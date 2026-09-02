@@ -31,8 +31,8 @@ recommendations, skill-gap analysis, and a learning plan.
 | Area | Status | Description |
 |------|--------|-------------|
 | Landing page | ✅ | Marketing home page with hero, "how it works", features, testimonials |
-| Auth screens | ✅ (UI only) | Login / Signup pages; Google button is a placeholder |
-| Resume upload | ✅ | Onboarding page uploads a PDF to the backend |
+| Authentication | ✅ | Email/password + Google sign-in via Supabase Auth; sessions, password reset, protected routes |
+| Resume upload | ✅ | Onboarding page (login-protected) uploads a PDF to the backend |
 | Resume parsing | ✅ | Backend extracts `name`, `education`, `skills`, `experience` (AI, with mock fallback) |
 | Career recommendations | 🚧 | Planned |
 | Skill-gap analysis & roadmap | 🚧 | Planned |
@@ -56,6 +56,7 @@ recommendations, skill-gap analysis, and a learning plan.
 - TypeScript
 - [Tailwind CSS v4](https://tailwindcss.com/)
 - [react-router-dom](https://reactrouter.com/)
+- [@supabase/supabase-js](https://supabase.com/docs/reference/javascript) — auth & sessions
 - [framer-motion](https://www.framer.com/motion/) — animations
 - [lucide-react](https://lucide.dev/) — icons
 - [oxlint](https://oxc.rs/) — linting
@@ -73,15 +74,22 @@ AI-Personal-Career-Counselor/
 │   └── venv/              # Local virtualenv (NOT committed)
 ├── frontend/
 │   ├── src/
-│   │   ├── App.tsx        # Routes
+│   │   ├── App.tsx        # Routes + <AuthProvider>
 │   │   ├── main.tsx       # Entry point
 │   │   ├── index.css      # Tailwind + font imports
+│   │   ├── lib/
+│   │   │   └── supabase.ts        # Supabase client (reads VITE_SUPABASE_* env)
+│   │   ├── context/
+│   │   │   └── AuthContext.tsx    # useAuth(): user/session + sign in/up/out
+│   │   ├── components/
+│   │   │   └── ProtectedRoute.tsx # Redirects to /login when signed out
 │   │   └── pages/
 │   │       ├── Home.tsx
-│   │       ├── Login.tsx
-│   │       ├── Signup.tsx
-│   │       └── Onboarding.tsx   # Calls http://localhost:8000/api/upload-resume
+│   │       ├── Login.tsx          # Email/password + Google + forgot password
+│   │       ├── Signup.tsx         # Email/password + Google + terms
+│   │       └── Onboarding.tsx     # Protected; calls http://localhost:8000/api/upload-resume
 │   ├── public/            # Static images (counselor*.jpg, favicon.svg)
+│   ├── .env.example       # Copy to frontend/.env
 │   ├── package.json
 │   └── vite.config.ts
 └── README.md
@@ -97,8 +105,12 @@ AI-Personal-Career-Counselor/
 | Node.js | 20+ | Vite 8 requires a recent Node |
 | npm | 10+ | Ships with Node |
 
-Optional: a **Google Gemini API key** ([aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)).
-Without it, resume parsing returns realistic **mock data** so the app still runs end to end.
+Also needed:
+
+- A **Supabase project** (free tier) for login/signup — [supabase.com](https://supabase.com/).
+  Without it the UI still renders but authentication is disabled.
+- Optional: a **Google Gemini API key** ([aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)).
+  Without it, resume parsing returns realistic **mock data** so the app still runs end to end.
 
 ---
 
@@ -139,7 +151,9 @@ npm install
 
 ## Environment variables
 
-Create `backend/.env` (copy from `backend/.env.example`):
+### Backend — `backend/.env`
+
+Copy from `backend/.env.example`:
 
 ```env
 # Optional — enables real AI resume parsing. Without it, mock data is returned.
@@ -154,6 +168,22 @@ DATABASE_URL=postgresql://user:password@host:5432/dbname
 > To actually call Gemini you must also enable it in `backend/main.py` by uncommenting
 > `genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))`. Until then the endpoint
 > always falls back to mock data.
+
+### Frontend — `frontend/.env`
+
+Copy from `frontend/.env.example`. Required for login/signup to work:
+
+```env
+VITE_SUPABASE_URL=https://YOUR-PROJECT-ref.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-public-key
+```
+
+Get both from your Supabase project → **Project Settings → API**. Only variables
+prefixed with `VITE_` are exposed to the browser; the anon key is designed to be
+public (protect data with Row Level Security).
+
+> If these are missing the app still loads, auth calls fail with a clear message,
+> and `/onboarding` is left open so you can work on the UI.
 
 The frontend currently hardcodes the API base URL as `http://localhost:8000` in
 `src/pages/Onboarding.tsx`. Change it there if your backend runs elsewhere.
@@ -189,6 +219,39 @@ npm run dev
 | `npm run build` | Type-check (`tsc -b`) and build for production into `dist/` |
 | `npm run preview` | Serve the production build locally |
 | `npm run lint` | Run oxlint |
+
+---
+
+## Authentication
+
+Auth is handled entirely on the frontend by **Supabase Auth** — no backend auth code.
+
+**Flow**
+
+- `src/lib/supabase.ts` creates the client from `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`.
+- `src/context/AuthContext.tsx` wraps the app, tracks the session via
+  `supabase.auth.onAuthStateChange`, and exposes `useAuth()`:
+  `{ user, session, loading, signIn, signUp, signInWithGoogle, resetPassword, signOut }`.
+- `src/components/ProtectedRoute.tsx` redirects to `/login` when signed out and
+  remembers the target page so login can send the user back.
+- `/onboarding` is wrapped in `<ProtectedRoute>`. Add future dashboard routes the same way.
+
+**One-time Supabase setup**
+
+1. Create a project at [supabase.com](https://supabase.com/).
+2. Put the URL + anon key in `frontend/.env` (see above).
+3. **Email/password:** Authentication → Providers → Email is on by default. For local
+   testing you can disable "Confirm email" so new signups can log in immediately.
+4. **Google:** Authentication → Providers → Google — add your Google OAuth client ID
+   and secret, then add `http://localhost:5173` to Authentication → URL Configuration
+   → Redirect URLs.
+
+**Manual test**
+
+1. `npm run dev`, open <http://localhost:5173/signup>, create an account.
+2. Confirm the email if confirmation is on, then log in at `/login`.
+3. You should land on `/onboarding` with a "Signed in as …" bar and a **Sign out** button.
+4. Visiting `/onboarding` while signed out should bounce you to `/login`.
 
 ---
 
@@ -244,6 +307,10 @@ curl -F "file=@/path/to/resume.pdf" http://localhost:8000/api/upload-resume
 | `Form data requires "python-multipart"` | Deps installed into the wrong Python | Run `venv\Scripts\python.exe -m pip install -r requirements.txt` |
 | Frontend upload fails / CORS error | Backend not running on port 8000 | Start the backend first; it allows all origins by default |
 | Resume parse returns "Demo User" / mock | No `GEMINI_API_KEY` or `genai.configure` still commented out | Set the key and enable it in `main.py` |
+| Login says "Authentication is not configured" | `frontend/.env` missing or not prefixed `VITE_` | Create `frontend/.env` with `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`, restart `npm run dev` |
+| Signup works but login fails with "Email not confirmed" | Email confirmation is on in Supabase | Confirm via the emailed link, or disable "Confirm email" in Supabase for local testing |
+| Google button redirects then errors | Redirect URL not allowlisted | Add `http://localhost:5173` in Supabase → Authentication → URL Configuration |
+| Env change not picked up | Vite reads `.env` at startup | Stop and restart `npm run dev` |
 | `git push` fails with HTTP 408 | `backend/venv/` was committed (~45 MiB) | See [Notes for contributors](#notes-for-contributors) |
 
 ---
