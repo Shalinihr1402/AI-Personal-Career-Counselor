@@ -10,13 +10,14 @@ import type { Session, User } from '@supabase/supabase-js';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 type AuthResult = { error: string | null };
+type SignInResult = AuthResult & { user: User | null };
 
 interface AuthContextValue {
   user: User | null;
   session: Session | null;
   loading: boolean;
   configured: boolean;
-  signIn: (email: string, password: string) => Promise<AuthResult>;
+  signIn: (email: string, password: string) => Promise<SignInResult>;
   signUp: (
     email: string,
     password: string,
@@ -66,12 +67,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       configured: isSupabaseConfigured,
 
       async signIn(email, password) {
-        if (!isSupabaseConfigured) return notConfigured;
-        const { error } = await supabase.auth.signInWithPassword({
+        if (!isSupabaseConfigured) return { ...notConfigured, user: null };
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        return { error: error?.message ?? null };
+        return { error: error?.message ?? null, user: data.user ?? null };
       },
 
       async signUp(email, password, fullName) {

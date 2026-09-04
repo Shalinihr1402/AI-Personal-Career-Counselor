@@ -7,8 +7,7 @@ const Login: React.FC = () => {
   const { signIn, signInWithGoogle, resetPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const redirectTo =
-    (location.state as { from?: string } | null)?.from ?? '/onboarding';
+  const explicitRedirect = (location.state as { from?: string } | null)?.from;
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,14 +27,19 @@ const Login: React.FC = () => {
     }
 
     setLoading(true);
-    const { error: signInError } = await signIn(email.trim(), password);
+    const { error: signInError, user: signedInUser } = await signIn(email.trim(), password);
     setLoading(false);
 
     if (signInError) {
       setError(signInError);
       return;
     }
-    navigate(redirectTo, { replace: true });
+
+    const onboardingDone = Boolean(
+      (signedInUser?.user_metadata as Record<string, unknown> | undefined)?.onboarding_complete,
+    );
+    const target = explicitRedirect ?? (onboardingDone ? '/dashboard' : '/onboarding');
+    navigate(target, { replace: true });
   };
 
   const handleGoogle = async () => {

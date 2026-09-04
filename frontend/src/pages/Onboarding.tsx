@@ -198,14 +198,22 @@ const Onboarding: React.FC = () => {
             </div>
             <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Welcome back!</h1>
             <p className="text-slate-500 mb-8">
-              You've already told us about yourself. Your personalized roadmap and dashboard are on the way.
+              You've already told us about yourself. Head to your dashboard to see your career matches.
             </p>
-            <button
-              onClick={restart}
-              className="text-[#6D28D9] font-bold hover:underline text-sm"
-            >
-              Update my answers
-            </button>
+            <div className="flex items-center justify-center gap-6">
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#5B21B6] transition-all shadow-md shadow-purple-600/20"
+              >
+                Go to dashboard <ArrowRight className="w-4 h-4" />
+              </Link>
+              <button
+                onClick={restart}
+                className="text-[#6D28D9] font-bold hover:underline text-sm"
+              >
+                Update my answers
+              </button>
+            </div>
           </div>
         ) : finished ? (
           /* --- Completion screen --- */
@@ -216,7 +224,7 @@ const Onboarding: React.FC = () => {
             <h1 className="text-2xl font-extrabold text-slate-900 mb-2">You're all set! 🎉</h1>
             <p className="text-slate-500 mb-8 max-w-md mx-auto">
               Thanks, {data.college || 'friend'}! We're using what you told us to build your
-              personalized career roadmap. The full dashboard is coming soon.
+              personalized career roadmap.
             </p>
             <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 mb-8 text-left text-sm text-slate-600 space-y-1.5">
               {data.path && <p><strong className="text-slate-800">Goal status:</strong> {PATH_OPTIONS.find((p) => p.value === data.path)?.title}</p>}
@@ -226,12 +234,20 @@ const Onboarding: React.FC = () => {
               {data.hoursPerWeek && <p><strong className="text-slate-800">Time available:</strong> {data.hoursPerWeek}</p>}
               {parsedData && <p><strong className="text-slate-800">Resume:</strong> parsed and saved</p>}
             </div>
-            <button
-              onClick={restart}
-              className="text-[#6D28D9] font-bold hover:underline text-sm"
-            >
-              Edit my answers
-            </button>
+            <div className="flex items-center justify-center gap-6">
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#5B21B6] transition-all shadow-md shadow-purple-600/20"
+              >
+                Go to dashboard <ArrowRight className="w-4 h-4" />
+              </Link>
+              <button
+                onClick={restart}
+                className="text-[#6D28D9] font-bold hover:underline text-sm"
+              >
+                Edit my answers
+              </button>
+            </div>
           </div>
         ) : (
           <>

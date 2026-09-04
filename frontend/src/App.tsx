@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Onboarding from './pages/Onboarding'
+import Dashboard from './pages/Dashboard'
 
 function App() {
   return (
@@ -19,6 +20,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Onboarding />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
               </ProtectedRoute>
             }
           />
