@@ -34,8 +34,10 @@ recommendations, skill-gap analysis, and a learning plan.
 | Authentication | ✅ | Email/password + Google sign-in via Supabase Auth; sessions, password reset, protected routes |
 | Resume upload | ✅ | Onboarding page (login-protected) uploads a PDF to the backend |
 | Resume parsing | ✅ | Backend extracts `name`, `education`, `skills`, `experience` (AI, with mock fallback) |
-| Career recommendations | 🚧 | Planned |
-| Skill-gap analysis & roadmap | 🚧 | Planned |
+| Career-interest assessment | ✅ | RIASEC/Holland questionnaire (`/assessment`) with deterministic scoring |
+| Career recommendations | ✅ | AI-ranked from the RIASEC profile against a fixed taxonomy, rule-based fallback |
+| Personalized roadmap & weekly timetable | ✅ | Curated per-role roadmaps (`/roadmap`), editable schedule, today's tasks (`/today`) |
+| Skill-gap analysis | 🚧 | Precise current-skills-vs-target-role diff — planned |
 | Persistent accounts / database | 🚧 | Supabase / Postgres env vars are present but not yet wired |
 
 ---
@@ -296,6 +298,27 @@ Example with `curl`:
 curl -F "file=@/path/to/resume.pdf" http://localhost:8000/api/upload-resume
 ```
 
+### `GET /api/assessment/questions`
+
+Returns the 24 RIASEC items, the rating scale, and dimension labels for the
+career-interest assessment.
+
+### `POST /api/assessment/score`
+
+Body: `{ "answers": { "r1": 2, "i3": 1, ... } }` (item id → 0/1/2).
+Returns `{ "scores": { "R": 0-100, ... }, "code": "IAR" }` — deterministic, no AI.
+
+### `POST /api/career-match`
+
+Body: `{ riasec_scores, code, interests[], education, work_style{}, resume_skills[] }`.
+Builds a structured profile and asks Gemini to rank 5 careers **from a fixed
+taxonomy** (`backend/careers.py`), returning each with a fit score and reasoning.
+If Gemini is unavailable it falls back to a rule-based RIASEC matcher, so the
+feature works with no API key. Response: `{ "source": "ai" | "rule", "matches": [...] }`.
+
+> The AI path activates only when `GEMINI_API_KEY` is set in `backend/.env`
+> (the backend now loads `.env` and calls `genai.configure` automatically).
+
 ---
 
 ## Troubleshooting
@@ -306,7 +329,8 @@ curl -F "file=@/path/to/resume.pdf" http://localhost:8000/api/upload-resume
 | `Activate.ps1` does nothing in cmd | It's a PowerShell script | Use `venv\Scripts\activate.bat` in cmd |
 | `Form data requires "python-multipart"` | Deps installed into the wrong Python | Run `venv\Scripts\python.exe -m pip install -r requirements.txt` |
 | Frontend upload fails / CORS error | Backend not running on port 8000 | Start the backend first; it allows all origins by default |
-| Resume parse returns "Demo User" / mock | No `GEMINI_API_KEY` or `genai.configure` still commented out | Set the key and enable it in `main.py` |
+| Resume parse / career-match returns mock or `"source": "rule"` | `GEMINI_API_KEY` not set in `backend/.env` | Add the key and restart uvicorn — `.env` is loaded and `genai.configure` runs automatically now |
+| Assessment page shows "Could not load the assessment" | Backend not running on `localhost:8000` | Start the backend first |
 | Login says "Authentication is not configured" | `frontend/.env` missing or not prefixed `VITE_` | Create `frontend/.env` with `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`, restart `npm run dev` |
 | Signup works but login fails with "Email not confirmed" | Email confirmation is on in Supabase | Confirm via the emailed link, or disable "Confirm email" in Supabase for local testing |
 | Google button redirects then errors | Redirect URL not allowlisted | Add `http://localhost:5173` in Supabase → Authentication → URL Configuration |

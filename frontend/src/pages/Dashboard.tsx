@@ -2,11 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   GraduationCap, Clock, Target, Sparkles, FileText, Map as MapIcon,
-  ArrowRight, ClipboardList, RefreshCw, CalendarCheck,
+  ArrowRight, ClipboardList, RefreshCw, CalendarCheck, Compass,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import AppHeader from '../components/AppHeader';
 import { readOnboarding, suggestCareers, type OnboardingRecord } from '../lib/onboarding';
+import type { StoredAssessment } from '../lib/assessment';
 
 const PATH_LABEL: Record<NonNullable<OnboardingRecord['path']>, string> = {
   know_goal: 'Knows their career goal',
@@ -17,6 +18,8 @@ const PATH_LABEL: Record<NonNullable<OnboardingRecord['path']>, string> = {
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const onboarding = readOnboarding(user);
+  const assessment = (user?.user_metadata as Record<string, unknown> | undefined)
+    ?.assessment as StoredAssessment | undefined;
 
   const hasProfile = Boolean(onboarding);
   const targetRole = onboarding?.targetRole?.trim();
@@ -118,6 +121,48 @@ const Dashboard: React.FC = () => {
 
             {/* Main column */}
             <div className="md:col-span-2 space-y-6">
+
+              {/* Career discovery */}
+              {assessment ? (
+                <div className="bg-white rounded-[1.5rem] p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2">
+                      <Compass className="w-4 h-4 text-purple-500" />
+                      <h3 className="font-bold text-slate-900">Your interest profile</h3>
+                    </div>
+                    <span className="text-sm font-extrabold text-purple-600 tracking-widest">
+                      {assessment.code}
+                    </span>
+                  </div>
+                  {assessment.topMatches?.length > 0 && (
+                    <p className="text-sm text-slate-600 mb-3">
+                      Top matches: {assessment.topMatches.join(', ')}
+                    </p>
+                  )}
+                  <Link
+                    to="/assessment"
+                    className="inline-flex items-center gap-1.5 text-[#6D28D9] font-bold text-sm hover:underline"
+                  >
+                    View full results <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              ) : (
+                <Link
+                  to="/assessment"
+                  className="block bg-gradient-to-br from-purple-600 to-indigo-600 text-white rounded-[1.5rem] p-6 shadow-md shadow-purple-600/20 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                >
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <Compass className="w-5 h-5" />
+                    <h3 className="font-bold">Not sure which career fits? Find out.</h3>
+                  </div>
+                  <p className="text-purple-100 text-sm mb-3">
+                    Take the 5-minute interest assessment and get ranked career matches with reasons.
+                  </p>
+                  <span className="inline-flex items-center gap-1.5 font-bold text-sm">
+                    Start career discovery <ArrowRight className="w-4 h-4" />
+                  </span>
+                </Link>
+              )}
 
               {targetRole ? (
                 <div className="bg-white rounded-[1.5rem] p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
