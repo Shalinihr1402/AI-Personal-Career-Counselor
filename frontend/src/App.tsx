@@ -6,6 +6,8 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Onboarding from './pages/Onboarding'
 import Dashboard from './pages/Dashboard'
+import Roadmap from './pages/Roadmap'
+import Today from './pages/Today'
 
 function App() {
   return (
@@ -28,6 +30,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/roadmap"
+            element={
+              <ProtectedRoute>
+                <Roadmap />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/today"
+            element={
+              <ProtectedRoute>
+                <Today />
               </ProtectedRoute>
             }
           />

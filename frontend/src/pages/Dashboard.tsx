@@ -1,50 +1,12 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
-  BrainCircuit, LogOut, GraduationCap, Clock, Target, Sparkles,
-  FileText, Map as MapIcon, ArrowRight, ClipboardList, RefreshCw,
+  GraduationCap, Clock, Target, Sparkles, FileText, Map as MapIcon,
+  ArrowRight, ClipboardList, RefreshCw, CalendarCheck,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-
-interface OnboardingRecord {
-  path: 'know_goal' | 'not_sure' | 'need_plan' | null;
-  college?: string;
-  course?: string;
-  year?: string;
-  interests?: string[];
-  strengthsNote?: string;
-  targetRole?: string;
-  hoursPerWeek?: string;
-  resume?: { name?: string; education?: string[]; skills?: string[]; experience?: string[] };
-}
-
-// Simple rule-based interest -> career lookup. Placeholder for a real
-// matching model; keeps the dashboard useful before that exists.
-const CAREER_MATCHES: Record<string, string[]> = {
-  'Coding & Tech': ['Software Engineer', 'Web Developer', 'Mobile App Developer'],
-  'Design & Creativity': ['UI/UX Designer', 'Graphic Designer', 'Product Designer'],
-  'Data & Numbers': ['Data Analyst', 'Data Scientist', 'Business Analyst'],
-  'Communication & People': ['HR Specialist', 'Customer Success Manager', 'Public Relations Specialist'],
-  'Business & Management': ['Product Manager', 'Business Consultant', 'Operations Manager'],
-  'Science & Research': ['Research Scientist', 'Lab Technician', 'Biotech Analyst'],
-  'Healthcare': ['Nurse', 'Healthcare Administrator', 'Medical Researcher'],
-  'Sports & Fitness': ['Sports Coach', 'Fitness Trainer', 'Sports Analyst'],
-  'Writing & Content': ['Content Writer', 'Technical Writer', 'Copywriter'],
-  'Public Speaking': ['Corporate Trainer', 'Sales Executive', 'Marketing Manager'],
-};
-
-function suggestCareers(interests: string[]): string[] {
-  const scores = new Map<string, number>();
-  for (const interest of interests) {
-    for (const career of CAREER_MATCHES[interest] ?? []) {
-      scores.set(career, (scores.get(career) ?? 0) + 1);
-    }
-  }
-  return [...scores.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
-    .map(([career]) => career);
-}
+import AppHeader from '../components/AppHeader';
+import { readOnboarding, suggestCareers, type OnboardingRecord } from '../lib/onboarding';
 
 const PATH_LABEL: Record<NonNullable<OnboardingRecord['path']>, string> = {
   know_goal: 'Knows their career goal',
@@ -53,16 +15,8 @@ const PATH_LABEL: Record<NonNullable<OnboardingRecord['path']>, string> = {
 };
 
 const Dashboard: React.FC = () => {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
-
-  const onboarding = (user?.user_metadata as Record<string, unknown> | undefined)
-    ?.onboarding as OnboardingRecord | undefined;
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/login', { replace: true });
-  };
+  const { user } = useAuth();
+  const onboarding = readOnboarding(user);
 
   const hasProfile = Boolean(onboarding);
   const targetRole = onboarding?.targetRole?.trim();
@@ -72,26 +26,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F8F9FE] font-sans">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-100">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <BrainCircuit className="w-6 h-6 text-purple-600" />
-            <span className="font-bold text-slate-900">AI Personal Career Counselor</span>
-          </Link>
-          <div className="flex items-center gap-4 text-sm">
-            <span className="text-slate-500 font-medium hidden sm:inline">
-              Signed in as <span className="text-slate-800 font-semibold">{user?.email}</span>
-            </span>
-            <button
-              onClick={handleSignOut}
-              className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-semibold transition-colors"
-            >
-              <LogOut className="w-4 h-4" /> Sign out
-            </button>
-          </div>
-        </div>
-      </header>
+      <AppHeader />
 
       <main className="max-w-5xl mx-auto px-6 py-10">
         <h1 className="text-3xl font-extrabold text-slate-900 mb-1">
@@ -100,7 +35,6 @@ const Dashboard: React.FC = () => {
         <p className="text-slate-500 mb-8">Here's where your career journey stands right now.</p>
 
         {!hasProfile ? (
-          /* Nudge back into onboarding if they somehow got here without it */
           <div className="bg-white rounded-[2rem] p-10 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-center">
             <div className="w-14 h-14 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <ClipboardList className="w-7 h-7" />
@@ -191,10 +125,13 @@ const Dashboard: React.FC = () => {
                     <Target className="w-4 h-4 text-purple-500" />
                     <h3 className="font-bold text-slate-900">Your target role</h3>
                   </div>
-                  <p className="text-2xl font-extrabold text-slate-900 mb-1">{targetRole}</p>
-                  <p className="text-slate-500 text-sm">
-                    Skill-gap analysis and your personalized roadmap for this role are coming soon.
-                  </p>
+                  <p className="text-2xl font-extrabold text-slate-900 mb-3">{targetRole}</p>
+                  <Link
+                    to="/roadmap"
+                    className="inline-flex items-center gap-1.5 text-[#6D28D9] font-bold text-sm hover:underline"
+                  >
+                    View your roadmap <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
               ) : suggestions.length > 0 ? (
                 <div className="bg-white rounded-[1.5rem] p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
@@ -217,9 +154,12 @@ const Dashboard: React.FC = () => {
                       </div>
                     ))}
                   </div>
-                  <p className="text-slate-400 text-xs mt-4">
-                    These are quick suggestions from your interests — a deeper AI-driven match is on the way.
-                  </p>
+                  <Link
+                    to="/roadmap"
+                    className="mt-4 inline-flex items-center gap-1.5 text-[#6D28D9] font-bold text-sm hover:underline"
+                  >
+                    See a roadmap for the top match <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
               ) : (
                 <div className="bg-white rounded-[1.5rem] p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] text-center">
@@ -229,22 +169,45 @@ const Dashboard: React.FC = () => {
                 </div>
               )}
 
-              {/* Coming soon */}
+              {/* Roadmap + Today (live) */}
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="bg-white rounded-[1.5rem] p-6 border border-dashed border-slate-200 opacity-70">
+                <Link
+                  to="/roadmap"
+                  className="bg-white rounded-[1.5rem] p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:border-purple-200 hover:-translate-y-0.5 transition-all"
+                >
                   <div className="flex items-center gap-2 mb-2">
-                    <ClipboardList className="w-4 h-4 text-slate-400" />
-                    <h4 className="font-bold text-slate-700 text-sm">Skill Gap Analysis</h4>
+                    <MapIcon className="w-4 h-4 text-purple-500" />
+                    <h4 className="font-bold text-slate-900 text-sm">Personalized Roadmap</h4>
                   </div>
-                  <p className="text-slate-400 text-xs">Coming soon</p>
-                </div>
-                <div className="bg-white rounded-[1.5rem] p-6 border border-dashed border-slate-200 opacity-70">
+                  <p className="text-slate-500 text-xs">Stages, skills, resources and a weekly schedule.</p>
+                  <span className="mt-3 inline-flex items-center gap-1 text-[#6D28D9] font-bold text-xs">
+                    Open <ArrowRight className="w-3 h-3" />
+                  </span>
+                </Link>
+                <Link
+                  to="/today"
+                  className="bg-white rounded-[1.5rem] p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:border-purple-200 hover:-translate-y-0.5 transition-all"
+                >
                   <div className="flex items-center gap-2 mb-2">
-                    <MapIcon className="w-4 h-4 text-slate-400" />
-                    <h4 className="font-bold text-slate-700 text-sm">Personalized Roadmap</h4>
+                    <CalendarCheck className="w-4 h-4 text-purple-500" />
+                    <h4 className="font-bold text-slate-900 text-sm">Today's Tasks</h4>
                   </div>
-                  <p className="text-slate-400 text-xs">Coming soon</p>
+                  <p className="text-slate-500 text-xs">What to work on this week, with check-offs.</p>
+                  <span className="mt-3 inline-flex items-center gap-1 text-[#6D28D9] font-bold text-xs">
+                    Open <ArrowRight className="w-3 h-3" />
+                  </span>
+                </Link>
+              </div>
+
+              {/* Still coming */}
+              <div className="bg-white rounded-[1.5rem] p-6 border border-dashed border-slate-200 opacity-70">
+                <div className="flex items-center gap-2 mb-2">
+                  <ClipboardList className="w-4 h-4 text-slate-400" />
+                  <h4 className="font-bold text-slate-700 text-sm">Skill Gap Analysis</h4>
                 </div>
+                <p className="text-slate-400 text-xs">
+                  A precise match of your current skills against your target role — coming soon.
+                </p>
               </div>
             </div>
           </div>
