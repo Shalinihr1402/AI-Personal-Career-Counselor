@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useProfile } from '../context/ProfileContext';
 
 /**
  * Gate for authenticated-only pages. While the session is loading it shows a
@@ -9,9 +10,10 @@ import { useAuth } from '../context/AuthContext';
  */
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
   const { user, loading, configured } = useAuth();
+  const { loading: profileLoading } = useProfile();
   const location = useLocation();
 
-  if (loading) {
+  if (loading || (user && profileLoading)) {
     return (
       <div className="min-h-screen bg-[#F8F9FE] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-purple-200 border-t-purple-600 rounded-full animate-spin" />

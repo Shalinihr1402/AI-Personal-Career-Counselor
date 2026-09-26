@@ -1,5 +1,3 @@
-import type { User } from '@supabase/supabase-js';
-
 export type CareerPath = 'know_goal' | 'not_sure' | 'need_plan';
 
 export interface OnboardingRecord {
@@ -19,23 +17,21 @@ export interface OnboardingRecord {
   };
 }
 
-export function readOnboarding(user: User | null): OnboardingRecord | undefined {
-  const meta = user?.user_metadata as Record<string, unknown> | undefined;
-  return meta?.onboarding as OnboardingRecord | undefined;
-}
-
-/** Rule-based interest -> career lookup. Placeholder for a real matching model. */
+/**
+ * Rule-based interest -> career lookup. Placeholder for a real matching model.
+ * Every title must exist in the backend taxonomy (backend/careers.py CAREERS).
+ */
 export const CAREER_MATCHES: Record<string, string[]> = {
-  'Coding & Tech': ['Software Engineer', 'Web Developer', 'Mobile App Developer'],
-  'Design & Creativity': ['UI/UX Designer', 'Graphic Designer', 'Product Designer'],
+  'Coding & Tech': ['Software Engineer', 'Frontend Developer', 'DevOps / Cloud Engineer'],
+  'Design & Creativity': ['UX Designer', 'Graphic Designer', 'Product Designer'],
   'Data & Numbers': ['Data Analyst', 'Data Scientist', 'Business Analyst'],
-  'Communication & People': ['HR Specialist', 'Customer Success Manager', 'Public Relations Specialist'],
-  'Business & Management': ['Product Manager', 'Business Consultant', 'Operations Manager'],
-  'Science & Research': ['Research Scientist', 'Lab Technician', 'Biotech Analyst'],
-  Healthcare: ['Nurse', 'Healthcare Administrator', 'Medical Researcher'],
-  'Sports & Fitness': ['Sports Coach', 'Fitness Trainer', 'Sports Analyst'],
-  'Writing & Content': ['Content Writer', 'Technical Writer', 'Copywriter'],
-  'Public Speaking': ['Corporate Trainer', 'Sales Executive', 'Marketing Manager'],
+  'Communication & People': ['HR Specialist', 'Customer Success Manager', 'Teacher / Trainer'],
+  'Business & Management': ['Product Manager', 'Management Consultant', 'Operations Manager'],
+  'Science & Research': ['Research Scientist', 'Data Scientist', 'Pharmacist'],
+  Healthcare: ['Nurse', 'Pharmacist'],
+  'Sports & Fitness': ['Sports Coach', 'Fitness Trainer'],
+  'Writing & Content': ['Content Writer', 'Technical Writer', 'Social Media Manager'],
+  'Public Speaking': ['Teacher / Trainer', 'Sales Executive', 'Digital Marketer'],
 };
 
 export function suggestCareers(interests: string[]): string[] {

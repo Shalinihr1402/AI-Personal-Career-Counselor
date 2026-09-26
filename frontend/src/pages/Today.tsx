@@ -4,14 +4,15 @@ import { CalendarCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import AppHeader from '../components/AppHeader';
 import ThisWeekPanel from '../components/ThisWeekPanel';
-import { readOnboarding, parseWeeklyHours, educationPace, suggestCareers } from '../lib/onboarding';
+import { parseWeeklyHours, educationPace, suggestCareers } from '../lib/onboarding';
+import { useProfile } from '../context/ProfileContext';
 import { getRoadmap } from '../data/roadmaps';
 import { buildTasks, generateTimetable, currentWeekIndex } from '../lib/planner';
 import { useProgress } from '../lib/useProgress';
 
 const Today: React.FC = () => {
   const { user } = useAuth();
-  const onboarding = readOnboarding(user);
+  const { profile: onboarding } = useProfile();
   const interests = useMemo<string[]>(() => onboarding?.interests ?? [], [onboarding?.interests]);
 
   const resolvedRole =

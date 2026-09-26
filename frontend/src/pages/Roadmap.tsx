@@ -5,10 +5,10 @@ import {
   EyeOff, Eye, ChevronDown, PlayCircle, GraduationCap, BookOpen, Code2, Rocket,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
 import AppHeader from '../components/AppHeader';
 import ThisWeekPanel from '../components/ThisWeekPanel';
-import { readOnboarding, parseWeeklyHours, educationPace, suggestCareers } from '../lib/onboarding';
+import { parseWeeklyHours, educationPace, suggestCareers } from '../lib/onboarding';
+import { useProfile } from '../context/ProfileContext';
 import { getRoadmap, skillHours, type ResourceType } from '../data/roadmaps';
 import {
   buildTasks, generateTimetable, currentWeekIndex, formatDateRange,
@@ -25,7 +25,7 @@ const TYPE_ICON: Record<ResourceType, React.ReactNode> = {
 
 const Roadmap: React.FC = () => {
   const { user, configured } = useAuth();
-  const onboarding = readOnboarding(user);
+  const { profile: onboarding, saveProfile } = useProfile();
   const interests = useMemo<string[]>(() => onboarding?.interests ?? [], [onboarding?.interests]);
 
   const resolvedRole =
@@ -66,9 +66,7 @@ const Roadmap: React.FC = () => {
     setSavingRole(true);
     setRoleSaved(false);
     try {
-      await supabase.auth.updateUser({
-        data: { onboarding: { ...(onboarding ?? {}), targetRole: roleInput.trim() } },
-      });
+      await saveProfile({ targetRole: roleInput.trim() });
       setRoleSaved(true);
     } catch {
       /* ignore — non-blocking */

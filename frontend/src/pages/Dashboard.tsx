@@ -4,10 +4,10 @@ import {
   GraduationCap, Clock, Target, Sparkles, FileText, Map as MapIcon,
   ArrowRight, ClipboardList, RefreshCw, CalendarCheck, Compass,
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useProfile } from '../context/ProfileContext';
 import AppHeader from '../components/AppHeader';
-import { readOnboarding, suggestCareers, type OnboardingRecord } from '../lib/onboarding';
-import type { StoredAssessment } from '../lib/assessment';
+import { suggestCareers, type OnboardingRecord } from '../lib/onboarding';
+import { isKnowMeComplete } from '../lib/knowMe';
 
 const PATH_LABEL: Record<NonNullable<OnboardingRecord['path']>, string> = {
   know_goal: 'Knows their career goal',
@@ -16,15 +16,15 @@ const PATH_LABEL: Record<NonNullable<OnboardingRecord['path']>, string> = {
 };
 
 const Dashboard: React.FC = () => {
-  const { user } = useAuth();
-  const onboarding = readOnboarding(user);
-  const assessment = (user?.user_metadata as Record<string, unknown> | undefined)
-    ?.assessment as StoredAssessment | undefined;
+  const { profile: onboarding, assessment } = useProfile();
+  const topMatches = assessment?.matches.slice(0, 3) ?? [];
+  const knowMeDone = isKnowMeComplete(onboarding?.knowMe);
 
   const hasProfile = Boolean(onboarding);
   const targetRole = onboarding?.targetRole?.trim();
   const interests = onboarding?.interests ?? [];
-  const suggestions = !targetRole && interests.length > 0 ? suggestCareers(interests) : [];
+  // Interest-only suggestions are a stopgap until the student has real discovery results.
+  const suggestions = !targetRole && !assessment && interests.length > 0 ? suggestCareers(interests) : [];
   const resumeSkills = onboarding?.resume?.skills ?? [];
 
   return (
@@ -134,9 +134,25 @@ const Dashboard: React.FC = () => {
                       {assessment.code}
                     </span>
                   </div>
-                  {assessment.topMatches?.length > 0 && (
-                    <p className="text-sm text-slate-600 mb-3">
-                      Top matches: {assessment.topMatches.join(', ')}
+                  {topMatches.length > 0 && (
+                    <ul className="space-y-2 mb-4">
+                      {topMatches.map((m, i) => (
+                        <li key={m.title} className="flex items-center justify-between gap-3 text-sm">
+                          <span className="flex items-center gap-2.5 min-w-0">
+                            <span className="w-5 h-5 rounded-full bg-purple-100 text-purple-700 text-[11px] font-bold flex items-center justify-center shrink-0">
+                              {i + 1}
+                            </span>
+                            <span className="font-semibold text-slate-800 truncate">{m.title}</span>
+                          </span>
+                          <span className="shrink-0 text-xs font-bold text-green-700">{m.fit}% fit</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {!knowMeDone && (
+                    <p className="text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mb-3">
+                      These matches were made before we asked about your values, strengths and
+                      situation. Retake discovery for more personal results.
                     </p>
                   )}
                   <Link
@@ -206,7 +222,7 @@ const Dashboard: React.FC = () => {
                     See a roadmap for the top match <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
-              ) : (
+              ) : assessment ? null : (
                 <div className="bg-white rounded-[1.5rem] p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] text-center">
                   <p className="text-slate-500 text-sm">
                     Add a few interests in onboarding and we'll suggest careers that fit.

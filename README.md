@@ -4,8 +4,12 @@ An AI-powered career guidance platform for students. Upload a resume, get struct
 profile data extracted by AI, and (on the roadmap) receive personalized career
 recommendations, skill-gap analysis, and a learning plan.
 
-- **Backend:** FastAPI (Python), PyMuPDF for PDF parsing, Google Gemini for extraction
+- **Backend:** FastAPI (Python), PyMuPDF for PDF parsing, Groq (GPT-OSS 120B, free tier) for AI extraction and matching
 - **Frontend:** React 19 + Vite + TypeScript + Tailwind CSS v4
+
+> 📘 **Planning to build a feature?** Read the full product & technical plan in
+> [`docs/BLUEPRINT.md`](docs/BLUEPRINT.md) — vision, module-by-module specs, data model,
+> API, design system and build order.
 
 ---
 
@@ -48,7 +52,7 @@ recommendations, skill-gap analysis, and a learning plan.
 
 - [FastAPI](https://fastapi.tiangolo.com/) + [Uvicorn](https://www.uvicorn.org/)
 - [PyMuPDF](https://pymupdf.readthedocs.io/) (`fitz`) — PDF text extraction
-- [google-generativeai](https://pypi.org/project/google-generativeai/) — Gemini 1.5 Flash
+- [groq](https://pypi.org/project/groq/) — GPT-OSS 120B via Groq (override with `GROQ_MODEL`)
 - `python-multipart` — required for file uploads
 - `python-dotenv` — loads `.env`
 
@@ -111,7 +115,7 @@ Also needed:
 
 - A **Supabase project** (free tier) for login/signup — [supabase.com](https://supabase.com/).
   Without it the UI still renders but authentication is disabled.
-- Optional: a **Google Gemini API key** ([aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)).
+- Optional: a free **Groq API key** ([console.groq.com/keys](https://console.groq.com/keys)).
   Without it, resume parsing returns realistic **mock data** so the app still runs end to end.
 
 ---
@@ -158,18 +162,14 @@ npm install
 Copy from `backend/.env.example`:
 
 ```env
-# Optional — enables real AI resume parsing. Without it, mock data is returned.
-GEMINI_API_KEY=your_google_gemini_api_key
+# Optional — enables real AI (resume parsing + career matching). Without it, mock/rule-based results are returned.
+GROQ_API_KEY=your_groq_api_key
 
 # Planned — not yet wired into the app
 SUPABASE_URL=your_supabase_url
 SUPABASE_KEY=your_supabase_anon_key
 DATABASE_URL=postgresql://user:password@host:5432/dbname
 ```
-
-> To actually call Gemini you must also enable it in `backend/main.py` by uncommenting
-> `genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))`. Until then the endpoint
-> always falls back to mock data.
 
 ### Frontend — `frontend/.env`
 
@@ -289,7 +289,7 @@ Upload a PDF resume for parsing.
 
 1. Rejects non-PDF uploads with `400`.
 2. If PyMuPDF or the AI client is unavailable → returns mock data.
-3. Otherwise extracts text with PyMuPDF and asks Gemini to return structured JSON.
+3. Otherwise extracts text with PyMuPDF and asks the LLM (Groq) to return structured JSON.
 4. If the AI call fails (e.g. missing key) → returns a fallback object.
 
 Example with `curl`:
@@ -311,13 +311,13 @@ Returns `{ "scores": { "R": 0-100, ... }, "code": "IAR" }` — deterministic, no
 ### `POST /api/career-match`
 
 Body: `{ riasec_scores, code, interests[], education, work_style{}, resume_skills[] }`.
-Builds a structured profile and asks Gemini to rank 5 careers **from a fixed
+Builds a structured profile and asks the LLM (Groq) to rank 5 careers **from a fixed
 taxonomy** (`backend/careers.py`), returning each with a fit score and reasoning.
-If Gemini is unavailable it falls back to a rule-based RIASEC matcher, so the
+If the AI is unavailable it falls back to a rule-based RIASEC matcher, so the
 feature works with no API key. Response: `{ "source": "ai" | "rule", "matches": [...] }`.
 
-> The AI path activates only when `GEMINI_API_KEY` is set in `backend/.env`
-> (the backend now loads `.env` and calls `genai.configure` automatically).
+> The AI path activates only when `GROQ_API_KEY` is set in `backend/.env`
+> (the backend loads `.env` automatically).
 
 ---
 
@@ -329,7 +329,7 @@ feature works with no API key. Response: `{ "source": "ai" | "rule", "matches": 
 | `Activate.ps1` does nothing in cmd | It's a PowerShell script | Use `venv\Scripts\activate.bat` in cmd |
 | `Form data requires "python-multipart"` | Deps installed into the wrong Python | Run `venv\Scripts\python.exe -m pip install -r requirements.txt` |
 | Frontend upload fails / CORS error | Backend not running on port 8000 | Start the backend first; it allows all origins by default |
-| Resume parse / career-match returns mock or `"source": "rule"` | `GEMINI_API_KEY` not set in `backend/.env` | Add the key and restart uvicorn — `.env` is loaded and `genai.configure` runs automatically now |
+| Resume parse / career-match returns mock or `"source": "rule"` | `GROQ_API_KEY` not set in `backend/.env` | Add the key and restart uvicorn |
 | Assessment page shows "Could not load the assessment" | Backend not running on `localhost:8000` | Start the backend first |
 | Login says "Authentication is not configured" | `frontend/.env` missing or not prefixed `VITE_` | Create `frontend/.env` with `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`, restart `npm run dev` |
 | Signup works but login fails with "Email not confirmed" | Email confirmation is on in Supabase | Confirm via the emailed link, or disable "Confirm email" in Supabase for local testing |

@@ -4,24 +4,62 @@ import {
   Sparkles, ArrowRight, ArrowLeft, Target,
   AlertTriangle, RotateCcw, Compass,
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
+import { useProfile } from '../context/ProfileContext';
 import AppHeader from '../components/AppHeader';
-import { readOnboarding } from '../lib/onboarding';
+import KnowMeSection from '../components/KnowMeSection';
+import { EMPTY_KNOW_ME, MAX_VALUES, SITUATION_QUESTIONS, knowMeForApi, type KnowMe } from '../lib/knowMe';
 import {
   fetchQuestions, scoreAssessment, fetchCareerMatches,
   DIM_LABEL, DIM_ORDER, WORK_STYLE_QUESTIONS,
   type RiasecQuestion, type ScaleOption, type ScoreResult, type MatchResult, type Dim,
 } from '../lib/assessment';
 
-type Phase = 'loading' | 'intro' | 'quiz' | 'workstyle' | 'scoring' | 'results' | 'error';
+type Phase =
+  | 'loading' | 'intro' | 'quiz' | 'workstyle'
+  | 'values' | 'strengths' | 'situation'
+  | 'scoring' | 'results' | 'error';
 
 const PER_PAGE = 6;
 
+/** The discovery journey as the student sees it (one entry per visible section). */
+const SECTIONS: { id: Phase; label: string }[] = [
+  { id: 'quiz', label: 'Interests' },
+  { id: 'workstyle', label: 'Work style' },
+  { id: 'values', label: 'Values' },
+  { id: 'strengths', label: 'Strengths' },
+  { id: 'situation', label: 'Your situation' },
+];
+
+const SECTION_INTRO: Partial<Record<Phase, { title: string; subtitle: string }>> = {
+  values: { title: 'What matters to you?', subtitle: 'The same job can feel great or awful depending on what you value.' },
+  strengths: { title: 'Where you shine', subtitle: 'Your strengths point to careers where you’ll grow fastest.' },
+  situation: { title: 'Your situation', subtitle: 'So we recommend careers that work in real life, not just on paper.' },
+};
+
+function SectionStepper({ current }: { current: Phase }) {
+  const idx = SECTIONS.findIndex((s) => s.id === current);
+  return (
+    <ol className="flex items-center gap-1.5 mb-6" aria-label="Discovery progress">
+      {SECTIONS.map((s, i) => (
+        <li key={s.id} className="flex-1 min-w-0">
+          <div className={`h-1.5 rounded-full ${i <= idx ? 'bg-purple-600' : 'bg-slate-200'}`} />
+          <span
+            className={`mt-1.5 block text-[11px] font-bold uppercase tracking-wide truncate ${
+              i === idx ? 'text-purple-700' : i < idx ? 'text-slate-500' : 'text-slate-300'
+            }`}
+            aria-current={i === idx ? 'step' : undefined}
+          >
+            {s.label}
+          </span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 const Assessment: React.FC = () => {
-  const { user, configured } = useAuth();
   const navigate = useNavigate();
-  const onboarding = readOnboarding(user);
+  const { profile, assessment: saved, saveProfile, saveAssessment } = useProfile();
 
   const [phase, setPhase] = useState<Phase>('loading');
   const [questions, setQuestions] = useState<RiasecQuestion[]>([]);
@@ -29,10 +67,15 @@ const Assessment: React.FC = () => {
   const [page, setPage] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [workStyle, setWorkStyle] = useState<Record<string, string>>({});
+  const [knowMe, setKnowMe] = useState<KnowMe>(() => ({ ...EMPTY_KNOW_ME, ...profile?.knowMe }));
   const [score, setScore] = useState<ScoreResult | null>(null);
   const [match, setMatch] = useState<MatchResult | null>(null);
+  const [resultsAt, setResultsAt] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [saveWarning, setSaveWarning] = useState<string | null>(null);
   const [settingGoal, setSettingGoal] = useState<string | null>(null);
+
+  const updateKnowMe = (patch: Partial<KnowMe>) => setKnowMe((k) => ({ ...k, ...patch }));
 
   useEffect(() => {
     let cancelled = false;
@@ -41,7 +84,15 @@ const Assessment: React.FC = () => {
         if (cancelled) return;
         setQuestions(data.questions);
         setScale(data.scale);
-        setPhase('intro');
+        if (saved) {
+          // Returning student: show their saved results instead of restarting the quiz.
+          setScore({ code: saved.code, scores: saved.scores });
+          setMatch({ source: saved.source, matches: saved.matches });
+          setResultsAt(saved.createdAt);
+          setPhase('results');
+        } else {
+          setPhase('intro');
+        }
       })
       .catch((e: unknown) => {
         if (cancelled) return;
@@ -51,6 +102,8 @@ const Assessment: React.FC = () => {
     return () => {
       cancelled = true;
     };
+    // Load once; `saved` is already available because ProtectedRoute waits for the profile.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const pageCount = Math.ceil(questions.length / PER_PAGE);
@@ -64,57 +117,53 @@ const Assessment: React.FC = () => {
   const submit = async () => {
     setPhase('scoring');
     setError(null);
+    setSaveWarning(null);
+    let s: ScoreResult;
+    let m: MatchResult;
+    const filled: Record<string, number> = {};
+    for (const q of questions) filled[q.id] = answers[q.id] ?? 1;
     try {
-      const filled: Record<string, number> = {};
-      for (const q of questions) filled[q.id] = answers[q.id] ?? 1;
-
-      const s = await scoreAssessment(filled);
-      const m = await fetchCareerMatches({
+      s = await scoreAssessment(filled);
+      m = await fetchCareerMatches({
         riasec_scores: s.scores,
         code: s.code,
-        interests: onboarding?.interests ?? [],
-        education: [onboarding?.course, onboarding?.year].filter(Boolean).join(' — ') || undefined,
+        interests: profile?.interests ?? [],
+        education: [profile?.course, profile?.year].filter(Boolean).join(' — ') || undefined,
         work_style: workStyle,
-        resume_skills: onboarding?.resume?.skills ?? [],
+        resume_skills: profile?.resume?.skills ?? [],
+        strengths_note: profile?.strengthsNote || undefined,
+        know_me: knowMeForApi(knowMe),
       });
-
-      setScore(s);
-      setMatch(m);
-      setPhase('results');
-
-      if (configured) {
-        try {
-          await supabase.auth.updateUser({
-            data: {
-              assessment: {
-                code: s.code,
-                scores: s.scores,
-                source: m.source,
-                topMatches: m.matches.slice(0, 3).map((x) => x.title),
-                at: new Date().toISOString(),
-              },
-            },
-          });
-        } catch {
-          /* non-blocking */
-        }
-      }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Something went wrong. Is the backend running?');
       setPhase('error');
+      return;
+    }
+
+    setScore(s);
+    setMatch(m);
+    setResultsAt(new Date().toISOString());
+    setPhase('results');
+
+    try {
+      await saveProfile({ knowMe });
+      await saveAssessment({
+        answers: filled, workStyle, knowMe,
+        scores: s.scores, code: s.code, matches: m.matches, source: m.source,
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('Could not save assessment:', e);
+      setSaveWarning("Your results couldn't be saved, so they'll be gone if you leave this page.");
     }
   };
 
   const setGoal = async (title: string) => {
     setSettingGoal(title);
-    if (configured) {
-      try {
-        await supabase.auth.updateUser({
-          data: { onboarding: { ...(onboarding ?? {}), targetRole: title, path: 'know_goal' } },
-        });
-      } catch {
-        /* non-blocking */
-      }
+    try {
+      await saveProfile({ targetRole: title, path: 'know_goal' });
+    } catch {
+      /* non-blocking — the roadmap page lets them set it again */
     }
     navigate('/roadmap');
   };
@@ -124,10 +173,20 @@ const Assessment: React.FC = () => {
     setWorkStyle({});
     setScore(null);
     setMatch(null);
+    setResultsAt(null);
     setPage(0);
     setError(null);
+    setSaveWarning(null);
     setPhase('intro');
   };
+
+  const sectionReady =
+    phase === 'values' ? knowMe.values.length > 0
+    : phase === 'strengths' ? knowMe.subjectsStrong.length > 0
+    : phase === 'situation' ? SITUATION_QUESTIONS.every((q) => Boolean(knowMe[q.key]))
+    : true;
+  const NEXT_OF: Partial<Record<Phase, Phase>> = { values: 'strengths', strengths: 'situation' };
+  const PREV_OF: Partial<Record<Phase, Phase>> = { values: 'workstyle', strengths: 'values', situation: 'strengths' };
 
   const topLetters = score ? score.code.split('') : [];
 
@@ -168,14 +227,14 @@ const Assessment: React.FC = () => {
         {phase === 'intro' && (
           <div className="bg-white rounded-[1.5rem] p-8 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
             <p className="text-slate-600 mb-4">
-              Rate {questions.length} short statements by how much you'd enjoy each activity. It
-              takes about 5 minutes. We use your answers (a standard{' '}
-              <strong>RIASEC / Holland</strong> profile) plus your interests to rank careers that
-              match — with a clear reason for each.
+              Like a session with a career counselor, we'll get to know you in{' '}
+              <strong>5 short sections</strong> (about 8 minutes): what you enjoy doing, how you like
+              to work, what you value, where you're strong, and your real-life situation. Then we
+              rank careers that genuinely fit — with a clear reason for each.
             </p>
             <ul className="text-sm text-slate-500 space-y-1.5 mb-6">
               <li>• No right or wrong answers</li>
-              <li>• Your results feed straight into your roadmap</li>
+              <li>• Your answers are saved and stay private</li>
               <li>• You can retake it anytime</li>
             </ul>
             <button
@@ -189,6 +248,7 @@ const Assessment: React.FC = () => {
 
         {phase === 'quiz' && (
           <div>
+            <SectionStepper current="quiz" />
             <div className="mb-5">
               <div className="flex justify-between text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
                 <span>Page {page + 1} of {pageCount}</span>
@@ -240,7 +300,7 @@ const Assessment: React.FC = () => {
                 onClick={() => (page + 1 < pageCount ? setPage((p) => p + 1) : setPhase('workstyle'))}
                 className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-2.5 px-6 rounded-xl hover:bg-[#5B21B6] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {page + 1 < pageCount ? 'Continue' : 'Almost done'} <ArrowRight className="w-4 h-4" />
+                Continue <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -248,6 +308,7 @@ const Assessment: React.FC = () => {
 
         {phase === 'workstyle' && (
           <div>
+            <SectionStepper current="workstyle" />
             <p className="text-slate-500 mb-5 text-sm">Four quick preferences to sharpen the match.</p>
             <div className="space-y-3">
               {WORK_STYLE_QUESTIONS.map((q) => (
@@ -282,11 +343,61 @@ const Assessment: React.FC = () => {
               </button>
               <button
                 type="button"
-                onClick={submit}
-                className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-2.5 px-6 rounded-xl hover:bg-[#5B21B6] transition-all shadow-md shadow-purple-600/20"
+                onClick={() => setPhase('values')}
+                className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-2.5 px-6 rounded-xl hover:bg-[#5B21B6] transition-all"
               >
-                See my career matches <Sparkles className="w-4 h-4" />
+                Continue <ArrowRight className="w-4 h-4" />
               </button>
+            </div>
+          </div>
+        )}
+
+        {(phase === 'values' || phase === 'strengths' || phase === 'situation') && (
+          <div>
+            <SectionStepper current={phase} />
+            <h2 className="text-xl font-extrabold text-slate-900">{SECTION_INTRO[phase]?.title}</h2>
+            <p className="text-slate-500 text-sm mb-5">{SECTION_INTRO[phase]?.subtitle}</p>
+
+            <KnowMeSection section={phase} value={knowMe} onChange={updateKnowMe} />
+
+            <div className="flex items-center justify-between mt-6">
+              <button
+                type="button"
+                onClick={() => setPhase(PREV_OF[phase] ?? 'workstyle')}
+                className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-semibold text-sm"
+              >
+                <ArrowLeft className="w-4 h-4" /> Back
+              </button>
+              <div className="flex items-center gap-3">
+                {!sectionReady && (
+                  <span className="text-xs text-slate-400 hidden sm:inline">
+                    {phase === 'values'
+                      ? `Pick 1–${MAX_VALUES}`
+                      : phase === 'strengths'
+                        ? 'Pick at least one strong subject'
+                        : 'Answer each question'}
+                  </span>
+                )}
+                {phase === 'situation' ? (
+                  <button
+                    type="button"
+                    disabled={!sectionReady}
+                    onClick={submit}
+                    className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-2.5 px-6 rounded-xl hover:bg-[#5B21B6] transition-all shadow-md shadow-purple-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    See my career matches <Sparkles className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={!sectionReady}
+                    onClick={() => setPhase(NEXT_OF[phase] ?? 'situation')}
+                    className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-2.5 px-6 rounded-xl hover:bg-[#5B21B6] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Continue <ArrowRight className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -300,6 +411,16 @@ const Assessment: React.FC = () => {
 
         {phase === 'results' && score && match && (
           <div className="space-y-6">
+            {saveWarning && (
+              <p className="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
+                {saveWarning}
+              </p>
+            )}
+            {resultsAt && (
+              <p className="text-xs text-slate-400 -mb-3">
+                Results from {new Date(resultsAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
+              </p>
+            )}
             {/* Holland profile */}
             <div className="bg-white rounded-[1.5rem] p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
               <div className="flex items-baseline justify-between mb-4">
@@ -331,8 +452,8 @@ const Assessment: React.FC = () => {
               </div>
               <p className="text-xs text-slate-400 mt-4">
                 {match.source === 'ai'
-                  ? 'Careers below were ranked by AI from your profile.'
-                  : 'Careers below were ranked from your profile (rule-based — add a Gemini key for AI reasoning).'}
+                  ? 'Careers below were ranked by AI from your whole profile — interests, values, strengths and situation.'
+                  : 'Careers below were ranked from your interest profile (the AI counselor was unavailable, so this is a simpler rule-based match).'}
               </p>
             </div>
 

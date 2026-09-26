@@ -40,14 +40,6 @@ export interface MatchResult {
   matches: CareerMatch[];
 }
 
-export interface StoredAssessment {
-  code: string;
-  scores: RiasecScores;
-  source: 'ai' | 'rule';
-  topMatches: string[];
-  at: string;
-}
-
 export const DIM_LABEL: Record<Dim, string> = {
   R: 'Realistic',
   I: 'Investigative',
@@ -100,6 +92,8 @@ export function fetchCareerMatches(payload: {
   education?: string;
   work_style: Record<string, string>;
   resume_skills: string[];
+  strengths_note?: string;
+  know_me: Record<string, unknown>;
 }): Promise<MatchResult> {
   return postJSON<MatchResult>('/api/career-match', payload);
 }

@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { BrainCircuit, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useProfile } from '../context/ProfileContext';
 
 const NAV = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -11,6 +12,7 @@ const NAV = [
 
 export default function AppHeader() {
   const { user, signOut } = useAuth();
+  const { setupNeeded } = useProfile();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -55,6 +57,13 @@ export default function AppHeader() {
           </button>
         </div>
       </div>
+      {setupNeeded && (
+        <div className="bg-amber-50 border-t border-amber-100 text-amber-800 text-xs font-medium px-6 py-2 text-center">
+          Database not set up yet — your answers can't be saved. Run{' '}
+          <code className="font-mono">supabase/migrations/0001_phase1_counselor.sql</code> in the
+          Supabase SQL Editor, then refresh.
+        </div>
+      )}
     </header>
   );
 }

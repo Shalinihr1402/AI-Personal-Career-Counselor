@@ -121,6 +121,12 @@ CAREERS = [
     {"title": "Entrepreneur / Founder", "code": "EAI", "field": "Business",
      "skills": ["Vision", "Risk tolerance", "Execution", "Selling"],
      "summary": "Build a product and a business from nothing."},
+    {"title": "Sports Coach", "code": "SRE", "field": "Sports",
+     "skills": ["Coaching", "Training plans", "Motivation", "Performance analysis"],
+     "summary": "Train athletes and teams to improve skills and results."},
+    {"title": "Fitness Trainer", "code": "RSE", "field": "Sports",
+     "skills": ["Exercise science", "Program design", "Client coaching", "Nutrition basics"],
+     "summary": "Design workouts and guide clients toward their fitness goals."},
 ]
 
 CAREER_TITLES = [c["title"] for c in CAREERS]
@@ -186,6 +192,7 @@ _INTEREST_TO_FIELDS = {
     "Business & Management": {"Business", "Finance"},
     "Science & Research": {"Science", "Healthcare", "Engineering"},
     "Healthcare": {"Healthcare"},
+    "Sports & Fitness": {"Sports"},
     "Writing & Content": {"Media"},
     "Public Speaking": {"Business", "Education", "Legal"},
 }

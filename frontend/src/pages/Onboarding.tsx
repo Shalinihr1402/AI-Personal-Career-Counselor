@@ -7,7 +7,9 @@ import {
   Dumbbell, PenTool, Mic, Check,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
+import { useProfile } from '../context/ProfileContext';
+import { API_BASE } from '../lib/api';
+import type { Profile } from '../lib/profile';
 
 type Path = 'know_goal' | 'not_sure' | 'need_plan';
 
@@ -63,13 +65,15 @@ const inputClass =
 
 const Onboarding: React.FC = () => {
   const { user, signOut } = useAuth();
+  const { profile, saveProfile } = useProfile();
   const navigate = useNavigate();
 
-  const alreadyDone = Boolean((user?.user_metadata as Record<string, unknown> | undefined)?.onboarding_complete);
+  const alreadyDone = Boolean(profile?.onboardingComplete);
   const [redoing, setRedoing] = useState(false);
 
   const [step, setStep] = useState(0);
   const [finished, setFinished] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [data, setData] = useState<OnboardingData>(emptyData);
 
   // Resume step's own state (kept separate: it's an async upload, not a form field)
@@ -100,19 +104,20 @@ const Onboarding: React.FC = () => {
   const goBack = () => setStep((s) => Math.max(s - 1, 0));
 
   const finishOnboarding = async () => {
+    setSaveError(null);
     try {
-      await supabase.auth.updateUser({
-        data: {
-          onboarding_complete: true,
-          onboarding: { ...data, resume: parsedData ?? undefined },
-        },
+      await saveProfile({
+        ...data,
+        // Keep the previously parsed resume if they didn't upload a new one.
+        resume: (parsedData as Profile['resume']) ?? profile?.resume,
+        onboardingComplete: true,
       });
+      setFinished(true);
     } catch (err) {
-      // Non-blocking: don't trap the student on this screen if the save fails.
       // eslint-disable-next-line no-console
       console.warn('Could not save onboarding profile:', err);
+      setSaveError("We couldn't save your answers. Check your connection and try again.");
     }
-    setFinished(true);
   };
 
   // --- Resume upload (unchanged behavior, now embedded as the last step) ---
@@ -141,7 +146,7 @@ const Onboarding: React.FC = () => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      const response = await fetch('http://localhost:8000/api/upload-resume', {
+      const response = await fetch(`${API_BASE}/api/upload-resume`, {
         method: 'POST',
         body: formData,
       });
@@ -156,7 +161,21 @@ const Onboarding: React.FC = () => {
   };
 
   const restart = () => {
-    setData(emptyData);
+    // Start from their saved answers so "update" doesn't mean "retype everything".
+    setData(
+      profile
+        ? {
+            path: profile.path ?? null,
+            college: profile.college ?? '',
+            course: profile.course ?? '',
+            year: profile.year ?? '',
+            interests: profile.interests ?? [],
+            strengthsNote: profile.strengthsNote ?? '',
+            targetRole: profile.targetRole ?? '',
+            hoursPerWeek: profile.hoursPerWeek ?? '',
+          }
+        : emptyData,
+    );
     setFile(null);
     setParsedData(null);
     setResumeError(null);
@@ -236,10 +255,11 @@ const Onboarding: React.FC = () => {
             </div>
             <div className="flex items-center justify-center gap-6">
               <Link
-                to="/dashboard"
+                to={data.path === 'not_sure' ? '/assessment' : '/dashboard'}
                 className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#5B21B6] transition-all shadow-md shadow-purple-600/20"
               >
-                Go to dashboard <ArrowRight className="w-4 h-4" />
+                {data.path === 'not_sure' ? 'Start career discovery' : 'Go to dashboard'}{' '}
+                <ArrowRight className="w-4 h-4" />
               </Link>
               <button
                 onClick={restart}
@@ -516,6 +536,12 @@ const Onboarding: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {saveError && (
+              <div className="bg-red-50 text-red-600 p-3 rounded-xl mt-6 text-sm font-medium border border-red-100 text-center">
+                {saveError}
+              </div>
+            )}
 
             {/* Nav */}
             <div className="flex items-center justify-between mt-6">
