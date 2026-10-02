@@ -9,7 +9,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
 import { API_BASE } from '../lib/api';
-import type { Profile } from '../lib/profile';
+import { isMissingTable, type Profile } from '../lib/profile';
 
 type Path = 'know_goal' | 'not_sure' | 'need_plan';
 
@@ -116,7 +116,11 @@ const Onboarding: React.FC = () => {
     } catch (err) {
       // eslint-disable-next-line no-console
       console.warn('Could not save onboarding profile:', err);
-      setSaveError("We couldn't save your answers. Check your connection and try again.");
+      setSaveError(
+        isMissingTable(err as { code?: string })
+          ? "The database isn't set up yet, so your answers can't be saved. Run supabase/migrations/0001_phase1_counselor.sql in the Supabase SQL Editor, then try again."
+          : "We couldn't save your answers. Check your connection and try again.",
+      );
     }
   };
 
