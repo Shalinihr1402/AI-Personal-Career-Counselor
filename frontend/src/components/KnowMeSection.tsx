@@ -1,15 +1,19 @@
 import type { ReactNode } from 'react';
 import { Check } from 'lucide-react';
 import {
+  DEAL_BREAKER_OPTIONS,
+  ENERGY_SOURCE_OPTIONS,
+  EQUAL_SALARY_OPTIONS,
   KNOWN_FOR_OPTIONS,
   MAX_VALUES,
+  SECRET_CURIOSITY_OPTIONS,
   SITUATION_QUESTIONS,
   SUBJECT_OPTIONS,
   VALUE_OPTIONS,
   type KnowMe,
 } from '../lib/knowMe';
 
-export type KnowMeSectionId = 'values' | 'strengths' | 'situation';
+export type KnowMeSectionId = 'values' | 'strengths' | 'identity' | 'situation';
 
 interface Props {
   section: KnowMeSectionId;
@@ -135,6 +139,105 @@ export default function KnowMeSection({ section, value, onChange }: Props) {
             selected={value.knownFor}
             onToggle={(o) => onChange({ knownFor: toggle(value.knownFor, o, 3) })}
           />
+        </Card>
+      </div>
+    );
+  }
+
+  if (section === 'identity') {
+    return (
+      <div className="space-y-4">
+        <p className="text-slate-500 text-sm">
+          These questions bypass parental expectations and societal hype to uncover who you are when you're completely free.
+        </p>
+
+        <Card
+          title="The Equal-Salary Test"
+          hint="If all jobs paid the exact same ₹50,000/month and your family was 100% proud no matter what, what would you explore?"
+        >
+          <div className="grid sm:grid-cols-2 gap-2">
+            {EQUAL_SALARY_OPTIONS.map((opt) => {
+              const active = value.equalSalaryChoice === opt;
+              return (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => onChange({ equalSalaryChoice: opt })}
+                  className={`text-left rounded-xl border p-3 text-xs font-semibold transition-all ${
+                    active
+                      ? 'border-purple-600 bg-purple-50/80 text-purple-900 shadow-sm'
+                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                  }`}
+                >
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+        </Card>
+
+        <Card
+          title="Your Natural Energy Source"
+          hint="Which kind of activity gives you energy instead of draining you?"
+        >
+          <div className="grid sm:grid-cols-1 gap-2">
+            {ENERGY_SOURCE_OPTIONS.map((opt) => {
+              const active = value.energySource === opt;
+              return (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => onChange({ energySource: opt })}
+                  className={`text-left rounded-xl border p-3 text-xs font-semibold transition-all ${
+                    active
+                      ? 'border-purple-600 bg-purple-50/80 text-purple-900 shadow-sm'
+                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                  }`}
+                >
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+        </Card>
+
+        <Card
+          title="Deal-Breakers & Anti-Goals"
+          hint="What do you definitely NOT want in your daily job? Pick up to 3."
+        >
+          <ChipGroup
+            options={DEAL_BREAKER_OPTIONS}
+            selected={value.dealBreakers}
+            onToggle={(o) => onChange({ dealBreakers: toggle(value.dealBreakers, o, 3) })}
+          />
+          <p className="text-[11px] text-slate-400 mt-2 text-right">
+            {value.dealBreakers.length}/3 selected
+          </p>
+        </Card>
+
+        <Card
+          title="The Secret Envy Compass"
+          hint="Whose daily work or creative output makes you secretly envious or inspired?"
+        >
+          <div className="grid sm:grid-cols-2 gap-2">
+            {SECRET_CURIOSITY_OPTIONS.map((opt) => {
+              const active = value.secretCuriosity === opt;
+              return (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => onChange({ secretCuriosity: opt })}
+                  className={`text-left rounded-xl border p-3 text-xs font-semibold transition-all ${
+                    active
+                      ? 'border-purple-600 bg-purple-50/80 text-purple-900 shadow-sm'
+                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                  }`}
+                >
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
         </Card>
       </div>
     );

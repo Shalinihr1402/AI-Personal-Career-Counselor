@@ -15,6 +15,11 @@ export interface KnowMe {
   familyExpectation: string;
   familyNote: string;
   workSetting: string;
+  // Subconscious identity & anti-goals:
+  equalSalaryChoice: string;
+  energySource: string;
+  dealBreakers: string[];
+  secretCuriosity: string;
 }
 
 export const EMPTY_KNOW_ME: KnowMe = {
@@ -28,6 +33,10 @@ export const EMPTY_KNOW_ME: KnowMe = {
   familyExpectation: '',
   familyNote: '',
   workSetting: '',
+  equalSalaryChoice: '',
+  energySource: '',
+  dealBreakers: [],
+  secretCuriosity: '',
 };
 
 export const MAX_VALUES = 3;
@@ -107,6 +116,42 @@ export const SITUATION_QUESTIONS: SingleChoice[] = [
   },
 ];
 
+export const EQUAL_SALARY_OPTIONS = [
+  'Building software, apps, or digital systems',
+  'Creating visual art, designs, videos, or stories',
+  'Solving scientific, logical, or mathematical problems',
+  'Teaching, counseling, or directly helping people',
+  'Starting ventures, organizing teams, and launching ideas',
+  'Researching, writing, and deep conceptual thinking',
+];
+
+export const ENERGY_SOURCE_OPTIONS = [
+  'Deep solitary focus on a complex technical puzzle',
+  'Brainstorming and making something visually or conceptually new',
+  'Listening to someone’s problems and guiding them one-on-one',
+  'Presenting, pitching, or convincing others',
+  'Organizing chaotic data, schedules, or plans into tidy order',
+];
+
+export const DEAL_BREAKER_OPTIONS = [
+  'Cold calling or aggressive selling',
+  'Sitting alone debugging code all day',
+  'Heavy abstract math & complex formulas',
+  'Monotonous paperwork & repetitive routine',
+  'Handling constant workplace conflict or customer complaints',
+  'Strict rigid hierarchy with zero creative freedom',
+  'Unpredictable hours & high-stress night shifts',
+];
+
+export const SECRET_CURIOSITY_OPTIONS = [
+  'Tech founders & software engineers shipping products',
+  'Product & UI/UX designers crafting beautiful tools',
+  'Content creators, writers, & creative directors',
+  'Business leaders, strategists, & entrepreneurs',
+  'Data detectives & scientists uncovering hidden patterns',
+  'Psychologists, mentors, & humanitarian leaders',
+];
+
 /** True when the student has answered enough for "Know me" to be useful. */
 export function isKnowMeComplete(k: KnowMe | undefined): boolean {
   if (!k) return false;
@@ -132,8 +177,13 @@ export function knowMeForApi(k: KnowMe | undefined): Record<string, unknown> {
       ? `${k.familyExpectation} (${k.familyNote})`
       : k.familyExpectation,
     work_setting: k.workSetting,
+    equal_salary_choice: k.equalSalaryChoice,
+    energy_source: k.energySource,
+    deal_breakers: k.dealBreakers,
+    secret_curiosity: k.secretCuriosity,
   };
   return Object.fromEntries(
     Object.entries(out).filter(([, v]) => (Array.isArray(v) ? v.length > 0 : Boolean(v))),
   );
 }
+

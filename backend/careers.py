@@ -144,19 +144,33 @@ def _expand_code(code: str) -> str:
 
 _MAX_RAW_MATCH = 3 + 2 + 1 + 2 + 1 + 1  # membership + positional + interest
 
+_DEAL_BREAKER_CONFLICTS = {
+    "Sitting alone debugging code all day": {"Software Engineer", "Machine Learning Engineer"},
+    "Cold calling or aggressive selling": {"Digital Marketer", "Social Media Manager"},
+    "Heavy abstract math & complex formulas": {"Machine Learning Engineer", "Data Scientist"},
+    "Monotonous paperwork & repetitive routine": {"Data Analyst", "Business Analyst"},
+}
 
-def fallback_match(scores: dict, interests=None, limit: int = 5) -> list:
+
+def fallback_match(scores: dict, interests=None, deal_breakers=None, limit: int = 5) -> list:
     """Rule-based match: overlap between the user's top dimensions and each
     career's Holland code, weighted by position and boosted by declared
-    interests."""
+    interests, penalized by deal-breakers."""
     dims = sorted(scores, key=lambda d: -scores[d])
     top = dims[:3]
     weight = {d: _RANK_WEIGHT[i] for i, d in enumerate(top)}
 
     interest_fields = _interest_fields(interests or [])
+    avoid_titles = set()
+    if deal_breakers and isinstance(deal_breakers, list):
+        for db in deal_breakers:
+            avoid_titles |= _DEAL_BREAKER_CONFLICTS.get(db, set())
 
     ranked = []
     for career in CAREERS:
+        # If this career clashes with an anti-goal deal breaker, heavily penalize or skip
+        if career["title"] in avoid_titles:
+            continue
         code = career["code"]
         raw = sum(weight.get(ch, 0) for ch in code)          # membership
         if top and code[:1] == top[0]:

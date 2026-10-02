@@ -151,7 +151,7 @@ const Dashboard: React.FC = () => {
                   )}
                   {!knowMeDone && (
                     <p className="text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mb-3">
-                      These matches were made before we asked about your values, strengths and
+                      These matches were made before we asked about your values, strengths, inner drive, and
                       situation. Retake discovery for more personal results.
                     </p>
                   )}

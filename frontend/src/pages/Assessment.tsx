@@ -16,7 +16,7 @@ import {
 
 type Phase =
   | 'loading' | 'intro' | 'quiz' | 'workstyle'
-  | 'values' | 'strengths' | 'situation'
+  | 'values' | 'strengths' | 'identity' | 'situation'
   | 'scoring' | 'results' | 'error';
 
 const PER_PAGE = 6;
@@ -27,12 +27,14 @@ const SECTIONS: { id: Phase; label: string }[] = [
   { id: 'workstyle', label: 'Work style' },
   { id: 'values', label: 'Values' },
   { id: 'strengths', label: 'Strengths' },
+  { id: 'identity', label: 'Inner drive' },
   { id: 'situation', label: 'Your situation' },
 ];
 
 const SECTION_INTRO: Partial<Record<Phase, { title: string; subtitle: string }>> = {
   values: { title: 'What matters to you?', subtitle: 'The same job can feel great or awful depending on what you value.' },
   strengths: { title: 'Where you shine', subtitle: 'Your strengths point to careers where you’ll grow fastest.' },
+  identity: { title: 'Your inner drive & identity', subtitle: 'Uncovering what you actually crave when social expectations and salary pressure are stripped away.' },
   situation: { title: 'Your situation', subtitle: 'So we recommend careers that work in real life, not just on paper.' },
 };
 
@@ -183,10 +185,20 @@ const Assessment: React.FC = () => {
   const sectionReady =
     phase === 'values' ? knowMe.values.length > 0
     : phase === 'strengths' ? knowMe.subjectsStrong.length > 0
+    : phase === 'identity' ? Boolean(knowMe.equalSalaryChoice && knowMe.energySource)
     : phase === 'situation' ? SITUATION_QUESTIONS.every((q) => Boolean(knowMe[q.key]))
     : true;
-  const NEXT_OF: Partial<Record<Phase, Phase>> = { values: 'strengths', strengths: 'situation' };
-  const PREV_OF: Partial<Record<Phase, Phase>> = { values: 'workstyle', strengths: 'values', situation: 'strengths' };
+  const NEXT_OF: Partial<Record<Phase, Phase>> = {
+    values: 'strengths',
+    strengths: 'identity',
+    identity: 'situation',
+  };
+  const PREV_OF: Partial<Record<Phase, Phase>> = {
+    values: 'workstyle',
+    strengths: 'values',
+    identity: 'strengths',
+    situation: 'identity',
+  };
 
   const topLetters = score ? score.code.split('') : [];
 
@@ -228,8 +240,8 @@ const Assessment: React.FC = () => {
           <div className="bg-white rounded-[1.5rem] p-8 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
             <p className="text-slate-600 mb-4">
               Like a session with a career counselor, we'll get to know you in{' '}
-              <strong>5 short sections</strong> (about 8 minutes): what you enjoy doing, how you like
-              to work, what you value, where you're strong, and your real-life situation. Then we
+              <strong>6 short sections</strong> (about 9 minutes): what you enjoy doing, how you like
+              to work, what you value, where you're strong, your subconscious inner drive, and your real-life situation. Then we
               rank careers that genuinely fit — with a clear reason for each.
             </p>
             <ul className="text-sm text-slate-500 space-y-1.5 mb-6">
@@ -352,7 +364,7 @@ const Assessment: React.FC = () => {
           </div>
         )}
 
-        {(phase === 'values' || phase === 'strengths' || phase === 'situation') && (
+        {(phase === 'values' || phase === 'strengths' || phase === 'identity' || phase === 'situation') && (
           <div>
             <SectionStepper current={phase} />
             <h2 className="text-xl font-extrabold text-slate-900">{SECTION_INTRO[phase]?.title}</h2>
@@ -375,7 +387,9 @@ const Assessment: React.FC = () => {
                       ? `Pick 1–${MAX_VALUES}`
                       : phase === 'strengths'
                         ? 'Pick at least one strong subject'
-                        : 'Answer each question'}
+                        : phase === 'identity'
+                          ? 'Select your equal-salary choice & energy source'
+                          : 'Answer each question'}
                   </span>
                 )}
                 {phase === 'situation' ? (
