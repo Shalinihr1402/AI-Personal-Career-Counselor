@@ -47,7 +47,14 @@ def _generate_json(prompt: str, temperature: float = 0.2) -> dict:
 
 
 from riasec import RIASEC_QUESTIONS, DIM_LABEL, score_riasec
-from careers import CAREERS, CAREER_TITLES, fallback_match, valid_titles
+from careers import (
+    CAREERS,
+    CAREER_TITLES,
+    fallback_match,
+    valid_titles,
+    get_career_by_slug,
+    slugify,
+)
 
 app = FastAPI(
     title="AI Personal Career Counselor API",
@@ -215,6 +222,8 @@ def _ai_career_match(profile: dict):
             d for d in data
             if isinstance(d, dict) and d.get("title") in allowed and d.get("why_it_fits")
         ]
+        for d in cleaned:
+            d["slug"] = slugify(d.get("title", ""))
         return cleaned[:5] if len(cleaned) >= 3 else None
     except Exception as e:
         print(f"AI career match failed, falling back: {e}")
@@ -237,3 +246,11 @@ def career_match(req: CareerMatchRequest):
 @app.get("/api/careers")
 def list_careers():
     return {"careers": CAREERS}
+
+
+@app.get("/api/careers/{slug}")
+def get_career_endpoint(slug: str):
+    career = get_career_by_slug(slug)
+    if not career:
+        raise HTTPException(status_code=404, detail="Career not found")
+    return career

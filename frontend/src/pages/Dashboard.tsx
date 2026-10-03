@@ -142,7 +142,12 @@ const Dashboard: React.FC = () => {
                             <span className="w-5 h-5 rounded-full bg-purple-100 text-purple-700 text-[11px] font-bold flex items-center justify-center shrink-0">
                               {i + 1}
                             </span>
-                            <span className="font-semibold text-slate-800 truncate">{m.title}</span>
+                            <Link
+                              to={`/careers/${m.slug || m.title.toLowerCase().replace(/[/&]/g, ' ').replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-')}`}
+                              className="font-semibold text-slate-800 truncate hover:text-purple-600 transition-colors"
+                            >
+                              {m.title}
+                            </Link>
                           </span>
                           <span className="shrink-0 text-xs font-bold text-green-700">{m.fit}% fit</span>
                         </li>

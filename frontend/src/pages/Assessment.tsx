@@ -502,15 +502,23 @@ const Assessment: React.FC = () => {
                       <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" /> {c.watch_outs}
                     </p>
                   )}
-                  <button
-                    type="button"
-                    onClick={() => setGoal(c.title)}
-                    disabled={settingGoal !== null}
-                    className="inline-flex items-center gap-1.5 text-[#6D28D9] font-bold text-sm hover:underline disabled:opacity-50"
-                  >
-                    <Target className="w-4 h-4" />
-                    {settingGoal === c.title ? 'Setting…' : 'Set as my goal & build roadmap'}
-                  </button>
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100/70 mt-2">
+                    <Link
+                      to={`/careers/${c.slug || c.title.toLowerCase().replace(/[/&]/g, ' ').replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-')}`}
+                      className="inline-flex items-center gap-1 text-[#6D28D9] font-bold text-xs hover:underline"
+                    >
+                      Explore day-to-day & salary <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setGoal(c.title)}
+                      disabled={settingGoal !== null}
+                      className="inline-flex items-center gap-1 text-slate-400 hover:text-slate-700 text-xs font-semibold disabled:opacity-50 transition-colors"
+                    >
+                      <Target className="w-3.5 h-3.5" />
+                      {settingGoal === c.title ? 'Setting…' : 'Quick select'}
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

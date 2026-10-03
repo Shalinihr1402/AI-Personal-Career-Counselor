@@ -178,3 +178,77 @@ export function legacyProfileFromMetadata(user: User): Partial<Profile> | null {
     onboardingComplete: Boolean(meta?.onboarding_complete),
   };
 }
+
+export interface CareerGoal {
+  id: string;
+  userId: string;
+  careerTitle: string;
+  field?: string;
+  reason?: string;
+  status: 'active' | 'archived';
+  confirmedAt: string;
+}
+
+export async function confirmCareerGoal(
+  userId: string,
+  careerTitle: string,
+  field?: string,
+  reason?: string,
+): Promise<CareerGoal> {
+  // Archive any existing active goals
+  await supabase
+    .from('career_goals')
+    .update({ status: 'archived' })
+    .eq('user_id', userId)
+    .eq('status', 'active');
+
+  // Insert the new active goal
+  const { data, error } = await supabase
+    .from('career_goals')
+    .insert({
+      user_id: userId,
+      career_title: careerTitle,
+      field: field ?? null,
+      reason: reason ?? null,
+      status: 'active',
+    })
+    .select('*')
+    .single();
+
+  if (error) throw error;
+
+  // Also update target_role in profiles table
+  await saveProfile(userId, { targetRole: careerTitle, path: 'know_goal' });
+
+  return {
+    id: data.id,
+    userId: data.user_id,
+    careerTitle: data.career_title,
+    field: data.field ?? undefined,
+    reason: data.reason ?? undefined,
+    status: data.status,
+    confirmedAt: data.confirmed_at,
+  };
+}
+
+export async function loadActiveGoal(userId: string): Promise<CareerGoal | null> {
+  const { data, error } = await supabase
+    .from('career_goals')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) return null;
+  return {
+    id: data.id,
+    userId: data.user_id,
+    careerTitle: data.career_title,
+    field: data.field ?? undefined,
+    reason: data.reason ?? undefined,
+    status: data.status,
+    confirmedAt: data.confirmed_at,
+  };
+}
+

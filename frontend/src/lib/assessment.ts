@@ -28,6 +28,7 @@ export interface ScoreResult {
 
 export interface CareerMatch {
   title: string;
+  slug?: string;
   fit: number;
   why_it_fits: string;
   day_to_day: string;

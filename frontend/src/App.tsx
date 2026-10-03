@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard'
 import Assessment from './pages/Assessment'
 import Roadmap from './pages/Roadmap'
 import Today from './pages/Today'
+import CareerDetail from './pages/CareerDetail'
 
 function App() {
   return (
@@ -41,6 +42,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Assessment />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/careers/:slug"
+              element={
+                <ProtectedRoute>
+                  <CareerDetail />
                 </ProtectedRoute>
               }
             />
