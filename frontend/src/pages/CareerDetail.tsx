@@ -42,6 +42,20 @@ interface CareerData {
   growth_outlook: string;
 }
 
+interface SkillGapData {
+  career_title: string;
+  career_slug: string;
+  readiness_score: number;
+  matched_skills: string[];
+  missing_skills: string[];
+  total_required: number;
+  learning_recommendations: {
+    skill: string;
+    priority: string;
+    action: string;
+  }[];
+}
+
 const CareerDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
@@ -49,6 +63,7 @@ const CareerDetail: React.FC = () => {
   const { profile, assessment, saveProfile } = useProfile();
 
   const [career, setCareer] = useState<CareerData | null>(null);
+  const [skillGap, setSkillGap] = useState<SkillGapData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -89,10 +104,33 @@ const CareerDetail: React.FC = () => {
         }
       });
 
+    // Fetch live skill gap analysis
+    const userSkills = profile?.resume?.skills && profile.resume.skills.length > 0
+      ? profile.resume.skills
+      : (profile?.interests || []);
+
+    fetch(`${API_BASE}/api/skill-gap`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        career_slug: slug,
+        student_skills: userSkills,
+      }),
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((gapData: SkillGapData | null) => {
+        if (!cancelled && gapData) {
+          setSkillGap(gapData);
+        }
+      })
+      .catch(() => {
+        // Non-blocking fallback
+      });
+
     return () => {
       cancelled = true;
     };
-  }, [slug]);
+  }, [slug, profile]);
 
   const handleConfirmGoal = async () => {
     if (!user || !career) return;
