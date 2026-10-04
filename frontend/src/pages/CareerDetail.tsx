@@ -387,6 +387,93 @@ const CareerDetail: React.FC = () => {
               </div>
             </div>
 
+            {/* Skill Gap & Job Readiness Analysis */}
+            {skillGap && (
+              <div className="bg-white rounded-3xl p-6 border border-purple-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] relative overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-5 border-b border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center font-black">
+                      <Target className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-slate-900 text-lg">AI Skill-Gap & Readiness Analysis</h3>
+                      <p className="text-xs text-slate-500">
+                        Based on your profile skills and O*NET industry benchmarks
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 bg-purple-50/80 px-4 py-2 rounded-2xl border border-purple-100 self-start sm:self-auto">
+                    <span className="text-xs font-bold text-slate-600">Job Readiness:</span>
+                    <span className="text-xl font-black text-purple-700">{skillGap.readiness_score}%</span>
+                  </div>
+                </div>
+
+                {/* Progress bar */}
+                <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-6">
+                  <div
+                    className="h-full bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full transition-all duration-700"
+                    style={{ width: `${skillGap.readiness_score}%` }}
+                  />
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-6">
+                  {/* Matched Skills */}
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-green-700 flex items-center gap-1.5 mb-3">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-green-600" /> Skills You Already Have ({skillGap.matched_skills.length})
+                    </h4>
+                    {skillGap.matched_skills.length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {skillGap.matched_skills.map((s) => (
+                          <span
+                            key={s}
+                            className="bg-green-50 text-green-800 text-xs font-bold px-2.5 py-1 rounded-lg border border-green-200/60"
+                          >
+                            ✓ {s}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-slate-400 italic">No exact skill overlap detected yet. Master the target skills below!</p>
+                    )}
+                  </div>
+
+                  {/* Missing Skills */}
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5 mb-3">
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-600" /> Priority Skills to Master ({skillGap.missing_skills.length})
+                    </h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {skillGap.missing_skills.slice(0, 6).map((s) => (
+                        <span
+                          key={s}
+                          className="bg-amber-50 text-amber-800 text-xs font-bold px-2.5 py-1 rounded-lg border border-amber-200/60"
+                        >
+                          + {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recommendations */}
+                {skillGap.learning_recommendations.length > 0 && (
+                  <div className="mt-5 pt-4 border-t border-slate-100">
+                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">
+                      Recommended Next Actions:
+                    </span>
+                    <div className="grid sm:grid-cols-2 gap-2">
+                      {skillGap.learning_recommendations.map((rec, i) => (
+                        <div key={i} className="text-xs bg-slate-50 border border-slate-100 rounded-xl p-2.5 text-slate-600">
+                          <span className="font-bold text-slate-900">{rec.skill}:</span> {rec.action}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Suggested Learning Path */}
             <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
               <div className="flex items-center gap-2 mb-4">
