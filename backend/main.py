@@ -236,10 +236,89 @@ def career_match(req: CareerMatchRequest):
     ai = _ai_career_match(profile)
     if ai:
         return {"source": "ai", "matches": ai}
+
+    # High-speed Hybrid Vector + Psychological matcher across all 1,016 careers
+    try:
+        from matcher import hybrid_career_match, is_semantic_engine_ready
+        if is_semantic_engine_ready():
+            matches = hybrid_career_match(
+                riasec_scores=req.riasec_scores,
+                interests=req.interests,
+                resume_skills=req.resume_skills,
+                know_me=req.know_me if isinstance(req.know_me, dict) else {},
+                free_text=req.strengths_note,
+                limit=5
+            )
+            if matches:
+                return {"source": "hybrid_vector", "matches": matches}
+    except Exception as e:
+        print(f"Hybrid matcher fallback error: {e}")
+
     deal_breakers = req.know_me.get("deal_breakers") if isinstance(req.know_me, dict) else None
     return {
         "source": "rule",
         "matches": fallback_match(req.riasec_scores, req.interests, deal_breakers=deal_breakers),
+    }
+
+
+@app.get("/api/careers/semantic-search")
+def career_semantic_search(q: str, limit: int = 10, field: str | None = None):
+    if not q or not q.strip():
+        raise HTTPException(status_code=400, detail="Query parameter 'q' is required")
+    from matcher import semantic_search
+    results = semantic_search(query_text=q.strip(), top_k=limit, filter_field=field)
+    return {"query": q, "results": results, "total": len(results)}
+
+
+class SkillGapRequest(BaseModel):
+    career_slug: str
+    student_skills: list[str] = Field(default_factory=list)
+
+
+@app.post("/api/skill-gap")
+def calculate_skill_gap(req: SkillGapRequest):
+    career = get_career_by_slug(req.career_slug)
+    if not career:
+        raise HTTPException(status_code=404, detail="Career not found")
+
+    target_skills = career.get("skills", [])
+    target_tools = career.get("software_tools", [])
+    all_required = target_skills + [t for t in target_tools if t not in target_skills]
+
+    student_skills_clean = [s.strip() for s in req.student_skills if s.strip()]
+    student_lower = {s.lower() for s in student_skills_clean}
+
+    matched = []
+    missing = []
+
+    for req_skill in all_required:
+        r_lower = req_skill.lower()
+        if any(r_lower in s or s in r_lower for s in student_lower):
+            matched.append(req_skill)
+        else:
+            missing.append(req_skill)
+
+    total_count = len(all_required) or 1
+    readiness_score = int(round((len(matched) / total_count) * 100))
+    if student_skills_clean and readiness_score < 25:
+        readiness_score = 30
+
+    recommendations = []
+    for miss in missing[:4]:
+        recommendations.append({
+            "skill": miss,
+            "priority": "High" if miss in target_skills[:2] else "Medium",
+            "action": f"Master {miss} with structured project-based practice and certifications."
+        })
+
+    return {
+        "career_title": career["title"],
+        "career_slug": career["slug"],
+        "readiness_score": readiness_score,
+        "matched_skills": matched,
+        "missing_skills": missing,
+        "total_required": len(all_required),
+        "learning_recommendations": recommendations,
     }
 
 
