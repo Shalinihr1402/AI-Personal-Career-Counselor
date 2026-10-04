@@ -244,8 +244,27 @@ def career_match(req: CareerMatchRequest):
 
 
 @app.get("/api/careers")
-def list_careers():
-    return {"careers": CAREERS}
+def list_careers(q: str | None = None, limit: int = 50):
+    from careers import ONET_CAREERS
+    if q:
+        query = q.lower().strip()
+        results = []
+        for c in CAREERS:
+            if query in c["title"].lower() or query in c.get("field", "").lower():
+                results.append(c)
+        for oc in ONET_CAREERS:
+            if query in oc["title"].lower() or query in oc.get("field", "").lower():
+                if not any(r["slug"] == oc["slug"] for r in results):
+                    results.append({
+                        "title": oc["title"],
+                        "slug": oc["slug"],
+                        "code": oc.get("riasec_code", ""),
+                        "field": oc.get("field", "General"),
+                        "skills": oc.get("skills", []),
+                        "summary": oc.get("description", "")
+                    })
+        return {"careers": results[:limit], "total": len(results)}
+    return {"careers": CAREERS, "total": len(CAREERS)}
 
 
 @app.get("/api/careers/{slug}")

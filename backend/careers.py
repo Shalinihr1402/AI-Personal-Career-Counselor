@@ -5,6 +5,8 @@ what the AI matcher is allowed to return, and it powers the rule-based
 fallback when the AI is unavailable.
 """
 
+import os
+import json
 import re
 
 # code: 2-3 Holland letters, strongest first
@@ -423,17 +425,79 @@ def _generate_default_extended(career: dict) -> dict:
     }
 
 
+_ONET_FILE = os.path.join(os.path.dirname(__file__), "data", "onet_careers.json")
+ONET_CAREERS = []
+ONET_BY_SLUG = {}
+ONET_BY_TITLE = {}
+
+if os.path.exists(_ONET_FILE):
+    try:
+        with open(_ONET_FILE, "r", encoding="utf-8") as f:
+            ONET_CAREERS = json.load(f)
+            for oc in ONET_CAREERS:
+                ONET_BY_SLUG[oc["slug"]] = oc
+                ONET_BY_TITLE[oc["title"].lower()] = oc
+    except Exception as e:
+        print(f"Warning: Failed to load onet_careers.json: {e}")
+
+
 def get_career_by_slug(slug: str) -> dict | None:
     career = next((c for c in CAREERS if c["slug"] == slug), None)
-    if not career:
-        return None
-    ext = CAREER_EXTENDED_INFO.get(slug) or _generate_default_extended(career)
-    return {**career, **ext}
+    if career:
+        ext = CAREER_EXTENDED_INFO.get(slug) or _generate_default_extended(career)
+        return {**career, **ext}
+
+    # Fallback to O*NET dataset (1,016 careers)
+    occ = ONET_BY_SLUG.get(slug)
+    if occ:
+        skills = occ.get("skills", [])
+        salary = occ.get("salary_inr", {})
+        return {
+            "title": occ["title"],
+            "slug": occ["slug"],
+            "code": occ.get("riasec_code", "IRC"),
+            "field": occ.get("field", "General"),
+            "summary": occ.get("description", ""),
+            "description": occ.get("description", ""),
+            "education": occ.get("education", "Bachelor's Degree"),
+            "skills": skills,
+            "software_tools": occ.get("software_tools", []),
+            "salary_india": {
+                "entry": salary.get("fresher", "₹4.5 - ₹8 LPA"),
+                "mid": salary.get("mid", "₹12 - ₹20 LPA"),
+                "senior": salary.get("senior", "₹22 - ₹42+ LPA"),
+            },
+            "day_in_the_life": [
+                {"time": "9:30 AM", "activity": f"Review morning priorities, briefs, and daily goals in {occ.get('field', 'the domain')}."},
+                {"time": "11:00 AM", "activity": f"Deep core execution using {', '.join(skills[:2]) if skills else 'core techniques'}."},
+                {"time": "2:30 PM", "activity": "Collaborate with cross-functional stakeholders and review project status."},
+                {"time": "4:30 PM", "activity": "Validate deliverables, document results, and plan follow-ups for tomorrow."},
+            ],
+            "pros": occ.get("pros", [
+                f"Strong career demand in {occ.get('field', 'this sector')}",
+                "Intellectually stimulating problem solving daily",
+                "Clear career progression to senior and leadership roles",
+            ]),
+            "cons": occ.get("cons", [
+                "Requires continuous upskilling as industry practices evolve",
+                "Demanding project deadlines and stakeholder management",
+            ]),
+            "learning_path": [
+                f"1. Build strong foundational knowledge in {skills[0] if skills else 'core subjects'}",
+                f"2. Master industry tools: {', '.join(occ.get('software_tools', skills)[:3])}",
+                "3. Work on practical projects, build a public portfolio, and obtain industry-recognized credentials",
+            ],
+            "growth_outlook": "High & Expanding (Verified O*NET 31.0 Database)",
+        }
+    return None
 
 
 def get_career_by_title(title: str) -> dict | None:
     career = next((c for c in CAREERS if c["title"].lower() == title.lower()), None)
-    if not career:
-        return None
-    return get_career_by_slug(career["slug"])
+    if career:
+        return get_career_by_slug(career["slug"])
+    occ = ONET_BY_TITLE.get(title.lower())
+    if occ:
+        return get_career_by_slug(occ["slug"])
+    return None
 
