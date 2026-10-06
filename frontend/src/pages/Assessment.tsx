@@ -466,57 +466,83 @@ const Assessment: React.FC = () => {
               </div>
               <p className="text-xs text-slate-400 mt-4">
                 {match.source === 'ai'
-                  ? 'Careers below were ranked by AI from your whole profile — interests, values, strengths and situation.'
-                  : 'Careers below were ranked from your interest profile (the AI counselor was unavailable, so this is a simpler rule-based match).'}
+                  ? 'Careers below were personalized by our AI Counselor using your full holistic profile, RIASEC scores, and subconscious preferences.'
+                  : match.source === 'hybrid_vector'
+                  ? 'Careers below were ranked by AI Vector Embeddings & Psychological RIASEC alignment across 1,016 official O*NET occupations.'
+                  : 'Careers below were matched using rule-based profile alignment.'}
               </p>
             </div>
 
             {/* Career matches */}
-            <div className="space-y-3">
+            <div className="space-y-4">
               {match.matches.map((c, i) => (
-                <div key={c.title} className="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                <div key={c.title} className="bg-white rounded-[1.5rem] p-5 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:border-purple-200 transition-all">
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <span className="w-6 h-6 rounded-full bg-purple-100 text-purple-700 text-xs font-bold flex items-center justify-center shrink-0">
                         {i + 1}
                       </span>
-                      <h3 className="font-bold text-slate-900 truncate">{c.title}</h3>
+                      <h3 className="font-bold text-slate-900 text-base truncate">{c.title}</h3>
                     </div>
-                    <span className="shrink-0 text-xs font-bold text-green-700 bg-green-50 border border-green-100 px-2 py-0.5 rounded-full">
+                    <span className="shrink-0 text-xs font-bold text-green-700 bg-green-50 border border-green-100 px-2.5 py-0.5 rounded-full">
                       {c.fit}% fit
                     </span>
                   </div>
-                  <p className="text-sm text-slate-600 mb-1">{c.why_it_fits}</p>
+
+                  {/* Metadata badges (Field, Salary, Education) */}
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    {c.field && (
+                      <span className="text-[11px] font-bold text-purple-700 bg-purple-50/80 px-2 py-0.5 rounded-md border border-purple-100">
+                        {c.field}
+                      </span>
+                    )}
+                    {c.salary_india?.mid && (
+                      <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
+                        Mid: {c.salary_india.mid}
+                      </span>
+                    )}
+                    {c.education && (
+                      <span className="text-[11px] font-medium text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200">
+                        {c.education}
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-sm text-slate-700 font-medium mb-1.5 leading-relaxed">{c.why_it_fits}</p>
                   <p className="text-xs text-slate-400 mb-3">{c.day_to_day}</p>
+
                   {c.key_skills.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mb-3">
                       {c.key_skills.map((s) => (
-                        <span key={s} className="bg-slate-50 text-slate-600 text-xs font-semibold px-2.5 py-1 rounded-full border border-slate-200">
+                        <span key={s} className="bg-slate-50 text-slate-600 text-xs font-semibold px-2.5 py-1 rounded-lg border border-slate-200">
                           {s}
                         </span>
                       ))}
                     </div>
                   )}
+
                   {c.watch_outs && (
-                    <p className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mb-3 flex items-start gap-1.5">
-                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" /> {c.watch_outs}
+                    <p className="text-xs text-amber-800 bg-amber-50/90 border border-amber-200/60 rounded-xl px-3.5 py-2 mb-3 flex items-start gap-1.5 leading-relaxed">
+                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-600" />
+                      <span><strong>Watch-out:</strong> {c.watch_outs}</span>
                     </p>
                   )}
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100/70 mt-2">
+
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 mt-2">
                     <Link
                       to={`/careers/${c.slug || c.title.toLowerCase().replace(/[/&]/g, ' ').replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-')}`}
-                      className="inline-flex items-center gap-1 text-[#6D28D9] font-bold text-xs hover:underline"
+                      className="inline-flex items-center gap-1.5 text-[#6D28D9] font-bold text-xs hover:underline bg-purple-50 hover:bg-purple-100/70 px-3 py-1.5 rounded-xl border border-purple-100 transition-colors"
                     >
-                      Explore day-to-day & salary <ArrowRight className="w-3.5 h-3.5" />
+                      Explore day-to-day & skill gap <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                     <button
                       type="button"
                       onClick={() => setGoal(c.title)}
                       disabled={settingGoal !== null}
-                      className="inline-flex items-center gap-1 text-slate-400 hover:text-slate-700 text-xs font-semibold disabled:opacity-50 transition-colors"
+                      className="inline-flex items-center gap-1.5 text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/70 px-3 py-1.5 rounded-xl text-xs font-semibold disabled:opacity-50 transition-colors"
                     >
-                      <Target className="w-3.5 h-3.5" />
-                      {settingGoal === c.title ? 'Setting…' : 'Quick select'}
+                      <Target className="w-3.5 h-3.5 text-purple-600" />
+                      {settingGoal === c.title ? 'Setting goal…' : 'Quick select as goal'}
                     </button>
                   </div>
                 </div>

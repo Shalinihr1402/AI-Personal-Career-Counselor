@@ -33,11 +33,19 @@ export interface CareerMatch {
   why_it_fits: string;
   day_to_day: string;
   key_skills: string[];
-  watch_outs: string;
+  watch_outs?: string;
+  field?: string;
+  salary_india?: {
+    entry?: string;
+    mid?: string;
+    senior?: string;
+  };
+  education?: string;
+  software_tools?: string[];
 }
 
 export interface MatchResult {
-  source: 'ai' | 'rule';
+  source: 'ai' | 'hybrid_vector' | 'rule';
   matches: CareerMatch[];
 }
 

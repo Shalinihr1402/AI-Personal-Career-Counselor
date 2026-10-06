@@ -410,12 +410,23 @@ const Onboarding: React.FC = () => {
                     <p className="text-slate-500">This shapes how we pace your roadmap.</p>
                   </div>
                   <div className="space-y-4 max-w-md mx-auto">
-                    <div className="space-y-2">
-                      <label className="block text-[13px] font-semibold text-slate-700">
-                        Target role or career <span className="text-slate-400 font-normal">(optional — leave blank if unsure)</span>
-                      </label>
-                      <input value={data.targetRole} onChange={(e) => update({ targetRole: e.target.value })} className={inputClass} placeholder="e.g. Data Analyst, UX Designer" />
-                    </div>
+                    {data.path === 'not_sure' ? (
+                      <div className="bg-purple-50/80 border border-purple-200/70 rounded-2xl p-4 text-left">
+                        <div className="flex items-center gap-2 text-purple-700 font-bold text-sm mb-1">
+                          <Sparkles className="w-4 h-4 text-purple-600" /> Career Exploration Mode
+                        </div>
+                        <p className="text-xs text-purple-950/80 leading-relaxed">
+                          Since you selected <strong>"I'm not sure which career fits me"</strong>, leave target role empty! Our AI will analyze your psychological RIASEC profile and match you with the best careers right after onboarding.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <label className="block text-[13px] font-semibold text-slate-700">
+                          Target role or career <span className="text-slate-400 font-normal">(optional — leave blank if unsure)</span>
+                        </label>
+                        <input value={data.targetRole} onChange={(e) => update({ targetRole: e.target.value })} className={inputClass} placeholder="e.g. Data Analyst, UX Designer" />
+                      </div>
+                    )}
                     <div className="space-y-2">
                       <label className="block text-[13px] font-semibold text-slate-700 flex items-center gap-1.5">
                         <Clock className="w-4 h-4 text-purple-500" /> How much time can you commit?
