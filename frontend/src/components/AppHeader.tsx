@@ -6,6 +6,7 @@ import { useProfile } from '../context/ProfileContext';
 const NAV = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/assessment', label: 'Discover' },
+  { to: '/careers', label: 'Careers' },
   { to: '/roadmap', label: 'Roadmap' },
   { to: '/today', label: 'Today' },
 ];

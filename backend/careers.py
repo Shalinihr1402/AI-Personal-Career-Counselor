@@ -501,3 +501,86 @@ def get_career_by_title(title: str) -> dict | None:
         return get_career_by_slug(occ["slug"])
     return None
 
+
+def get_similar_careers(slug: str, limit: int = 4) -> list[dict]:
+    """Find related careers sharing similar domain field, RIASEC codes, or skill overlap."""
+    target = get_career_by_slug(slug)
+    if not target:
+        return []
+
+    target_field = (target.get("field") or "").lower()
+    target_code = set(target.get("code") or target.get("riasec_code") or "")
+    target_skills = set(s.lower() for s in target.get("skills", []))
+
+    candidates = []
+
+    # 1. Search in curated CAREERS
+    for c in CAREERS:
+        if c["slug"] == slug:
+            continue
+        c_code = set(c.get("code", ""))
+        c_field = (c.get("field") or "").lower()
+        score = 0
+        if target_field and (target_field in c_field or c_field in target_field):
+            score += 4
+        score += len(target_code.intersection(c_code)) * 1.5
+        c_skills = set(s.lower() for s in c.get("skills", []))
+        score += len(target_skills.intersection(c_skills)) * 0.5
+
+        salary = c.get("salary_india")
+        if not salary:
+            ext = CAREER_EXTENDED_INFO.get(c["slug"])
+            salary = ext.get("salary_india") if ext else None
+        if not salary:
+            salary = {"entry": "₹4.5 - ₹8 LPA", "mid": "₹12 - ₹20 LPA", "senior": "₹22 - ₹42+ LPA"}
+
+        candidates.append({
+            "score": score,
+            "title": c["title"],
+            "slug": c["slug"],
+            "code": c.get("code", "IRC"),
+            "field": c.get("field", "General"),
+            "summary": c.get("summary", ""),
+            "skills": c.get("skills", [])[:3],
+            "salary_india": salary,
+        })
+
+    # 2. Search in ONET_CAREERS
+    seen_slugs = {c["slug"] for c in candidates}
+    seen_slugs.add(slug)
+    for oc in ONET_CAREERS:
+        if oc["slug"] in seen_slugs:
+            continue
+        c_code = set(oc.get("riasec_code", ""))
+        c_field = (oc.get("field") or "").lower()
+        score = 0
+        if target_field and (target_field in c_field or c_field in target_field):
+            score += 4
+        score += len(target_code.intersection(c_code)) * 1.5
+        c_skills = set(s.lower() for s in oc.get("skills", []))
+        score += len(target_skills.intersection(c_skills)) * 0.5
+
+        salary_inr = oc.get("salary_inr", {})
+        candidates.append({
+            "score": score,
+            "title": oc["title"],
+            "slug": oc["slug"],
+            "code": oc.get("riasec_code", "IRC"),
+            "field": oc.get("field", "General"),
+            "summary": oc.get("description", "")[:140] + ("..." if len(oc.get("description", "")) > 140 else ""),
+            "skills": oc.get("skills", [])[:3],
+            "salary_india": {
+                "entry": salary_inr.get("fresher", "₹4 - ₹7 LPA"),
+                "mid": salary_inr.get("mid", "₹10 - ₹18 LPA"),
+                "senior": salary_inr.get("senior", "₹20 - ₹35+ LPA"),
+            },
+        })
+
+    candidates.sort(key=lambda x: x["score"], reverse=True)
+    results = []
+    for item in candidates[:limit]:
+        item.pop("score", None)
+        results.append(item)
+    return results
+
+

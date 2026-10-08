@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   GraduationCap, Clock, Target, Sparkles, FileText, Map as MapIcon,
-  ArrowRight, ClipboardList, RefreshCw, CalendarCheck, Compass,
+  ArrowRight, ClipboardList, RefreshCw, CalendarCheck, Compass, Layers,
 } from 'lucide-react';
 import { useProfile } from '../context/ProfileContext';
 import AppHeader from '../components/AppHeader';
@@ -262,6 +262,26 @@ const Dashboard: React.FC = () => {
                   <span className="mt-3 inline-flex items-center gap-1 text-[#6D28D9] font-bold text-xs">
                     Open <ArrowRight className="w-3 h-3" />
                   </span>
+                </Link>
+
+                <Link
+                  to="/careers"
+                  className="sm:col-span-2 bg-gradient-to-r from-purple-50 via-indigo-50 to-emerald-50 border border-purple-200/80 rounded-2xl p-4 flex items-center justify-between hover:shadow-md hover:border-purple-300 transition-all group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-purple-600/30">
+                      <Layers className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-extrabold text-slate-900 text-sm group-hover:text-purple-700 transition-colors">
+                        Explore 1,000+ Real Careers & Compare Options
+                      </div>
+                      <div className="text-xs text-slate-500 mt-0.5">
+                        Search verified O*NET jobs, inspect Indian salary benchmarks, and compare roles side-by-side.
+                      </div>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-purple-600 group-hover:translate-x-1 transition-transform shrink-0" />
                 </Link>
               </div>
 

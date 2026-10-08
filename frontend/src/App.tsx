@@ -11,6 +11,7 @@ import Assessment from './pages/Assessment'
 import Roadmap from './pages/Roadmap'
 import Today from './pages/Today'
 import CareerDetail from './pages/CareerDetail'
+import Careers from './pages/Careers'
 
 function App() {
   return (
@@ -42,6 +43,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Assessment />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/careers"
+              element={
+                <ProtectedRoute>
+                  <Careers />
                 </ProtectedRoute>
               }
             />

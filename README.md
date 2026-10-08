@@ -80,11 +80,13 @@ flowchart TD
 | **Psychometric Assessment** | ✅ | 24-question Holland/RIASEC assessment with deterministic mathematical scoring (0–100%). |
 | **Subconscious Identity Profiling** | ✅ | Uncovers inner drive via the Equal-Salary test, energy source audit, secret envy compass, and anti-goal deal-breakers. |
 | **AI Career Matching** | ✅ | Groq GPT-OSS 120B ranks top 5 allowed careers with personalized reasons and watch-outs; deterministic rule-based fallback if offline. |
-| **Career Detail Exploration** | ✅ | Dedicated `/careers/:slug` pages with Indian salary tiers (Fresher/Mid/Senior), daily hourly schedules, pros/cons, and learning paths. |
+| **Career Detail Exploration** | ✅ | Dedicated `/careers/:slug` pages with Indian salary tiers (Fresher/Mid/Senior), daily hourly schedules, pros/cons, learning paths, and similar careers. |
+| **Career Catalog & Explorer** | ✅ | Full `/careers` catalog browsing all 1,056 careers with instant search, 36 industry field filters, and pagination. |
+| **Side-by-Side Career Comparison** | ✅ | Interactive comparison modal to compare up to 3 careers simultaneously across salaries, skills, education, and pros/cons. |
 | **Career Goal Confirmation** | ✅ | Explicit goal commitment dialog that writes active goals to Supabase `career_goals` with RLS. |
 | **Roadmap & Timetable** | ✅ | Weekly task packing, interactive checkboxes, and pace adaptation according to year of study (`/roadmap`, `/today`). |
-| **O\*NET Vector Embeddings** | 🚧 *(Stage 3)* | Scaling from 42 static careers to 900+ careers using `sentence-transformers` and Supabase `pgvector`. |
-| **NLP Skill-Gap Analysis** | 🚧 *(Stage 3)* | Pinpointing precise missing skills between uploaded resume and target job requirements using NLP. |
+| **O\*NET Vector Embeddings** | ✅ | Scaled across 1,016 real careers using `all-MiniLM-L6-v2` dense embeddings and semantic search. |
+| **NLP Skill-Gap Analysis** | ✅ | Pinpoints precise missing competencies between uploaded resume and target job requirements with % job readiness. |
 | **Gamified Nature Level Map** | 🚧 *(Stage 4)* | Visual stage map where levels unlock via checkpoints (quizzes/projects). |
 | **AI Career Coach Chatbot** | 🚧 *(Stage 4)* | Context-aware daily coaching chatbot with memory. |
 

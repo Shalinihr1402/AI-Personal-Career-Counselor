@@ -362,27 +362,126 @@ def calculate_skill_gap(req: SkillGapRequest):
 
 
 @app.get("/api/careers")
-def list_careers(q: str | None = None, limit: int = 50):
-    from careers import ONET_CAREERS
-    if q:
+def list_careers(
+    q: str | None = None,
+    field: str | None = None,
+    page: int = 1,
+    limit: int = 24,
+    sort: str = "popular"
+):
+    from careers import ONET_CAREERS, CAREER_EXTENDED_INFO
+
+    # 1. Build unified career repository
+    unified = []
+    seen = set()
+
+    # Add curated CAREERS first
+    for c in CAREERS:
+        seen.add(c["slug"])
+        ext = CAREER_EXTENDED_INFO.get(c["slug"], {})
+        sal = ext.get("salary_india", {"entry": "₹4.5 - ₹8 LPA", "mid": "₹12 - ₹20 LPA", "senior": "₹22 - ₹42+ LPA"})
+        unified.append({
+            "title": c["title"],
+            "slug": c["slug"],
+            "code": c.get("code", "IRC"),
+            "field": c.get("field", "General"),
+            "skills": c.get("skills", []),
+            "summary": c.get("summary", ""),
+            "salary_india": sal,
+            "education": c.get("education", "Bachelor's Degree"),
+            "is_curated": True,
+        })
+
+    # Add O*NET careers (all 1,016 careers)
+    for oc in ONET_CAREERS:
+        if oc["slug"] not in seen:
+            seen.add(oc["slug"])
+            sal_inr = oc.get("salary_inr", {})
+            sal = {
+                "entry": sal_inr.get("fresher", "₹4 - ₹7 LPA"),
+                "mid": sal_inr.get("mid", "₹10 - ₹18 LPA"),
+                "senior": sal_inr.get("senior", "₹20 - ₹35+ LPA"),
+            }
+            unified.append({
+                "title": oc["title"],
+                "slug": oc["slug"],
+                "code": oc.get("riasec_code", "IRC"),
+                "field": oc.get("field", "General"),
+                "skills": oc.get("skills", []),
+                "summary": oc.get("description", "")[:150] + ("..." if len(oc.get("description", "")) > 150 else ""),
+                "salary_india": sal,
+                "education": oc.get("education", "Bachelor's Degree"),
+                "is_curated": False,
+            })
+
+    # Available fields with count
+    field_counts = {}
+    for item in unified:
+        f_name = item.get("field", "General")
+        field_counts[f_name] = field_counts.get(f_name, 0) + 1
+
+    # Filter by query
+    filtered = unified
+    if q and q.strip():
         query = q.lower().strip()
-        results = []
-        for c in CAREERS:
-            if query in c["title"].lower() or query in c.get("field", "").lower():
-                results.append(c)
-        for oc in ONET_CAREERS:
-            if query in oc["title"].lower() or query in oc.get("field", "").lower():
-                if not any(r["slug"] == oc["slug"] for r in results):
-                    results.append({
-                        "title": oc["title"],
-                        "slug": oc["slug"],
-                        "code": oc.get("riasec_code", ""),
-                        "field": oc.get("field", "General"),
-                        "skills": oc.get("skills", []),
-                        "summary": oc.get("description", "")
-                    })
-        return {"careers": results[:limit], "total": len(results)}
-    return {"careers": CAREERS, "total": len(CAREERS)}
+        filtered = [
+            c for c in filtered
+            if query in c["title"].lower()
+            or query in c.get("field", "").lower()
+            or query in c.get("summary", "").lower()
+            or any(query in s.lower() for s in c.get("skills", []))
+        ]
+
+    # Filter by field
+    if field and field.strip() and field.lower() != "all":
+        target_f = field.lower().strip()
+        filtered = [
+            c for c in filtered
+            if target_f in c.get("field", "").lower()
+        ]
+
+    # Sort
+    if sort == "title_asc":
+        filtered.sort(key=lambda x: x["title"].lower())
+    elif sort == "title_desc":
+        filtered.sort(key=lambda x: x["title"].lower(), reverse=True)
+    elif sort == "popular":
+        filtered.sort(key=lambda x: (not x.get("is_curated", False), x["title"].lower()))
+
+    total = len(filtered)
+    page = max(1, page)
+    limit = max(1, min(limit, 100))
+    start = (page - 1) * limit
+    end = start + limit
+    page_items = filtered[start:end]
+    total_pages = (total + limit - 1) // limit if total > 0 else 1
+
+    return {
+        "careers": page_items,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": total_pages,
+        "fields": [{"field": k, "count": v} for k, v in sorted(field_counts.items())]
+    }
+
+
+@app.get("/api/careers/compare")
+def compare_careers(slugs: str):
+    """Compare up to 3 careers side by side."""
+    slug_list = [s.strip() for s in slugs.split(",") if s.strip()]
+    if not slug_list:
+        raise HTTPException(status_code=400, detail="At least one career slug is required")
+    if len(slug_list) > 3:
+        slug_list = slug_list[:3]
+
+    results = []
+    for s in slug_list:
+        c = get_career_by_slug(s)
+        if c:
+            results.append(c)
+
+    return {"careers": results, "count": len(results)}
 
 
 @app.get("/api/careers/{slug}")
@@ -390,4 +489,8 @@ def get_career_endpoint(slug: str):
     career = get_career_by_slug(slug)
     if not career:
         raise HTTPException(status_code=404, detail="Career not found")
+
+    from careers import get_similar_careers
+    career["similar_careers"] = get_similar_careers(slug, limit=4)
     return career
+

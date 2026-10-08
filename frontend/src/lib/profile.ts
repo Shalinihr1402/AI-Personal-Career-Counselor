@@ -20,7 +20,7 @@ export interface SavedAssessment {
   code: string;
   scores: RiasecScores;
   matches: CareerMatch[];
-  source: 'ai' | 'rule';
+  source: 'ai' | 'hybrid_vector' | 'rule';
   workStyle: Record<string, string>;
   knowMe?: KnowMe;
   createdAt: string;
@@ -46,7 +46,7 @@ interface AssessmentRow {
   code: string;
   scores: RiasecScores;
   matches: CareerMatch[];
-  source: 'ai' | 'rule';
+  source: 'ai' | 'hybrid_vector' | 'rule';
   work_style: Record<string, string>;
   know_me: KnowMe | null;
   created_at: string;
@@ -143,7 +143,7 @@ export async function saveAssessment(
     scores: RiasecScores;
     code: string;
     matches: CareerMatch[];
-    source: 'ai' | 'rule';
+    source: 'ai' | 'hybrid_vector' | 'rule';
   },
 ): Promise<SavedAssessment> {
   const { data, error } = await supabase

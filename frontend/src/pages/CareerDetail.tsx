@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
+  ArrowRight,
   Briefcase,
   Clock,
   Compass,
@@ -13,12 +14,27 @@ import {
   BookOpen,
   Check,
   X,
+  Layers,
 } from 'lucide-react';
 import AppHeader from '../components/AppHeader';
 import { API_BASE } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
 import { confirmCareerGoal } from '../lib/profile';
+
+interface SimilarCareerItem {
+  title: string;
+  slug: string;
+  code?: string;
+  field: string;
+  summary?: string;
+  skills?: string[];
+  salary_india?: {
+    entry?: string;
+    mid?: string;
+    senior?: string;
+  };
+}
 
 interface CareerData {
   title: string;
@@ -40,6 +56,7 @@ interface CareerData {
   cons: string[];
   learning_path: string[];
   growth_outlook: string;
+  similar_careers?: SimilarCareerItem[];
 }
 
 interface SkillGapData {
@@ -491,6 +508,70 @@ const CareerDetail: React.FC = () => {
                 ))}
               </div>
             </div>
+
+            {/* Similar Careers Recommendation Section */}
+            {career.similar_careers && career.similar_careers.length > 0 && (
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      Related Opportunities
+                    </div>
+                    <h3 className="font-extrabold text-slate-900 text-xl">
+                      Similar & Alternative Career Paths
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Careers that share similar Holland RIASEC profiles, core skills, or work environments.
+                    </p>
+                  </div>
+                  <Link
+                    to="/careers"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-600 hover:text-purple-800 shrink-0 bg-purple-50 hover:bg-purple-100 px-3.5 py-2 rounded-xl transition-colors"
+                  >
+                    <Layers className="w-4 h-4" /> Compare in Explorer
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {career.similar_careers.map((sim) => (
+                    <Link
+                      key={sim.slug}
+                      to={`/careers/${sim.slug}`}
+                      className="group p-4 rounded-2xl border border-slate-200/90 hover:border-purple-300 hover:shadow-md bg-slate-50/50 hover:bg-white transition-all flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between gap-2 mb-1.5">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-700 truncate max-w-[140px]">
+                            {sim.field}
+                          </span>
+                          {sim.code && (
+                            <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              {sim.code}
+                            </span>
+                          )}
+                        </div>
+                        <h4 className="text-sm font-bold text-slate-900 group-hover:text-purple-600 transition-colors">
+                          {sim.title}
+                        </h4>
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                          {sim.summary}
+                        </p>
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <span className="text-slate-500 text-[11px] font-medium">
+                          Mid: <strong className="text-slate-700">{sim.salary_india?.mid || '₹10 - ₹18 LPA'}</strong>
+                        </span>
+                        <span className="text-purple-600 font-bold group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1 text-[11px]">
+                          View <ArrowRight className="w-3 h-3" />
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
