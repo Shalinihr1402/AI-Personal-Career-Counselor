@@ -2,11 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Sparkles, ArrowRight, ArrowLeft, Target,
-  AlertTriangle, RotateCcw, Compass,
+  AlertTriangle, RotateCcw, Compass, Mic, FileText,
 } from 'lucide-react';
 import { useProfile } from '../context/ProfileContext';
 import AppHeader from '../components/AppHeader';
 import KnowMeSection from '../components/KnowMeSection';
+import CounselorVoiceChat from '../components/CounselorVoiceChat';
 import { EMPTY_KNOW_ME, MAX_VALUES, SITUATION_QUESTIONS, knowMeForApi, type KnowMe } from '../lib/knowMe';
 import {
   fetchQuestions, scoreAssessment, fetchCareerMatches,
@@ -63,6 +64,7 @@ const Assessment: React.FC = () => {
   const navigate = useNavigate();
   const { profile, assessment: saved, saveProfile, saveAssessment } = useProfile();
 
+  const [mode, setMode] = useState<'voice' | 'quiz'>('voice');
   const [phase, setPhase] = useState<Phase>('loading');
   const [questions, setQuestions] = useState<RiasecQuestion[]>([]);
   const [scale, setScale] = useState<ScaleOption[]>([]);
@@ -203,14 +205,50 @@ const Assessment: React.FC = () => {
   const topLetters = score ? score.code.split('') : [];
 
   return (
-    <div className="min-h-screen bg-[#F8F9FE] font-sans">
+    <div className="min-h-screen bg-[#F8F9FE] font-sans pb-16">
       <AppHeader />
-      <main className="max-w-2xl mx-auto px-6 py-10">
-        <div className="flex items-center gap-2 text-purple-500 mb-1">
-          <Compass className="w-5 h-5" />
-          <span className="text-sm font-bold uppercase tracking-wider">Career discovery</span>
+      <main className="max-w-3xl mx-auto px-6 py-10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <div className="flex items-center gap-2 text-purple-600 mb-1">
+              <Compass className="w-5 h-5" />
+              <span className="text-xs font-bold uppercase tracking-wider">Career discovery</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              Find careers that fit you
+            </h1>
+          </div>
+
+          {phase !== 'loading' && phase !== 'error' && (
+            <div className="flex bg-slate-200/80 p-1 rounded-2xl border border-slate-200 text-xs font-bold shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('voice');
+                  if (phase === 'results') setPhase('intro');
+                }}
+                className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                  mode === 'voice'
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Mic className="w-3.5 h-3.5" /> Voice Counselor
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode('quiz')}
+                className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                  mode === 'quiz'
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5" /> Questionnaire
+              </button>
+            </div>
+          )}
         </div>
-        <h1 className="text-3xl font-extrabold text-slate-900 mb-6">Find careers that fit you</h1>
 
         {phase === 'loading' && (
           <div className="bg-white rounded-[1.5rem] p-10 border border-slate-100 text-center">
@@ -236,7 +274,17 @@ const Assessment: React.FC = () => {
           </div>
         )}
 
-        {phase === 'intro' && (
+        {/* Interactive Voice Counselor Mode */}
+        {phase !== 'loading' && phase !== 'error' && phase !== 'results' && mode === 'voice' && (
+          <CounselorVoiceChat
+            onRestartAssessment={() => {
+              setPhase('intro');
+              setMode('voice');
+            }}
+          />
+        )}
+
+        {phase === 'intro' && mode === 'quiz' && (
           <div className="bg-white rounded-[1.5rem] p-8 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
             <p className="text-slate-600 mb-4">
               Like a session with a career counselor, we'll get to know you in{' '}
@@ -549,14 +597,23 @@ const Assessment: React.FC = () => {
               ))}
             </div>
 
-            <div className="flex items-center justify-center gap-6 pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+              <button
+                onClick={() => {
+                  setMode('voice');
+                  setPhase('intro');
+                }}
+                className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm"
+              >
+                <Mic className="w-3.5 h-3.5" /> Chat with Voice Counselor
+              </button>
               <button
                 onClick={restart}
-                className="inline-flex items-center gap-1.5 text-slate-400 hover:text-slate-700 text-xs font-semibold"
+                className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-800 text-xs font-semibold bg-white border border-slate-200 px-3.5 py-2 rounded-xl transition-colors"
               >
-                <RotateCcw className="w-3.5 h-3.5" /> Retake assessment
+                <RotateCcw className="w-3.5 h-3.5" /> Retake questionnaire
               </button>
-              <Link to="/dashboard" className="text-[#6D28D9] font-bold text-sm hover:underline">
+              <Link to="/dashboard" className="text-[#6D28D9] font-bold text-xs hover:underline">
                 Back to dashboard
               </Link>
             </div>

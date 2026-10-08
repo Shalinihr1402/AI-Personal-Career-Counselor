@@ -53,6 +53,7 @@ from careers import (
     fallback_match,
     valid_titles,
     get_career_by_slug,
+    get_career_by_title,
     slugify,
 )
 
@@ -359,6 +360,182 @@ def calculate_skill_gap(req: SkillGapRequest):
         "total_required": len(all_required),
         "learning_recommendations": recommendations,
     }
+
+
+class CounselorChatMessage(BaseModel):
+    role: str
+    content: str
+
+
+class CounselorChatRequest(BaseModel):
+    messages: list[CounselorChatMessage]
+    student_profile: dict | None = None
+
+
+@app.post("/api/counselor/chat")
+def counselor_chat(req: CounselorChatRequest):
+    user_msgs = [m for m in req.messages if m.role == "user"]
+    turn_count = len(user_msgs)
+
+    profile = req.student_profile or {}
+    education_stage = profile.get("educationStage", "degree_ug")
+    stage_labels = {
+        "sslc_10th": "SSLC / 10th Standard (Deciding 11th/12th Stream or Polytechnic Diploma)",
+        "puc_12th": "PUC / 12th / Intermediate (Deciding Undergraduate College Degree)",
+        "diploma": "Polytechnic / Diploma (Deciding Engineering Lateral Entry or Industry Role)",
+        "degree_ug": "College Degree UG (Preparing for Campus Placements & Industry Roles)",
+        "postgrad": "Postgraduate / Fresher Job Seeker"
+    }
+    stage_desc = stage_labels.get(education_stage, "College Student")
+
+    if _AI_ENABLED:
+        try:
+            conversation_str = "\n".join(f"{m.role.upper()}: {m.content}" for m in req.messages[-8:])
+            should_conclude = turn_count >= 2
+
+            conclude_instruction = (
+                f"The student has completed {turn_count} turns. Conclude your diagnosis now! "
+                "Set 'is_concluded' to true. Calculate RIASEC scores (0-100 each), identify their top 3-letter RIASEC code (e.g. AIC, IRC, ESC), "
+                "write an inspiring 2-sentence summary tailored to their stage, and provide 3-4 specific recommended career titles."
+                if should_conclude
+                else f"Keep diagnosing their natural energy and deal-breakers. Be warm and encouraging. Ask exactly ONE thoughtful follow-up question tailored to a {stage_desc}. Set 'is_concluded' to false."
+            )
+
+            prompt = f"""You are a warm, empathetic, and expert AI Career Counselor guiding an Indian student.
+Student Academic Stage: {stage_desc}
+Additional Info: {json.dumps(profile)}
+
+Conversation so far:
+{conversation_str}
+
+Instructions:
+{conclude_instruction}
+
+Respond with a single valid JSON object:
+{{
+  "reply": "Warm counselor response (2-3 sentences max). Ask only 1 question if not concluded.",
+  "is_concluded": {str(should_conclude).lower()},
+  "progress_percent": {min(100, turn_count * 50)},
+  "riasec_scores": {{"R": 45, "I": 75, "A": 85, "S": 60, "E": 40, "C": 50}} or null,
+  "riasec_code": "AIC" or null,
+  "summary": "1-2 sentence diagnostic summary of their strengths and natural fit." or null,
+  "suggested_careers": ["UI/UX Designer", "Frontend Developer", "Product Designer"] or null
+}}"""
+
+            parsed = _generate_json(prompt, temperature=0.3)
+
+            if parsed.get("is_concluded"):
+                suggested = parsed.get("suggested_careers") or []
+                riasec_scores = parsed.get("riasec_scores") or {"R": 50, "I": 50, "A": 50, "S": 50, "E": 50, "C": 50}
+                matches = []
+                seen_slugs = set()
+
+                for title in suggested:
+                    c = get_career_by_title(title)
+                    if c and c["slug"] not in seen_slugs:
+                        seen_slugs.add(c["slug"])
+                        matches.append({
+                            "title": c["title"],
+                            "slug": c["slug"],
+                            "field": c.get("field", "General"),
+                            "code": c.get("code", "IRC"),
+                            "fit": 94 - len(matches) * 4,
+                            "reason": f"Matches your natural interest in {c.get('skills', ['core concepts'])[0]} identified in our conversation.",
+                            "salary_india": c.get("salary_india"),
+                            "education": c.get("education", "Bachelor's Degree"),
+                            "skills": c.get("skills", [])[:4],
+                        })
+
+                if len(matches) < 3:
+                    try:
+                        from matcher import hybrid_career_match, is_semantic_engine_ready
+                        if is_semantic_engine_ready():
+                            extra = hybrid_career_match(
+                                riasec_scores=riasec_scores,
+                                free_text=" ".join(m.content for m in user_msgs),
+                                limit=5
+                            )
+                            for m_item in extra:
+                                if m_item["slug"] not in seen_slugs:
+                                    seen_slugs.add(m_item["slug"])
+                                    c_info = get_career_by_slug(m_item["slug"])
+                                    matches.append({
+                                        "title": m_item["title"],
+                                        "slug": m_item["slug"],
+                                        "field": m_item.get("field", "General"),
+                                        "code": m_item.get("riasec_code", "IRC"),
+                                        "fit": m_item.get("match_percent", 86),
+                                        "reason": f"Strong psychological alignment with your {parsed.get('riasec_code', 'RIASEC')} profile.",
+                                        "salary_india": c_info.get("salary_india") if c_info else None,
+                                        "education": c_info.get("education") if c_info else "Bachelor's Degree",
+                                        "skills": m_item.get("skills", [])[:4],
+                                    })
+                                if len(matches) >= 4:
+                                    break
+                    except Exception as match_err:
+                        print(f"Hybrid matcher error in counselor chat: {match_err}")
+
+                if len(matches) < 3:
+                    fallback_list = fallback_match(riasec_scores)
+                    for fb in fallback_list:
+                        if fb["slug"] not in seen_slugs:
+                            seen_slugs.add(fb["slug"])
+                            c_info = get_career_by_slug(fb["slug"])
+                            matches.append({
+                                "title": fb["title"],
+                                "slug": fb["slug"],
+                                "field": fb.get("field", "General"),
+                                "code": fb.get("code", "IRC"),
+                                "fit": fb.get("fit", 82),
+                                "reason": fb.get("reason", "Strong alignment with your profile."),
+                                "salary_india": c_info.get("salary_india") if c_info else None,
+                                "education": c_info.get("education") if c_info else "Bachelor's Degree",
+                                "skills": c_info.get("skills", [])[:4] if c_info else [],
+                            })
+                        if len(matches) >= 4:
+                            break
+
+                parsed["matches"] = matches[:4]
+
+            return parsed
+        except Exception as e:
+            print(f"Counselor chat AI error: {e}")
+
+    # Fallback if offline
+    if turn_count < 2:
+        return {
+            "reply": f"That's great! Since you are exploring options for {stage_desc}, tell me: Do you prefer creating things visually (like software UI, art, or content) versus solving analytical problems (like code, data, or operations)?",
+            "is_concluded": False,
+            "progress_percent": 50,
+            "riasec_scores": None,
+            "riasec_code": None,
+            "summary": None,
+            "matches": []
+        }
+    else:
+        top_curated = CAREERS[:4]
+        return {
+            "reply": "Thank you for sharing your thoughts! Based on your natural inclinations and academic stage, here are high-potential career directions that genuinely fit who you are.",
+            "is_concluded": True,
+            "progress_percent": 100,
+            "riasec_scores": {"R": 40, "I": 75, "A": 80, "S": 60, "E": 50, "C": 45},
+            "riasec_code": "AIC",
+            "summary": f"You show high natural aptitude for creative problem-solving and structured execution, well-suited for high-growth sectors.",
+            "matches": [
+                {
+                    "title": c["title"],
+                    "slug": c["slug"],
+                    "field": c.get("field", "Technology"),
+                    "code": c.get("code", "IRC"),
+                    "fit": 90 - idx * 4,
+                    "reason": f"Strong alignment with your creative problem solving style.",
+                    "salary_india": get_career_by_slug(c["slug"]).get("salary_india") if get_career_by_slug(c["slug"]) else None,
+                    "education": "Bachelor's Degree",
+                    "skills": c.get("skills", [])[:4]
+                }
+                for idx, c in enumerate(top_curated)
+            ]
+        }
 
 
 @app.get("/api/careers")

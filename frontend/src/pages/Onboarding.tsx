@@ -10,11 +10,14 @@ import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
 import { API_BASE } from '../lib/api';
 import { isMissingTable, type Profile } from '../lib/profile';
+import type { EducationStage } from '../lib/onboarding';
 
 type Path = 'know_goal' | 'not_sure' | 'need_plan';
 
 interface OnboardingData {
   path: Path | null;
+  educationStage: EducationStage;
+  streamOrBranch: string;
   college: string;
   course: string;
   year: string;
@@ -26,9 +29,11 @@ interface OnboardingData {
 
 const emptyData: OnboardingData = {
   path: null,
+  educationStage: 'degree_ug',
+  streamOrBranch: '',
   college: '',
   course: '',
-  year: '',
+  year: '1st year',
   interests: [],
   strengthsNote: '',
   targetRole: '',
@@ -170,6 +175,8 @@ const Onboarding: React.FC = () => {
       profile
         ? {
             path: profile.path ?? null,
+            educationStage: profile.educationStage ?? 'degree_ug',
+            streamOrBranch: profile.streamOrBranch ?? '',
             college: profile.college ?? '',
             course: profile.course ?? '',
             year: profile.year ?? '',
@@ -321,41 +328,237 @@ const Onboarding: React.FC = () => {
                 </div>
               )}
 
-              {/* --- Step 1: Profile --- */}
+              {/* --- Step 1: Education Stage & Profile --- */}
               {step === 1 && (
                 <div>
-                  <div className="text-center mb-8">
-                    <h1 className="text-3xl font-extrabold text-slate-900 mb-2">A bit about you</h1>
-                    <p className="text-slate-500">Helps us tailor timelines to your student life.</p>
+                  <div className="text-center mb-6">
+                    <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Where are you in your education?</h1>
+                    <p className="text-slate-500 text-sm">Counseling guidance is completely tailored based on your current academic stage.</p>
                   </div>
-                  <div className="space-y-4 max-w-md mx-auto">
-                    <div className="space-y-2">
-                      <label className="block text-[13px] font-semibold text-slate-700">College / University</label>
-                      <input value={data.college} onChange={(e) => update({ college: e.target.value })} className={inputClass} placeholder="e.g. State University" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="block text-[13px] font-semibold text-slate-700">Course / Degree</label>
-                      <input value={data.course} onChange={(e) => update({ course: e.target.value })} className={inputClass} placeholder="e.g. B.Tech Computer Science" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="block text-[13px] font-semibold text-slate-700">Year of study</label>
-                      <div className="flex flex-wrap gap-2">
-                        {YEAR_OPTIONS.map((y) => (
-                          <button
-                            key={y}
-                            type="button"
-                            onClick={() => update({ year: y })}
-                            className={`px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
-                              data.year === y
-                                ? 'bg-purple-600 border-purple-600 text-white'
-                                : 'bg-white border-slate-200 text-slate-600 hover:border-purple-300'
-                            }`}
-                          >
-                            {y}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+
+                  {/* Indian Education Stage Cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6 max-w-xl mx-auto">
+                    {[
+                      { id: 'sslc_10th', label: '10th / SSLC', icon: '🏫', sub: 'School / 10th Board' },
+                      { id: 'puc_12th', label: '12th / PUC', icon: '🎓', sub: 'Science / Commerce / Arts' },
+                      { id: 'diploma', label: 'Polytechnic', icon: '📜', sub: '3-Year Diploma' },
+                      { id: 'degree_ug', label: 'College Degree (UG)', icon: '🏛️', sub: 'B.Tech, BCA, B.Com, B.Sc' },
+                      { id: 'postgrad', label: 'Postgrad / Graduated', icon: '🎯', sub: 'MCA, MBA, M.Tech, Job Seeker' },
+                    ].map((stg) => {
+                      const isSel = data.educationStage === stg.id;
+                      return (
+                        <button
+                          key={stg.id}
+                          type="button"
+                          onClick={() => {
+                            update({
+                              educationStage: stg.id as EducationStage,
+                              streamOrBranch: '',
+                              course: stg.id === 'sslc_10th' ? '10th Standard / SSLC' : stg.id === 'puc_12th' ? '12th Standard / PUC' : data.course,
+                            });
+                          }}
+                          className={`p-3.5 rounded-2xl border-2 text-left transition-all ${
+                            isSel
+                              ? 'border-purple-600 bg-purple-50/70 shadow-sm'
+                              : 'border-slate-200 bg-white hover:border-purple-300'
+                          }`}
+                        >
+                          <div className="text-2xl mb-1">{stg.icon}</div>
+                          <div className="font-extrabold text-slate-900 text-xs sm:text-sm">{stg.label}</div>
+                          <div className="text-[11px] text-slate-500 leading-tight mt-0.5">{stg.sub}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Contextual Fields depending on Education Stage */}
+                  <div className="space-y-4 max-w-md mx-auto bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                    {/* IF SSLC / 10th */}
+                    {data.educationStage === 'sslc_10th' && (
+                      <>
+                        <div className="space-y-1.5">
+                          <label className="block text-[13px] font-semibold text-slate-700">School / Board</label>
+                          <input
+                            value={data.college}
+                            onChange={(e) => update({ college: e.target.value })}
+                            className={inputClass}
+                            placeholder="e.g. State Board / CBSE / ICSE School"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="block text-[13px] font-semibold text-slate-700">
+                            Which stream are you leaning towards for 11th/12th?
+                          </label>
+                          <div className="flex flex-wrap gap-2">
+                            {[
+                              'Science (PCMB / PCMC)',
+                              'Commerce',
+                              'Arts / Humanities',
+                              'Polytechnic Diploma',
+                              'Not sure, need counselor advice',
+                            ].map((opt) => (
+                              <button
+                                key={opt}
+                                type="button"
+                                onClick={() => update({ streamOrBranch: opt, course: `10th - Considering ${opt}` })}
+                                className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                                  data.streamOrBranch === opt
+                                    ? 'bg-purple-600 border-purple-600 text-white'
+                                    : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-purple-300'
+                                }`}
+                              >
+                                {opt}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* IF PUC / 12th */}
+                    {data.educationStage === 'puc_12th' && (
+                      <>
+                        <div className="space-y-1.5">
+                          <label className="block text-[13px] font-semibold text-slate-700">PUC / Junior College Name</label>
+                          <input
+                            value={data.college}
+                            onChange={(e) => update({ college: e.target.value })}
+                            className={inputClass}
+                            placeholder="e.g. National PU College, St. Joseph's, etc."
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="block text-[13px] font-semibold text-slate-700">Current Stream in 11th/12th</label>
+                          <div className="flex flex-wrap gap-2">
+                            {[
+                              'Science — PCMB (Medical/Tech)',
+                              'Science — PCMC (Computer Science)',
+                              'Commerce (with Math/Stats)',
+                              'Commerce (with Computers/IP)',
+                              'Arts / Humanities',
+                            ].map((st) => (
+                              <button
+                                key={st}
+                                type="button"
+                                onClick={() => update({ streamOrBranch: st, course: `12th - ${st}` })}
+                                className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                                  data.streamOrBranch === st
+                                    ? 'bg-purple-600 border-purple-600 text-white'
+                                    : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-purple-300'
+                                }`}
+                              >
+                                {st}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="block text-[13px] font-semibold text-slate-700">Current Year</label>
+                          <div className="flex gap-2">
+                            {['1st PUC / 11th', '2nd PUC / 12th', 'Completed 12th'].map((y) => (
+                              <button
+                                key={y}
+                                type="button"
+                                onClick={() => update({ year: y })}
+                                className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                                  data.year === y
+                                    ? 'bg-purple-600 border-purple-600 text-white'
+                                    : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-purple-300'
+                                }`}
+                              >
+                                {y}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* IF Diploma */}
+                    {data.educationStage === 'diploma' && (
+                      <>
+                        <div className="space-y-1.5">
+                          <label className="block text-[13px] font-semibold text-slate-700">Polytechnic / Institute Name</label>
+                          <input
+                            value={data.college}
+                            onChange={(e) => update({ college: e.target.value })}
+                            className={inputClass}
+                            placeholder="e.g. Government Polytechnic"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="block text-[13px] font-semibold text-slate-700">Diploma Branch</label>
+                          <input
+                            value={data.streamOrBranch}
+                            onChange={(e) => update({ streamOrBranch: e.target.value, course: `Diploma in ${e.target.value}` })}
+                            className={inputClass}
+                            placeholder="e.g. Computer Science, Mechanical, Electronics"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="block text-[13px] font-semibold text-slate-700">Current Year</label>
+                          <div className="flex gap-2">
+                            {['1st Year', '2nd Year', 'Final Year', 'Completed Diploma'].map((y) => (
+                              <button
+                                key={y}
+                                type="button"
+                                onClick={() => update({ year: y })}
+                                className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                                  data.year === y
+                                    ? 'bg-purple-600 border-purple-600 text-white'
+                                    : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-purple-300'
+                                }`}
+                              >
+                                {y}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* IF Degree (UG) or Postgrad */}
+                    {(data.educationStage === 'degree_ug' || data.educationStage === 'postgrad') && (
+                      <>
+                        <div className="space-y-1.5">
+                          <label className="block text-[13px] font-semibold text-slate-700">College / University</label>
+                          <input
+                            value={data.college}
+                            onChange={(e) => update({ college: e.target.value })}
+                            className={inputClass}
+                            placeholder="e.g. VTU, Bangalore University, State Tech Campus"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="block text-[13px] font-semibold text-slate-700">Degree & Specialization</label>
+                          <input
+                            value={data.course}
+                            onChange={(e) => update({ course: e.target.value })}
+                            className={inputClass}
+                            placeholder="e.g. B.Tech Computer Science, BCA, B.Com, B.Sc"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="block text-[13px] font-semibold text-slate-700">Year of study</label>
+                          <div className="flex flex-wrap gap-2">
+                            {YEAR_OPTIONS.map((y) => (
+                              <button
+                                key={y}
+                                type="button"
+                                onClick={() => update({ year: y })}
+                                className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
+                                  data.year === y
+                                    ? 'bg-purple-600 border-purple-600 text-white'
+                                    : 'bg-white border-slate-200 text-slate-600 hover:border-purple-300'
+                                }`}
+                              >
+                                {y}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               )}

@@ -144,7 +144,7 @@ Decided 2026-09-26: complete the counselor role before any Phase 2 work.
 |---|---|---|---|
 | **C0** | Save data properly | ✅ built (run `supabase/migrations/0001_phase1_counselor.sql`) | `profiles`, `assessments`, `career_goals` tables with RLS; `ProfileContext` loads profile + latest assessment once; old `user_metadata` data migrates automatically |
 | **C1** | "Know me" profile | ✅ built | Discovery now has 5 sections: Interests · Work style · **Values** (top 3) · **Strengths** (strong/enjoyed subjects, known for) · **Your situation** (earning timeline, budget, relocation, family, work setting). All sent to the AI matcher |
-| **C2** | Counselor conversation | ⬜ next | After the quiz, the AI asks 3–4 personalised follow-up questions; answers feed the match |
+| **C2** | Counselor conversation | ✅ built | Real-time Voice (Web Speech API 🎙️) & Chat AI Counselor diagnosing natural energy and dealbreakers; tailored to SSLC, PUC, Diploma & Degree tracks |
 | **C3** | Counselor report | ⬜ | Saved report: "who you are" summary, strengths, top 5 careers with reasons & trade-offs (basic saved results already work) |
 | **C4** | Explore & compare careers | ✅ built | `/careers` catalog (1,056 careers, search, industry field filters, pagination) + `/careers/:slug` detail with similar careers + side-by-side comparison modal (compare up to 3) |
 | **C5** | Confirm your goal | ✅ built | Deliberate confirm step with "why this career?", writes `career_goals`; "I know my goal" path gets a fit check |

@@ -1,7 +1,16 @@
 export type CareerPath = 'know_goal' | 'not_sure' | 'need_plan';
 
+export type EducationStage =
+  | 'sslc_10th'
+  | 'puc_12th'
+  | 'diploma'
+  | 'degree_ug'
+  | 'postgrad';
+
 export interface OnboardingRecord {
   path: CareerPath | null;
+  educationStage?: EducationStage;
+  streamOrBranch?: string;
   college?: string;
   course?: string;
   year?: string;
