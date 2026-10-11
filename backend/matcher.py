@@ -176,16 +176,68 @@ def hybrid_career_match(
 
         # 4. Deal-breaker penalties
         penalty = 0.0
-        title_desc = (career.get("title", "") + " " + career.get("description", "")).lower()
+
+        d2d = career.get("day_to_day") or ""
+        if isinstance(d2d, list):
+            d2d = " ".join(str(item) for item in d2d)
+
+        title_desc = " ".join([
+            str(career.get("title") or ""),
+            str(career.get("description") or ""),
+            str(d2d),
+        ]).lower()
+
         for db in deal_breakers:
-            if "alone debugging" in db.lower() and any(w in title_desc for w in ["software", "programmer", "coding"]):
+            db_lower = db.lower().strip()
+
+            if (
+                any(term in db_lower for term in [
+                    "alone debugging",
+                    "debugging alone",
+                    "working alone debugging"
+                ])
+                and any(w in title_desc for w in [
+                    "software developer", "programmer", "software engineer",
+                    "debugging", "coding"
+                ])
+            ):
                 penalty += 0.25
-            if "cold calling" in db.lower() and any(w in title_desc for w in ["sales", "telemarketing", "selling"]):
+
+            if (
+                "cold calling" in db_lower
+                and any(w in title_desc for w in [
+                    "cold call", "telemarketing", "sales calls"
+                ])
+            ):
                 penalty += 0.35
-            if "abstract math" in db.lower() and any(w in title_desc for w in ["mathematician", "statistician", "actuary"]):
+
+            if (
+                "abstract math" in db_lower
+                and any(w in title_desc for w in [
+                    "mathematician", "statistician", "actuary"
+                ])
+            ):
                 penalty += 0.30
-            if "monotonous paperwork" in db.lower() and any(w in title_desc for w in ["clerk", "recordkeeper", "billing"]):
-                penalty += 0.30
+
+            if any(term in db_lower for term in [
+                "monotonous paperwork",
+                "repetitive paperwork",
+                "routine paperwork",
+                "repetitive administrative tasks"
+            ]):
+                paperwork_tasks = [
+                    "filing records",
+                    "maintaining records",
+                    "processing invoices",
+                    "data entry",
+                    "clerical duties",
+                    "administrative paperwork",
+                    "processing forms",
+                    "record keeping"
+                ]
+
+                if any(task in title_desc for task in paperwork_tasks):
+                    penalty += 0.30
 
         # Weighted final score: 50% Semantic + 30% RIASEC + 20% Skill Overlap - Penalty
         combined = (0.50 * norm_semantic[idx]) + (0.30 * norm_riasec) + (0.20 * norm_skills) - penalty
