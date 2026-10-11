@@ -2,7 +2,7 @@ import type { User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 import type { KnowMe } from './knowMe';
 import type { CareerMatch, RiasecScores } from './assessment';
-import type { CareerPath, OnboardingRecord } from './onboarding';
+import type { CareerPath, EducationStage, OnboardingRecord } from './onboarding';
 
 /**
  * Persistence for the counselor phase: the student's profile and their
@@ -11,6 +11,8 @@ import type { CareerPath, OnboardingRecord } from './onboarding';
  */
 
 export interface Profile extends OnboardingRecord {
+  educationStage?: EducationStage;
+  streamOrBranch?: string;
   knowMe?: KnowMe;
   onboardingComplete: boolean;
 }
@@ -37,7 +39,7 @@ interface ProfileRow {
   target_role: string | null;
   hours_per_week: string | null;
   resume: Profile['resume'] | null;
-  know_me: KnowMe | null;
+  know_me: (KnowMe & { educationStage?: EducationStage; streamOrBranch?: string }) | null;
   onboarding_complete: boolean;
 }
 
@@ -53,6 +55,7 @@ interface AssessmentRow {
 }
 
 function fromRow(r: ProfileRow): Profile {
+  const km = r.know_me || {};
   return {
     path: r.path,
     college: r.college ?? undefined,
@@ -64,6 +67,8 @@ function fromRow(r: ProfileRow): Profile {
     hoursPerWeek: r.hours_per_week ?? undefined,
     resume: r.resume ?? undefined,
     knowMe: r.know_me ?? undefined,
+    educationStage: km.educationStage || undefined,
+    streamOrBranch: km.streamOrBranch || undefined,
     onboardingComplete: r.onboarding_complete,
   };
 }
@@ -79,7 +84,17 @@ function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> {
   if ('targetRole' in p) row.target_role = p.targetRole ?? null;
   if ('hoursPerWeek' in p) row.hours_per_week = p.hoursPerWeek ?? null;
   if ('resume' in p) row.resume = p.resume ?? null;
-  if ('knowMe' in p) row.know_me = p.knowMe ?? null;
+
+  const existingKm = (p.knowMe as any) || {};
+  const stage = p.educationStage || existingKm.educationStage;
+  const stream = p.streamOrBranch || existingKm.streamOrBranch;
+  const mergedKm = {
+    ...existingKm,
+    ...(stage ? { educationStage: stage } : {}),
+    ...(stream ? { streamOrBranch: stream } : {}),
+  };
+  row.know_me = Object.keys(mergedKm).length > 0 ? mergedKm : null;
+
   if ('onboardingComplete' in p) row.onboarding_complete = Boolean(p.onboardingComplete);
   return row;
 }

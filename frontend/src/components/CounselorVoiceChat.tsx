@@ -17,6 +17,7 @@ import {
 import { API_BASE } from '../lib/api';
 import { useProfile } from '../context/ProfileContext';
 import type { RiasecScores } from '../lib/assessment';
+import type { EducationStage } from '../lib/onboarding';
 
 interface Message {
   id: string;
@@ -40,10 +41,17 @@ interface CareerMatchItem {
   skills?: string[];
 }
 
+interface StageAdvice {
+  recommended_path?: string;
+  next_immediate_step?: string;
+  creative_balance?: string;
+}
+
 interface ConclusionData {
   riasec_scores: RiasecScores;
   riasec_code: string;
   summary: string;
+  stage_advice?: StageAdvice;
   matches: CareerMatchItem[];
 }
 
@@ -77,31 +85,94 @@ interface SpeechRecognitionInstance {
   onend: () => void;
 }
 
-export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
-  const { profile, saveAssessment } = useProfile();
+const STAGE_OPTIONS: { id: EducationStage; label: string; short: string; icon: string; desc: string }[] = [
+  { id: 'sslc_10th', label: '10th / SSLC', short: '10th / SSLC', icon: '🌱', desc: 'Choosing 11th/12th Stream or 3-yr Diploma' },
+  { id: 'puc_12th', label: '12th / PUC / Inter', short: '12th / PUC', icon: '📘', desc: 'Choosing Undergraduate College Degree' },
+  { id: 'diploma', label: 'Polytechnic Diploma', short: 'Diploma', icon: '🔧', desc: 'Lateral Entry to B.Tech vs Core Jobs' },
+  { id: 'degree_ug', label: 'College Degree (UG)', short: 'Degree (UG)', icon: '🎓', desc: 'Campus Placements, Internships & Skills' },
+  { id: 'postgrad', label: 'Postgraduate / Job', short: 'Postgrad', icon: '🚀', desc: 'Domain Pivot & Specialization' },
+];
 
-  // Initial welcome message tailored to their Indian education stage
-  const getInitialMessage = () => {
-    const stage = profile?.educationStage;
-    if (stage === 'sslc_10th') {
-      return "Hello! I'm your AI Career Counselor. Finishing 10th / SSLC can feel overwhelming with everyone pushing you into different streams. Let's make it simple: What subjects in school do you naturally enjoy, and what kind of activities make you lose track of time?";
+const getInitialMessageForStage = (stage: EducationStage) => {
+  switch (stage) {
+    case 'sslc_10th':
+      return "Hello! I'm your AI Career Counselor. Finishing 10th / SSLC is a major turning point, and deciding your 11th/12th stream or diploma can feel confusing. Let's make it simple: Which school subjects or hobbies (like singing, gaming, drawing, or science) do you naturally enjoy the most?";
+    case 'puc_12th':
+      return "Welcome! Finishing PUC / 12th is where you pick your undergraduate college degree. Tell me: Which fields excite you (like Engineering, Medicine, Commerce, Design, Law), and which entrance exams are you considering?";
+    case 'diploma':
+      return "Hello! As a Polytechnic / Diploma student, you are gaining hands-on technical skills. Are you planning for lateral entry into 2nd year B.Tech (via DCET) or are you aiming for direct core industry jobs?";
+    case 'degree_ug':
+      return "Hello! I'm your AI Career Counselor. Whether you're in college or preparing for campus placements, let's map your career: What projects, tech stacks, or domains are you currently exploring?";
+    case 'postgrad':
+      return "Welcome! Let's align your specialization or career pivot: What target roles or industry sectors are you aiming for?";
+  }
+};
+
+const getInitialChipsForStage = (stage: EducationStage) => {
+  switch (stage) {
+    case 'sslc_10th':
+      return [
+        '🎵 I love singing & music — what streams fit?',
+        '💻 I like computers & want to learn programming',
+        '🧪 I enjoy Science & Math (PCMB/PCMC)',
+        '📊 I want Commerce & Business (Accountancy)',
+        '🎨 I want creative arts, design, or humanities',
+        '🔧 Tell me about 3-year Polytechnic Diplomas',
+      ];
+    case 'puc_12th':
+      return [
+        'Engineering (B.Tech) - CS, AI, Electronics',
+        'Medical & Allied Health (MBBS, Pharmacy)',
+        'Commerce & Finance (B.Com, BBA, CA)',
+        'Design & Creative Arts (B.Des, NIFT)',
+        'Law & Civil Services (BA LLB, UPSC)',
+      ];
+    case 'diploma':
+      return [
+        'Lateral Entry into B.Tech 2nd year (DCET)',
+        'Direct Core Industry Technical Job',
+        'Switch from Core branch to Software/IT',
+      ];
+    case 'degree_ug':
+      return [
+        'Software Engineering & Full Stack Dev',
+        'Data Science & AI/ML careers',
+        'UI/UX Design & Product Management',
+        'Campus Placement preparation & skills',
+      ];
+    case 'postgrad':
+      return [
+        'Senior Technical Specialist roles',
+        'Management, Strategy & Leadership',
+        'Domain Pivot into High-Growth Tech',
+      ];
+  }
+};
+
+export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
+  const { profile, saveProfile, saveAssessment } = useProfile();
+
+  // Active educational stage (defaults to profile -> localStorage -> sslc_10th)
+  const [activeStage, setActiveStage] = useState<EducationStage>(() => {
+    if (profile?.educationStage) return profile.educationStage;
+    const stored = localStorage.getItem('counselor_selected_stage');
+    if (stored && ['sslc_10th', 'puc_12th', 'diploma', 'degree_ug', 'postgrad'].includes(stored)) {
+      return stored as EducationStage;
     }
-    if (stage === 'puc_12th') {
-      return `Welcome! You're in ${profile?.course || 'PUC / 12th'} — a crucial turning point. Tell me: When you think about college and your future, what fields or projects naturally excite you, and what subjects do you want to avoid?`;
-    }
-    if (stage === 'diploma') {
-      return `Hey there! As a Polytechnic/Diploma student, you're building practical skills. Tell me: Do you want to continue in engineering through lateral entry, or are you looking to pivot into software, design, or specialized industry roles?`;
-    }
-    return `Hello! I'm your AI Career Counselor. Don't worry if you don't know your exact career path yet — we're going to figure it out together. To start: What kinds of activities, projects, or hobbies do you naturally find energizing?`;
-  };
+    return 'sslc_10th';
+  });
 
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'assistant',
-      text: getInitialMessage(),
+      text: getInitialMessageForStage(activeStage),
     },
   ]);
+
+  const [suggestionChips, setSuggestionChips] = useState<string[]>(() =>
+    getInitialChipsForStage(activeStage),
+  );
 
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
@@ -112,6 +183,26 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
 
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Switch educational stage anytime
+  const handleStageChange = (newStage: EducationStage) => {
+    setActiveStage(newStage);
+    localStorage.setItem('counselor_selected_stage', newStage);
+    if (profile) {
+      saveProfile({ educationStage: newStage }).catch(() => {});
+    }
+    setConclusion(null);
+    const newMsg = getInitialMessageForStage(newStage);
+    setMessages([
+      {
+        id: Date.now().toString(),
+        role: 'assistant',
+        text: newMsg,
+      },
+    ]);
+    setSuggestionChips(getInitialChipsForStage(newStage));
+    speakText(newMsg);
+  };
 
   // Check Web Speech API support
   useEffect(() => {
@@ -224,7 +315,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
       const payload = {
         messages: updated.map((m) => ({ role: m.role, content: m.text })),
         student_profile: {
-          educationStage: profile?.educationStage || 'degree_ug',
+          educationStage: activeStage,
           course: profile?.course,
           college: profile?.college,
           interests: profile?.interests,
@@ -250,12 +341,18 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
       setMessages((prev) => [...prev, assistantMsg]);
       speakText(assistantMsg.text);
 
+      // Update suggestion chips from backend if provided
+      if (data.suggested_chips && Array.isArray(data.suggested_chips) && data.suggested_chips.length > 0) {
+        setSuggestionChips(data.suggested_chips);
+      }
+
       // If the counselor has completed diagnosis
       if (data.is_concluded && data.matches && data.matches.length > 0) {
         const conc: ConclusionData = {
           riasec_scores: data.riasec_scores || { R: 50, I: 50, A: 50, S: 50, E: 50, C: 50 },
           riasec_code: data.riasec_code || 'AIC',
           summary: data.summary || 'Strong alignment with creative problem solving and analytical thinking.',
+          stage_advice: data.stage_advice || undefined,
           matches: data.matches,
         };
         setConclusion(conc);
@@ -296,19 +393,12 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
     }
   };
 
-  // Quick suggestion chips based on turn
-  const suggestionChips = [
-    'I love coding & building digital products',
-    'I prefer creative design, UI/UX & visuals',
-    'I enjoy business strategy and managing people',
-    'I dislike heavy calculus and dry theory',
-    'I want a high-growth career with strong salary in India',
-  ];
+  const currentStageInfo = STAGE_OPTIONS.find((s) => s.id === activeStage) || STAGE_OPTIONS[0];
 
   return (
     <div className="max-w-3xl mx-auto">
       {/* Counselor Chat Header */}
-      <div className="bg-gradient-to-r from-purple-800 via-indigo-800 to-purple-900 rounded-3xl p-6 text-white shadow-xl mb-6 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-purple-800 via-indigo-800 to-purple-900 rounded-3xl p-6 text-white shadow-xl mb-4 relative overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl border border-white/20 shadow-inner">
@@ -325,14 +415,9 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
 
           {/* Education Stage Tag & Audio Toggle */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-purple-100">
-              {profile?.educationStage === 'sslc_10th'
-                ? '🏫 10th / SSLC Track'
-                : profile?.educationStage === 'puc_12th'
-                ? '🎓 12th / PUC Track'
-                : profile?.educationStage === 'diploma'
-                ? '📜 Polytechnic Track'
-                : '🏛️ Degree Track'}
+            <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-purple-100 flex items-center gap-1.5">
+              <span>{currentStageInfo.icon}</span>
+              <span>{currentStageInfo.short} Track</span>
             </span>
 
             <button
@@ -346,6 +431,36 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
               {isVoiceEnabled ? <Volume2 className="w-4 h-4 text-emerald-300" /> : <VolumeX className="w-4 h-4 text-slate-300" />}
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Interactive Academic Level Selector */}
+      <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 mb-4 shadow-2xs">
+        <div className="flex items-center justify-between px-1 mb-2">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
+            <span>🎓 Academic Stage</span>
+            <span className="text-slate-400 font-normal hidden sm:inline">(select your exact level for 100% relevant counseling):</span>
+          </div>
+          <span className="text-[11px] font-semibold text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-full">
+            {currentStageInfo.desc}
+          </span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
+          {STAGE_OPTIONS.map((opt) => (
+            <button
+              key={opt.id}
+              onClick={() => handleStageChange(opt.id)}
+              disabled={loading}
+              className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 ${
+                activeStage === opt.id
+                  ? 'bg-purple-600 text-white shadow-sm ring-2 ring-purple-300'
+                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
+              }`}
+            >
+              <span>{opt.icon}</span>
+              <span className="truncate">{opt.short}</span>
+            </button>
+          ))}
         </div>
       </div>
 
@@ -481,11 +596,56 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
             </div>
           </div>
 
+          {/* Stage-Specific Strategy Card */}
+          {conclusion.stage_advice && (
+            <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-3xl p-6 border border-purple-200/80 shadow-xs">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="p-1.5 rounded-xl bg-purple-600 text-white text-xs font-bold">🎯</span>
+                <h3 className="text-base font-black text-slate-900">
+                  {activeStage === 'sslc_10th'
+                    ? 'Recommended 11th/12th Academic Path & Strategy'
+                    : activeStage === 'puc_12th'
+                    ? 'Recommended College Degree & Entrance Target'
+                    : 'Personalized Academic & Career Strategy'}
+                </h3>
+              </div>
+
+              <div className="space-y-3 text-sm">
+                {conclusion.stage_advice.recommended_path && (
+                  <div className="bg-white p-4 rounded-2xl border border-purple-100 shadow-2xs">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-purple-700 block mb-1">
+                      {activeStage === 'sslc_10th' ? 'Recommended Stream / Diploma:' : 'Recommended Degree / Track:'}
+                    </span>
+                    <p className="font-bold text-slate-800">{conclusion.stage_advice.recommended_path}</p>
+                  </div>
+                )}
+
+                {conclusion.stage_advice.next_immediate_step && (
+                  <div className="bg-white p-4 rounded-2xl border border-purple-100 shadow-2xs">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-700 block mb-1">
+                      Immediate Next Academic Step:
+                    </span>
+                    <p className="text-slate-700 leading-relaxed">{conclusion.stage_advice.next_immediate_step}</p>
+                  </div>
+                )}
+
+                {conclusion.stage_advice.creative_balance && (
+                  <div className="bg-white p-4 rounded-2xl border border-purple-100 shadow-2xs">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 block mb-1">
+                      Nurturing Your Creative Talents:
+                    </span>
+                    <p className="text-slate-700 leading-relaxed">{conclusion.stage_advice.creative_balance}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Top Recommended Career Cards */}
           <div className="space-y-4">
             <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
               <Target className="w-5 h-5 text-purple-600" />
-              Top Recommended Career Paths
+              Top Long-Term Career Matches
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -546,13 +706,15 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
                   onRestartAssessment();
                 } else {
                   setConclusion(null);
+                  const resetMsg = getInitialMessageForStage(activeStage);
                   setMessages([
                     {
                       id: Date.now().toString(),
                       role: 'assistant',
-                      text: getInitialMessage(),
+                      text: resetMsg,
                     },
                   ]);
+                  setSuggestionChips(getInitialChipsForStage(activeStage));
                 }
               }}
               className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-4 py-2.5 rounded-xl transition-colors"
