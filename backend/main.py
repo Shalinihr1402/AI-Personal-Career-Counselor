@@ -198,15 +198,33 @@ def _ai_career_match(profile: dict):
                 limit=15,
             )
             candidate_careers = [
-                {"title": c["title"], "field": c.get("field", ""), "skills": c.get("key_skills", [])[:3]}
-                for c in candidates
+                {
+                    "baseline_rank": idx,
+                    "title": c["title"],
+                    "field": c.get("field", ""),
+                    "riasec_code": c.get("riasec_code", ""),
+                    "score": round(float(c.get("score", 0)), 3) if c.get("score") is not None else None,
+                    "key_skills": c.get("key_skills", []),
+                    "software_tools": c.get("software_tools", []),
+                    "day_to_day": c.get("day_to_day", ""),
+                }
+                for idx, c in enumerate(candidates, start=1)
             ]
 
         if not candidate_careers:
             from careers import CAREERS
             candidate_careers = [
-                {"title": c["title"], "field": c.get("field", ""), "skills": c.get("skills", [])[:3]}
-                for c in CAREERS[:20]
+                {
+                    "baseline_rank": idx,
+                    "title": c["title"],
+                    "field": c.get("field", ""),
+                    "riasec_code": c.get("code", ""),
+                    "score": None,
+                    "key_skills": c.get("skills", []),
+                    "software_tools": [],
+                    "day_to_day": c.get("summary", ""),
+                }
+                for idx, c in enumerate(CAREERS[:15], start=1)
             ]
 
         allowed_titles = {c["title"].lower(): c["title"] for c in candidate_careers}
@@ -318,6 +336,7 @@ def _ai_career_match(profile: dict):
                         d["salary_india"] = c_info.get("salary_india")
                         d["education"] = c_info.get("education")
                         d["software_tools"] = c_info.get("software_tools", [])
+                    d.pop("fit", None)
                     cleaned.append(d)
 
         return cleaned[:5] if len(cleaned) >= 3 else None

@@ -1,0 +1,376 @@
+{
+  "original_top_15": [
+    {
+      "baseline_rank": 1,
+      "title": "Poets, Lyricists and Creative Writers",
+      "field": "Arts, Design & Media",
+      "riasec_code": "AIE",
+      "score": 0.7549,
+      "key_skills": [
+        "Writing",
+        "Reading Comprehension",
+        "Speaking",
+        "Critical Thinking",
+        "WordPress"
+      ],
+      "day_to_day": "Create original written works, such as scripts, essays, prose, poetry or song lyrics, for publication or performance."
+    },
+    {
+      "baseline_rank": 2,
+      "title": "Musicians and Singers",
+      "field": "Arts, Design & Media",
+      "riasec_code": "AES",
+      "score": 0.75,
+      "key_skills": [
+        "Speaking",
+        "Active Listening",
+        "Monitoring",
+        "Reading Comprehension",
+        "SAP software"
+      ],
+      "day_to_day": "Play one or more musical instruments or sing."
+    },
+    {
+      "baseline_rank": 3,
+      "title": "Music Directors and Composers",
+      "field": "Arts, Design & Media",
+      "riasec_code": "AES",
+      "score": 0.7078,
+      "key_skills": [
+        "Active Listening",
+        "Speaking",
+        "Reading Comprehension",
+        "Critical Thinking",
+        "Microsoft Word"
+      ],
+      "day_to_day": "Conduct, direct, plan, and lead instrumental or vocal performances by musical artists or groups, such as orchestras, bands, choirs, and glee clubs; or create original works of music."
+    },
+    {
+      "baseline_rank": 4,
+      "title": "Editors",
+      "field": "Arts, Design & Media",
+      "riasec_code": "ACE",
+      "score": 0.6545,
+      "key_skills": [
+        "Reading Comprehension",
+        "Writing",
+        "Active Listening",
+        "Speaking",
+        "WordPress"
+      ],
+      "day_to_day": "Plan, coordinate, revise, or edit written material."
+    },
+    {
+      "baseline_rank": 5,
+      "title": "Graphic Designers",
+      "field": "Arts, Design & Media",
+      "riasec_code": "ACE",
+      "score": 0.6536,
+      "key_skills": [
+        "Active Listening",
+        "Speaking",
+        "Writing",
+        "Critical Thinking",
+        "WordPress"
+      ],
+      "day_to_day": "Design or create graphics to meet specific commercial or promotional needs, such as packaging, displays, or logos."
+    },
+    {
+      "baseline_rank": 6,
+      "title": "Actors",
+      "field": "Arts, Design & Media",
+      "riasec_code": "ASE",
+      "score": 0.6533,
+      "key_skills": [
+        "Reading Comprehension",
+        "Speaking",
+        "Active Listening",
+        "Critical Thinking",
+        "Zoom"
+      ],
+      "day_to_day": "Play parts in stage, television, radio, video, or film productions, or other settings for entertainment, information, or instruction."
+    },
+    {
+      "baseline_rank": 7,
+      "title": "Choreographers",
+      "field": "Arts, Design & Media",
+      "riasec_code": "ASE",
+      "score": 0.6343,
+      "key_skills": [
+        "Active Listening",
+        "Speaking",
+        "Monitoring",
+        "Learning Strategies",
+        "Salesforce software"
+      ],
+      "day_to_day": "Create new dance routines."
+    },
+    {
+      "baseline_rank": 8,
+      "title": "Self-Enrichment Teachers",
+      "field": "Education & Training",
+      "riasec_code": "SAE",
+      "score": 0.6185,
+      "key_skills": [
+        "Speaking",
+        "Active Listening",
+        "Learning Strategies",
+        "Reading Comprehension",
+        "Microsoft Word"
+      ],
+      "day_to_day": "Teach or instruct individuals or groups for the primary purpose of self-enrichment or recreation, rather than for an occupational objective, educational attainment, competition, or fitness."
+    },
+    {
+      "baseline_rank": 9,
+      "title": "Art, Drama, and Music Teachers, Postsecondary",
+      "field": "Education & Training",
+      "riasec_code": "SAI",
+      "score": 0.6182,
+      "key_skills": [
+        "Speaking",
+        "Learning Strategies",
+        "Reading Comprehension",
+        "Active Listening",
+        "PHP"
+      ],
+      "day_to_day": "Teach courses in drama, music, and the arts including fine and applied art, such as painting and sculpture, or design and crafts."
+    },
+    {
+      "baseline_rank": 10,
+      "title": "Writers and Authors",
+      "field": "Arts, Design & Media",
+      "riasec_code": "AEC",
+      "score": 0.6077,
+      "key_skills": [
+        "Writing",
+        "Reading Comprehension",
+        "Active Listening",
+        "Speaking",
+        "WordPress"
+      ],
+      "day_to_day": "Originate and prepare written material, such as scripts, stories, advertisements, and other material."
+    },
+    {
+      "baseline_rank": 11,
+      "title": "Talent Directors",
+      "field": "Arts, Design & Media",
+      "riasec_code": "EAS",
+      "score": 0.596,
+      "key_skills": [
+        "Active Listening",
+        "Speaking",
+        "Reading Comprehension",
+        "Critical Thinking",
+        "UNIX"
+      ],
+      "day_to_day": "Audition and interview performers to select most appropriate talent for parts in stage, television, radio, or motion picture productions."
+    },
+    {
+      "baseline_rank": 12,
+      "title": "Political Science Teachers, Postsecondary",
+      "field": "Education & Training",
+      "riasec_code": "SIA",
+      "score": 0.5916,
+      "key_skills": [
+        "Speaking",
+        "Reading Comprehension",
+        "Active Listening",
+        "Writing",
+        "R"
+      ],
+      "day_to_day": "Teach courses in political science, international affairs, and international relations."
+    },
+    {
+      "baseline_rank": 13,
+      "title": "Business Teachers, Postsecondary",
+      "field": "Education & Training",
+      "riasec_code": "SIE",
+      "score": 0.5908,
+      "key_skills": [
+        "Speaking",
+        "Reading Comprehension",
+        "Active Listening",
+        "Writing",
+        "SAS"
+      ],
+      "day_to_day": "Teach courses in business administration and management, such as accounting, finance, human resources, labor and industrial relations, marketing, and operations research."
+    },
+    {
+      "baseline_rank": 14,
+      "title": "Dancers",
+      "field": "Arts, Design & Media",
+      "riasec_code": "ARS",
+      "score": 0.5613,
+      "key_skills": [
+        "Active Listening",
+        "Critical Thinking",
+        "Speaking",
+        "Monitoring",
+        "Microsoft Outlook"
+      ],
+      "day_to_day": "Perform dances."
+    },
+    {
+      "baseline_rank": 15,
+      "title": "Art Directors",
+      "field": "Arts, Design & Media",
+      "riasec_code": "AEC",
+      "score": 0.5604,
+      "key_skills": [
+        "Active Listening",
+        "Speaking",
+        "Reading Comprehension",
+        "Critical Thinking",
+        "WordPress"
+      ],
+      "day_to_day": "Formulate design concepts and presentation approaches for visual productions and media, such as print, broadcasting, video, and film."
+    }
+  ],
+  "final_top_5": [
+    {
+      "title": "Poets, Lyricists and Creative Writers",
+      "why_it_fits": "The student loves creative writing and lyric creation, matching the career's focus on original written works and song lyrics.",
+      "day_to_day": "Create original written works, such as scripts, essays, prose, poetry or song lyrics, for publication or performance.",
+      "key_skills": [
+        "Writing",
+        "Critical Thinking",
+        "Speaking"
+      ],
+      "watch_outs": "Success often requires building a portfolio and may involve freelance contracts with irregular income.",
+      "baseline_rank": 1,
+      "reranking_reason": "Baseline ranking retained because the career directly aligns with the student's expressed interest in creative writing and lyricism.",
+      "slug": "poets-lyricists-and-creative-writers",
+      "field": "Arts, Design & Media",
+      "salary_india": {
+        "entry": "₹3.5 - 7 LPA",
+        "mid": "₹8 - 16 LPA",
+        "senior": "₹18 - 35 LPA"
+      },
+      "education": "Bachelor's Degree (B.Tech / B.Sc / B.Com / B.A)",
+      "software_tools": [
+        "WordPress",
+        "Microsoft Word",
+        "Microsoft PowerPoint",
+        "Microsoft Office software",
+        "Microsoft Excel",
+        "Facebook"
+      ]
+    },
+    {
+      "title": "Musicians and Singers",
+      "why_it_fits": "Singing and music composition are listed strengths, and the student’s primary interest is music performance.",
+      "day_to_day": "Play one or more musical instruments or sing.",
+      "key_skills": [
+        "Speaking",
+        "Active Listening",
+        "Monitoring"
+      ],
+      "watch_outs": "Highly competitive field; steady income may require additional roles such as teaching or session work.",
+      "baseline_rank": 2,
+      "reranking_reason": "Baseline ranking retained as the role matches the student's core artistic strengths and avoids repetitive paperwork.",
+      "slug": "musicians-and-singers",
+      "field": "Arts, Design & Media",
+      "salary_india": {
+        "entry": "₹3.5 - 7 LPA",
+        "mid": "₹8 - 16 LPA",
+        "senior": "₹18 - 35 LPA"
+      },
+      "education": "Bachelor's Degree (B.Tech / B.Sc / B.Com / B.A)",
+      "software_tools": [
+        "SAP software",
+        "Microsoft Word",
+        "Microsoft Office software",
+        "Microsoft Excel",
+        "Facebook",
+        "Acoustica Mixcraft"
+      ]
+    },
+    {
+      "title": "Music Directors and Composers",
+      "why_it_fits": "The student enjoys creating music and leading artistic expression, which aligns with directing performances and composing original works.",
+      "day_to_day": "Conduct, direct, plan, and lead instrumental or vocal performances by musical artists or groups, such as orchestras, bands, choirs, and glee clubs; or create original works of music.",
+      "key_skills": [
+        "Active Listening",
+        "Critical Thinking",
+        "Speaking"
+      ],
+      "watch_outs": "May involve administrative planning and coordination tasks that could include some paperwork.",
+      "baseline_rank": 3,
+      "reranking_reason": "Baseline ranking retained; the role expands on the student's music creation interest while still emphasizing creativity.",
+      "slug": "music-directors-and-composers",
+      "field": "Arts, Design & Media",
+      "salary_india": {
+        "entry": "₹3.5 - 7 LPA",
+        "mid": "₹8 - 16 LPA",
+        "senior": "₹18 - 35 LPA"
+      },
+      "education": "Bachelor's Degree (B.Tech / B.Sc / B.Com / B.A)",
+      "software_tools": [
+        "Microsoft Word",
+        "Microsoft PowerPoint",
+        "Microsoft Outlook",
+        "Microsoft Office software",
+        "Microsoft Excel",
+        "Anvil Studio"
+      ]
+    },
+    {
+      "title": "Actors",
+      "why_it_fits": "Performing arts is a stated interest, and acting offers a creative outlet for self‑expression without routine paperwork.",
+      "day_to_day": "Play parts in stage, television, radio, video, or film productions, or other settings for entertainment, information, or instruction.",
+      "key_skills": [
+        "Speaking",
+        "Active Listening",
+        "Critical Thinking"
+      ],
+      "watch_outs": "Career stability often depends on auditions and contracts, which can be unpredictable.",
+      "baseline_rank": 6,
+      "reranking_reason": "Promoted above baseline rank due to strong alignment with the student's performing‑arts interest and ASE RIASEC code.",
+      "slug": "actors",
+      "field": "Arts, Design & Media",
+      "salary_india": {
+        "entry": "₹3.5 - 7 LPA",
+        "mid": "₹8 - 16 LPA",
+        "senior": "₹18 - 35 LPA"
+      },
+      "education": "High School Diploma or Vocational Certificate",
+      "software_tools": [
+        "Zoom",
+        "TikTok",
+        "Microsoft Word",
+        "Microsoft PowerPoint",
+        "Microsoft Outlook",
+        "Microsoft Office software"
+      ]
+    },
+    {
+      "title": "Writers and Authors",
+      "why_it_fits": "The student's passion for creative writing and lyricism fits the creation of original written material such as stories and scripts.",
+      "day_to_day": "Originate and prepare written material, such as scripts, stories, advertisements, and other material.",
+      "key_skills": [
+        "Writing",
+        "Speaking",
+        "Active Listening"
+      ],
+      "watch_outs": "May require self‑discipline to meet deadlines and could involve editorial revisions that feel repetitive.",
+      "baseline_rank": 10,
+      "reranking_reason": "Elevated from baseline because the career matches the student's creative writing interest despite a lower original rank.",
+      "slug": "writers-and-authors",
+      "field": "Arts, Design & Media",
+      "salary_india": {
+        "entry": "₹3.5 - 7 LPA",
+        "mid": "₹8 - 16 LPA",
+        "senior": "₹18 - 35 LPA"
+      },
+      "education": "Bachelor's Degree (B.Tech / B.Sc / B.Com / B.A)",
+      "software_tools": [
+        "WordPress",
+        "TikTok",
+        "Slack",
+        "PHP",
+        "MySQL",
+        "Microsoft Word"
+      ]
+    }
+  ]
+}

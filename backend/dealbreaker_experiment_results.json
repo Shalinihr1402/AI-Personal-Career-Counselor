@@ -1,0 +1,484 @@
+{
+  "profile_a": {
+    "retrieval_top_15": [
+      {
+        "baseline_rank": 1,
+        "title": "Musicians and Singers",
+        "score": 0.75,
+        "riasec": "AES"
+      },
+      {
+        "baseline_rank": 2,
+        "title": "Poets, Lyricists and Creative Writers",
+        "score": 0.7429,
+        "riasec": "AIE"
+      },
+      {
+        "baseline_rank": 3,
+        "title": "Music Directors and Composers",
+        "score": 0.6962,
+        "riasec": "AES"
+      },
+      {
+        "baseline_rank": 4,
+        "title": "Graphic Designers",
+        "score": 0.6621,
+        "riasec": "ACE"
+      },
+      {
+        "baseline_rank": 5,
+        "title": "Actors",
+        "score": 0.6522,
+        "riasec": "ASE"
+      },
+      {
+        "baseline_rank": 6,
+        "title": "Editors",
+        "score": 0.6452,
+        "riasec": "ACE"
+      },
+      {
+        "baseline_rank": 7,
+        "title": "Choreographers",
+        "score": 0.642,
+        "riasec": "ASE"
+      },
+      {
+        "baseline_rank": 8,
+        "title": "Art, Drama, and Music Teachers, Postsecondary",
+        "score": 0.6221,
+        "riasec": "SAI"
+      },
+      {
+        "baseline_rank": 9,
+        "title": "Self-Enrichment Teachers",
+        "score": 0.619,
+        "riasec": "SAE"
+      },
+      {
+        "baseline_rank": 10,
+        "title": "Talent Directors",
+        "score": 0.6035,
+        "riasec": "EAS"
+      },
+      {
+        "baseline_rank": 11,
+        "title": "Political Science Teachers, Postsecondary",
+        "score": 0.5984,
+        "riasec": "SIA"
+      },
+      {
+        "baseline_rank": 12,
+        "title": "Business Teachers, Postsecondary",
+        "score": 0.594,
+        "riasec": "SIE"
+      },
+      {
+        "baseline_rank": 13,
+        "title": "Writers and Authors",
+        "score": 0.5903,
+        "riasec": "AEC"
+      },
+      {
+        "baseline_rank": 14,
+        "title": "Dancers",
+        "score": 0.5712,
+        "riasec": "ARS"
+      },
+      {
+        "baseline_rank": 15,
+        "title": "English Language and Literature Teachers, Postsecondary",
+        "score": 0.5515,
+        "riasec": "SIA"
+      }
+    ],
+    "final_top_5": [
+      {
+        "title": "Musicians and Singers",
+        "why_it_fits": "Student loves singing and music creation, matching the artistic focus of this role.",
+        "day_to_day": "Play one or more musical instruments or sing.",
+        "key_skills": [
+          "Speaking",
+          "Active Listening",
+          "Reading Comprehension"
+        ],
+        "watch_outs": "Career often requires building a network and may involve irregular income early on.",
+        "baseline_rank": 1,
+        "reranking_reason": "Baseline ranking retained because it aligns directly with student's music interests and strengths.",
+        "slug": "musicians-and-singers",
+        "field": "Arts, Design & Media",
+        "salary_india": {
+          "entry": "₹3.5 - 7 LPA",
+          "mid": "₹8 - 16 LPA",
+          "senior": "₹18 - 35 LPA"
+        },
+        "education": "Bachelor's Degree (B.Tech / B.Sc / B.Com / B.A)",
+        "software_tools": [
+          "SAP software",
+          "Microsoft Word",
+          "Microsoft Office software",
+          "Microsoft Excel",
+          "Facebook",
+          "Acoustica Mixcraft"
+        ]
+      },
+      {
+        "title": "Poets, Lyricists and Creative Writers",
+        "why_it_fits": "Student enjoys creative writing and lyric creation, aligning with this career.",
+        "day_to_day": "Create original written works, such as scripts, essays, prose, poetry or song lyrics, for publication or performance.",
+        "key_skills": [
+          "Writing",
+          "Reading Comprehension",
+          "Critical Thinking"
+        ],
+        "watch_outs": "Success may depend on publishing opportunities and may require self‑promotion.",
+        "baseline_rank": 2,
+        "reranking_reason": "Baseline ranking retained; strong match to creative writing interest.",
+        "slug": "poets-lyricists-and-creative-writers",
+        "field": "Arts, Design & Media",
+        "salary_india": {
+          "entry": "₹3.5 - 7 LPA",
+          "mid": "₹8 - 16 LPA",
+          "senior": "₹18 - 35 LPA"
+        },
+        "education": "Bachelor's Degree (B.Tech / B.Sc / B.Com / B.A)",
+        "software_tools": [
+          "WordPress",
+          "Microsoft Word",
+          "Microsoft PowerPoint",
+          "Microsoft Office software",
+          "Microsoft Excel",
+          "Facebook"
+        ]
+      },
+      {
+        "title": "Music Directors and Composers",
+        "why_it_fits": "Student wants to compose music and lead performances, fitting this role.",
+        "day_to_day": "Conduct, direct, plan, and lead instrumental or vocal performances by musical artists or groups, such as orchestras, bands, choirs, and glee clubs; or create original works of music.",
+        "key_skills": [
+          "Active Listening",
+          "Critical Thinking",
+          "Speaking"
+        ],
+        "watch_outs": "Often requires advanced training or formal qualifications and experience in directing ensembles.",
+        "baseline_rank": 3,
+        "reranking_reason": "Baseline ranking retained; aligns with music composition and leadership interests.",
+        "slug": "music-directors-and-composers",
+        "field": "Arts, Design & Media",
+        "salary_india": {
+          "entry": "₹3.5 - 7 LPA",
+          "mid": "₹8 - 16 LPA",
+          "senior": "₹18 - 35 LPA"
+        },
+        "education": "Bachelor's Degree (B.Tech / B.Sc / B.Com / B.A)",
+        "software_tools": [
+          "Microsoft Word",
+          "Microsoft PowerPoint",
+          "Microsoft Outlook",
+          "Microsoft Office software",
+          "Microsoft Excel",
+          "Anvil Studio"
+        ]
+      },
+      {
+        "title": "Actors",
+        "why_it_fits": "Interest in performing arts matches acting, which involves expressing emotion on stage or screen.",
+        "day_to_day": "Play parts in stage, television, radio, video, or film productions, or other settings for entertainment, information, or instruction.",
+        "key_skills": [
+          "Reading Comprehension",
+          "Speaking",
+          "Active Listening"
+        ],
+        "watch_outs": "Highly competitive field with variable job stability.",
+        "baseline_rank": 5,
+        "reranking_reason": "Baseline ranking retained; fits performing‑arts interest.",
+        "slug": "actors",
+        "field": "Arts, Design & Media",
+        "salary_india": {
+          "entry": "₹3.5 - 7 LPA",
+          "mid": "₹8 - 16 LPA",
+          "senior": "₹18 - 35 LPA"
+        },
+        "education": "High School Diploma or Vocational Certificate",
+        "software_tools": [
+          "Zoom",
+          "TikTok",
+          "Microsoft Word",
+          "Microsoft PowerPoint",
+          "Microsoft Outlook",
+          "Microsoft Office software"
+        ]
+      },
+      {
+        "title": "Writers and Authors",
+        "why_it_fits": "Student's creative writing and lyric skills translate to authoring original written material.",
+        "day_to_day": "Originate and prepare written material, such as scripts, stories, advertisements, and other material.",
+        "key_skills": [
+          "Writing",
+          "Reading Comprehension",
+          "Active Listening"
+        ],
+        "watch_outs": "May require building a portfolio and facing uncertain income streams.",
+        "baseline_rank": 13,
+        "reranking_reason": "Promoted above baseline rank 4‑6 because the student's explicit creative‑writing interest outweighs less‑relevant design or teaching roles.",
+        "slug": "writers-and-authors",
+        "field": "Arts, Design & Media",
+        "salary_india": {
+          "entry": "₹3.5 - 7 LPA",
+          "mid": "₹8 - 16 LPA",
+          "senior": "₹18 - 35 LPA"
+        },
+        "education": "Bachelor's Degree (B.Tech / B.Sc / B.Com / B.A)",
+        "software_tools": [
+          "WordPress",
+          "TikTok",
+          "Slack",
+          "PHP",
+          "MySQL",
+          "Microsoft Word"
+        ]
+      }
+    ]
+  },
+  "profile_b": {
+    "retrieval_top_15": [
+      {
+        "baseline_rank": 1,
+        "title": "Poets, Lyricists and Creative Writers",
+        "score": 0.7549,
+        "riasec": "AIE"
+      },
+      {
+        "baseline_rank": 2,
+        "title": "Musicians and Singers",
+        "score": 0.75,
+        "riasec": "AES"
+      },
+      {
+        "baseline_rank": 3,
+        "title": "Music Directors and Composers",
+        "score": 0.7078,
+        "riasec": "AES"
+      },
+      {
+        "baseline_rank": 4,
+        "title": "Editors",
+        "score": 0.6545,
+        "riasec": "ACE"
+      },
+      {
+        "baseline_rank": 5,
+        "title": "Graphic Designers",
+        "score": 0.6536,
+        "riasec": "ACE"
+      },
+      {
+        "baseline_rank": 6,
+        "title": "Actors",
+        "score": 0.6533,
+        "riasec": "ASE"
+      },
+      {
+        "baseline_rank": 7,
+        "title": "Choreographers",
+        "score": 0.6343,
+        "riasec": "ASE"
+      },
+      {
+        "baseline_rank": 8,
+        "title": "Self-Enrichment Teachers",
+        "score": 0.6185,
+        "riasec": "SAE"
+      },
+      {
+        "baseline_rank": 9,
+        "title": "Art, Drama, and Music Teachers, Postsecondary",
+        "score": 0.6182,
+        "riasec": "SAI"
+      },
+      {
+        "baseline_rank": 10,
+        "title": "Writers and Authors",
+        "score": 0.6077,
+        "riasec": "AEC"
+      },
+      {
+        "baseline_rank": 11,
+        "title": "Talent Directors",
+        "score": 0.596,
+        "riasec": "EAS"
+      },
+      {
+        "baseline_rank": 12,
+        "title": "Political Science Teachers, Postsecondary",
+        "score": 0.5916,
+        "riasec": "SIA"
+      },
+      {
+        "baseline_rank": 13,
+        "title": "Business Teachers, Postsecondary",
+        "score": 0.5908,
+        "riasec": "SIE"
+      },
+      {
+        "baseline_rank": 14,
+        "title": "Dancers",
+        "score": 0.5613,
+        "riasec": "ARS"
+      },
+      {
+        "baseline_rank": 15,
+        "title": "Art Directors",
+        "score": 0.5604,
+        "riasec": "AEC"
+      }
+    ],
+    "final_top_5": [
+      {
+        "title": "Musicians and Singers",
+        "why_it_fits": "The student explicitly enjoys singing and music composition, and values artistic self‑expression, making a performing‑music role a direct fit.",
+        "day_to_day": "Play one or more musical instruments or sing.",
+        "key_skills": [
+          "Speaking",
+          "Active Listening",
+          "Monitoring"
+        ],
+        "watch_outs": "Income can be irregular and may require networking or self‑promotion beyond pure performance.",
+        "baseline_rank": 2,
+        "reranking_reason": "Baseline ranking retained as it already reflects the strongest alignment with the student's core interests.",
+        "slug": "musicians-and-singers",
+        "field": "Arts, Design & Media",
+        "salary_india": {
+          "entry": "₹3.5 - 7 LPA",
+          "mid": "₹8 - 16 LPA",
+          "senior": "₹18 - 35 LPA"
+        },
+        "education": "Bachelor's Degree (B.Tech / B.Sc / B.Com / B.A)",
+        "software_tools": [
+          "SAP software",
+          "Microsoft Word",
+          "Microsoft Office software",
+          "Microsoft Excel",
+          "Facebook",
+          "Acoustica Mixcraft"
+        ]
+      },
+      {
+        "title": "Music Directors and Composers",
+        "why_it_fits": "The student creates music and seeks creative freedom, which aligns with directing, planning, and composing original works.",
+        "day_to_day": "Conduct, direct, plan, and lead instrumental or vocal performances by musical artists or groups, such as orchestras, bands, choirs, and glee clubs; or create original works of music.",
+        "key_skills": [
+          "Active Listening",
+          "Critical Thinking",
+          "Speaking"
+        ],
+        "watch_outs": "The role often involves leadership duties and administrative tasks like score preparation that may feel repetitive.",
+        "baseline_rank": 3,
+        "reranking_reason": "Baseline ranking retained because it matches both the student's musical skills and artistic values.",
+        "slug": "music-directors-and-composers",
+        "field": "Arts, Design & Media",
+        "salary_india": {
+          "entry": "₹3.5 - 7 LPA",
+          "mid": "₹8 - 16 LPA",
+          "senior": "₹18 - 35 LPA"
+        },
+        "education": "Bachelor's Degree (B.Tech / B.Sc / B.Com / B.A)",
+        "software_tools": [
+          "Microsoft Word",
+          "Microsoft PowerPoint",
+          "Microsoft Outlook",
+          "Microsoft Office software",
+          "Microsoft Excel",
+          "Anvil Studio"
+        ]
+      },
+      {
+        "title": "Actors",
+        "why_it_fits": "Interest in performing arts and self‑expression matches the acting profession’s focus on embodying roles for stage or screen.",
+        "day_to_day": "Play parts in stage, television, radio, video, or film productions, or other settings for entertainment, information, or instruction.",
+        "key_skills": [
+          "Speaking",
+          "Active Listening",
+          "Critical Thinking"
+        ],
+        "watch_outs": "Success can depend on auditions, irregular work schedules, and potential typecasting.",
+        "baseline_rank": 6,
+        "reranking_reason": "Promoted relative to baseline due to strong alignment with the student's performing‑arts interest and artistic values.",
+        "slug": "actors",
+        "field": "Arts, Design & Media",
+        "salary_india": {
+          "entry": "₹3.5 - 7 LPA",
+          "mid": "₹8 - 16 LPA",
+          "senior": "₹18 - 35 LPA"
+        },
+        "education": "High School Diploma or Vocational Certificate",
+        "software_tools": [
+          "Zoom",
+          "TikTok",
+          "Microsoft Word",
+          "Microsoft PowerPoint",
+          "Microsoft Outlook",
+          "Microsoft Office software"
+        ]
+      },
+      {
+        "title": "Poets, Lyricists and Creative Writers",
+        "why_it_fits": "The student enjoys creative writing and lyric creation, linking directly to producing original written works for performance or publication.",
+        "day_to_day": "Create original written works, such as scripts, essays, prose, poetry or song lyrics, for publication or performance.",
+        "key_skills": [
+          "Writing",
+          "Critical Thinking",
+          "Reading Comprehension"
+        ],
+        "watch_outs": "Work can involve solitary drafting and repetitive editing, which may conflict with the dislike for monotonous paperwork.",
+        "baseline_rank": 1,
+        "reranking_reason": "Demoted from #1 because, while writing fits, the student's primary passion is music performance; writing roles may involve more repetitive tasks.",
+        "slug": "poets-lyricists-and-creative-writers",
+        "field": "Arts, Design & Media",
+        "salary_india": {
+          "entry": "₹3.5 - 7 LPA",
+          "mid": "₹8 - 16 LPA",
+          "senior": "₹18 - 35 LPA"
+        },
+        "education": "Bachelor's Degree (B.Tech / B.Sc / B.Com / B.A)",
+        "software_tools": [
+          "WordPress",
+          "Microsoft Word",
+          "Microsoft PowerPoint",
+          "Microsoft Office software",
+          "Microsoft Excel",
+          "Facebook"
+        ]
+      },
+      {
+        "title": "Writers and Authors",
+        "why_it_fits": "Creative writing and lyric composition are central to the student's strengths, and this role emphasizes original content creation.",
+        "day_to_day": "Originate and prepare written material, such as scripts, stories, advertisements, and other material.",
+        "key_skills": [
+          "Writing",
+          "Reading Comprehension",
+          "Active Listening"
+        ],
+        "watch_outs": "Deadlines and editorial revisions can introduce repetitive paperwork that the student wishes to avoid.",
+        "baseline_rank": 10,
+        "reranking_reason": "Promoted from baseline rank 10 due to clear relevance to the student's creative writing interests and lyrical abilities.",
+        "slug": "writers-and-authors",
+        "field": "Arts, Design & Media",
+        "salary_india": {
+          "entry": "₹3.5 - 7 LPA",
+          "mid": "₹8 - 16 LPA",
+          "senior": "₹18 - 35 LPA"
+        },
+        "education": "Bachelor's Degree (B.Tech / B.Sc / B.Com / B.A)",
+        "software_tools": [
+          "WordPress",
+          "TikTok",
+          "Slack",
+          "PHP",
+          "MySQL",
+          "Microsoft Word"
+        ]
+      }
+    ]
+  }
+}
