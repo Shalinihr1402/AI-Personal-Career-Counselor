@@ -184,20 +184,39 @@ def build_onet_dataset():
                 pass
 
     # 3. Parse Software Skills & Tools
-    software_by_soc: dict[str, list[str]] = {}
+    demand_software_by_soc: dict[str, list[str]] = {}
+    hot_software_by_soc: dict[str, list[str]] = {}
+    other_software_by_soc: dict[str, list[str]] = {}
+
     for row in software_rows:
         soc = row.get("O*NET-SOC Code", "").strip()
         example = (row.get("Workplace Example") or row.get("Example") or "").strip()
         is_hot = row.get("Hot Technology", "N") == "Y"
         is_demand = row.get("In Demand", "N") == "Y"
         if soc and example:
-            if soc not in software_by_soc:
-                software_by_soc[soc] = []
-            # Prioritize hot / in demand technologies
-            if (is_hot or is_demand) and example not in software_by_soc[soc]:
-                software_by_soc[soc].insert(0, example)
-            elif example not in software_by_soc[soc] and len(software_by_soc[soc]) < 10:
-                software_by_soc[soc].append(example)
+            if is_demand:
+                if soc not in demand_software_by_soc:
+                    demand_software_by_soc[soc] = []
+                if example not in demand_software_by_soc[soc]:
+                    demand_software_by_soc[soc].append(example)
+            elif is_hot:
+                if soc not in hot_software_by_soc:
+                    hot_software_by_soc[soc] = []
+                if example not in hot_software_by_soc[soc]:
+                    hot_software_by_soc[soc].append(example)
+            else:
+                if soc not in other_software_by_soc:
+                    other_software_by_soc[soc] = []
+                if example not in other_software_by_soc[soc]:
+                    other_software_by_soc[soc].append(example)
+
+    software_by_soc: dict[str, list[str]] = {}
+    all_software_socs = set(list(demand_software_by_soc.keys()) + list(hot_software_by_soc.keys()) + list(other_software_by_soc.keys()))
+    for soc in all_software_socs:
+        dem = demand_software_by_soc.get(soc, [])
+        hot = [x for x in hot_software_by_soc.get(soc, []) if x not in dem]
+        others = [x for x in other_software_by_soc.get(soc, []) if x not in dem and x not in hot]
+        software_by_soc[soc] = (dem + hot + others)[:10]
 
     # 4. Parse Job Zones (Education / Prep level)
     job_zone_by_soc: dict[str, str] = {}
@@ -252,9 +271,7 @@ def build_onet_dataset():
         if field in ["Technology & Computer Science", "Data & AI"] and top_software:
             combined_skills = top_software[:3] + top_workplace_skills[:3]
         else:
-            combined_skills = top_workplace_skills[:4]
-            if top_software:
-                combined_skills += top_software[:2]
+            combined_skills = top_workplace_skills[:5]
 
         if not combined_skills:
             combined_skills = ["Critical Thinking", "Complex Problem Solving", "Active Listening", "Communication"]

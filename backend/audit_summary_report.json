@@ -1,0 +1,165 @@
+{
+  "total_careers": 1016,
+  "duplicate_socs": {},
+  "duplicate_slugs": {},
+  "overall_tool_counts": {
+    "SAP software": 179,
+    "Microsoft Word": 481,
+    "Microsoft Office software": 79,
+    "Facebook": 9,
+    "Microsoft Excel": 52
+  },
+  "field_tool_counts": {
+    "Business, Management & Finance": {
+      "SAP software": 28,
+      "Microsoft Word": 30
+    },
+    "Engineering & Architecture": {
+      "Microsoft Word": 8,
+      "SAP software": 15,
+      "Microsoft Office software": 1
+    },
+    "Physical & Life Sciences": {
+      "SAP software": 11,
+      "Microsoft Word": 21
+    },
+    "Community & Social Services": {
+      "Microsoft Word": 14
+    },
+    "Law & Public Policy": {
+      "SAP software": 3,
+      "Microsoft Word": 5
+    },
+    "Education & Training": {
+      "Microsoft Word": 40,
+      "SAP software": 3,
+      "Microsoft Office software": 2
+    },
+    "Arts, Design & Media": {
+      "Facebook": 1,
+      "Microsoft Word": 19,
+      "SAP software": 2,
+      "Microsoft Office software": 2
+    },
+    "Healthcare & Medicine": {
+      "Microsoft Word": 77,
+      "Microsoft Office software": 19,
+      "Microsoft Excel": 11,
+      "Facebook": 2,
+      "SAP software": 6
+    },
+    "Protective & Security Services": {
+      "Microsoft Word": 20,
+      "SAP software": 2
+    },
+    "Hospitality & Food Services": {
+      "Microsoft Word": 6,
+      "Microsoft Excel": 3,
+      "Microsoft Office software": 4,
+      "Facebook": 3
+    },
+    "Facilities & Operations": {
+      "SAP software": 1,
+      "Microsoft Word": 6,
+      "Microsoft Excel": 1,
+      "Microsoft Office software": 1
+    },
+    "Personal Care & Services": {
+      "Microsoft Word": 25,
+      "SAP software": 1,
+      "Microsoft Office software": 9,
+      "Microsoft Excel": 2,
+      "Facebook": 1
+    },
+    "Sales & Business Development": {
+      "SAP software": 3,
+      "Microsoft Word": 7,
+      "Microsoft Excel": 2,
+      "Microsoft Office software": 1
+    },
+    "Operations & Administration": {
+      "SAP software": 19,
+      "Microsoft Word": 29
+    },
+    "Agriculture & Natural Resources": {
+      "Microsoft Word": 10,
+      "Microsoft Excel": 2,
+      "Microsoft Office software": 2,
+      "SAP software": 2
+    },
+    "Construction & Trades": {
+      "SAP software": 12,
+      "Microsoft Word": 31,
+      "Microsoft Office software": 13,
+      "Facebook": 2,
+      "Microsoft Excel": 10
+    },
+    "Installation & Maintenance": {
+      "SAP software": 16,
+      "Microsoft Word": 35,
+      "Microsoft Office software": 5,
+      "Microsoft Excel": 2
+    },
+    "Manufacturing & Production": {
+      "SAP software": 38,
+      "Microsoft Word": 75,
+      "Microsoft Excel": 16,
+      "Microsoft Office software": 12
+    },
+    "Transportation & Logistics": {
+      "Microsoft Word": 23,
+      "SAP software": 17,
+      "Microsoft Office software": 8,
+      "Microsoft Excel": 3
+    }
+  },
+  "musician_record": {
+    "soc_code": "27-2042.00",
+    "title": "Musicians and Singers",
+    "slug": "musicians-and-singers",
+    "field": "Arts, Design & Media",
+    "education": "Bachelor's Degree (B.Tech / B.Sc / B.Com / B.A)",
+    "job_zone": 4,
+    "description": "Play one or more musical instruments or sing. May perform on stage, for broadcasting, or for sound or video recording.",
+    "riasec_code": "AES",
+    "riasec_scores": {
+      "R": 2.87,
+      "I": 1.53,
+      "A": 6.66,
+      "S": 3.41,
+      "E": 3.42,
+      "C": 2.17
+    },
+    "skills": [
+      "Speaking",
+      "Active Listening",
+      "Monitoring",
+      "Reading Comprehension",
+      "SAP software",
+      "Microsoft Word"
+    ],
+    "software_tools": [
+      "SAP software",
+      "Microsoft Word",
+      "Microsoft Office software",
+      "Microsoft Excel",
+      "Facebook",
+      "Acoustica Mixcraft"
+    ],
+    "salary_inr": {
+      "fresher": "₹3.5 - 7 LPA",
+      "mid": "₹8 - 16 LPA",
+      "senior": "₹18 - 35 LPA"
+    },
+    "day_to_day": "Play one or more musical instruments or sing.",
+    "pros": [
+      "Strong career opportunities and mobility in Arts, Design & Media",
+      "Intellectually engaging day-to-day problem solving",
+      "Clear pathways to senior and leadership positions"
+    ],
+    "cons": [
+      "Requires continuous upskilling as industry practices evolve",
+      "Can involve demanding project deadlines and stakeholder management"
+    ]
+  }
+}

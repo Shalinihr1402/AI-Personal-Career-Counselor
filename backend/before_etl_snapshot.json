@@ -1,0 +1,162 @@
+{
+  "11-3051.00": {
+    "title": "Industrial Production Managers",
+    "field": "Business, Management & Finance",
+    "skills": [
+      "Speaking",
+      "Critical Thinking",
+      "Monitoring",
+      "Reading Comprehension",
+      "SAP software",
+      "Oracle PeopleSoft"
+    ],
+    "software_tools": [
+      "SAP software",
+      "Oracle PeopleSoft",
+      "Microsoft Word",
+      "Microsoft Project",
+      "Microsoft PowerPoint",
+      "Microsoft Outlook"
+    ]
+  },
+  "11-3051.01": {
+    "title": "Quality Control Systems Managers",
+    "field": "Business, Management & Finance",
+    "skills": [
+      "Reading Comprehension",
+      "Active Listening",
+      "Writing",
+      "Speaking",
+      "Structured query language SQL",
+      "Selenium"
+    ],
+    "software_tools": [
+      "Structured query language SQL",
+      "Selenium",
+      "SAP software",
+      "Oracle Java",
+      "Microsoft Word",
+      "Microsoft Visio"
+    ]
+  },
+  "15-1252.00": {
+    "title": "Software Developers",
+    "field": "Technology & Computer Science",
+    "skills": [
+      "Zoom",
+      "Workday software",
+      "WordPress",
+      "Critical Thinking",
+      "Reading Comprehension",
+      "Active Learning"
+    ],
+    "software_tools": [
+      "Zoom",
+      "Workday software",
+      "WordPress",
+      "Vue.js",
+      "UNIX Shell",
+      "UNIX"
+    ]
+  },
+  "15-2051.00": {
+    "title": "Data Scientists",
+    "field": "Data & AI",
+    "skills": [
+      "UNIX",
+      "The MathWorks MATLAB",
+      "Teradata Database",
+      "Mathematics",
+      "Critical Thinking",
+      "Reading Comprehension"
+    ],
+    "software_tools": [
+      "UNIX",
+      "The MathWorks MATLAB",
+      "Teradata Database",
+      "TensorFlow",
+      "Tableau",
+      "Structured query language SQL"
+    ]
+  },
+  "25-2012.00": {
+    "title": "Kindergarten Teachers, Except Special Education",
+    "field": "Education & Training",
+    "skills": [
+      "Active Listening",
+      "Speaking",
+      "Learning Strategies",
+      "Monitoring",
+      "Microsoft Word",
+      "Microsoft PowerPoint"
+    ],
+    "software_tools": [
+      "Microsoft Word",
+      "Microsoft PowerPoint",
+      "Microsoft Outlook",
+      "Microsoft Office software",
+      "Microsoft Excel",
+      "Bloomz"
+    ]
+  },
+  "27-1022.00": {
+    "title": "Fashion Designers",
+    "field": "Arts, Design & Media",
+    "skills": [
+      "Active Listening",
+      "Speaking",
+      "Critical Thinking",
+      "Active Learning",
+      "Trimble SketchUp Pro",
+      "SAS"
+    ],
+    "software_tools": [
+      "Trimble SketchUp Pro",
+      "SAS",
+      "Microsoft Word",
+      "Microsoft PowerPoint",
+      "Microsoft Outlook",
+      "Microsoft Office software"
+    ]
+  },
+  "27-2042.00": {
+    "title": "Musicians and Singers",
+    "field": "Arts, Design & Media",
+    "skills": [
+      "Speaking",
+      "Active Listening",
+      "Monitoring",
+      "Reading Comprehension",
+      "SAP software",
+      "Microsoft Word"
+    ],
+    "software_tools": [
+      "SAP software",
+      "Microsoft Word",
+      "Microsoft Office software",
+      "Microsoft Excel",
+      "Facebook",
+      "Acoustica Mixcraft"
+    ]
+  },
+  "29-1141.00": {
+    "title": "Registered Nurses",
+    "field": "Healthcare & Medicine",
+    "skills": [
+      "Active Listening",
+      "Speaking",
+      "Critical Thinking",
+      "Reading Comprehension",
+      "Microsoft Word",
+      "Microsoft Windows"
+    ],
+    "software_tools": [
+      "Microsoft Word",
+      "Microsoft Windows",
+      "Microsoft SharePoint",
+      "Microsoft Project",
+      "Microsoft PowerPoint",
+      "Microsoft Outlook"
+    ]
+  }
+}

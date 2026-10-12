@@ -16,8 +16,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Structured query language SQL",
-      "SAP software"
+      "Active Listening"
     ]
   },
   {
@@ -37,8 +36,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "Tableau",
-      "SAP software"
+      "Speaking"
     ]
   },
   {
@@ -58,8 +56,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Yardi software",
-      "The MathWorks MATLAB"
+      "Critical Thinking"
     ]
   },
   {
@@ -75,8 +72,10 @@
       "senior": "₹28 - 50+ LPA"
     },
     "skills": [
-      "Structured query language SQL",
-      "Microsoft Word"
+      "Critical Thinking",
+      "Complex Problem Solving",
+      "Active Listening",
+      "Communication"
     ]
   },
   {
@@ -96,8 +95,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "WordPress",
-      "Tableau"
+      "Writing"
     ]
   },
   {
@@ -117,8 +115,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Yardi software",
-      "WordPress"
+      "Active Learning"
     ]
   },
   {
@@ -138,8 +135,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Zoom",
-      "Yardi software"
+      "Monitoring"
     ]
   },
   {
@@ -159,8 +155,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "Zoom",
-      "Yardi software"
+      "Critical Thinking"
     ]
   },
   {
@@ -180,8 +175,7 @@
       "Critical Thinking",
       "Active Listening",
       "Reading Comprehension",
-      "Yardi software",
-      "Teradata Database"
+      "Writing"
     ]
   },
   {
@@ -201,8 +195,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "Yardi software",
-      "Teradata Database"
+      "Critical Thinking"
     ]
   },
   {
@@ -222,8 +215,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "Yardi software",
-      "Teradata Database"
+      "Monitoring"
     ]
   },
   {
@@ -243,8 +235,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Oracle PeopleSoft"
+      "Monitoring"
     ]
   },
   {
@@ -264,8 +255,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Monitoring"
     ]
   },
   {
@@ -285,8 +275,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Yardi software",
-      "Workday software"
+      "Writing"
     ]
   },
   {
@@ -306,8 +295,7 @@
       "Active Listening",
       "Speaking",
       "Mathematics",
-      "Yardi software",
-      "Structured query language SQL"
+      "Critical Thinking"
     ]
   },
   {
@@ -327,8 +315,7 @@
       "Active Listening",
       "Critical Thinking",
       "Speaking",
-      "Tableau",
-      "Structured query language SQL"
+      "Active Learning"
     ]
   },
   {
@@ -348,8 +335,7 @@
       "Critical Thinking",
       "Monitoring",
       "Reading Comprehension",
-      "SAP software",
-      "Oracle PeopleSoft"
+      "Active Listening"
     ]
   },
   {
@@ -369,8 +355,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Structured query language SQL",
-      "Selenium"
+      "Monitoring"
     ]
   },
   {
@@ -390,8 +375,7 @@
       "Reading Comprehension",
       "Speaking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Active Listening"
     ]
   },
   {
@@ -411,8 +395,7 @@
       "Critical Thinking",
       "Active Listening",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Speaking"
     ]
   },
   {
@@ -432,8 +415,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -453,8 +435,7 @@
       "Speaking",
       "Reading Comprehension",
       "Monitoring",
-      "SAP software",
-      "Oracle Database"
+      "Critical Thinking"
     ]
   },
   {
@@ -474,8 +455,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "SAP software",
-      "Purchasing software"
+      "Monitoring"
     ]
   },
   {
@@ -495,8 +475,7 @@
       "Active Listening",
       "Monitoring",
       "Writing",
-      "Warehouse management system WMS",
-      "Structured query language SQL"
+      "Speaking"
     ]
   },
   {
@@ -516,8 +495,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Warehouse management system WMS",
-      "Structured query language SQL"
+      "Writing"
     ]
   },
   {
@@ -537,8 +515,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Workday software",
-      "Structured query language SQL"
+      "Critical Thinking"
     ]
   },
   {
@@ -558,8 +535,7 @@
       "Reading Comprehension",
       "Speaking",
       "Writing",
-      "Workday software",
-      "SAP software"
+      "Critical Thinking"
     ]
   },
   {
@@ -579,8 +555,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Oracle PeopleSoft",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -600,8 +575,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -621,8 +595,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Speaking",
-      "Yardi software",
-      "Trimble SketchUp Pro"
+      "Active Learning"
     ]
   },
   {
@@ -642,8 +615,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -663,8 +635,7 @@
       "Learning Strategies",
       "Reading Comprehension",
       "Speaking",
-      "The MathWorks MATLAB",
-      "Student information systems SIS software"
+      "Writing"
     ]
   },
   {
@@ -684,8 +655,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "Student information systems SIS software",
-      "SAS"
+      "Speaking"
     ]
   },
   {
@@ -724,8 +694,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "UNIX",
-      "Trimble SketchUp Pro"
+      "Mathematics"
     ]
   },
   {
@@ -745,8 +714,7 @@
       "Writing",
       "Speaking",
       "Critical Thinking",
-      "UNIX",
-      "SAP software"
+      "Active Listening"
     ]
   },
   {
@@ -766,8 +734,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Project"
+      "Critical Thinking"
     ]
   },
   {
@@ -787,8 +754,7 @@
       "Speaking",
       "Monitoring",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -808,8 +774,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Slack",
-      "SAS"
+      "Monitoring"
     ]
   },
   {
@@ -829,8 +794,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Property management system PMS software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -850,8 +814,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "Yardi software",
-      "Trimble SketchUp Pro"
+      "Writing"
     ]
   },
   {
@@ -871,8 +834,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "The MathWorks MATLAB",
-      "Structured query language SQL"
+      "Monitoring"
     ]
   },
   {
@@ -892,8 +854,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "The MathWorks MATLAB",
-      "SAS"
+      "Critical Thinking"
     ]
   },
   {
@@ -913,8 +874,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Structured query language SQL",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -934,8 +894,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -955,8 +914,7 @@
       "Speaking",
       "Active Listening",
       "Critical Thinking",
-      "Yardi software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -976,8 +934,7 @@
       "Critical Thinking",
       "Active Learning",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Project"
+      "Reading Comprehension"
     ]
   },
   {
@@ -997,8 +954,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -1018,8 +974,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -1058,8 +1013,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -1079,8 +1033,7 @@
       "Monitoring",
       "Active Listening",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Active Learning"
     ]
   },
   {
@@ -1119,8 +1072,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Tableau",
-      "Structured query language SQL"
+      "Critical Thinking"
     ]
   },
   {
@@ -1140,8 +1092,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "Mozilla Firefox",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -1161,8 +1112,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Structured query language SQL",
-      "SAP software"
+      "Monitoring"
     ]
   },
   {
@@ -1182,8 +1132,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -1203,8 +1152,7 @@
       "Reading Comprehension",
       "Writing",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Active Listening"
     ]
   },
   {
@@ -1224,8 +1172,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Tableau",
-      "SAP software"
+      "Active Listening"
     ]
   },
   {
@@ -1245,8 +1192,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Zoom",
-      "Salesforce software"
+      "Writing"
     ]
   },
   {
@@ -1266,8 +1212,7 @@
       "Critical Thinking",
       "Speaking",
       "Reading Comprehension",
-      "SAP software",
-      "Salesforce software"
+      "Writing"
     ]
   },
   {
@@ -1287,8 +1232,7 @@
       "Active Listening",
       "Speaking",
       "Reading Comprehension",
-      "SAP software",
-      "Purchasing software"
+      "Active Learning"
     ]
   },
   {
@@ -1308,8 +1252,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "SAP software",
-      "Oracle Primavera Enterprise Project Portfolio Management"
+      "Critical Thinking"
     ]
   },
   {
@@ -1329,8 +1272,7 @@
       "Active Listening",
       "Critical Thinking",
       "Speaking",
-      "Zoom",
-      "Xactware Xactimate"
+      "Writing"
     ]
   },
   {
@@ -1350,8 +1292,7 @@
       "Speaking",
       "Reading Comprehension",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Critical Thinking"
     ]
   },
   {
@@ -1371,8 +1312,7 @@
       "Speaking",
       "Active Listening",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Critical Thinking"
     ]
   },
   {
@@ -1392,8 +1332,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "UNIX",
-      "SAP software"
+      "Speaking"
     ]
   },
   {
@@ -1413,8 +1352,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Writing"
     ]
   },
   {
@@ -1434,8 +1372,7 @@
       "Reading Comprehension",
       "Writing",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -1455,8 +1392,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "Zoom",
-      "UNIX"
+      "Writing"
     ]
   },
   {
@@ -1476,8 +1412,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Yardi software",
-      "Structured query language SQL"
+      "Critical Thinking"
     ]
   },
   {
@@ -1497,8 +1432,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -1518,8 +1452,7 @@
       "Mathematics",
       "Speaking",
       "Active Listening",
-      "Trimble SketchUp Pro",
-      "SAP software"
+      "Critical Thinking"
     ]
   },
   {
@@ -1539,8 +1472,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "Zoom",
-      "Workday software"
+      "Critical Thinking"
     ]
   },
   {
@@ -1560,8 +1492,7 @@
       "Active Listening",
       "Critical Thinking",
       "Monitoring",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -1581,8 +1512,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Workday software",
-      "ServiceNow"
+      "Critical Thinking"
     ]
   },
   {
@@ -1602,8 +1532,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Structured query language SQL",
-      "SAP software"
+      "Monitoring"
     ]
   },
   {
@@ -1623,8 +1552,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Mathematics",
-      "Tableau",
-      "Structured query language SQL"
+      "Active Learning"
     ]
   },
   {
@@ -1644,8 +1572,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "The MathWorks MATLAB",
-      "Tableau"
+      "Monitoring"
     ]
   },
   {
@@ -1665,8 +1592,7 @@
       "Critical Thinking",
       "Writing",
       "Monitoring",
-      "Zoom",
-      "Trimble SketchUp Pro"
+      "Reading Comprehension"
     ]
   },
   {
@@ -1686,8 +1612,7 @@
       "Active Listening",
       "Critical Thinking",
       "Writing",
-      "UNIX",
-      "Trimble SketchUp Pro"
+      "Speaking"
     ]
   },
   {
@@ -1707,8 +1632,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Trimble SketchUp Pro",
-      "Oracle Primavera Enterprise Project Portfolio Management"
+      "Writing"
     ]
   },
   {
@@ -1728,8 +1652,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "Structured query language SQL",
-      "Salesforce software"
+      "Critical Thinking"
     ]
   },
   {
@@ -1749,8 +1672,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Workday software",
-      "Structured query language SQL"
+      "Writing"
     ]
   },
   {
@@ -1770,8 +1692,7 @@
       "Learning Strategies",
       "Active Listening",
       "Reading Comprehension",
-      "Zoom",
-      "SAP software"
+      "Writing"
     ]
   },
   {
@@ -1791,8 +1712,7 @@
       "Active Listening",
       "Writing",
       "Critical Thinking",
-      "Zoom",
-      "WordPress"
+      "Speaking"
     ]
   },
   {
@@ -1812,8 +1732,7 @@
       "Active Listening",
       "Critical Thinking",
       "Active Learning",
-      "WordPress",
-      "Tableau"
+      "Speaking"
     ]
   },
   {
@@ -1852,8 +1771,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Writing",
-      "Teradata Database",
-      "Structured query language SQL"
+      "Speaking"
     ]
   },
   {
@@ -1873,8 +1791,7 @@
       "Writing",
       "Speaking",
       "Active Listening",
-      "Tableau",
-      "Structured query language SQL"
+      "Critical Thinking"
     ]
   },
   {
@@ -1894,8 +1811,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "WordPress",
-      "Structured query language SQL"
+      "Writing"
     ]
   },
   {
@@ -1915,8 +1831,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "UNIX",
-      "Structured query language SQL"
+      "Writing"
     ]
   },
   {
@@ -1936,8 +1851,7 @@
       "Active Listening",
       "Writing",
       "Critical Thinking",
-      "Yardi software",
-      "Workday software"
+      "Speaking"
     ]
   },
   {
@@ -1957,8 +1871,7 @@
       "Critical Thinking",
       "Writing",
       "Active Listening",
-      "Yardi software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -1978,8 +1891,7 @@
       "Active Listening",
       "Critical Thinking",
       "Writing",
-      "Yardi software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -1999,8 +1911,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "Structured query language SQL",
-      "SAP software"
+      "Speaking"
     ]
   },
   {
@@ -2020,8 +1931,7 @@
       "Reading Comprehension",
       "Speaking",
       "Active Learning",
-      "Structured query language SQL",
-      "SAS"
+      "Active Listening"
     ]
   },
   {
@@ -2037,8 +1947,10 @@
       "senior": "₹28 - 50+ LPA"
     },
     "skills": [
-      "Yardi software",
-      "Workday software"
+      "Critical Thinking",
+      "Complex Problem Solving",
+      "Active Listening",
+      "Communication"
     ]
   },
   {
@@ -2058,8 +1970,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "Swift",
-      "Structured query language SQL"
+      "Critical Thinking"
     ]
   },
   {
@@ -2079,8 +1990,7 @@
       "Active Listening",
       "Writing",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Speaking"
     ]
   },
   {
@@ -2096,8 +2006,10 @@
       "senior": "₹28 - 50+ LPA"
     },
     "skills": [
-      "Yardi software",
-      "UNIX"
+      "Critical Thinking",
+      "Complex Problem Solving",
+      "Active Listening",
+      "Communication"
     ]
   },
   {
@@ -2117,8 +2029,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "Structured query language SQL",
-      "SAP software"
+      "Speaking"
     ]
   },
   {
@@ -2138,8 +2049,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "SAP software",
-      "Oracle PeopleSoft"
+      "Writing"
     ]
   },
   {
@@ -2159,8 +2069,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Zoom",
-      "SAP software"
+      "Writing"
     ]
   },
   {
@@ -2180,8 +2089,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Tax software",
-      "Tax compliance property tax management software"
+      "Writing"
     ]
   },
   {
@@ -2201,8 +2109,7 @@
       "Active Listening",
       "Critical Thinking",
       "Speaking",
-      "Tax software",
-      "Tax compliance property tax management software"
+      "Active Learning"
     ]
   },
   {
@@ -2241,8 +2148,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Speaking"
     ]
   },
   {
@@ -2262,8 +2168,7 @@
       "Writing",
       "Reading Comprehension",
       "Speaking",
-      "Tableau",
-      "Structured query language SQL"
+      "Critical Thinking"
     ]
   },
   {
@@ -2279,9 +2184,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "Transact-SQL",
+      "Atlassian JIRA",
+      "Microsoft Excel",
+      "Microsoft Office software",
       "Speaking",
       "Reading Comprehension",
       "Active Listening"
@@ -2300,9 +2205,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX",
-      "Tableau",
-      "Structured query language SQL",
+      "Microsoft Excel",
+      "Microsoft Office software",
+      "Microsoft Outlook",
       "Reading Comprehension",
       "Active Listening",
       "Writing"
@@ -2321,9 +2226,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "The MathWorks MATLAB",
+      "Amazon Web Services AWS software",
+      "eMASS",
+      "Firewall software",
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening"
@@ -2342,9 +2247,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "Vector database software",
-      "UNIX Shell",
-      "UNIX",
+      "Amazon Web Services AWS SageMaker",
+      "Amazon Web Services AWS software",
+      "Ansible software",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening"
@@ -2363,9 +2268,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "Teradata Database",
+      "Apple macOS",
+      "Firewall software",
+      "Linux",
       "Critical Thinking",
       "Active Listening",
       "Reading Comprehension"
@@ -2384,9 +2289,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "Zoom",
-      "Yardi software",
-      "UNIX Shell",
+      "Apple iOS",
+      "Apple macOS",
+      "Firewall software",
       "Reading Comprehension",
       "Active Listening",
       "Speaking"
@@ -2405,9 +2310,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "Trimble SketchUp Pro",
+      "Amazon Web Services AWS software",
+      "Ansible software",
+      "Border Gateway Protocol BGP",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening"
@@ -2426,9 +2331,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX",
-      "Structured query language SQL",
-      "Shell script",
+      "Autodesk AutoCAD",
+      "Autodesk Navisworks",
+      "Autodesk Revit",
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening"
@@ -2447,9 +2352,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "Transact-SQL",
+      "Amazon Redshift",
+      "Amazon Web Services AWS software",
+      "Apache Airflow",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening"
@@ -2468,9 +2373,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "Transact-SQL",
+      "Amazon Web Services AWS software",
+      "Apache Kafka",
+      "Apache Spark",
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening"
@@ -2489,9 +2394,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "Transact-SQL",
+      "Microsoft Access",
+      "Microsoft Excel",
+      "Microsoft Office software",
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening"
@@ -2510,9 +2415,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "Transact-SQL",
+      "Amazon Web Services AWS software",
+      "Ansible software",
+      "Bash",
       "Active Listening",
       "Reading Comprehension",
       "Critical Thinking"
@@ -2531,9 +2436,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "Transact-SQL",
+      "C#",
+      "C++",
+      "Cascading style sheets CSS",
       "Active Listening",
       "Critical Thinking",
       "Reading Comprehension"
@@ -2552,9 +2457,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "Zoom",
-      "Workday software",
-      "WordPress",
+      "Amazon Web Services AWS software",
+      "Apache Kafka",
+      "Atlassian JIRA",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Learning"
@@ -2573,9 +2478,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "Zoom",
-      "UNIX Shell",
-      "UNIX",
+      "Amazon Web Services AWS software",
+      "Apache JMeter",
+      "Appium",
       "Reading Comprehension",
       "Active Listening",
       "Speaking"
@@ -2594,9 +2499,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "WordPress",
-      "Web application software",
-      "Vue.js",
+      "Amazon Web Services AWS software",
+      "Apache Kafka",
+      "Atlassian JIRA",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening"
@@ -2615,9 +2520,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "Vue.js",
-      "UNIX Shell",
-      "UNIX",
+      "Adobe Creative Cloud software",
+      "Adobe Illustrator",
+      "Adobe Photoshop",
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening"
@@ -2636,9 +2541,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "Unreal Technology Unreal Engine",
-      "Unity Technologies Unity",
-      "TypeScript",
+      "Adobe Photoshop",
+      "Autodesk Maya",
+      "C#",
       "Active Listening",
       "Reading Comprehension",
       "Critical Thinking"
@@ -2676,9 +2581,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "WordPress",
-      "Web server software",
-      "Web application software",
+      "Adobe Photoshop",
+      "Cascading style sheets CSS",
+      "Content management systems CMS",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening"
@@ -2697,9 +2602,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX",
-      "TypeScript",
-      "Transact-SQL",
+      "Amazon Web Services AWS software",
+      "Autodesk AutoCAD",
+      "ESRI ArcGIS ArcPy",
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening"
@@ -2718,9 +2623,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX",
-      "Teradata Database",
-      "Perl",
+      "Microsoft Excel",
+      "Microsoft Office software",
+      "Microsoft Outlook",
       "Reading Comprehension",
       "Active Listening",
       "Writing"
@@ -2739,9 +2644,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX",
-      "Tenable Nessus",
-      "Structured query language SQL",
+      "Amazon Web Services AWS software",
+      "Bash",
+      "C",
       "Critical Thinking",
       "Reading Comprehension",
       "Writing"
@@ -2760,9 +2665,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "Structured query language SQL",
+      "Amazon Web Services AWS software",
+      "Bash",
+      "Firewall software",
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening"
@@ -2781,9 +2686,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX",
-      "Structured query language SQL",
-      "Splunk Enterprise",
+      "Amazon Web Services AWS software",
+      "Firewall software",
+      "Linux",
       "Reading Comprehension",
       "Active Listening",
       "Writing"
@@ -2802,9 +2707,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "TypeScript",
-      "Structured query language SQL",
-      "Spring Framework",
+      "Amazon Web Services AWS software",
+      "C#",
+      "C++",
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking"
@@ -2823,9 +2728,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "TypeScript",
+      "Amazon Web Services AWS CloudFormation",
+      "Amazon Web Services AWS software",
+      "Ansible software",
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking"
@@ -2844,9 +2749,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "Trimble SketchUp Pro",
+      "Amazon Web Services AWS software",
+      "Atlassian Confluence",
+      "Atlassian JIRA",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening"
@@ -2865,9 +2770,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "Tableau",
-      "Structured query language SQL",
-      "SAS",
+      "Microsoft Excel",
+      "Microsoft Office software",
+      "Microsoft Power BI",
       "Mathematics",
       "Reading Comprehension",
       "Active Listening"
@@ -2886,9 +2791,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "Version control software",
-      "UNIX",
-      "The MathWorks MATLAB",
+      "Atlassian JIRA",
+      "C",
+      "C#",
       "Mathematics",
       "Critical Thinking",
       "Reading Comprehension"
@@ -2907,9 +2812,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "The MathWorks MATLAB",
+      "Microsoft Excel",
+      "Microsoft Office software",
+      "Microsoft Outlook",
       "Mathematics",
       "Reading Comprehension",
       "Active Listening"
@@ -2928,9 +2833,9 @@
       "senior": "₹38 - 70+ LPA"
     },
     "skills": [
-      "UNIX",
-      "The MathWorks MATLAB",
-      "Teradata Database",
+      "IBM SPSS Statistics",
+      "Microsoft Excel",
+      "Microsoft Office software",
       "Mathematics",
       "Reading Comprehension",
       "Critical Thinking"
@@ -2949,9 +2854,9 @@
       "senior": "₹38 - 70+ LPA"
     },
     "skills": [
-      "UNIX",
-      "The MathWorks MATLAB",
-      "Structured query language SQL",
+      "IBM SPSS Statistics",
+      "Microsoft Excel",
+      "Microsoft Office software",
       "Mathematics",
       "Reading Comprehension",
       "Speaking"
@@ -2970,9 +2875,9 @@
       "senior": "₹38 - 70+ LPA"
     },
     "skills": [
-      "UNIX",
-      "The MathWorks MATLAB",
-      "Teradata Database",
+      "Amazon Web Services AWS software",
+      "Apache Hadoop",
+      "Apache Spark",
       "Mathematics",
       "Critical Thinking",
       "Reading Comprehension"
@@ -2991,9 +2896,9 @@
       "senior": "₹38 - 70+ LPA"
     },
     "skills": [
-      "UNIX Shell",
-      "UNIX",
-      "Transact-SQL",
+      "Amazon Web Services AWS software",
+      "Microsoft Azure software",
+      "Microsoft Excel",
       "Reading Comprehension",
       "Active Listening",
       "Speaking"
@@ -3012,9 +2917,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "Teradata Database",
-      "Structured query language SQL",
-      "SAS",
+      "Epic Systems",
+      "Microsoft Excel",
+      "Microsoft Office software",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening"
@@ -3052,9 +2957,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "The MathWorks MATLAB",
-      "Structured query language SQL",
-      "SAS",
+      "Apache Subversion SVN",
+      "C",
+      "C++",
       "Reading Comprehension",
       "Active Listening",
       "Writing"
@@ -3077,8 +2982,7 @@
       "Reading Comprehension",
       "Speaking",
       "Active Listening",
-      "Trimble SketchUp Pro",
-      "Puppet"
+      "Writing"
     ]
   },
   {
@@ -3098,8 +3002,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Trimble SketchUp Pro",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -3119,8 +3022,7 @@
       "Writing",
       "Critical Thinking",
       "Active Listening",
-      "Structured query language SQL",
-      "SAP software"
+      "Active Learning"
     ]
   },
   {
@@ -3140,8 +3042,7 @@
       "Reading Comprehension",
       "Writing",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Speaking"
     ]
   },
   {
@@ -3161,8 +3062,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "Structured query language SQL",
-      "SAP software"
+      "Writing"
     ]
   },
   {
@@ -3182,8 +3082,7 @@
       "Critical Thinking",
       "Writing",
       "Mathematics",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Science"
     ]
   },
   {
@@ -3203,8 +3102,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "SAS",
-      "SAP software"
+      "Critical Thinking"
     ]
   },
   {
@@ -3224,8 +3122,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Mathematics"
     ]
   },
   {
@@ -3245,8 +3142,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Learning",
-      "The MathWorks MATLAB",
-      "Structured query language SQL"
+      "Mathematics"
     ]
   },
   {
@@ -3266,8 +3162,7 @@
       "Reading Comprehension",
       "Speaking",
       "Mathematics",
-      "Trimble SketchUp Pro",
-      "The MathWorks MATLAB"
+      "Critical Thinking"
     ]
   },
   {
@@ -3287,8 +3182,7 @@
       "Writing",
       "Speaking",
       "Critical Thinking",
-      "Structured query language SQL",
-      "Python"
+      "Mathematics"
     ]
   },
   {
@@ -3308,8 +3202,7 @@
       "Writing",
       "Critical Thinking",
       "Active Listening",
-      "Structured query language SQL",
-      "SAP software"
+      "Mathematics"
     ]
   },
   {
@@ -3329,8 +3222,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "Very high speed integrated circuit VHSIC hardware description language VHDL simulation software",
-      "Verilog"
+      "Speaking"
     ]
   },
   {
@@ -3350,8 +3242,7 @@
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Speaking"
     ]
   },
   {
@@ -3371,8 +3262,7 @@
       "Critical Thinking",
       "Speaking",
       "Active Listening",
-      "UNIX",
-      "Trimble SketchUp Pro"
+      "Writing"
     ]
   },
   {
@@ -3392,8 +3282,7 @@
       "Active Listening",
       "Speaking",
       "Reading Comprehension",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Writing"
     ]
   },
   {
@@ -3413,8 +3302,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "The MathWorks MATLAB",
-      "SAS"
+      "Critical Thinking"
     ]
   },
   {
@@ -3434,8 +3322,7 @@
       "Active Listening",
       "Writing",
       "Critical Thinking",
-      "The MathWorks MATLAB",
-      "SAP software"
+      "Speaking"
     ]
   },
   {
@@ -3455,8 +3342,7 @@
       "Reading Comprehension",
       "Speaking",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -3476,8 +3362,7 @@
       "Active Listening",
       "Critical Thinking",
       "Speaking",
-      "UNIX Shell",
-      "The MathWorks MATLAB"
+      "Writing"
     ]
   },
   {
@@ -3497,8 +3382,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "The MathWorks MATLAB",
-      "SAS"
+      "Critical Thinking"
     ]
   },
   {
@@ -3518,8 +3402,7 @@
       "Writing",
       "Speaking",
       "Critical Thinking",
-      "UNIX Shell",
-      "UNIX"
+      "Active Listening"
     ]
   },
   {
@@ -3539,8 +3422,7 @@
       "Mathematics",
       "Active Listening",
       "Speaking",
-      "The MathWorks MATLAB",
-      "SAP software"
+      "Monitoring"
     ]
   },
   {
@@ -3560,8 +3442,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "Zoom",
-      "The MathWorks MATLAB"
+      "Speaking"
     ]
   },
   {
@@ -3581,8 +3462,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "The MathWorks MATLAB",
-      "SAP software"
+      "Mathematics"
     ]
   },
   {
@@ -3602,8 +3482,7 @@
       "Active Listening",
       "Critical Thinking",
       "Mathematics",
-      "Trimble SketchUp Pro",
-      "The MathWorks MATLAB"
+      "Science"
     ]
   },
   {
@@ -3623,8 +3502,7 @@
       "Critical Thinking",
       "Writing",
       "Speaking",
-      "The MathWorks MATLAB",
-      "Python"
+      "Science"
     ]
   },
   {
@@ -3644,8 +3522,7 @@
       "Reading Comprehension",
       "Writing",
       "Speaking",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Mathematics"
     ]
   },
   {
@@ -3665,8 +3542,7 @@
       "Writing",
       "Speaking",
       "Critical Thinking",
-      "SAP software",
-      "Oracle Database"
+      "Active Listening"
     ]
   },
   {
@@ -3686,8 +3562,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Writing"
     ]
   },
   {
@@ -3707,8 +3582,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "The MathWorks MATLAB",
-      "SAS"
+      "Speaking"
     ]
   },
   {
@@ -3747,8 +3621,7 @@
       "Active Listening",
       "Writing",
       "Critical Thinking",
-      "The MathWorks MATLAB",
-      "R"
+      "Active Learning"
     ]
   },
   {
@@ -3768,8 +3641,7 @@
       "Writing",
       "Critical Thinking",
       "Active Listening",
-      "The MathWorks MATLAB",
-      "Structured query language SQL"
+      "Speaking"
     ]
   },
   {
@@ -3789,8 +3661,7 @@
       "Active Listening",
       "Critical Thinking",
       "Writing",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Speaking"
     ]
   },
   {
@@ -3810,8 +3681,7 @@
       "Reading Comprehension",
       "Writing",
       "Active Listening",
-      "Zemax",
-      "UNIX"
+      "Speaking"
     ]
   },
   {
@@ -3831,8 +3701,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Monitoring",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Writing"
     ]
   },
   {
@@ -3852,8 +3721,7 @@
       "Speaking",
       "Science",
       "Critical Thinking",
-      "Tableau",
-      "Structured query language SQL"
+      "Active Listening"
     ]
   },
   {
@@ -3873,8 +3741,7 @@
       "Reading Comprehension",
       "Mathematics",
       "Active Listening",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Writing"
     ]
   },
   {
@@ -3894,8 +3761,7 @@
       "Critical Thinking",
       "Writing",
       "Speaking",
-      "Trimble SketchUp Pro",
-      "The MathWorks MATLAB"
+      "Active Listening"
     ]
   },
   {
@@ -3915,8 +3781,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "Trimble SketchUp Pro",
-      "SAP software"
+      "Speaking"
     ]
   },
   {
@@ -3936,8 +3801,7 @@
       "Writing",
       "Critical Thinking",
       "Reading Comprehension",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Speaking"
     ]
   },
   {
@@ -3957,8 +3821,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Mathematics",
-      "Trimble SketchUp Pro",
-      "SAP software"
+      "Active Learning"
     ]
   },
   {
@@ -3997,8 +3860,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "UNIX",
-      "Structured query language SQL"
+      "Writing"
     ]
   },
   {
@@ -4018,8 +3880,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Mathematics",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -4039,8 +3900,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Writing"
     ]
   },
   {
@@ -4060,8 +3920,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Writing"
     ]
   },
   {
@@ -4081,8 +3940,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Speaking"
     ]
   },
   {
@@ -4102,8 +3960,7 @@
       "Active Listening",
       "Critical Thinking",
       "Active Learning",
-      "The MathWorks MATLAB",
-      "SAS"
+      "Speaking"
     ]
   },
   {
@@ -4123,8 +3980,7 @@
       "Active Listening",
       "Critical Thinking",
       "Writing",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Speaking"
     ]
   },
   {
@@ -4144,8 +4000,7 @@
       "Critical Thinking",
       "Writing",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Science"
     ]
   },
   {
@@ -4165,8 +4020,7 @@
       "Active Listening",
       "Critical Thinking",
       "Speaking",
-      "The MathWorks MATLAB",
-      "SAP software"
+      "Writing"
     ]
   },
   {
@@ -4186,8 +4040,7 @@
       "Speaking",
       "Critical Thinking",
       "Active Listening",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -4203,8 +4056,10 @@
       "senior": "₹22 - 40 LPA"
     },
     "skills": [
-      "The MathWorks MATLAB",
-      "Microsoft Word"
+      "Critical Thinking",
+      "Complex Problem Solving",
+      "Active Listening",
+      "Communication"
     ]
   },
   {
@@ -4243,8 +4098,7 @@
       "Active Listening",
       "Critical Thinking",
       "Monitoring",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -4264,8 +4118,7 @@
       "Active Listening",
       "Critical Thinking",
       "Active Learning",
-      "The MathWorks MATLAB",
-      "SAP software"
+      "Monitoring"
     ]
   },
   {
@@ -4285,8 +4138,7 @@
       "Critical Thinking",
       "Mathematics",
       "Active Listening",
-      "Structured query language SQL",
-      "Python"
+      "Monitoring"
     ]
   },
   {
@@ -4306,8 +4158,7 @@
       "Writing",
       "Science",
       "Critical Thinking",
-      "Tableau",
-      "Structured query language SQL"
+      "Active Listening"
     ]
   },
   {
@@ -4327,8 +4178,7 @@
       "Critical Thinking",
       "Active Learning",
       "Active Listening",
-      "Tableau",
-      "Structured query language SQL"
+      "Writing"
     ]
   },
   {
@@ -4348,8 +4198,7 @@
       "Speaking",
       "Science",
       "Critical Thinking",
-      "SAS",
-      "R"
+      "Active Learning"
     ]
   },
   {
@@ -4369,8 +4218,7 @@
       "Reading Comprehension",
       "Writing",
       "Critical Thinking",
-      "The MathWorks MATLAB",
-      "SAS"
+      "Active Listening"
     ]
   },
   {
@@ -4390,8 +4238,7 @@
       "Reading Comprehension",
       "Writing",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Active Listening"
     ]
   },
   {
@@ -4411,8 +4258,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "SAS",
-      "Salesforce software"
+      "Science"
     ]
   },
   {
@@ -4451,8 +4297,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Science"
     ]
   },
   {
@@ -4472,8 +4317,7 @@
       "Reading Comprehension",
       "Writing",
       "Critical Thinking",
-      "The MathWorks MATLAB",
-      "R"
+      "Active Listening"
     ]
   },
   {
@@ -4493,8 +4337,7 @@
       "Science",
       "Active Listening",
       "Writing",
-      "UNIX",
-      "Structured query language SQL"
+      "Speaking"
     ]
   },
   {
@@ -4514,8 +4357,7 @@
       "Reading Comprehension",
       "Writing",
       "Active Listening",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Speaking"
     ]
   },
   {
@@ -4535,8 +4377,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Science"
     ]
   },
   {
@@ -4556,8 +4397,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Monitoring"
     ]
   },
   {
@@ -4577,8 +4417,7 @@
       "Active Listening",
       "Writing",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -4598,8 +4437,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Active Listening"
     ]
   },
   {
@@ -4619,8 +4457,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "Tableau",
-      "Structured query language SQL"
+      "Speaking"
     ]
   },
   {
@@ -4640,8 +4477,7 @@
       "Speaking",
       "Science",
       "Active Learning",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Reading Comprehension"
     ]
   },
   {
@@ -4680,8 +4516,7 @@
       "Science",
       "Writing",
       "Mathematics",
-      "The MathWorks MATLAB",
-      "Structured query language SQL"
+      "Critical Thinking"
     ]
   },
   {
@@ -4701,8 +4536,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Speaking",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Mathematics"
     ]
   },
   {
@@ -4722,8 +4556,7 @@
       "Active Listening",
       "Speaking",
       "Science",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Critical Thinking"
     ]
   },
   {
@@ -4743,8 +4576,7 @@
       "Reading Comprehension",
       "Critical Thinking",
       "Speaking",
-      "Structured query language SQL",
-      "SAP software"
+      "Active Listening"
     ]
   },
   {
@@ -4764,8 +4596,7 @@
       "Active Listening",
       "Science",
       "Critical Thinking",
-      "The MathWorks MATLAB",
-      "R"
+      "Writing"
     ]
   },
   {
@@ -4785,8 +4616,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Structured query language SQL",
-      "SAP software"
+      "Science"
     ]
   },
   {
@@ -4806,8 +4636,7 @@
       "Active Listening",
       "Critical Thinking",
       "Writing",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Speaking"
     ]
   },
   {
@@ -4827,8 +4656,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Speaking"
     ]
   },
   {
@@ -4848,8 +4676,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "The MathWorks MATLAB",
-      "Splunk Enterprise"
+      "Critical Thinking"
     ]
   },
   {
@@ -4869,8 +4696,7 @@
       "Science",
       "Writing",
       "Speaking",
-      "The MathWorks MATLAB",
-      "SAS"
+      "Critical Thinking"
     ]
   },
   {
@@ -4890,8 +4716,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Mathematics",
-      "The MathWorks MATLAB",
-      "RockWare MODFLOW"
+      "Science"
     ]
   },
   {
@@ -4930,8 +4755,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Speaking"
     ]
   },
   {
@@ -4951,8 +4775,7 @@
       "Mathematics",
       "Critical Thinking",
       "Active Listening",
-      "UNIX Shell",
-      "UNIX"
+      "Writing"
     ]
   },
   {
@@ -4972,8 +4795,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Mathematics",
-      "The MathWorks MATLAB",
-      "Tableau"
+      "Critical Thinking"
     ]
   },
   {
@@ -4993,8 +4815,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Zoom",
-      "The MathWorks MATLAB"
+      "Critical Thinking"
     ]
   },
   {
@@ -5014,8 +4835,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "SAS",
-      "Oracle PeopleSoft"
+      "Critical Thinking"
     ]
   },
   {
@@ -5035,8 +4855,7 @@
       "Active Listening",
       "Writing",
       "Critical Thinking",
-      "Zoom",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -5056,8 +4875,7 @@
       "Speaking",
       "Active Listening",
       "Writing",
-      "Zoom",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -5096,8 +4914,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -5117,8 +4934,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -5138,8 +4954,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "SAS",
-      "SAP software"
+      "Critical Thinking"
     ]
   },
   {
@@ -5159,8 +4974,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Trimble SketchUp Pro",
-      "Structured query language SQL"
+      "Writing"
     ]
   },
   {
@@ -5180,8 +4994,7 @@
       "Speaking",
       "Reading Comprehension",
       "Active Listening",
-      "The MathWorks MATLAB",
-      "Structured query language SQL"
+      "Critical Thinking"
     ]
   },
   {
@@ -5201,8 +5014,7 @@
       "Writing",
       "Speaking",
       "Critical Thinking",
-      "The MathWorks MATLAB",
-      "Structured query language SQL"
+      "Active Listening"
     ]
   },
   {
@@ -5222,8 +5034,7 @@
       "Writing",
       "Critical Thinking",
       "Active Listening",
-      "Structured query language SQL",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -5243,8 +5054,7 @@
       "Active Listening",
       "Speaking",
       "Active Learning",
-      "Tableau",
-      "SAS"
+      "Writing"
     ]
   },
   {
@@ -5283,8 +5093,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Transportation management system TMS software",
-      "Tableau"
+      "Critical Thinking"
     ]
   },
   {
@@ -5304,8 +5113,7 @@
       "Active Listening",
       "Critical Thinking",
       "Writing",
-      "SAP software",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -5325,8 +5133,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -5346,8 +5153,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "SAS",
-      "SAP software"
+      "Science"
     ]
   },
   {
@@ -5367,8 +5173,7 @@
       "Active Listening",
       "Science",
       "Critical Thinking",
-      "SAS",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -5388,8 +5193,7 @@
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening",
-      "Structured query language SQL",
-      "SAP software"
+      "Writing"
     ]
   },
   {
@@ -5409,8 +5213,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -5430,8 +5233,7 @@
       "Critical Thinking",
       "Writing",
       "Monitoring",
-      "SAP software",
-      "Microsoft Word"
+      "Active Listening"
     ]
   },
   {
@@ -5447,8 +5249,10 @@
       "senior": "₹20 - 38 LPA"
     },
     "skills": [
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Critical Thinking",
+      "Complex Problem Solving",
+      "Active Listening",
+      "Communication"
     ]
   },
   {
@@ -5468,8 +5272,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "Structured query language SQL",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -5489,8 +5292,7 @@
       "Critical Thinking",
       "Monitoring",
       "Reading Comprehension",
-      "Structured query language SQL",
-      "Oracle Java"
+      "Speaking"
     ]
   },
   {
@@ -5510,8 +5312,7 @@
       "Active Listening",
       "Writing",
       "Critical Thinking",
-      "The MathWorks MATLAB",
-      "Tableau"
+      "Speaking"
     ]
   },
   {
@@ -5531,8 +5332,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -5552,8 +5352,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Visio"
+      "Critical Thinking"
     ]
   },
   {
@@ -5592,8 +5391,7 @@
       "Monitoring",
       "Active Listening",
       "Writing",
-      "The MathWorks MATLAB",
-      "Structured query language SQL"
+      "Critical Thinking"
     ]
   },
   {
@@ -5613,8 +5411,7 @@
       "Reading Comprehension",
       "Speaking",
       "Mathematics",
-      "UNIX Shell",
-      "UNIX"
+      "Active Listening"
     ]
   },
   {
@@ -5634,8 +5431,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -5655,8 +5451,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -5676,8 +5471,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -5697,8 +5491,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Oracle PeopleSoft",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -5718,8 +5511,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Zoom",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -5739,8 +5531,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Oracle PeopleSoft",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -5760,8 +5551,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -5800,8 +5590,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -5821,8 +5610,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "Zoom",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -5842,8 +5630,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Monitoring"
     ]
   },
   {
@@ -5882,8 +5669,7 @@
       "Writing",
       "Speaking",
       "Learning Strategies",
-      "Microsoft Word",
-      "Microsoft Visio"
+      "Active Learning"
     ]
   },
   {
@@ -5903,8 +5689,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -5924,8 +5709,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -5945,8 +5729,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Zoom",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -5985,8 +5768,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -6006,8 +5788,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Critical Thinking",
-      "Zoom",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -6046,8 +5827,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -6067,8 +5847,7 @@
       "Active Listening",
       "Critical Thinking",
       "Writing",
-      "Thomson Reuters Westlaw",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -6088,8 +5867,7 @@
       "Active Listening",
       "Critical Thinking",
       "Writing",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -6109,8 +5887,7 @@
       "Writing",
       "Reading Comprehension",
       "Speaking",
-      "SAP software",
-      "Salesforce software"
+      "Critical Thinking"
     ]
   },
   {
@@ -6130,8 +5907,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Speaking"
     ]
   },
   {
@@ -6151,8 +5927,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Zoom",
-      "Thomson Reuters Westlaw"
+      "Critical Thinking"
     ]
   },
   {
@@ -6172,8 +5947,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Salesforce software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -6212,8 +5986,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "SAS",
-      "R"
+      "Learning Strategies"
     ]
   },
   {
@@ -6233,8 +6006,7 @@
       "Writing",
       "Speaking",
       "Active Listening",
-      "UNIX",
-      "Python"
+      "Critical Thinking"
     ]
   },
   {
@@ -6254,8 +6026,7 @@
       "Speaking",
       "Reading Comprehension",
       "Active Listening",
-      "Structured query language SQL",
-      "SAS"
+      "Writing"
     ]
   },
   {
@@ -6275,8 +6046,7 @@
       "Speaking",
       "Learning Strategies",
       "Active Listening",
-      "Trimble SketchUp Pro",
-      "Salesforce software"
+      "Writing"
     ]
   },
   {
@@ -6296,8 +6066,7 @@
       "Learning Strategies",
       "Reading Comprehension",
       "Active Listening",
-      "The MathWorks MATLAB",
-      "Python"
+      "Writing"
     ]
   },
   {
@@ -6317,8 +6086,7 @@
       "Speaking",
       "Learning Strategies",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -6338,8 +6106,7 @@
       "Learning Strategies",
       "Reading Comprehension",
       "Active Listening",
-      "The MathWorks MATLAB",
-      "SAS"
+      "Writing"
     ]
   },
   {
@@ -6359,8 +6126,7 @@
       "Writing",
       "Learning Strategies",
       "Active Listening",
-      "SAS",
-      "SAP software"
+      "Speaking"
     ]
   },
   {
@@ -6380,8 +6146,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "The MathWorks MATLAB",
-      "Microsoft Word"
+      "Science"
     ]
   },
   {
@@ -6401,8 +6166,7 @@
       "Writing",
       "Speaking",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Science"
     ]
   },
   {
@@ -6422,8 +6186,7 @@
       "Speaking",
       "Active Listening",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Science"
     ]
   },
   {
@@ -6443,8 +6206,7 @@
       "Speaking",
       "Science",
       "Active Listening",
-      "The MathWorks MATLAB",
-      "Perl"
+      "Writing"
     ]
   },
   {
@@ -6464,8 +6226,7 @@
       "Reading Comprehension",
       "Writing",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Learning Strategies"
     ]
   },
   {
@@ -6485,8 +6246,7 @@
       "Speaking",
       "Active Listening",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Active Learning"
     ]
   },
   {
@@ -6506,8 +6266,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "The MathWorks MATLAB",
-      "R"
+      "Critical Thinking"
     ]
   },
   {
@@ -6527,8 +6286,7 @@
       "Speaking",
       "Reading Comprehension",
       "Active Listening",
-      "The MathWorks MATLAB",
-      "Mozilla Firefox"
+      "Critical Thinking"
     ]
   },
   {
@@ -6548,8 +6306,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "R",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -6569,8 +6326,7 @@
       "Reading Comprehension",
       "Speaking",
       "Active Listening",
-      "The MathWorks MATLAB",
-      "SAS"
+      "Writing"
     ]
   },
   {
@@ -6590,8 +6346,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "The MathWorks MATLAB",
-      "SAS"
+      "Learning Strategies"
     ]
   },
   {
@@ -6630,8 +6385,7 @@
       "Speaking",
       "Active Listening",
       "Writing",
-      "SAS",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -6651,8 +6405,7 @@
       "Learning Strategies",
       "Reading Comprehension",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -6672,8 +6425,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Learning Strategies",
-      "SAS",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -6693,8 +6445,7 @@
       "Speaking",
       "Active Listening",
       "Writing",
-      "Structured query language SQL",
-      "Splunk Enterprise"
+      "Critical Thinking"
     ]
   },
   {
@@ -6714,8 +6465,7 @@
       "Active Listening",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -6735,8 +6485,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Learning Strategies",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -6756,8 +6505,7 @@
       "Learning Strategies",
       "Reading Comprehension",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -6777,8 +6525,7 @@
       "Learning Strategies",
       "Reading Comprehension",
       "Active Listening",
-      "PHP",
-      "MySQL"
+      "Active Learning"
     ]
   },
   {
@@ -6798,8 +6545,7 @@
       "Speaking",
       "Active Listening",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Learning Strategies"
     ]
   },
   {
@@ -6819,8 +6565,7 @@
       "Writing",
       "Speaking",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Learning Strategies"
     ]
   },
   {
@@ -6840,8 +6585,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "Zoom",
-      "Microsoft Word"
+      "Learning Strategies"
     ]
   },
   {
@@ -6861,8 +6605,7 @@
       "Reading Comprehension",
       "Writing",
       "Learning Strategies",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Active Listening"
     ]
   },
   {
@@ -6882,8 +6625,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -6903,8 +6645,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Learning Strategies",
-      "Zoom",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -6924,8 +6665,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Project"
+      "Learning Strategies"
     ]
   },
   {
@@ -6945,8 +6685,7 @@
       "Learning Strategies",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Active Learning"
     ]
   },
   {
@@ -6985,8 +6724,7 @@
       "Active Listening",
       "Learning Strategies",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Critical Thinking"
     ]
   },
   {
@@ -7006,8 +6744,7 @@
       "Speaking",
       "Learning Strategies",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -7027,8 +6764,7 @@
       "Speaking",
       "Active Listening",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Monitoring"
     ]
   },
   {
@@ -7048,8 +6784,7 @@
       "Speaking",
       "Active Listening",
       "Reading Comprehension",
-      "Zoom",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -7069,8 +6804,7 @@
       "Learning Strategies",
       "Reading Comprehension",
       "Active Listening",
-      "UNIX",
-      "Tableau"
+      "Critical Thinking"
     ]
   },
   {
@@ -7090,8 +6824,7 @@
       "Active Listening",
       "Speaking",
       "Learning Strategies",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -7111,8 +6844,7 @@
       "Active Listening",
       "Speaking",
       "Learning Strategies",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -7132,8 +6864,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Learning Strategies"
     ]
   },
   {
@@ -7153,8 +6884,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Learning Strategies",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -7174,8 +6904,7 @@
       "Speaking",
       "Reading Comprehension",
       "Learning Strategies",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -7195,8 +6924,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Speaking"
     ]
   },
   {
@@ -7216,8 +6944,7 @@
       "Reading Comprehension",
       "Speaking",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Writing"
     ]
   },
   {
@@ -7256,8 +6983,7 @@
       "Speaking",
       "Learning Strategies",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -7277,8 +7003,7 @@
       "Active Listening",
       "Speaking",
       "Learning Strategies",
-      "Zoom",
-      "SAP software"
+      "Writing"
     ]
   },
   {
@@ -7298,8 +7023,7 @@
       "Active Listening",
       "Learning Strategies",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -7319,8 +7043,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Outlook",
-      "Microsoft Office software"
+      "Monitoring"
     ]
   },
   {
@@ -7340,8 +7063,7 @@
       "Active Listening",
       "Speaking",
       "Learning Strategies",
-      "Zoom",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -7380,8 +7102,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -7401,8 +7122,7 @@
       "Speaking",
       "Active Listening",
       "Writing",
-      "SAS",
-      "R"
+      "Critical Thinking"
     ]
   },
   {
@@ -7422,8 +7142,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -7443,8 +7162,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "Zoom",
-      "Structured query language SQL"
+      "Critical Thinking"
     ]
   },
   {
@@ -7464,8 +7182,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Learning Strategies"
     ]
   },
   {
@@ -7485,8 +7202,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "ServiceNow",
-      "SAP software"
+      "Critical Thinking"
     ]
   },
   {
@@ -7506,8 +7222,7 @@
       "Writing",
       "Speaking",
       "Reading Comprehension",
-      "TechSmith Camtasia",
-      "Structured query language SQL"
+      "Active Listening"
     ]
   },
   {
@@ -7527,8 +7242,7 @@
       "Reading Comprehension",
       "Speaking",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -7548,8 +7262,7 @@
       "Speaking",
       "Reading Comprehension",
       "Learning Strategies",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -7569,8 +7282,7 @@
       "Active Listening",
       "Speaking",
       "Learning Strategies",
-      "Structured query language SQL",
-      "SAS"
+      "Writing"
     ]
   },
   {
@@ -7628,8 +7340,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "WordPress",
-      "PHP"
+      "Writing"
     ]
   },
   {
@@ -7649,8 +7360,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Facebook",
-      "DRAWSTITCH Artistic Sewing Suite"
+      "Monitoring"
     ]
   },
   {
@@ -7670,8 +7380,7 @@
       "Active Learning",
       "Active Listening",
       "Reading Comprehension",
-      "Trimble SketchUp Pro",
-      "Python"
+      "Speaking"
     ]
   },
   {
@@ -7691,8 +7400,7 @@
       "Reading Comprehension",
       "Critical Thinking",
       "Speaking",
-      "Unreal Technology Unreal Engine",
-      "UNIX"
+      "Writing"
     ]
   },
   {
@@ -7731,8 +7439,7 @@
       "Reading Comprehension",
       "Critical Thinking",
       "Speaking",
-      "Trimble SketchUp Pro",
-      "The MathWorks MATLAB"
+      "Writing"
     ]
   },
   {
@@ -7752,8 +7459,7 @@
       "Speaking",
       "Critical Thinking",
       "Active Learning",
-      "Trimble SketchUp Pro",
-      "SAS"
+      "Reading Comprehension"
     ]
   },
   {
@@ -7773,8 +7479,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -7794,8 +7499,7 @@
       "Speaking",
       "Writing",
       "Critical Thinking",
-      "WordPress",
-      "Trimble SketchUp Pro"
+      "Active Learning"
     ]
   },
   {
@@ -7815,8 +7519,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Trimble SketchUp Pro",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -7836,8 +7539,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Trimble SketchUp Pro",
-      "SAS"
+      "Writing"
     ]
   },
   {
@@ -7857,8 +7559,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "UNIX",
-      "Trimble SketchUp Pro"
+      "Writing"
     ]
   },
   {
@@ -7897,8 +7598,7 @@
       "Speaking",
       "Active Listening",
       "Critical Thinking",
-      "Zoom",
-      "TikTok"
+      "Active Learning"
     ]
   },
   {
@@ -7918,8 +7618,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "Zoom",
-      "WordPress"
+      "Monitoring"
     ]
   },
   {
@@ -7939,8 +7638,7 @@
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening",
-      "TikTok",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -7960,8 +7658,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "UNIX",
-      "SAP software"
+      "Monitoring"
     ]
   },
   {
@@ -7981,8 +7678,7 @@
       "Speaking",
       "Monitoring",
       "Critical Thinking",
-      "UNIX Shell",
-      "UNIX"
+      "Reading Comprehension"
     ]
   },
   {
@@ -8002,8 +7698,7 @@
       "Active Listening",
       "Critical Thinking",
       "Monitoring",
-      "Oracle PeopleSoft",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -8023,8 +7718,7 @@
       "Learning Strategies",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Active Listening"
     ]
   },
   {
@@ -8044,8 +7738,7 @@
       "Critical Thinking",
       "Active Listening",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -8065,8 +7758,7 @@
       "Critical Thinking",
       "Speaking",
       "Monitoring",
-      "Microsoft Outlook",
-      "Microsoft Office software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -8086,8 +7778,7 @@
       "Speaking",
       "Monitoring",
       "Learning Strategies",
-      "Salesforce software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -8107,8 +7798,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -8128,8 +7818,7 @@
       "Active Listening",
       "Monitoring",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -8149,8 +7838,7 @@
       "Active Listening",
       "Monitoring",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -8189,8 +7877,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Critical Thinking",
-      "Zoom",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -8210,8 +7897,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "WordPress",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -8231,8 +7917,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "WordPress",
-      "Salesforce software"
+      "Critical Thinking"
     ]
   },
   {
@@ -8252,8 +7937,7 @@
       "Writing",
       "Active Listening",
       "Speaking",
-      "WordPress",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -8273,8 +7957,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Structured query language SQL",
-      "SAS"
+      "Critical Thinking"
     ]
   },
   {
@@ -8294,8 +7977,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "WordPress",
-      "TikTok"
+      "Critical Thinking"
     ]
   },
   {
@@ -8315,8 +7997,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "WordPress",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -8336,8 +8017,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Writing",
-      "Productivity software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -8357,8 +8037,7 @@
       "Writing",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Monitoring"
     ]
   },
   {
@@ -8397,8 +8076,7 @@
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening",
-      "Zoom",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -8418,8 +8096,7 @@
       "Monitoring",
       "Active Listening",
       "Reading Comprehension",
-      "UNIX",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -8439,8 +8116,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "UNIX",
-      "Oracle Java"
+      "Writing"
     ]
   },
   {
@@ -8456,8 +8132,10 @@
       "senior": "₹18 - 35 LPA"
     },
     "skills": [
-      "Microsoft Project",
-      "Microsoft PowerPoint"
+      "Critical Thinking",
+      "Complex Problem Solving",
+      "Active Listening",
+      "Communication"
     ]
   },
   {
@@ -8477,8 +8155,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "WordPress",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -8498,8 +8175,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "Video editing software",
-      "TikTok"
+      "Monitoring"
     ]
   },
   {
@@ -8519,8 +8195,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Speaking",
-      "Video editing software",
-      "TikTok"
+      "Active Learning"
     ]
   },
   {
@@ -8559,8 +8234,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Writing"
     ]
   },
   {
@@ -8580,8 +8254,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Active Learning"
     ]
   },
   {
@@ -8601,8 +8274,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "Ada",
-      "Apteryx Imaging Suite"
+      "Speaking"
     ]
   },
   {
@@ -8622,8 +8294,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Office software",
-      "Facebook"
+      "Reading Comprehension"
     ]
   },
   {
@@ -8643,8 +8314,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Henry Schein Dentrix",
-      "Apple iOS"
+      "Monitoring"
     ]
   },
   {
@@ -8683,8 +8353,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -8704,8 +8373,7 @@
       "Active Listening",
       "Critical Thinking",
       "Writing",
-      "Web browser software",
-      "Mozilla Firefox"
+      "Speaking"
     ]
   },
   {
@@ -8725,8 +8393,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -8746,8 +8413,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Speaking"
     ]
   },
   {
@@ -8767,8 +8433,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Active Learning"
     ]
   },
   {
@@ -8788,8 +8453,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Access",
-      "Facebook"
+      "Active Learning"
     ]
   },
   {
@@ -8809,8 +8473,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Speaking"
     ]
   },
   {
@@ -8830,8 +8493,7 @@
       "Speaking",
       "Learning Strategies",
       "Reading Comprehension",
-      "Workday software",
-      "SAP software"
+      "Writing"
     ]
   },
   {
@@ -8851,8 +8513,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Writing"
     ]
   },
   {
@@ -8872,8 +8533,7 @@
       "Active Listening",
       "Critical Thinking",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Monitoring"
     ]
   },
   {
@@ -8893,8 +8553,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -8914,8 +8573,7 @@
       "Critical Thinking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Speaking"
     ]
   },
   {
@@ -8935,8 +8593,7 @@
       "Active Listening",
       "Critical Thinking",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Speaking"
     ]
   },
   {
@@ -8956,8 +8613,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -8996,8 +8652,7 @@
       "Speaking",
       "Monitoring",
       "Critical Thinking",
-      "Zoom",
-      "Trimble SketchUp Pro"
+      "Reading Comprehension"
     ]
   },
   {
@@ -9017,8 +8672,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Office software",
-      "Avid Technology Pro Tools"
+      "Learning Strategies"
     ]
   },
   {
@@ -9038,8 +8692,7 @@
       "Active Listening",
       "Active Learning",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Science"
     ]
   },
   {
@@ -9059,8 +8712,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -9080,8 +8732,7 @@
       "Speaking",
       "Critical Thinking",
       "Active Listening",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -9101,8 +8752,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "SAS",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -9122,8 +8772,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft SharePoint",
-      "Microsoft Office software"
+      "Critical Thinking"
     ]
   },
   {
@@ -9143,8 +8792,7 @@
       "Reading Comprehension",
       "Critical Thinking",
       "Active Learning",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -9164,8 +8812,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "Patient management software",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -9185,8 +8832,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Active Learning"
     ]
   },
   {
@@ -9206,8 +8852,7 @@
       "Active Listening",
       "Critical Thinking",
       "Writing",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Speaking"
     ]
   },
   {
@@ -9227,8 +8872,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -9248,8 +8892,7 @@
       "Reading Comprehension",
       "Monitoring",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -9265,8 +8908,10 @@
       "senior": "₹32 - 70+ LPA"
     },
     "skills": [
-      "MEDITECH software",
-      "Epic Systems"
+      "Critical Thinking",
+      "Complex Problem Solving",
+      "Active Listening",
+      "Communication"
     ]
   },
   {
@@ -9286,8 +8931,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Speaking",
-      "Zoom",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -9307,8 +8951,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Speaking",
-      "MEDITECH software",
-      "Epic Systems"
+      "Writing"
     ]
   },
   {
@@ -9328,8 +8971,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Speaking"
     ]
   },
   {
@@ -9349,8 +8991,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Science"
     ]
   },
   {
@@ -9370,8 +9011,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -9391,8 +9031,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Active Learning",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Writing"
     ]
   },
   {
@@ -9412,8 +9051,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "Microsoft Access",
-      "MEDITECH software"
+      "Writing"
     ]
   },
   {
@@ -9433,8 +9071,7 @@
       "Writing",
       "Critical Thinking",
       "Active Listening",
-      "SAP software",
-      "Microsoft PowerPoint"
+      "Science"
     ]
   },
   {
@@ -9454,8 +9091,7 @@
       "Critical Thinking",
       "Speaking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Writing"
     ]
   },
   {
@@ -9475,8 +9111,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Critical Thinking"
     ]
   },
   {
@@ -9515,8 +9150,7 @@
       "Active Listening",
       "Writing",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Speaking"
     ]
   },
   {
@@ -9536,8 +9170,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Active Learning"
     ]
   },
   {
@@ -9557,8 +9190,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Speaking"
     ]
   },
   {
@@ -9578,8 +9210,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "eClinicalWorks EHR software"
+      "Writing"
     ]
   },
   {
@@ -9599,8 +9230,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "The MathWorks MATLAB",
-      "SAS"
+      "Writing"
     ]
   },
   {
@@ -9620,8 +9250,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Active Learning"
     ]
   },
   {
@@ -9641,8 +9270,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Speaking"
     ]
   },
   {
@@ -9658,8 +9286,10 @@
       "senior": "₹32 - 70+ LPA"
     },
     "skills": [
-      "Microsoft Windows",
-      "MEDITECH software"
+      "Critical Thinking",
+      "Complex Problem Solving",
+      "Active Listening",
+      "Communication"
     ]
   },
   {
@@ -9675,8 +9305,10 @@
       "senior": "₹32 - 70+ LPA"
     },
     "skills": [
-      "Microsoft Windows",
-      "MEDITECH software"
+      "Critical Thinking",
+      "Complex Problem Solving",
+      "Active Listening",
+      "Communication"
     ]
   },
   {
@@ -9715,8 +9347,7 @@
       "Critical Thinking",
       "Speaking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Monitoring"
     ]
   },
   {
@@ -9736,8 +9367,7 @@
       "Speaking",
       "Critical Thinking",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Monitoring"
     ]
   },
   {
@@ -9776,8 +9406,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Zoom",
-      "Microsoft Excel"
+      "Writing"
     ]
   },
   {
@@ -9797,8 +9426,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -9818,8 +9446,7 @@
       "Critical Thinking",
       "Active Listening",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Project"
+      "Monitoring"
     ]
   },
   {
@@ -9839,8 +9466,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "Python",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -9860,8 +9486,7 @@
       "Active Listening",
       "Critical Thinking",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Writing"
     ]
   },
   {
@@ -9881,8 +9506,7 @@
       "Critical Thinking",
       "Monitoring",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Speaking"
     ]
   },
   {
@@ -9902,8 +9526,7 @@
       "Active Listening",
       "Critical Thinking",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -9923,8 +9546,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Speaking"
     ]
   },
   {
@@ -9944,8 +9566,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Reading Comprehension"
     ]
   },
   {
@@ -9965,8 +9586,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Writing"
     ]
   },
   {
@@ -9986,8 +9606,7 @@
       "Active Listening",
       "Speaking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -10007,8 +9626,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "R",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -10028,8 +9646,7 @@
       "Active Listening",
       "Monitoring",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Critical Thinking"
     ]
   },
   {
@@ -10049,8 +9666,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "MEDITECH software",
-      "Epic Systems"
+      "Writing"
     ]
   },
   {
@@ -10066,8 +9682,10 @@
       "senior": "₹32 - 70+ LPA"
     },
     "skills": [
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking",
+      "Complex Problem Solving",
+      "Active Listening",
+      "Communication"
     ]
   },
   {
@@ -10087,8 +9705,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Speaking",
-      "R",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -10108,8 +9725,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -10129,8 +9745,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "Mozilla Firefox",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -10150,8 +9765,7 @@
       "Monitoring",
       "Speaking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Critical Thinking"
     ]
   },
   {
@@ -10171,8 +9785,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Critical Thinking"
     ]
   },
   {
@@ -10192,8 +9805,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -10213,8 +9825,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -10234,8 +9845,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "Zoom",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -10255,8 +9865,7 @@
       "Critical Thinking",
       "Active Listening",
       "Writing",
-      "Teradata Database",
-      "Tableau"
+      "Speaking"
     ]
   },
   {
@@ -10276,8 +9885,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Writing"
     ]
   },
   {
@@ -10297,8 +9905,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -10318,8 +9925,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -10358,8 +9964,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "R",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -10379,8 +9984,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -10400,8 +10004,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -10417,8 +10020,10 @@
       "senior": "₹32 - 70+ LPA"
     },
     "skills": [
-      "Teradata Database",
-      "Tableau"
+      "Critical Thinking",
+      "Complex Problem Solving",
+      "Active Listening",
+      "Communication"
     ]
   },
   {
@@ -10438,8 +10043,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -10459,8 +10063,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -10480,8 +10083,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft PowerPoint",
-      "Microsoft Office software"
+      "Monitoring"
     ]
   },
   {
@@ -10520,8 +10122,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -10541,8 +10142,7 @@
       "Reading Comprehension",
       "Monitoring",
       "Speaking",
-      "UNIX",
-      "SAP software"
+      "Critical Thinking"
     ]
   },
   {
@@ -10562,8 +10162,7 @@
       "Critical Thinking",
       "Monitoring",
       "Speaking",
-      "MEDITECH software",
-      "Appletree"
+      "Reading Comprehension"
     ]
   },
   {
@@ -10583,8 +10182,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Critical Thinking"
     ]
   },
   {
@@ -10604,8 +10202,7 @@
       "Speaking",
       "Critical Thinking",
       "Writing",
-      "Microsoft Windows",
-      "Microsoft Outlook"
+      "Monitoring"
     ]
   },
   {
@@ -10625,8 +10222,7 @@
       "Active Listening",
       "Monitoring",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Active Learning"
     ]
   },
   {
@@ -10646,8 +10242,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Monitoring"
     ]
   },
   {
@@ -10667,8 +10262,7 @@
       "Active Listening",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -10688,8 +10282,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -10709,8 +10302,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Speaking"
     ]
   },
   {
@@ -10730,8 +10322,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Monitoring"
     ]
   },
   {
@@ -10751,8 +10342,7 @@
       "Speaking",
       "Reading Comprehension",
       "Active Learning",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Monitoring"
     ]
   },
   {
@@ -10772,8 +10362,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Monitoring"
     ]
   },
   {
@@ -10793,8 +10382,7 @@
       "Monitoring",
       "Active Listening",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Speaking"
     ]
   },
   {
@@ -10814,8 +10402,7 @@
       "Reading Comprehension",
       "Writing",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Speaking"
     ]
   },
   {
@@ -10835,8 +10422,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Active Learning"
     ]
   },
   {
@@ -10856,8 +10442,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -10877,8 +10462,7 @@
       "Active Listening",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Monitoring"
     ]
   },
   {
@@ -10917,8 +10501,7 @@
       "Reading Comprehension",
       "Speaking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -10938,8 +10521,7 @@
       "Active Listening",
       "Critical Thinking",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Speaking"
     ]
   },
   {
@@ -10959,8 +10541,7 @@
       "Critical Thinking",
       "Monitoring",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -10980,8 +10561,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Visio"
+      "Monitoring"
     ]
   },
   {
@@ -11001,8 +10581,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -11022,8 +10601,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -11062,8 +10640,7 @@
       "Critical Thinking",
       "Active Learning",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Monitoring"
     ]
   },
   {
@@ -11083,8 +10660,7 @@
       "Writing",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11104,8 +10680,7 @@
       "Speaking",
       "Active Listening",
       "Monitoring",
-      "Salesforce software",
-      "Puppet"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11125,8 +10700,7 @@
       "Monitoring",
       "Active Listening",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11146,8 +10720,7 @@
       "Monitoring",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11167,8 +10740,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Structured query language SQL",
-      "SAS"
+      "Writing"
     ]
   },
   {
@@ -11188,8 +10760,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -11209,8 +10780,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "UNIX",
-      "Teradata Database"
+      "Critical Thinking"
     ]
   },
   {
@@ -11230,8 +10800,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "Swift",
-      "Puppet"
+      "Writing"
     ]
   },
   {
@@ -11251,8 +10820,7 @@
       "Monitoring",
       "Active Listening",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11272,8 +10840,7 @@
       "Speaking",
       "Critical Thinking",
       "Active Learning",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11293,8 +10860,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -11314,8 +10880,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -11335,8 +10900,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -11356,8 +10920,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -11377,8 +10940,7 @@
       "Critical Thinking",
       "Speaking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Active Listening"
     ]
   },
   {
@@ -11398,8 +10960,7 @@
       "Monitoring",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11419,8 +10980,7 @@
       "Active Listening",
       "Monitoring",
       "Critical Thinking",
-      "Microsoft Word",
-      "Payroll software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11440,8 +11000,7 @@
       "Speaking",
       "Active Listening",
       "Learning Strategies",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -11461,8 +11020,7 @@
       "Monitoring",
       "Active Listening",
       "Critical Thinking",
-      "Slack",
-      "Oracle Java"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11482,8 +11040,7 @@
       "Speaking",
       "Active Listening",
       "Critical Thinking",
-      "Microsoft Windows",
-      "Web browser software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11522,8 +11079,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Structured query language SQL",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11543,8 +11099,7 @@
       "Speaking",
       "Critical Thinking",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11564,8 +11119,7 @@
       "Monitoring",
       "Active Listening",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Project"
+      "Critical Thinking"
     ]
   },
   {
@@ -11585,8 +11139,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Monitoring"
     ]
   },
   {
@@ -11606,8 +11159,7 @@
       "Monitoring",
       "Active Listening",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11627,8 +11179,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "WordPress",
-      "Intuit QuickBooks"
+      "Monitoring"
     ]
   },
   {
@@ -11648,8 +11199,7 @@
       "Critical Thinking",
       "Monitoring",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11669,8 +11219,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Aldelo Systems Aldelo for Restaurants Pro",
-      "Foodman Home-Delivery"
+      "Monitoring"
     ]
   },
   {
@@ -11709,8 +11258,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Monitoring"
     ]
   },
   {
@@ -11730,8 +11278,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Outlook",
-      "Facebook"
+      "Active Learning"
     ]
   },
   {
@@ -11751,8 +11298,7 @@
       "Monitoring",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Windows",
-      "Microsoft Office software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11772,8 +11318,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Critical Thinking"
     ]
   },
   {
@@ -11793,8 +11338,7 @@
       "Speaking",
       "Monitoring",
       "Critical Thinking",
-      "Facebook",
-      "Blink"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11814,8 +11358,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Windows",
-      "Microsoft Outlook"
+      "Monitoring"
     ]
   },
   {
@@ -11835,8 +11378,7 @@
       "Speaking",
       "Monitoring",
       "Critical Thinking",
-      "Microsoft Windows",
-      "Microsoft Excel"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11856,8 +11398,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Windows",
-      "Facebook"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11877,8 +11418,7 @@
       "Speaking",
       "Reading Comprehension",
       "Monitoring",
-      "Microsoft Windows",
-      "Microsoft Office software"
+      "Critical Thinking"
     ]
   },
   {
@@ -11917,8 +11457,7 @@
       "Monitoring",
       "Active Listening",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Learning Strategies"
     ]
   },
   {
@@ -11938,8 +11477,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -11959,8 +11497,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Active Learning"
     ]
   },
   {
@@ -11980,8 +11517,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Windows",
-      "Microsoft Excel"
+      "Reading Comprehension"
     ]
   },
   {
@@ -12020,8 +11556,7 @@
       "Critical Thinking",
       "Writing",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Monitoring"
     ]
   },
   {
@@ -12041,8 +11576,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Reading Comprehension"
     ]
   },
   {
@@ -12062,8 +11596,7 @@
       "Active Listening",
       "Critical Thinking",
       "Speaking",
-      "Microsoft Outlook",
-      "Microsoft Office software"
+      "Monitoring"
     ]
   },
   {
@@ -12083,8 +11616,7 @@
       "Monitoring",
       "Speaking",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Reading Comprehension"
     ]
   },
   {
@@ -12123,8 +11655,7 @@
       "Active Listening",
       "Speaking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Project"
+      "Critical Thinking"
     ]
   },
   {
@@ -12144,8 +11675,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -12165,8 +11695,7 @@
       "Critical Thinking",
       "Speaking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -12186,8 +11715,7 @@
       "Learning Strategies",
       "Critical Thinking",
       "Active Learning",
-      "SAP software",
-      "Oracle PeopleSoft"
+      "Active Listening"
     ]
   },
   {
@@ -12207,8 +11735,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -12228,8 +11755,7 @@
       "Speaking",
       "Reading Comprehension",
       "Monitoring",
-      "Slack",
-      "Microsoft Office software"
+      "Mathematics"
     ]
   },
   {
@@ -12249,8 +11775,7 @@
       "Speaking",
       "Monitoring",
       "Mathematics",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -12289,8 +11814,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -12310,8 +11834,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -12331,8 +11854,7 @@
       "Active Listening",
       "Monitoring",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -12352,8 +11874,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Critical Thinking"
     ]
   },
   {
@@ -12373,8 +11894,7 @@
       "Speaking",
       "Reading Comprehension",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Writing"
     ]
   },
   {
@@ -12413,8 +11933,7 @@
       "Active Listening",
       "Writing",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -12430,8 +11949,10 @@
       "senior": "₹15 - 28 LPA"
     },
     "skills": [
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Critical Thinking",
+      "Complex Problem Solving",
+      "Active Listening",
+      "Communication"
     ]
   },
   {
@@ -12451,8 +11972,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Critical Thinking"
     ]
   },
   {
@@ -12472,8 +11992,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Salesforce software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -12493,8 +12012,7 @@
       "Speaking",
       "Reading Comprehension",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Critical Thinking"
     ]
   },
   {
@@ -12514,8 +12032,7 @@
       "Speaking",
       "Critical Thinking",
       "Active Learning",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -12535,8 +12052,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "Microsoft Outlook",
-      "Microsoft Office software"
+      "Active Learning"
     ]
   },
   {
@@ -12556,8 +12072,7 @@
       "Speaking",
       "Reading Comprehension",
       "Active Learning",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Monitoring"
     ]
   },
   {
@@ -12577,8 +12092,7 @@
       "Active Listening",
       "Monitoring",
       "Reading Comprehension",
-      "Facebook",
-      "Appointment scheduling software"
+      "Critical Thinking"
     ]
   },
   {
@@ -12598,8 +12112,7 @@
       "Active Listening",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -12619,8 +12132,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Monitoring"
     ]
   },
   {
@@ -12640,8 +12152,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Yardi software",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -12661,8 +12172,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Monitoring",
-      "Zoom",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -12682,8 +12192,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Writing",
-      "Tableau",
-      "Structured query language SQL"
+      "Critical Thinking"
     ]
   },
   {
@@ -12703,8 +12212,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -12724,8 +12232,7 @@
       "Monitoring",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Learning Strategies"
     ]
   },
   {
@@ -12745,8 +12252,7 @@
       "Active Listening",
       "Learning Strategies",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -12766,8 +12272,7 @@
       "Speaking",
       "Monitoring",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Reading Comprehension"
     ]
   },
   {
@@ -12787,8 +12292,7 @@
       "Speaking",
       "Monitoring",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -12827,8 +12331,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Yardi software",
-      "Teradata Database"
+      "Reading Comprehension"
     ]
   },
   {
@@ -12848,8 +12351,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "SAP software",
-      "Salesforce software"
+      "Writing"
     ]
   },
   {
@@ -12869,8 +12371,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Mozilla Firefox",
-      "Microsoft Windows"
+      "Mathematics"
     ]
   },
   {
@@ -12890,8 +12391,7 @@
       "Active Listening",
       "Speaking",
       "Mathematics",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Critical Thinking"
     ]
   },
   {
@@ -12911,8 +12411,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Oracle Database",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -12932,8 +12431,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -12953,8 +12451,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "SAP software",
-      "Salesforce software"
+      "Writing"
     ]
   },
   {
@@ -12974,8 +12471,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Writing",
-      "WordPress",
-      "Salesforce software"
+      "Critical Thinking"
     ]
   },
   {
@@ -12995,8 +12491,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Zoom",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -13016,8 +12511,7 @@
       "Critical Thinking",
       "Monitoring",
       "Reading Comprehension",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Speaking"
     ]
   },
   {
@@ -13037,8 +12531,7 @@
       "Reading Comprehension",
       "Speaking",
       "Writing",
-      "Zoom",
-      "SAP Concur"
+      "Critical Thinking"
     ]
   },
   {
@@ -13058,8 +12551,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Salesforce software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -13079,8 +12571,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Active Learning",
-      "Zoom",
-      "Teradata Database"
+      "Writing"
     ]
   },
   {
@@ -13100,8 +12591,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "Zoom",
-      "Trimble SketchUp Pro"
+      "Writing"
     ]
   },
   {
@@ -13121,8 +12611,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Zoom",
-      "Yardi software"
+      "Writing"
     ]
   },
   {
@@ -13142,8 +12631,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Zoom",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -13163,8 +12651,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -13184,8 +12671,7 @@
       "Active Listening",
       "Speaking",
       "Active Learning",
-      "Yardi software",
-      "Salesforce software"
+      "Critical Thinking"
     ]
   },
   {
@@ -13205,8 +12691,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Zoom",
-      "Yardi software"
+      "Writing"
     ]
   },
   {
@@ -13226,8 +12711,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "UNIX",
-      "Teradata Database"
+      "Writing"
     ]
   },
   {
@@ -13247,8 +12731,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Critical Thinking",
-      "Zoom",
-      "Salesforce software"
+      "Writing"
     ]
   },
   {
@@ -13268,8 +12751,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Critical Thinking"
     ]
   },
   {
@@ -13308,8 +12790,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Yardi software",
-      "Tableau"
+      "Critical Thinking"
     ]
   },
   {
@@ -13329,8 +12810,7 @@
       "Speaking",
       "Reading Comprehension",
       "Monitoring",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -13350,8 +12830,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Monitoring"
     ]
   },
   {
@@ -13390,8 +12869,7 @@
       "Speaking",
       "Writing",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -13411,8 +12889,7 @@
       "Speaking",
       "Active Listening",
       "Writing",
-      "SAP software",
-      "Microsoft Word"
+      "Mathematics"
     ]
   },
   {
@@ -13432,8 +12909,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "Yardi software",
-      "SAP software"
+      "Writing"
     ]
   },
   {
@@ -13453,8 +12929,7 @@
       "Active Listening",
       "Mathematics",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -13474,8 +12949,7 @@
       "Active Listening",
       "Mathematics",
       "Writing",
-      "Workday software",
-      "SAP software"
+      "Speaking"
     ]
   },
   {
@@ -13495,8 +12969,7 @@
       "Speaking",
       "Active Listening",
       "Critical Thinking",
-      "SAP software",
-      "Oracle PeopleSoft"
+      "Writing"
     ]
   },
   {
@@ -13516,8 +12989,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Monitoring"
     ]
   },
   {
@@ -13556,8 +13028,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Structured query language SQL",
-      "Salesforce software"
+      "Writing"
     ]
   },
   {
@@ -13577,8 +13048,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -13598,8 +13068,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Zoom",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -13619,8 +13088,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Tableau",
-      "Structured query language SQL"
+      "Writing"
     ]
   },
   {
@@ -13640,8 +13108,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Zoom",
-      "Yardi software"
+      "Writing"
     ]
   },
   {
@@ -13661,8 +13128,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Writing",
-      "Zoom",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -13682,8 +13148,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Monitoring"
     ]
   },
   {
@@ -13703,8 +13168,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Monitoring",
-      "Yardi software",
-      "Property management system PMS software"
+      "Writing"
     ]
   },
   {
@@ -13724,8 +13188,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Zoom",
-      "Oracle PeopleSoft"
+      "Critical Thinking"
     ]
   },
   {
@@ -13745,8 +13208,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Critical Thinking"
     ]
   },
   {
@@ -13766,8 +13228,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -13787,8 +13248,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft SharePoint"
+      "Monitoring"
     ]
   },
   {
@@ -13808,8 +13268,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "SAP software",
-      "Order management software"
+      "Critical Thinking"
     ]
   },
   {
@@ -13829,8 +13288,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "SAP ERP",
-      "Oracle PeopleSoft"
+      "Critical Thinking"
     ]
   },
   {
@@ -13850,8 +13308,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -13871,8 +13328,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -13911,8 +13367,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -13932,8 +13387,7 @@
       "Monitoring",
       "Active Listening",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -13953,8 +13407,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Critical Thinking"
     ]
   },
   {
@@ -13974,8 +13427,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -13995,8 +13447,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -14016,8 +13467,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Monitoring"
     ]
   },
   {
@@ -14037,8 +13487,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Microsoft Windows",
-      "Budgeting software"
+      "Monitoring"
     ]
   },
   {
@@ -14058,8 +13507,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Monitoring"
     ]
   },
   {
@@ -14079,8 +13527,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "Teradata Database",
-      "SAP software"
+      "Active Listening"
     ]
   },
   {
@@ -14100,8 +13547,7 @@
       "Speaking",
       "Active Listening",
       "Critical Thinking",
-      "Structured query language SQL",
-      "SAP software"
+      "Writing"
     ]
   },
   {
@@ -14121,8 +13567,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "Web browser software",
-      "Warehouse management system WMS"
+      "Monitoring"
     ]
   },
   {
@@ -14142,8 +13587,7 @@
       "Reading Comprehension",
       "Speaking",
       "Monitoring",
-      "SAP software",
-      "Oracle Database"
+      "Active Listening"
     ]
   },
   {
@@ -14163,8 +13607,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "Zoom",
-      "Slack"
+      "Critical Thinking"
     ]
   },
   {
@@ -14184,8 +13627,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Visio"
+      "Critical Thinking"
     ]
   },
   {
@@ -14205,8 +13647,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Critical Thinking"
     ]
   },
   {
@@ -14226,8 +13667,7 @@
       "Speaking",
       "Reading Comprehension",
       "Writing",
-      "Zoom",
-      "Yardi software"
+      "Monitoring"
     ]
   },
   {
@@ -14247,8 +13687,7 @@
       "Active Listening",
       "Monitoring",
       "Writing",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -14268,8 +13707,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "SAP software",
-      "Oracle PeopleSoft"
+      "Monitoring"
     ]
   },
   {
@@ -14289,8 +13727,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "UNIX",
-      "SAP software"
+      "Writing"
     ]
   },
   {
@@ -14310,8 +13747,7 @@
       "Speaking",
       "Active Listening",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Writing"
     ]
   },
   {
@@ -14331,8 +13767,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Active Listening"
     ]
   },
   {
@@ -14352,8 +13787,7 @@
       "Active Listening",
       "Speaking",
       "Writing",
-      "Yardi software",
-      "SAP software"
+      "Critical Thinking"
     ]
   },
   {
@@ -14373,8 +13807,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Monitoring"
     ]
   },
   {
@@ -14394,8 +13827,7 @@
       "Writing",
       "Speaking",
       "Active Listening",
-      "WordPress",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -14415,8 +13847,7 @@
       "Reading Comprehension",
       "Critical Thinking",
       "Active Learning",
-      "The MathWorks MATLAB",
-      "Tableau"
+      "Writing"
     ]
   },
   {
@@ -14455,8 +13886,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Active Listening"
     ]
   },
   {
@@ -14476,8 +13906,7 @@
       "Active Listening",
       "Monitoring",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Speaking"
     ]
   },
   {
@@ -14497,8 +13926,7 @@
       "Active Listening",
       "Speaking",
       "Science",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Active Learning"
     ]
   },
   {
@@ -14518,8 +13946,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -14539,8 +13966,7 @@
       "Critical Thinking",
       "Speaking",
       "Monitoring",
-      "Microsoft PowerPoint",
-      "Microsoft Excel"
+      "Reading Comprehension"
     ]
   },
   {
@@ -14560,8 +13986,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -14581,8 +14006,7 @@
       "Monitoring",
       "Active Listening",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Speaking"
     ]
   },
   {
@@ -14621,8 +14045,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Active Listening"
     ]
   },
   {
@@ -14642,8 +14065,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Speaking"
     ]
   },
   {
@@ -14663,8 +14085,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Mathematics"
     ]
   },
   {
@@ -14684,8 +14105,7 @@
       "Monitoring",
       "Critical Thinking",
       "Writing",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -14705,8 +14125,7 @@
       "Critical Thinking",
       "Speaking",
       "Writing",
-      "SAP software",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -14745,8 +14164,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Procore software",
-      "Oracle Primavera Enterprise Project Portfolio Management"
+      "Monitoring"
     ]
   },
   {
@@ -14766,8 +14184,7 @@
       "Reading Comprehension",
       "Speaking",
       "Active Listening",
-      "Trimble SketchUp Pro",
-      "SAP software"
+      "Critical Thinking"
     ]
   },
   {
@@ -14787,8 +14204,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -14808,8 +14224,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Microsoft Windows",
-      "Microsoft Office software"
+      "Mathematics"
     ]
   },
   {
@@ -14829,8 +14244,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Mathematics"
     ]
   },
   {
@@ -14850,8 +14264,7 @@
       "Critical Thinking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Speaking"
     ]
   },
   {
@@ -14871,8 +14284,7 @@
       "Mathematics",
       "Critical Thinking",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Speaking"
     ]
   },
   {
@@ -14892,8 +14304,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Office software",
-      "Facebook"
+      "Active Learning"
     ]
   },
   {
@@ -14913,8 +14324,7 @@
       "Monitoring",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Excel",
-      "Floor planning software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -14934,8 +14344,7 @@
       "Speaking",
       "Mathematics",
       "Critical Thinking",
-      "Salesforce software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -14955,8 +14364,7 @@
       "Speaking",
       "Active Listening",
       "Critical Thinking",
-      "ACT Contractors Forms",
-      "ADAPT-Modeler"
+      "Mathematics"
     ]
   },
   {
@@ -14976,8 +14384,7 @@
       "Monitoring",
       "Critical Thinking",
       "Active Listening",
-      "Microsoft Windows",
-      "Microsoft Excel"
+      "Mathematics"
     ]
   },
   {
@@ -14997,8 +14404,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Critical Thinking",
-      "Oracle Primavera Enterprise Project Portfolio Management",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -15018,8 +14424,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "Microsoft Outlook",
-      "Microsoft Office software"
+      "Active Learning"
     ]
   },
   {
@@ -15039,8 +14444,7 @@
       "Active Listening",
       "Critical Thinking",
       "Speaking",
-      "Microsoft Excel",
-      "Email software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15060,8 +14464,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Windows",
-      "Microsoft Outlook"
+      "Critical Thinking"
     ]
   },
   {
@@ -15081,8 +14484,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Active Listening"
     ]
   },
   {
@@ -15102,8 +14504,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Office software",
-      "Intuit QuickBooks"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15123,8 +14524,7 @@
       "Speaking",
       "Critical Thinking",
       "Active Learning",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15144,8 +14544,7 @@
       "Speaking",
       "Critical Thinking",
       "Active Listening",
-      "Microsoft Windows",
-      "Microsoft Office software"
+      "Monitoring"
     ]
   },
   {
@@ -15165,8 +14564,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Windows",
-      "Microsoft Outlook"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15186,8 +14584,7 @@
       "Critical Thinking",
       "Monitoring",
       "Speaking",
-      "CMSN FieldPAK",
-      "Comput-Ability Mechanical Insulation Key Estimator"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15207,8 +14604,7 @@
       "Critical Thinking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Speaking"
     ]
   },
   {
@@ -15228,8 +14624,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15249,8 +14644,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Monitoring"
     ]
   },
   {
@@ -15270,8 +14664,7 @@
       "Monitoring",
       "Speaking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Active Listening"
     ]
   },
   {
@@ -15291,8 +14684,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Salesforce software",
-      "Oracle Java"
+      "Monitoring"
     ]
   },
   {
@@ -15312,8 +14704,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "Salesforce software",
-      "Oracle Database"
+      "Critical Thinking"
     ]
   },
   {
@@ -15333,8 +14724,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Active Listening",
-      "Application Software SHEAR",
-      "Applied Systems Associates aSa Rebar"
+      "Speaking"
     ]
   },
   {
@@ -15354,8 +14744,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Active Learning"
     ]
   },
   {
@@ -15375,8 +14764,7 @@
       "Critical Thinking",
       "Monitoring",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Speaking"
     ]
   },
   {
@@ -15396,8 +14784,7 @@
       "Critical Thinking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Outlook",
-      "Cost estimating software"
+      "Speaking"
     ]
   },
   {
@@ -15417,8 +14804,7 @@
       "Active Listening",
       "Monitoring",
       "Reading Comprehension",
-      "Salesforce software",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -15438,8 +14824,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Visio"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15459,8 +14844,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "UNIX",
-      "SAP software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15480,8 +14864,7 @@
       "Speaking",
       "Critical Thinking",
       "Active Learning",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Monitoring"
     ]
   },
   {
@@ -15501,8 +14884,7 @@
       "Active Listening",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Active Learning"
     ]
   },
   {
@@ -15522,8 +14904,7 @@
       "Critical Thinking",
       "Monitoring",
       "Active Learning",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Speaking"
     ]
   },
   {
@@ -15543,8 +14924,7 @@
       "Monitoring",
       "Speaking",
       "Critical Thinking",
-      "AppliCad Roof Wizard",
-      "DigiTools Roof CAD"
+      "Active Learning"
     ]
   },
   {
@@ -15583,8 +14963,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Oracle Primavera Enterprise Project Portfolio Management"
+      "Writing"
     ]
   },
   {
@@ -15604,8 +14983,7 @@
       "Speaking",
       "Active Listening",
       "Critical Thinking",
-      "UNIX",
-      "The MathWorks MATLAB"
+      "Writing"
     ]
   },
   {
@@ -15625,8 +15003,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Active Learning",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Monitoring"
     ]
   },
   {
@@ -15646,8 +15023,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Excel",
-      "Facebook"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15667,8 +15043,7 @@
       "Critical Thinking",
       "Active Listening",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -15688,8 +15063,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15709,8 +15083,7 @@
       "Monitoring",
       "Critical Thinking",
       "Speaking",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Active Learning"
     ]
   },
   {
@@ -15730,8 +15103,7 @@
       "Active Listening",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Speaking"
     ]
   },
   {
@@ -15751,8 +15123,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15791,8 +15162,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15812,8 +15182,7 @@
       "Speaking",
       "Monitoring",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15833,8 +15202,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Salesforce software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15854,8 +15222,7 @@
       "Monitoring",
       "Active Listening",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -15875,8 +15242,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Critical Thinking"
     ]
   },
   {
@@ -15896,8 +15262,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15917,8 +15282,7 @@
       "Monitoring",
       "Critical Thinking",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15938,8 +15302,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -15959,8 +15322,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "Caterpillar Cat MineStar System",
-      "Caterpillar Command"
+      "Active Learning"
     ]
   },
   {
@@ -15980,8 +15342,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Windows",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -16020,8 +15381,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -16041,8 +15401,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -16062,8 +15421,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Active Learning"
     ]
   },
   {
@@ -16102,8 +15460,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Yardi software",
-      "SAP software"
+      "Active Listening"
     ]
   },
   {
@@ -16123,8 +15480,7 @@
       "Critical Thinking",
       "Speaking",
       "Reading Comprehension",
-      "UNIX",
-      "Structured query language SQL"
+      "Writing"
     ]
   },
   {
@@ -16144,8 +15500,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Monitoring"
     ]
   },
   {
@@ -16165,8 +15520,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Speaking"
     ]
   },
   {
@@ -16186,8 +15540,7 @@
       "Active Listening",
       "Speaking",
       "Reading Comprehension",
-      "Workday software",
-      "UNIX"
+      "Writing"
     ]
   },
   {
@@ -16207,8 +15560,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Speaking",
-      "SAP software",
-      "Python"
+      "Writing"
     ]
   },
   {
@@ -16228,8 +15580,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Monitoring",
-      "Trimble SketchUp Pro",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -16249,8 +15600,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Monitoring"
     ]
   },
   {
@@ -16270,8 +15620,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Monitoring"
     ]
   },
   {
@@ -16291,8 +15640,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -16312,8 +15660,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Active Learning"
     ]
   },
   {
@@ -16333,8 +15680,7 @@
       "Critical Thinking",
       "Active Listening",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Monitoring"
     ]
   },
   {
@@ -16354,8 +15700,7 @@
       "Critical Thinking",
       "Monitoring",
       "Active Listening",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -16375,8 +15720,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Reading Comprehension"
     ]
   },
   {
@@ -16396,8 +15740,7 @@
       "Active Listening",
       "Critical Thinking",
       "Monitoring",
-      "Workday software",
-      "Microsoft Windows"
+      "Active Learning"
     ]
   },
   {
@@ -16417,8 +15760,7 @@
       "Active Listening",
       "Monitoring",
       "Speaking",
-      "SAP software",
-      "Mozilla Firefox"
+      "Active Learning"
     ]
   },
   {
@@ -16438,8 +15780,7 @@
       "Speaking",
       "Active Listening",
       "Monitoring",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -16459,8 +15800,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Reading Comprehension"
     ]
   },
   {
@@ -16480,8 +15820,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Speaking"
     ]
   },
   {
@@ -16501,8 +15840,7 @@
       "Active Listening",
       "Speaking",
       "Reading Comprehension",
-      "Mozilla Firefox",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -16522,8 +15860,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -16543,8 +15880,7 @@
       "Speaking",
       "Critical Thinking",
       "Active Learning",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Monitoring"
     ]
   },
   {
@@ -16564,8 +15900,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Monitoring"
     ]
   },
   {
@@ -16585,8 +15920,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Writing"
     ]
   },
   {
@@ -16606,8 +15940,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Active Learning"
     ]
   },
   {
@@ -16627,8 +15960,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Monitoring"
     ]
   },
   {
@@ -16648,8 +15980,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Windows",
-      "Microsoft PowerPoint"
+      "Active Learning"
     ]
   },
   {
@@ -16669,8 +16000,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Structured query language SQL",
-      "SAP software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -16690,8 +16020,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -16711,8 +16040,7 @@
       "Speaking",
       "Active Listening",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Active Learning"
     ]
   },
   {
@@ -16732,8 +16060,7 @@
       "Active Listening",
       "Active Learning",
       "Monitoring",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -16753,8 +16080,7 @@
       "Active Listening",
       "Critical Thinking",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -16774,8 +16100,7 @@
       "Active Listening",
       "Monitoring",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -16795,8 +16120,7 @@
       "Reading Comprehension",
       "Critical Thinking",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -16816,8 +16140,7 @@
       "Monitoring",
       "Critical Thinking",
       "Reading Comprehension",
-      "Zoom",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -16837,8 +16160,7 @@
       "Critical Thinking",
       "Monitoring",
       "Reading Comprehension",
-      "Slack",
-      "Microsoft Word"
+      "Active Listening"
     ]
   },
   {
@@ -16858,8 +16180,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Active Learning"
     ]
   },
   {
@@ -16879,8 +16200,7 @@
       "Critical Thinking",
       "Active Listening",
       "Active Learning",
-      "SAP software",
-      "Salesforce software"
+      "Speaking"
     ]
   },
   {
@@ -16900,8 +16220,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Katsura Shareware KS Strobe Tuner",
-      "Katsura Shareware ProLevel"
+      "Monitoring"
     ]
   },
   {
@@ -16921,8 +16240,7 @@
       "Active Listening",
       "Speaking",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -16961,8 +16279,7 @@
       "Active Learning",
       "Monitoring",
       "Reading Comprehension",
-      "Yardi software",
-      "SAP software"
+      "Active Listening"
     ]
   },
   {
@@ -16982,8 +16299,7 @@
       "Reading Comprehension",
       "Monitoring",
       "Active Listening",
-      "Structured query language SQL",
-      "SAP software"
+      "Speaking"
     ]
   },
   {
@@ -17003,8 +16319,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -17024,8 +16339,7 @@
       "Critical Thinking",
       "Speaking",
       "Reading Comprehension",
-      "Diving logbook software",
-      "Diving table software"
+      "Writing"
     ]
   },
   {
@@ -17045,8 +16359,7 @@
       "Active Listening",
       "Speaking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Writing"
     ]
   },
   {
@@ -17066,8 +16379,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "Microsoft Excel",
-      "Email software"
+      "Active Learning"
     ]
   },
   {
@@ -17087,8 +16399,7 @@
       "Active Listening",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Speaking"
     ]
   },
   {
@@ -17108,8 +16419,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Writing",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Speaking"
     ]
   },
   {
@@ -17129,8 +16439,7 @@
       "Critical Thinking",
       "Monitoring",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -17169,8 +16478,7 @@
       "Reading Comprehension",
       "Critical Thinking",
       "Active Learning",
-      "SAP software",
-      "Microsoft Word"
+      "Active Listening"
     ]
   },
   {
@@ -17190,8 +16498,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "SAP software",
-      "Mozilla Firefox"
+      "Reading Comprehension"
     ]
   },
   {
@@ -17211,8 +16518,7 @@
       "Critical Thinking",
       "Monitoring",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -17232,8 +16538,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Speaking",
-      "Blueprint display software",
-      "Electronic Systems of Wisconsin Motor Test System software"
+      "Critical Thinking"
     ]
   },
   {
@@ -17253,8 +16558,7 @@
       "Critical Thinking",
       "Active Listening",
       "Monitoring",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -17274,8 +16578,7 @@
       "Speaking",
       "Critical Thinking",
       "Active Listening",
-      "SAP software",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -17295,8 +16598,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -17316,8 +16618,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Monitoring"
     ]
   },
   {
@@ -17337,8 +16638,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Writing"
     ]
   },
   {
@@ -17358,8 +16658,7 @@
       "Critical Thinking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Office software",
-      "At Your Service Software At Your Service Repair"
+      "Speaking"
     ]
   },
   {
@@ -17379,8 +16678,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -17419,8 +16717,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Monitoring"
     ]
   },
   {
@@ -17440,8 +16737,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Monitoring"
     ]
   },
   {
@@ -17461,8 +16757,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Web browser software",
-      "Microsoft Excel"
+      "Reading Comprehension"
     ]
   },
   {
@@ -17482,8 +16777,7 @@
       "Active Listening",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Active Learning"
     ]
   },
   {
@@ -17503,8 +16797,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking",
-      "Microsoft Excel",
-      "Email software"
+      "Speaking"
     ]
   },
   {
@@ -17524,8 +16817,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "Microsoft Office software",
-      "Edible Software"
+      "Writing"
     ]
   },
   {
@@ -17545,7 +16837,7 @@
       "Monitoring",
       "Active Listening",
       "Critical Thinking",
-      "Database software"
+      "Writing"
     ]
   },
   {
@@ -17584,8 +16876,7 @@
       "Speaking",
       "Critical Thinking",
       "Active Listening",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -17605,8 +16896,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Email software",
-      "Inventory tracking software"
+      "Critical Thinking"
     ]
   },
   {
@@ -17626,8 +16916,7 @@
       "Speaking",
       "Active Listening",
       "Critical Thinking",
-      "Email software",
-      "Web browser software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -17647,8 +16936,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -17668,8 +16956,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -17689,8 +16976,7 @@
       "Critical Thinking",
       "Monitoring",
       "Active Listening",
-      "SAP software",
-      "Microsoft Windows"
+      "Speaking"
     ]
   },
   {
@@ -17710,8 +16996,7 @@
       "Active Listening",
       "Monitoring",
       "Speaking",
-      "Autodesk HSMWorks",
-      "Computer numerical control CNC editor software"
+      "Critical Thinking"
     ]
   },
   {
@@ -17731,8 +17016,7 @@
       "Monitoring",
       "Active Listening",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Speaking"
     ]
   },
   {
@@ -17752,8 +17036,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -17773,8 +17056,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Critical Thinking"
     ]
   },
   {
@@ -17794,8 +17076,7 @@
       "Critical Thinking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Speaking"
     ]
   },
   {
@@ -17815,8 +17096,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Speaking"
     ]
   },
   {
@@ -17836,8 +17116,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "Microsoft Outlook",
-      "Microsoft Excel"
+      "Monitoring"
     ]
   },
   {
@@ -17857,8 +17136,7 @@
       "Active Listening",
       "Critical Thinking",
       "Speaking",
-      "Dassault Systemes SolidWorks",
-      "Autodesk AutoCAD"
+      "Active Learning"
     ]
   },
   {
@@ -17878,8 +17156,7 @@
       "Reading Comprehension",
       "Monitoring",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -17899,8 +17176,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -17920,8 +17196,7 @@
       "Monitoring",
       "Active Listening",
       "Active Learning",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -17941,8 +17216,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "Oracle Database",
-      "Microsoft Windows"
+      "Reading Comprehension"
     ]
   },
   {
@@ -17962,8 +17236,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -17983,8 +17256,7 @@
       "Speaking",
       "Monitoring",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18004,8 +17276,7 @@
       "Reading Comprehension",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Active Listening"
     ]
   },
   {
@@ -18025,8 +17296,7 @@
       "Active Listening",
       "Monitoring",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Critical Thinking"
     ]
   },
   {
@@ -18046,8 +17316,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "Microsoft Excel",
-      "Dassault Systemes SolidWorks"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18086,8 +17355,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18107,8 +17375,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -18128,8 +17395,7 @@
       "Reading Comprehension",
       "Monitoring",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Active Listening"
     ]
   },
   {
@@ -18149,8 +17415,7 @@
       "Monitoring",
       "Critical Thinking",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18170,8 +17435,7 @@
       "Monitoring",
       "Speaking",
       "Active Learning",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18191,8 +17455,7 @@
       "Active Listening",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Speaking"
     ]
   },
   {
@@ -18212,8 +17475,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Excel",
-      "Bookkeeping software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18233,8 +17495,7 @@
       "Active Listening",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Speaking"
     ]
   },
   {
@@ -18254,8 +17515,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft PowerPoint",
-      "Microsoft Office software"
+      "Critical Thinking"
     ]
   },
   {
@@ -18275,8 +17535,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18296,8 +17555,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -18317,8 +17575,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18338,8 +17595,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18359,8 +17615,7 @@
       "Active Listening",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18380,8 +17635,7 @@
       "Active Listening",
       "Speaking",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -18401,8 +17655,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Mathematics"
     ]
   },
   {
@@ -18422,8 +17675,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Active Learning"
     ]
   },
   {
@@ -18462,8 +17714,7 @@
       "Reading Comprehension",
       "Speaking",
       "Active Listening",
-      "Microsoft Windows",
-      "Microsoft Outlook"
+      "Mathematics"
     ]
   },
   {
@@ -18483,8 +17734,7 @@
       "Critical Thinking",
       "Monitoring",
       "Speaking",
-      "Microsoft Office software",
-      "Intuit QuickBooks"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18504,8 +17754,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Active Listening"
     ]
   },
   {
@@ -18525,8 +17774,7 @@
       "Monitoring",
       "Active Listening",
       "Mathematics",
-      "Microsoft Outlook",
-      "Microsoft Office software"
+      "Critical Thinking"
     ]
   },
   {
@@ -18546,8 +17794,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18567,8 +17814,7 @@
       "Speaking",
       "Critical Thinking",
       "Active Listening",
-      "Oracle Java",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18607,8 +17853,7 @@
       "Active Listening",
       "Critical Thinking",
       "Monitoring",
-      "Structured query language SQL",
-      "Outage management system OMS"
+      "Writing"
     ]
   },
   {
@@ -18628,8 +17873,7 @@
       "Active Listening",
       "Critical Thinking",
       "Monitoring",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -18649,8 +17893,7 @@
       "Speaking",
       "Active Listening",
       "Monitoring",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -18670,8 +17913,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Writing"
     ]
   },
   {
@@ -18691,8 +17933,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Speaking"
     ]
   },
   {
@@ -18712,8 +17953,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Learning",
-      "SAP software",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -18733,8 +17973,7 @@
       "Active Listening",
       "Speaking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Critical Thinking"
     ]
   },
   {
@@ -18754,8 +17993,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Speaking"
     ]
   },
   {
@@ -18775,8 +18013,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -18796,8 +18033,7 @@
       "Reading Comprehension",
       "Speaking",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Writing"
     ]
   },
   {
@@ -18836,8 +18072,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "Tableau",
-      "SAS"
+      "Writing"
     ]
   },
   {
@@ -18857,8 +18092,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Writing",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -18878,8 +18112,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Active Listening",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -18899,8 +18132,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Writing"
     ]
   },
   {
@@ -18920,8 +18152,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Monitoring"
     ]
   },
   {
@@ -18941,8 +18172,7 @@
       "Critical Thinking",
       "Monitoring",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Active Listening"
     ]
   },
   {
@@ -18962,8 +18192,7 @@
       "Speaking",
       "Reading Comprehension",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Critical Thinking"
     ]
   },
   {
@@ -18983,8 +18212,7 @@
       "Monitoring",
       "Active Listening",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -19004,8 +18232,7 @@
       "Speaking",
       "Reading Comprehension",
       "Active Listening",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -19025,8 +18252,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Monitoring"
     ]
   },
   {
@@ -19046,8 +18272,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "The MathWorks MATLAB",
-      "Structured query language SQL"
+      "Speaking"
     ]
   },
   {
@@ -19067,8 +18292,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Monitoring"
     ]
   },
   {
@@ -19088,8 +18312,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Active Listening",
-      "Business accounting software",
-      "Gem identification databases"
+      "Speaking"
     ]
   },
   {
@@ -19109,8 +18332,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Active Learning"
     ]
   },
   {
@@ -19130,8 +18352,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Monitoring"
     ]
   },
   {
@@ -19151,8 +18372,7 @@
       "Critical Thinking",
       "Monitoring",
       "Active Listening",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -19172,8 +18392,7 @@
       "Active Listening",
       "Reading Comprehension",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -19193,8 +18412,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Excel",
-      "Adobe Photoshop"
+      "Critical Thinking"
     ]
   },
   {
@@ -19214,8 +18432,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Speaking"
     ]
   },
   {
@@ -19235,8 +18452,7 @@
       "Critical Thinking",
       "Active Listening",
       "Monitoring",
-      "SAP software",
-      "Python"
+      "Speaking"
     ]
   },
   {
@@ -19256,8 +18472,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "TypeScript",
-      "Structured query language SQL"
+      "Monitoring"
     ]
   },
   {
@@ -19277,8 +18492,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -19298,8 +18512,7 @@
       "Mathematics",
       "Reading Comprehension",
       "Active Listening",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -19319,8 +18532,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -19340,8 +18552,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Reading Comprehension"
     ]
   },
   {
@@ -19361,8 +18572,7 @@
       "Monitoring",
       "Speaking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Active Listening"
     ]
   },
   {
@@ -19382,8 +18592,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "Microsoft Windows",
-      "Microsoft Office software"
+      "Critical Thinking"
     ]
   },
   {
@@ -19403,8 +18612,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Writing"
     ]
   },
   {
@@ -19424,8 +18632,7 @@
       "Critical Thinking",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Monitoring"
     ]
   },
   {
@@ -19445,8 +18652,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Outlook",
-      "Microsoft Excel"
+      "Reading Comprehension"
     ]
   },
   {
@@ -19466,8 +18672,7 @@
       "Critical Thinking",
       "Monitoring",
       "Speaking",
-      "Microsoft Outlook",
-      "Microsoft Excel"
+      "Reading Comprehension"
     ]
   },
   {
@@ -19487,8 +18692,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Active Learning"
     ]
   },
   {
@@ -19508,8 +18712,7 @@
       "Critical Thinking",
       "Monitoring",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -19529,8 +18732,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Speaking",
-      "SAP software",
-      "Microsoft Word"
+      "Critical Thinking"
     ]
   },
   {
@@ -19569,8 +18771,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Learning Strategies"
     ]
   },
   {
@@ -19590,8 +18791,7 @@
       "Active Listening",
       "Critical Thinking",
       "Monitoring",
-      "Warehouse management system WMS",
-      "SAP software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -19611,8 +18811,7 @@
       "Active Listening",
       "Critical Thinking",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -19632,8 +18831,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "Warehouse management system WMS",
-      "SAP software"
+      "Monitoring"
     ]
   },
   {
@@ -19653,8 +18851,7 @@
       "Speaking",
       "Reading Comprehension",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Active Learning"
     ]
   },
   {
@@ -19693,8 +18890,7 @@
       "Critical Thinking",
       "Monitoring",
       "Reading Comprehension",
-      "R",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -19714,8 +18910,7 @@
       "Critical Thinking",
       "Active Listening",
       "Reading Comprehension",
-      "Microsoft Office software",
-      "Adobe Creative Cloud software"
+      "Speaking"
     ]
   },
   {
@@ -19735,8 +18930,7 @@
       "Speaking",
       "Critical Thinking",
       "Monitoring",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -19756,8 +18950,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Speaking",
-      "SAP software",
-      "Oracle Database"
+      "Critical Thinking"
     ]
   },
   {
@@ -19777,8 +18970,7 @@
       "Active Listening",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Critical Thinking"
     ]
   },
   {
@@ -19798,8 +18990,7 @@
       "Critical Thinking",
       "Speaking",
       "Reading Comprehension",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Active Learning"
     ]
   },
   {
@@ -19819,8 +19010,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Microsoft Office software",
-      "Microsoft Excel"
+      "Monitoring"
     ]
   },
   {
@@ -19840,8 +19030,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Word"
+      "Active Listening"
     ]
   },
   {
@@ -19861,8 +19050,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Microsoft Windows",
-      "Microsoft Outlook"
+      "Critical Thinking"
     ]
   },
   {
@@ -19882,8 +19070,7 @@
       "Critical Thinking",
       "Monitoring",
       "Speaking",
-      "Microsoft Windows",
-      "AOL MapQuest"
+      "Reading Comprehension"
     ]
   },
   {
@@ -19903,8 +19090,7 @@
       "Critical Thinking",
       "Speaking",
       "Monitoring",
-      "Microsoft Windows",
-      "AOL MapQuest"
+      "Reading Comprehension"
     ]
   },
   {
@@ -19924,8 +19110,7 @@
       "Critical Thinking",
       "Monitoring",
       "Speaking",
-      "Microsoft Windows",
-      "Microsoft Office software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -19941,8 +19126,10 @@
       "senior": "₹15 - 28 LPA"
     },
     "skills": [
-      "Microsoft Windows",
-      "Microsoft Office software"
+      "Critical Thinking",
+      "Complex Problem Solving",
+      "Active Listening",
+      "Communication"
     ]
   },
   {
@@ -19981,8 +19168,7 @@
       "Critical Thinking",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Reading Comprehension"
     ]
   },
   {
@@ -20002,8 +19188,7 @@
       "Speaking",
       "Active Listening",
       "Critical Thinking",
-      "Positive train control PTC systems",
-      "Railcar inspection management software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -20023,8 +19208,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Outlook",
-      "Microsoft Office software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -20044,8 +19228,7 @@
       "Monitoring",
       "Critical Thinking",
       "Active Listening",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -20065,7 +19248,7 @@
       "Speaking",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Office software"
+      "Critical Thinking"
     ]
   },
   {
@@ -20104,8 +19287,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Critical Thinking"
     ]
   },
   {
@@ -20125,8 +19307,7 @@
       "Monitoring",
       "Active Listening",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft PowerPoint"
+      "Reading Comprehension"
     ]
   },
   {
@@ -20146,8 +19327,7 @@
       "Monitoring",
       "Active Listening",
       "Critical Thinking",
-      "Autopilot software",
-      "Cartography software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -20167,8 +19347,7 @@
       "Active Listening",
       "Monitoring",
       "Speaking",
-      "SAP software",
-      "Salesforce software"
+      "Active Learning"
     ]
   },
   {
@@ -20188,8 +19367,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "SAP software",
-      "Oracle PeopleSoft"
+      "Reading Comprehension"
     ]
   },
   {
@@ -20209,8 +19387,7 @@
       "Active Listening",
       "Critical Thinking",
       "Writing",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Mathematics"
     ]
   },
   {
@@ -20230,8 +19407,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "Web browser software",
-      "Mozilla Firefox"
+      "Monitoring"
     ]
   },
   {
@@ -20251,8 +19427,7 @@
       "Monitoring",
       "Reading Comprehension",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Critical Thinking"
     ]
   },
   {
@@ -20272,8 +19447,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "The MathWorks MATLAB",
-      "Tableau"
+      "Writing"
     ]
   },
   {
@@ -20293,8 +19467,7 @@
       "Writing",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Active Listening"
     ]
   },
   {
@@ -20314,8 +19487,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "SAS",
-      "SAP software"
+      "Writing"
     ]
   },
   {
@@ -20335,8 +19507,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "Structured query language SQL",
-      "Microsoft Word"
+      "Monitoring"
     ]
   },
   {
@@ -20356,8 +19527,7 @@
       "Speaking",
       "Monitoring",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Windows"
+      "Reading Comprehension"
     ]
   },
   {
@@ -20396,8 +19566,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "SAP software",
-      "Microsoft Windows"
+      "Reading Comprehension"
     ]
   },
   {
@@ -20417,8 +19586,7 @@
       "Active Listening",
       "Monitoring",
       "Reading Comprehension",
-      "Microsoft Windows",
-      "Microsoft Outlook"
+      "Speaking"
     ]
   },
   {
@@ -20438,8 +19606,7 @@
       "Active Listening",
       "Speaking",
       "Monitoring",
-      "Global positioning system GPS software",
-      "HYPACK DREDGEPACK"
+      "Reading Comprehension"
     ]
   },
   {
@@ -20459,8 +19626,7 @@
       "Monitoring",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Excel"
+      "Active Learning"
     ]
   },
   {
@@ -20480,8 +19646,7 @@
       "Active Listening",
       "Speaking",
       "Critical Thinking",
-      "Warehouse management system WMS",
-      "SAP software"
+      "Monitoring"
     ]
   },
   {
@@ -20501,8 +19666,7 @@
       "Speaking",
       "Active Listening",
       "Reading Comprehension",
-      "Microsoft Windows",
-      "Bella FSM Auto Detailing Service Software"
+      "Critical Thinking"
     ]
   },
   {
@@ -20522,8 +19686,7 @@
       "Reading Comprehension",
       "Speaking",
       "Monitoring",
-      "Warehouse management system WMS",
-      "SAP software"
+      "Critical Thinking"
     ]
   },
   {
@@ -20543,8 +19706,7 @@
       "Monitoring",
       "Speaking",
       "Critical Thinking",
-      "Microsoft Word",
-      "Microsoft Office software"
+      "Reading Comprehension"
     ]
   },
   {
@@ -20564,8 +19726,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Outlook",
-      "Microsoft Office software"
+      "Critical Thinking"
     ]
   },
   {
@@ -20585,8 +19746,7 @@
       "Active Listening",
       "Critical Thinking",
       "Reading Comprehension",
-      "SAP software",
-      "Microsoft Word"
+      "Speaking"
     ]
   },
   {
@@ -20606,8 +19766,7 @@
       "Reading Comprehension",
       "Speaking",
       "Critical Thinking",
-      "SAP software",
-      "Mozilla Firefox"
+      "Writing"
     ]
   },
   {
@@ -20627,8 +19786,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Monitoring",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Writing"
     ]
   },
   {
@@ -20648,8 +19806,7 @@
       "Reading Comprehension",
       "Active Listening",
       "Speaking",
-      "Microsoft Word",
-      "Microsoft Outlook"
+      "Critical Thinking"
     ]
   },
   {
@@ -20669,8 +19826,7 @@
       "Monitoring",
       "Speaking",
       "Active Listening",
-      "SAP software",
-      "Microsoft Word"
+      "Reading Comprehension"
     ]
   },
   {
@@ -20690,8 +19846,7 @@
       "Speaking",
       "Critical Thinking",
       "Reading Comprehension",
-      "AMCS Platform",
-      "Computerized maintenance management system CMMS"
+      "Writing"
     ]
   },
   {
@@ -20711,8 +19866,7 @@
       "Active Listening",
       "Writing",
       "Speaking",
-      "Warehouse management system WMS",
-      "SAP software"
+      "Critical Thinking"
     ]
   },
   {
