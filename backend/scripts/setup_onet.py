@@ -92,6 +92,236 @@ def slugify(text: str) -> str:
     return text.strip("-")
 
 
+# Ubiquitous software threshold: tools appearing in >= 250 occupations (~27% of all SOCs)
+UBIQUITOUS_TOOL_THRESHOLD = 250
+
+# Universal utility software categories: general workplace tools present in 50-93% of occupations.
+# These categories are never classified as occupation-specific domain tools.
+UNIVERSAL_UTILITY_ELEMENTS = {
+    "2.E.1.k",   # Office suite software (Microsoft Office, etc.)
+    "2.E.4.d",   # Word processing software (Microsoft Word, Google Docs)
+    "2.E.4.i",   # Spreadsheet software (Microsoft Excel)
+    "2.E.16.a",  # Electronic mail software (Outlook, Gmail)
+    "2.E.10.e",  # Internet browser software (Chrome, Edge)
+    "2.E.4.f",   # Presentation software (PowerPoint)
+}
+
+# Strict mapping of Career Fields to O*NET Content Model Element ID prefixes
+DOMAIN_ELEMENT_IDS: dict[str, tuple[str, ...]] = {
+    "Arts, Design & Media": (
+        "2.E.3.b",  # Music or sound editing software
+        "2.E.4.a",  # Pattern design software
+        "2.E.4.b",  # Graphics or photo imaging software
+        "2.E.4.c",  # Video creation and editing software
+        "2.E.4.k",  # Desktop publishing software
+    ),
+    "Healthcare & Medicine": (
+        "2.E.9.i",  # Medical software
+    ),
+    "Education & Training": (
+        "2.E.8.a",  # Foreign language software
+        "2.E.8.b",  # Computer based training software
+        "2.E.8.e",  # Multi-media educational software
+    ),
+    "Technology & Computer Science": (
+        "2.E.5.a",  # Content workflow software
+        "2.E.5.c",  # File versioning software
+        "2.E.6.d",  # Data base management system software
+        "2.E.6.f",  # Data base user interface and query software
+        "2.E.7",    # Development software
+        "2.E.10.a", # Application server software
+        "2.E.11",   # Network management software
+        "2.E.12",   # Networking software
+        "2.E.13",   # Operating environment software
+        "2.E.14",   # Security and protection software
+        "2.E.17",   # System management software
+    ),
+    "Data & AI": (
+        "2.E.6.b",  # Clustering software
+        "2.E.6.d",  # Data base management system software
+        "2.E.6.e",  # Data base reporting software
+        "2.E.6.f",  # Data base user interface and query software
+        "2.E.6.g",  # Data mining software
+        "2.E.6.j",  # Object oriented data base management software
+        "2.E.6.m",  # Business intelligence and data analysis software
+        "2.E.9.d",  # Analytical or scientific software
+        "2.E.7.b",  # Development environment software
+    ),
+    "Engineering & Architecture": (
+        "2.E.9.c",  # Computer aided design CAD software
+        "2.E.9.g",  # Industrial control software
+        "2.E.9.k",  # Computer aided manufacturing CAM software
+        "2.E.9.l",  # Manufacturing execution system MES software
+        "2.E.9.m",  # CAD/CAM software
+        "2.E.8.h",  # Geographic information system (GIS)
+    ),
+    "Manufacturing & Production": (
+        "2.E.9.g",  # Industrial control software
+        "2.E.9.k",  # CAM software
+        "2.E.9.l",  # MES software
+        "2.E.9.m",  # CAD/CAM
+        "2.E.2.b",  # ERP software
+    ),
+    "Construction & Trades": (
+        "2.E.9.c",  # CAD software
+        "2.E.1.e",  # Project management software
+    ),
+    "Physical & Life Sciences": (
+        "2.E.9.d",  # Analytical or scientific software
+        "2.E.8.h",  # GIS
+    ),
+    "Business, Management & Finance": (
+        "2.E.2.a",  # Accounting software
+        "2.E.2.b",  # Enterprise resource planning ERP software
+        "2.E.2.c",  # Tax preparation software
+        "2.E.2.d",  # Financial analysis software
+        "2.E.2.f",  # Billing and invoicing software
+        "2.E.1.b",  # Procurement software
+        "2.E.1.c",  # Human resources software
+        "2.E.1.d",  # Logistics and supply chain software
+        "2.E.1.e",  # Project management software
+        "2.E.1.f",  # Inventory management software
+        "2.E.1.l",  # Sales and marketing software
+        "2.E.6.c",  # Customer relationship management CRM software
+    ),
+    "Sales & Business Development": (
+        "2.E.6.c",  # CRM software
+        "2.E.1.l",  # Sales and marketing software
+    ),
+    "Operations & Administration": (
+        "2.E.1.b",  # Procurement
+        "2.E.1.c",  # Human resources
+        "2.E.1.e",  # Project management
+        "2.E.1.f",  # Inventory management
+        "2.E.2.a",  # Accounting
+        "2.E.2.b",  # ERP
+        "2.E.2.f",  # Billing and invoicing
+        "2.E.4.h",  # Calendar and scheduling software
+        "2.E.5.b",  # Document management software
+    ),
+    "Law & Public Policy": (
+        "2.E.9.n",  # Legal management software
+        "2.E.9.e",  # Compliance software
+    ),
+    "Community & Social Services": (
+        "2.E.6.c",  # CRM software
+        "2.E.1.c",  # Human resources
+        "2.E.9.i",  # Medical software
+    ),
+    "Transportation & Logistics": (
+        "2.E.1.d",  # Materials requirements planning and supply chain
+        "2.E.8.d",  # Route navigation software
+        "2.E.9.a",  # Aviation ground support
+        "2.E.9.f",  # Flight control software
+    ),
+}
+
+# High-precision word-boundary title domain rules for cross-disciplinary occupations
+TITLE_DOMAIN_RULES: list[tuple[re.Pattern, tuple[str, ...]]] = [
+    (re.compile(r"\b(music|musical|singers?|sound|composers?|audio)\b", re.IGNORECASE), ("2.E.3.b",)),
+    (re.compile(r"\b(designers?|artists?|photographers?|animators?|illustrators?)\b", re.IGNORECASE), ("2.E.4.a", "2.E.4.b", "2.E.4.c", "2.E.4.k")),
+    (re.compile(r"\b(teachers?|instructors?|professors?|educators?)\b", re.IGNORECASE), ("2.E.8.a", "2.E.8.b", "2.E.8.e")),
+    (re.compile(r"\b(nurses?|physicians?|surgeons?|dentists?|therapists?|clinical|medical)\b", re.IGNORECASE), ("2.E.9.i",)),
+    (re.compile(r"\b(industrial|production|manufacturing)\b", re.IGNORECASE), ("2.E.9.g", "2.E.9.k", "2.E.9.l", "2.E.9.m", "2.E.2.b")),
+]
+
+
+def is_domain_aligned(eid: str, ename: str, field: str, title: str) -> bool:
+    """
+    Determine if a software element category aligns with the occupation's field or title.
+    Enforces strict Element ID matching to eliminate false substring matches.
+    """
+    if not eid or eid in UNIVERSAL_UTILITY_ELEMENTS:
+        return False
+
+    # 1. Field-level Element ID taxonomy match
+    prefixes = DOMAIN_ELEMENT_IDS.get(field, ())
+    if any(eid.startswith(p) for p in prefixes):
+        return True
+
+    # 2. Precise word-boundary title match for specialized roles
+    for pattern, rule_prefixes in TITLE_DOMAIN_RULES:
+        if pattern.search(title):
+            if any(eid.startswith(p) for p in rule_prefixes):
+                return True
+
+    return False
+
+
+def rank_software_tools_for_occupation(
+    candidates: list[dict],
+    field: str,
+    title: str,
+    desc: str,
+    tool_soc_counts: dict[str, int],
+    max_tools: int = 6
+) -> list[str]:
+    """
+    Transparent, deterministic, occupation-aware ranking strategy:
+    1. Aggregates duplicate candidate rows for the same tool name, combining the strongest
+       applicable In Demand and Hot Technology signals and all associated element categories.
+    2. Scores each unique tool:
+       - In Demand ('Y'): +4.0 (Occupation-specific job posting frequency; exempt from ubiquity penalty)
+       - Domain Aligned:   +3.0 (O*NET Content Model element aligned with occupation field/title)
+       - Hot Technology:  +1.0 (National market adoption signal)
+       - Ubiquitous tool: -2.0 (Applied only to generic tools appearing across >=27% of US occupations
+                               when they are NOT in demand for this occupation)
+       - Tiebreaker: -first_encounter_order (preserves deterministic O*NET file sequence)
+    """
+    # 1. Aggregate candidate rows by tool name
+    tool_groups: dict[str, dict] = {}
+    for idx, c in enumerate(candidates):
+        tool = (c.get("tool") or "").strip()
+        if not tool:
+            continue
+        if tool not in tool_groups:
+            tool_groups[tool] = {
+                "tool": tool,
+                "is_demand": False,
+                "is_hot": False,
+                "elements": [],
+                "first_order": c.get("order", idx),
+            }
+        group = tool_groups[tool]
+        if c.get("is_demand"):
+            group["is_demand"] = True
+        if c.get("is_hot"):
+            group["is_hot"] = True
+        eid = c.get("eid", "")
+        ename = c.get("ename", "")
+        if eid or ename:
+            group["elements"].append((eid, ename))
+
+    # 2. Score aggregated tools
+    scored = []
+    for tool, group in tool_groups.items():
+        is_dem = group["is_demand"]
+        is_hot = group["is_hot"]
+        order = group["first_order"]
+
+        is_domain = any(
+            is_domain_aligned(eid, ename, field, title)
+            for eid, ename in group["elements"]
+        )
+        is_ubiquitous = tool_soc_counts.get(tool, 0) >= UBIQUITOUS_TOOL_THRESHOLD
+
+        score = 0.0
+        if is_dem:
+            score += 4.0
+        if is_domain:
+            score += 3.0
+        if is_hot:
+            score += 1.0
+        # In-demand tools are proven by occupation job postings, so they avoid the generic commodity penalty
+        if is_ubiquitous and not is_dem:
+            score -= 2.0
+
+        scored.append((score, -order, tool))
+
+    scored.sort(reverse=True)
+    return [item[2] for item in scored[:max_tools]]
+
+
 def ensure_zip_downloaded():
     """Ensure the raw O*NET zip exists and is valid."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -184,39 +414,31 @@ def build_onet_dataset():
                 pass
 
     # 3. Parse Software Skills & Tools
-    demand_software_by_soc: dict[str, list[str]] = {}
-    hot_software_by_soc: dict[str, list[str]] = {}
-    other_software_by_soc: dict[str, list[str]] = {}
+    software_candidates_by_soc: dict[str, list[dict]] = {}
+    tool_soc_counts: dict[str, int] = {}
+    seen_soc_tool: set[tuple[str, str]] = set()
 
-    for row in software_rows:
+    for idx, row in enumerate(software_rows):
         soc = row.get("O*NET-SOC Code", "").strip()
         example = (row.get("Workplace Example") or row.get("Example") or "").strip()
+        eid = row.get("Element ID", "").strip()
+        ename = row.get("Element Name", "").strip()
         is_hot = row.get("Hot Technology", "N") == "Y"
         is_demand = row.get("In Demand", "N") == "Y"
         if soc and example:
-            if is_demand:
-                if soc not in demand_software_by_soc:
-                    demand_software_by_soc[soc] = []
-                if example not in demand_software_by_soc[soc]:
-                    demand_software_by_soc[soc].append(example)
-            elif is_hot:
-                if soc not in hot_software_by_soc:
-                    hot_software_by_soc[soc] = []
-                if example not in hot_software_by_soc[soc]:
-                    hot_software_by_soc[soc].append(example)
-            else:
-                if soc not in other_software_by_soc:
-                    other_software_by_soc[soc] = []
-                if example not in other_software_by_soc[soc]:
-                    other_software_by_soc[soc].append(example)
-
-    software_by_soc: dict[str, list[str]] = {}
-    all_software_socs = set(list(demand_software_by_soc.keys()) + list(hot_software_by_soc.keys()) + list(other_software_by_soc.keys()))
-    for soc in all_software_socs:
-        dem = demand_software_by_soc.get(soc, [])
-        hot = [x for x in hot_software_by_soc.get(soc, []) if x not in dem]
-        others = [x for x in other_software_by_soc.get(soc, []) if x not in dem and x not in hot]
-        software_by_soc[soc] = (dem + hot + others)[:10]
+            if soc not in software_candidates_by_soc:
+                software_candidates_by_soc[soc] = []
+            software_candidates_by_soc[soc].append({
+                "tool": example,
+                "eid": eid,
+                "ename": ename,
+                "is_hot": is_hot,
+                "is_demand": is_demand,
+                "order": idx,
+            })
+            if (soc, example) not in seen_soc_tool:
+                seen_soc_tool.add((soc, example))
+                tool_soc_counts[example] = tool_soc_counts.get(example, 0) + 1
 
     # 4. Parse Job Zones (Education / Prep level)
     job_zone_by_soc: dict[str, str] = {}
@@ -263,8 +485,16 @@ def build_onet_dataset():
         sorted_skills = sorted(raw_skills, key=lambda x: x[1], reverse=True)
         top_workplace_skills = [s[0] for s in sorted_skills[:5]]
 
-        # Top software tools
-        top_software = software_by_soc.get(soc, [])[:6]
+        # Top software tools: occupation-aware ranking
+        raw_candidates = software_candidates_by_soc.get(soc, [])
+        top_software = rank_software_tools_for_occupation(
+            raw_candidates,
+            field=field,
+            title=title,
+            desc=desc,
+            tool_soc_counts=tool_soc_counts,
+            max_tools=6,
+        )
 
         # Combine skills: for Tech/Data include software tools; for others include workplace skills
         combined_skills = []

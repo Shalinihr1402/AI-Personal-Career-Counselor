@@ -95,6 +95,77 @@ def semantic_search(query_text: str, top_k: int = 10, filter_field: str | None =
     return results
 
 
+def _resolve_text(know_me: dict, primary_key: str, fallback_key: str) -> str:
+    """Resolve text field with explicit precedence: primary_key > fallback_key."""
+    for key in (primary_key, fallback_key):
+        val = know_me.get(key)
+        if isinstance(val, str):
+            cleaned = val.strip()
+            if cleaned:
+                return cleaned
+    return ""
+
+
+def _resolve_values(know_me: dict, primary_key: str = "core_values", fallback_key: str = "values") -> str:
+    """Normalize workplace values from list, tuple, set, or string, safely filtering unexpected types."""
+    for key in (primary_key, fallback_key):
+        val = know_me.get(key)
+        if val is None:
+            continue
+        if isinstance(val, str):
+            cleaned = val.strip()
+            if cleaned:
+                return cleaned
+        elif isinstance(val, set):
+            items = sorted(str(item).strip() for item in val if isinstance(item, str) and item.strip())
+            if items:
+                return ", ".join(items)
+        elif isinstance(val, (list, tuple)):
+            items = [str(item).strip() for item in val if isinstance(item, str) and item.strip()]
+            if items:
+                return ", ".join(items)
+    return ""
+
+
+def build_semantic_query(
+    free_text: str | None = None,
+    interests: list[str] | None = None,
+    resume_skills: list[str] | None = None,
+    know_me: dict | None = None,
+) -> str:
+    """
+    Constructs the rich semantic query representation from the student's profile.
+    Supports both canonical backend keys and frontend knowMeForApi aliases:
+      - core_values / values
+      - energy_flow / energy_source
+      - envy_compass / secret_curiosity
+    """
+    know_me = know_me or {}
+    envy = _resolve_text(know_me, "envy_compass", "secret_curiosity")
+    flow = _resolve_text(know_me, "energy_flow", "energy_source")
+    values_str = _resolve_values(know_me, "core_values", "values")
+
+    query_components = []
+    if free_text:
+        query_components.append(f"Student goal: {free_text}")
+    if interests:
+        query_components.append(f"Interests and passions: {', '.join(interests)}")
+    if resume_skills:
+        query_components.append(f"Technical & domain skills: {', '.join(resume_skills)}")
+    if flow:
+        query_components.append(f"Natural flow state and deep work: {flow}")
+    if envy:
+        query_components.append(f"Role models and admired work: {envy}")
+    if values_str:
+        query_components.append(f"Core workplace values: {values_str}")
+
+    semantic_query = ". ".join(query_components)
+    if not semantic_query.strip():
+        semantic_query = "Motivated college student seeking rewarding career opportunities"
+
+    return semantic_query
+
+
 def hybrid_career_match(
     riasec_scores: dict[str, float],
     interests: list[str] | None = None,
@@ -116,28 +187,15 @@ def hybrid_career_match(
     know_me = know_me or {}
 
     # 1. Build rich semantic query from student profile
-    envy = know_me.get("envy_compass", "")
-    flow = know_me.get("energy_flow", "")
-    values = know_me.get("core_values", [])
     deal_breakers = know_me.get("deal_breakers", [])
+    flow = _resolve_text(know_me, "energy_flow", "energy_source")
 
-    query_components = []
-    if free_text:
-        query_components.append(f"Student goal: {free_text}")
-    if interests:
-        query_components.append(f"Interests and passions: {', '.join(interests)}")
-    if resume_skills:
-        query_components.append(f"Technical & domain skills: {', '.join(resume_skills)}")
-    if flow:
-        query_components.append(f"Natural flow state and deep work: {flow}")
-    if envy:
-        query_components.append(f"Role models and admired work: {envy}")
-    if values and isinstance(values, list):
-        query_components.append(f"Core workplace values: {', '.join(values)}")
-
-    semantic_query = ". ".join(query_components)
-    if not semantic_query.strip():
-        semantic_query = "Motivated college student seeking rewarding career opportunities"
+    semantic_query = build_semantic_query(
+        free_text=free_text,
+        interests=interests,
+        resume_skills=resume_skills,
+        know_me=know_me,
+    )
 
     # Compute dense semantic similarity vector
     query_vec = _MODEL.encode([semantic_query], normalize_embeddings=True)

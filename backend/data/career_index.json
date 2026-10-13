@@ -2185,8 +2185,8 @@
     },
     "skills": [
       "Atlassian JIRA",
-      "Microsoft Excel",
-      "Microsoft Office software",
+      "Python",
+      "ServiceNow",
       "Speaking",
       "Reading Comprehension",
       "Active Listening"
@@ -2205,9 +2205,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "Microsoft Excel",
-      "Microsoft Office software",
-      "Microsoft Outlook",
+      "Python",
+      "R",
+      "Structured query language SQL",
       "Reading Comprehension",
       "Active Listening",
       "Writing"
@@ -2227,8 +2227,8 @@
     },
     "skills": [
       "Amazon Web Services AWS software",
-      "eMASS",
-      "Firewall software",
+      "Linux",
+      "Microsoft Azure software",
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening"
@@ -2247,9 +2247,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "Amazon Web Services AWS SageMaker",
       "Amazon Web Services AWS software",
-      "Ansible software",
+      "Apache Hadoop",
+      "Apache Kafka",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening"
@@ -2269,8 +2269,8 @@
     },
     "skills": [
       "Apple macOS",
-      "Firewall software",
       "Linux",
+      "Microsoft Windows",
       "Critical Thinking",
       "Active Listening",
       "Reading Comprehension"
@@ -2291,7 +2291,7 @@
     "skills": [
       "Apple iOS",
       "Apple macOS",
-      "Firewall software",
+      "Linux",
       "Reading Comprehension",
       "Active Listening",
       "Speaking"
@@ -2311,8 +2311,8 @@
     },
     "skills": [
       "Amazon Web Services AWS software",
-      "Ansible software",
       "Border Gateway Protocol BGP",
+      "IBM Terraform",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening"
@@ -2331,8 +2331,8 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
+      "Firewall software",
       "Autodesk AutoCAD",
-      "Autodesk Navisworks",
       "Autodesk Revit",
       "Reading Comprehension",
       "Critical Thinking",
@@ -2354,7 +2354,7 @@
     "skills": [
       "Amazon Redshift",
       "Amazon Web Services AWS software",
-      "Apache Airflow",
+      "Apache Hadoop",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening"
@@ -2395,8 +2395,8 @@
     },
     "skills": [
       "Microsoft Access",
-      "Microsoft Excel",
-      "Microsoft Office software",
+      "Python",
+      "Structured query language SQL",
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening"
@@ -2416,8 +2416,8 @@
     },
     "skills": [
       "Amazon Web Services AWS software",
-      "Ansible software",
       "Bash",
+      "Linux",
       "Active Listening",
       "Reading Comprehension",
       "Critical Thinking"
@@ -2479,8 +2479,8 @@
     },
     "skills": [
       "Amazon Web Services AWS software",
-      "Apache JMeter",
-      "Appium",
+      "C#",
+      "C++",
       "Reading Comprehension",
       "Active Listening",
       "Speaking"
@@ -2542,8 +2542,8 @@
     },
     "skills": [
       "Adobe Photoshop",
-      "Autodesk Maya",
       "C#",
+      "C++",
       "Active Listening",
       "Reading Comprehension",
       "Critical Thinking"
@@ -2581,9 +2581,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "Adobe Photoshop",
       "Cascading style sheets CSS",
-      "Content management systems CMS",
+      "Hypertext markup language HTML",
+      "JavaScript",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening"
@@ -2603,8 +2603,8 @@
     },
     "skills": [
       "Amazon Web Services AWS software",
-      "Autodesk AutoCAD",
-      "ESRI ArcGIS ArcPy",
+      "JavaScript",
+      "Microsoft Access",
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening"
@@ -2667,7 +2667,7 @@
     "skills": [
       "Amazon Web Services AWS software",
       "Bash",
-      "Firewall software",
+      "IBM Terraform",
       "Reading Comprehension",
       "Critical Thinking",
       "Active Listening"
@@ -2687,8 +2687,8 @@
     },
     "skills": [
       "Amazon Web Services AWS software",
-      "Firewall software",
       "Linux",
+      "Microsoft PowerShell",
       "Reading Comprehension",
       "Active Listening",
       "Writing"
@@ -2730,7 +2730,7 @@
     "skills": [
       "Amazon Web Services AWS CloudFormation",
       "Amazon Web Services AWS software",
-      "Ansible software",
+      "Atlassian JIRA",
       "Reading Comprehension",
       "Active Listening",
       "Critical Thinking"
@@ -2750,8 +2750,8 @@
     },
     "skills": [
       "Amazon Web Services AWS software",
-      "Atlassian Confluence",
-      "Atlassian JIRA",
+      "Microsoft Azure software",
+      "ServiceNow",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening"
@@ -2770,9 +2770,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
-      "Microsoft Excel",
-      "Microsoft Office software",
-      "Microsoft Power BI",
+      "Microsoft Visual Basic for Applications VBA",
+      "Python",
+      "R",
       "Mathematics",
       "Reading Comprehension",
       "Active Listening"
@@ -2812,9 +2812,9 @@
       "senior": "₹35 - 65+ LPA"
     },
     "skills": [
+      "Python",
+      "Structured query language SQL",
       "Microsoft Excel",
-      "Microsoft Office software",
-      "Microsoft Outlook",
       "Mathematics",
       "Reading Comprehension",
       "Active Listening"
@@ -2834,8 +2834,8 @@
     },
     "skills": [
       "IBM SPSS Statistics",
-      "Microsoft Excel",
-      "Microsoft Office software",
+      "SAS",
+      "Structured query language SQL",
       "Mathematics",
       "Reading Comprehension",
       "Critical Thinking"
@@ -2855,8 +2855,8 @@
     },
     "skills": [
       "IBM SPSS Statistics",
-      "Microsoft Excel",
-      "Microsoft Office software",
+      "SAS",
+      "Structured query language SQL",
       "Mathematics",
       "Reading Comprehension",
       "Speaking"
@@ -2898,7 +2898,7 @@
     "skills": [
       "Amazon Web Services AWS software",
       "Microsoft Azure software",
-      "Microsoft Excel",
+      "Microsoft Power BI",
       "Reading Comprehension",
       "Active Listening",
       "Speaking"
@@ -2918,8 +2918,8 @@
     },
     "skills": [
       "Epic Systems",
+      "Structured query language SQL",
       "Microsoft Excel",
-      "Microsoft Office software",
       "Critical Thinking",
       "Reading Comprehension",
       "Active Listening"
