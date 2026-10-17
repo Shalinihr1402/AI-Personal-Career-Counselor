@@ -4,15 +4,17 @@ import {
   Sparkles, ArrowRight, ArrowLeft, Target,
   AlertTriangle, RotateCcw, Compass, Mic, FileText,
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
 import AppHeader from '../components/AppHeader';
 import KnowMeSection from '../components/KnowMeSection';
 import CounselorVoiceChat from '../components/CounselorVoiceChat';
+import { confirmCareerGoal } from '../lib/profile';
 import { EMPTY_KNOW_ME, MAX_VALUES, SITUATION_QUESTIONS, knowMeForApi, type KnowMe } from '../lib/knowMe';
 import {
   fetchQuestions, scoreAssessment, fetchCareerMatches,
   DIM_LABEL, DIM_ORDER, WORK_STYLE_QUESTIONS,
-  type RiasecQuestion, type ScaleOption, type ScoreResult, type MatchResult, type Dim,
+  type RiasecQuestion, type ScaleOption, type ScoreResult, type MatchResult, type Dim, type CareerMatch,
 } from '../lib/assessment';
 
 type Phase =
@@ -62,7 +64,8 @@ function SectionStepper({ current }: { current: Phase }) {
 
 const Assessment: React.FC = () => {
   const navigate = useNavigate();
-  const { profile, assessment: saved, saveProfile, saveAssessment } = useProfile();
+  const { user } = useAuth();
+  const { profile, assessment: saved, saveProfile, saveAssessment, refreshActiveGoal } = useProfile();
 
   const [mode, setMode] = useState<'voice' | 'quiz'>('voice');
   const [phase, setPhase] = useState<Phase>('loading');
@@ -78,6 +81,7 @@ const Assessment: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [saveWarning, setSaveWarning] = useState<string | null>(null);
   const [settingGoal, setSettingGoal] = useState<string | null>(null);
+  const [goalError, setGoalError] = useState<string | null>(null);
 
   const updateKnowMe = (patch: Partial<KnowMe>) => setKnowMe((k) => ({ ...k, ...patch }));
 
@@ -115,6 +119,15 @@ const Assessment: React.FC = () => {
     // Load once; `saved` is already available because ProtectedRoute waits for the profile.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (saved && phase !== 'results' && phase !== 'scoring') {
+      setScore({ code: saved.code, scores: saved.scores });
+      setMatch({ source: saved.source, matches: saved.matches });
+      setResultsAt(saved.createdAt);
+      setPhase('results');
+    }
+  }, [saved, phase]);
 
   const pageCount = Math.ceil(questions.length / PER_PAGE);
   const pageQuestions = useMemo(
@@ -168,14 +181,35 @@ const Assessment: React.FC = () => {
     }
   };
 
-  const setGoal = async (title: string) => {
-    setSettingGoal(title);
-    try {
-      await saveProfile({ targetRole: title, path: 'know_goal' });
-    } catch {
-      /* non-blocking — the roadmap page lets them set it again */
+  const setGoal = async (career: CareerMatch) => {
+    if (!user) {
+      setGoalError('Please sign in to confirm your career goal.');
+      return;
     }
-    navigate('/roadmap');
+    setSettingGoal(career.title);
+    setGoalError(null);
+    try {
+      const reason = career.why_it_fits?.trim() || 'Selected from career assessment recommendations';
+      await confirmCareerGoal(
+        user.id,
+        career.title,
+        career.field,
+        reason,
+      );
+      await saveProfile({ targetRole: career.title, path: 'know_goal' });
+      await refreshActiveGoal?.();
+      navigate('/dashboard');
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to confirm career goal:', err);
+      setGoalError(
+        err instanceof Error
+          ? `Could not save your career goal: ${err.message}`
+          : 'Could not save your career goal. Please try again.',
+      );
+    } finally {
+      setSettingGoal(null);
+    }
   };
 
   const restart = () => {
@@ -187,6 +221,7 @@ const Assessment: React.FC = () => {
     setPage(0);
     setError(null);
     setSaveWarning(null);
+    setGoalError(null);
     setPhase('intro');
   };
 
@@ -479,6 +514,21 @@ const Assessment: React.FC = () => {
 
         {phase === 'results' && score && match && (
           <div className="space-y-6">
+            {goalError && (
+              <div className="text-sm text-rose-800 bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-start justify-between gap-3">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  <span>{goalError}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setGoalError(null)}
+                  className="text-rose-600 hover:text-rose-800 text-xs font-bold underline shrink-0"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
             {saveWarning && (
               <p className="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
                 {saveWarning}
@@ -591,7 +641,7 @@ const Assessment: React.FC = () => {
                     </Link>
                     <button
                       type="button"
-                      onClick={() => setGoal(c.title)}
+                      onClick={() => setGoal(c)}
                       disabled={settingGoal !== null}
                       className="inline-flex items-center gap-1.5 text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/70 px-3 py-1.5 rounded-xl text-xs font-semibold disabled:opacity-50 transition-colors"
                     >

@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { BrainCircuit, Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import {
+  getJourneyStatus,
+  loadProfile,
+  loadLatestAssessment,
+  loadActiveGoal,
+} from '../lib/profile';
 
 const Login: React.FC = () => {
   const { signIn, signInWithGoogle, resetPassword } = useAuth();
@@ -35,11 +41,27 @@ const Login: React.FC = () => {
       return;
     }
 
-    const onboardingDone = Boolean(
-      (signedInUser?.user_metadata as Record<string, unknown> | undefined)?.onboarding_complete,
-    );
-    const target = explicitRedirect ?? (onboardingDone ? '/dashboard' : '/onboarding');
-    navigate(target, { replace: true });
+    if (signedInUser) {
+      try {
+        const p = await loadProfile(signedInUser.id);
+        const a = p?.onboardingComplete ? await loadLatestAssessment(signedInUser.id) : null;
+        const g = a ? await loadActiveGoal(signedInUser.id).catch(() => null) : null;
+        const status = getJourneyStatus(p, a, g);
+        const target =
+          status.stage === 'complete'
+            ? (explicitRedirect ?? '/dashboard')
+            : status.nextRoute;
+        navigate(target, { replace: true });
+        return;
+      } catch {
+        const onboardingDone = Boolean(
+          (signedInUser?.user_metadata as Record<string, unknown> | undefined)?.onboarding_complete,
+        );
+        const target = explicitRedirect ?? (onboardingDone ? '/assessment' : '/onboarding');
+        navigate(target, { replace: true });
+        return;
+      }
+    }
   };
 
   const handleGoogle = async () => {

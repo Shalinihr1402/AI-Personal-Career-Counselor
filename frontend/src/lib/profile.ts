@@ -213,11 +213,13 @@ export async function confirmCareerGoal(
   reason?: string,
 ): Promise<CareerGoal> {
   // Archive any existing active goals
-  await supabase
+  const { error: archiveError } = await supabase
     .from('career_goals')
     .update({ status: 'archived' })
     .eq('user_id', userId)
     .eq('status', 'active');
+
+  if (archiveError) throw archiveError;
 
   // Insert the new active goal
   const { data, error } = await supabase
@@ -266,6 +268,55 @@ export async function loadActiveGoal(userId: string): Promise<CareerGoal | null>
     reason: data.reason ?? undefined,
     status: data.status,
     confirmedAt: data.confirmed_at,
+  };
+}
+
+export type JourneyStage = 'onboarding' | 'assessment' | 'goal' | 'complete';
+
+export interface JourneyStatus {
+  stage: JourneyStage;
+  onboardingComplete: boolean;
+  assessmentComplete: boolean;
+  goalComplete: boolean;
+  nextRoute: '/onboarding' | '/assessment' | '/dashboard';
+}
+
+export function getJourneyStatus(
+  profile: Profile | null,
+  assessment: SavedAssessment | null,
+  activeGoal?: CareerGoal | null,
+): JourneyStatus {
+  const onboardingComplete = Boolean(profile?.onboardingComplete);
+  const assessmentComplete = Boolean(
+    assessment && Array.isArray(assessment.matches) && assessment.matches.length > 0,
+  );
+  const goalComplete = Boolean(
+    activeGoal && activeGoal.status === 'active' && Boolean(activeGoal.careerTitle?.trim()),
+  );
+
+  let stage: JourneyStage;
+  let nextRoute: '/onboarding' | '/assessment' | '/dashboard';
+
+  if (!onboardingComplete) {
+    stage = 'onboarding';
+    nextRoute = '/onboarding';
+  } else if (!assessmentComplete) {
+    stage = 'assessment';
+    nextRoute = '/assessment';
+  } else if (!goalComplete) {
+    stage = 'goal';
+    nextRoute = '/assessment';
+  } else {
+    stage = 'complete';
+    nextRoute = '/dashboard';
+  }
+
+  return {
+    stage,
+    onboardingComplete,
+    assessmentComplete,
+    goalComplete,
+    nextRoute,
   };
 }
 

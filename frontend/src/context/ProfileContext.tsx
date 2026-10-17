@@ -14,20 +14,24 @@ import {
   legacyProfileFromMetadata,
   loadLatestAssessment,
   loadProfile,
+  loadActiveGoal,
   saveAssessment as saveAssessmentRow,
   saveProfile as saveProfileRow,
   type Profile,
   type SavedAssessment,
+  type CareerGoal,
 } from '../lib/profile';
 
 interface ProfileContextValue {
   profile: Profile | null;
   assessment: SavedAssessment | null;
+  activeGoal: CareerGoal | null;
   loading: boolean;
   /** Set when the Supabase tables haven't been created yet. */
   setupNeeded: boolean;
   saveProfile: (patch: Partial<Profile>) => Promise<Profile>;
   saveAssessment: (a: Parameters<typeof saveAssessmentRow>[1]) => Promise<SavedAssessment>;
+  refreshActiveGoal: () => Promise<CareerGoal | null>;
 }
 
 const ProfileContext = createContext<ProfileContextValue | undefined>(undefined);
@@ -38,6 +42,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [assessment, setAssessment] = useState<SavedAssessment | null>(null);
+  const [activeGoal, setActiveGoal] = useState<CareerGoal | null>(null);
   const [loading, setLoading] = useState(true);
   const [setupNeeded, setSetupNeeded] = useState(false);
 
@@ -47,6 +52,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     if (!configured || !user) {
       setProfile(null);
       setAssessment(null);
+      setActiveGoal(null);
       setLoading(false);
       return;
     }
@@ -60,9 +66,11 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
           if (legacy) p = await saveProfileRow(user.id, legacy);
         }
         const a = await loadLatestAssessment(user.id);
+        const g = await loadActiveGoal(user.id).catch(() => null);
         if (cancelled) return;
         setProfile(p);
         setAssessment(a);
+        setActiveGoal(g);
         setSetupNeeded(false);
       } catch (err) {
         if (cancelled) return;
@@ -95,6 +103,14 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
         // Login reads this flag before the profile loads, to pick the landing page.
         await supabase.auth.updateUser({ data: { onboarding_complete: saved.onboardingComplete } });
       }
+      if ('targetRole' in patch) {
+        try {
+          const g = await loadActiveGoal(userId);
+          setActiveGoal(g);
+        } catch {
+          // ignore
+        }
+      }
       return saved;
     },
     [userId],
@@ -110,9 +126,29 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     [userId],
   );
 
+  const refreshActiveGoal = useCallback(async () => {
+    if (!userId) return null;
+    try {
+      const g = await loadActiveGoal(userId);
+      setActiveGoal(g);
+      return g;
+    } catch {
+      return null;
+    }
+  }, [userId]);
+
   const value = useMemo<ProfileContextValue>(
-    () => ({ profile, assessment, loading, setupNeeded, saveProfile, saveAssessment }),
-    [profile, assessment, loading, setupNeeded, saveProfile, saveAssessment],
+    () => ({
+      profile,
+      assessment,
+      activeGoal,
+      loading,
+      setupNeeded,
+      saveProfile,
+      saveAssessment,
+      refreshActiveGoal,
+    }),
+    [profile, assessment, activeGoal, loading, setupNeeded, saveProfile, saveAssessment, refreshActiveGoal],
   );
 
   return <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>;
