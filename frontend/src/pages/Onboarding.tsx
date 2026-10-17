@@ -70,7 +70,7 @@ const inputClass =
 
 const Onboarding: React.FC = () => {
   const { user, signOut } = useAuth();
-  const { profile, saveProfile } = useProfile();
+  const { profile, assessment, saveProfile } = useProfile();
   const navigate = useNavigate();
 
   const alreadyDone = Boolean(profile?.onboardingComplete);
@@ -79,7 +79,39 @@ const Onboarding: React.FC = () => {
   const [step, setStep] = useState(0);
   const [finished, setFinished] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const [data, setData] = useState<OnboardingData>(emptyData);
+  const [data, setData] = useState<OnboardingData>(() => (
+    profile
+      ? {
+          path: profile.path ?? null,
+          educationStage: profile.educationStage ?? 'degree_ug',
+          streamOrBranch: profile.streamOrBranch ?? '',
+          college: profile.college ?? '',
+          course: profile.course ?? '',
+          year: profile.year ?? '1st year',
+          interests: profile.interests ?? [],
+          strengthsNote: profile.strengthsNote ?? '',
+          targetRole: profile.targetRole ?? '',
+          hoursPerWeek: profile.hoursPerWeek ?? '',
+        }
+      : emptyData
+  ));
+
+  React.useEffect(() => {
+    if (profile && !redoing) {
+      setData((prev) => ({
+        path: prev.path ?? profile.path ?? null,
+        educationStage: prev.educationStage !== 'degree_ug' ? prev.educationStage : (profile.educationStage ?? 'degree_ug'),
+        streamOrBranch: prev.streamOrBranch || (profile.streamOrBranch ?? ''),
+        college: prev.college || (profile.college ?? ''),
+        course: prev.course || (profile.course ?? ''),
+        year: prev.year !== '1st year' ? prev.year : (profile.year ?? '1st year'),
+        interests: prev.interests.length > 0 ? prev.interests : (profile.interests ?? []),
+        strengthsNote: prev.strengthsNote || (profile.strengthsNote ?? ''),
+        targetRole: prev.targetRole || (profile.targetRole ?? ''),
+        hoursPerWeek: prev.hoursPerWeek || (profile.hoursPerWeek ?? ''),
+      }));
+    }
+  }, [profile, redoing]);
 
   // Resume step's own state (kept separate: it's an async upload, not a form field)
   const [isDragging, setIsDragging] = useState(false);
@@ -228,14 +260,17 @@ const Onboarding: React.FC = () => {
             </div>
             <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Welcome back!</h1>
             <p className="text-slate-500 mb-8">
-              You've already told us about yourself. Head to your dashboard to see your career matches.
+              {assessment
+                ? "You've already told us about yourself. Head to your dashboard to see your career matches."
+                : "You've already told us about yourself. Continue to your assessment to discover your career matches."}
             </p>
             <div className="flex items-center justify-center gap-6">
               <Link
-                to="/dashboard"
+                to={assessment ? '/dashboard' : '/assessment'}
                 className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#5B21B6] transition-all shadow-md shadow-purple-600/20"
               >
-                Go to dashboard <ArrowRight className="w-4 h-4" />
+                {assessment ? 'Go to dashboard' : 'Continue to assessment'}{' '}
+                <ArrowRight className="w-4 h-4" />
               </Link>
               <button
                 onClick={restart}
@@ -253,8 +288,7 @@ const Onboarding: React.FC = () => {
             </div>
             <h1 className="text-2xl font-extrabold text-slate-900 mb-2">You're all set! 🎉</h1>
             <p className="text-slate-500 mb-8 max-w-md mx-auto">
-              Thanks, {data.college || 'friend'}! We're using what you told us to build your
-              personalized career roadmap.
+              Thanks, {data.college || 'friend'}! We're using what you told us to discover careers that fit you best.
             </p>
             <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 mb-8 text-left text-sm text-slate-600 space-y-1.5">
               {data.path && <p><strong className="text-slate-800">Goal status:</strong> {PATH_OPTIONS.find((p) => p.value === data.path)?.title}</p>}
@@ -266,11 +300,10 @@ const Onboarding: React.FC = () => {
             </div>
             <div className="flex items-center justify-center gap-6">
               <Link
-                to={data.path === 'not_sure' ? '/assessment' : '/dashboard'}
+                to="/assessment"
                 className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#5B21B6] transition-all shadow-md shadow-purple-600/20"
               >
-                {data.path === 'not_sure' ? 'Start career discovery' : 'Go to dashboard'}{' '}
-                <ArrowRight className="w-4 h-4" />
+                Start career discovery <ArrowRight className="w-4 h-4" />
               </Link>
               <button
                 onClick={restart}

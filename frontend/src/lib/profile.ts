@@ -55,7 +55,7 @@ interface AssessmentRow {
 }
 
 function fromRow(r: ProfileRow): Profile {
-  const km = r.know_me || {};
+  const km = r.know_me;
   return {
     path: r.path,
     college: r.college ?? undefined,
@@ -67,8 +67,8 @@ function fromRow(r: ProfileRow): Profile {
     hoursPerWeek: r.hours_per_week ?? undefined,
     resume: r.resume ?? undefined,
     knowMe: r.know_me ?? undefined,
-    educationStage: km.educationStage || undefined,
-    streamOrBranch: km.streamOrBranch || undefined,
+    educationStage: km?.educationStage || undefined,
+    streamOrBranch: km?.streamOrBranch || undefined,
     onboardingComplete: r.onboarding_complete,
   };
 }
@@ -85,15 +85,17 @@ function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> {
   if ('hoursPerWeek' in p) row.hours_per_week = p.hoursPerWeek ?? null;
   if ('resume' in p) row.resume = p.resume ?? null;
 
-  const existingKm = (p.knowMe as any) || {};
-  const stage = p.educationStage || existingKm.educationStage;
-  const stream = p.streamOrBranch || existingKm.streamOrBranch;
-  const mergedKm = {
-    ...existingKm,
-    ...(stage ? { educationStage: stage } : {}),
-    ...(stream ? { streamOrBranch: stream } : {}),
-  };
-  row.know_me = Object.keys(mergedKm).length > 0 ? mergedKm : null;
+  if ('knowMe' in p || 'educationStage' in p || 'streamOrBranch' in p) {
+    const existingKm = (p.knowMe as any) || {};
+    const stage = p.educationStage ?? existingKm.educationStage;
+    const stream = p.streamOrBranch ?? existingKm.streamOrBranch;
+    const mergedKm = {
+      ...existingKm,
+      ...(stage ? { educationStage: stage } : {}),
+      ...(stream ? { streamOrBranch: stream } : {}),
+    };
+    row.know_me = Object.keys(mergedKm).length > 0 ? mergedKm : null;
+  }
 
   if ('onboardingComplete' in p) row.onboarding_complete = Boolean(p.onboardingComplete);
   return row;

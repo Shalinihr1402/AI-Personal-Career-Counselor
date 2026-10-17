@@ -153,10 +153,12 @@ export const SECRET_CURIOSITY_OPTIONS = [
 ];
 
 /** True when the student has answered enough for "Know me" to be useful. */
-export function isKnowMeComplete(k: KnowMe | undefined): boolean {
+export function isKnowMeComplete(k: KnowMe | Partial<KnowMe> | undefined | null): boolean {
   if (!k) return false;
   return (
+    Array.isArray(k.values) &&
     k.values.length > 0 &&
+    Array.isArray(k.subjectsStrong) &&
     k.subjectsStrong.length > 0 &&
     SITUATION_QUESTIONS.every((q) => Boolean(k[q.key]))
   );

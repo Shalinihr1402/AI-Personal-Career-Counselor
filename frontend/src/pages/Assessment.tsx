@@ -82,6 +82,12 @@ const Assessment: React.FC = () => {
   const updateKnowMe = (patch: Partial<KnowMe>) => setKnowMe((k) => ({ ...k, ...patch }));
 
   useEffect(() => {
+    if (profile?.knowMe) {
+      setKnowMe((k) => ({ ...k, ...profile.knowMe }));
+    }
+  }, [profile?.knowMe]);
+
+  useEffect(() => {
     let cancelled = false;
     fetchQuestions()
       .then((data) => {
