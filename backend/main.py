@@ -47,7 +47,7 @@ def _generate_json(prompt: str, temperature: float = 0.2) -> dict:
     return json.loads(response.choices[0].message.content)
 
 
-from riasec import RIASEC_QUESTIONS, DIM_LABEL, score_riasec
+from riasec import RIASEC_QUESTIONS, SCENARIO_QUESTIONS, DIM_LABEL, score_riasec
 from careers import (
     CAREERS,
     CAREER_TITLES,
@@ -148,18 +148,15 @@ async def upload_resume(file: UploadFile = File(...)):
 @app.get("/api/assessment/questions")
 def assessment_questions():
     return {
-        "questions": RIASEC_QUESTIONS,
-        "scale": [
-            {"value": 0, "label": "Would dislike"},
-            {"value": 1, "label": "Neutral"},
-            {"value": 2, "label": "Would like"},
-        ],
+        "questions": SCENARIO_QUESTIONS,
+        "legacy_questions": RIASEC_QUESTIONS,
         "dimensions": DIM_LABEL,
+        "total": len(SCENARIO_QUESTIONS),
     }
 
 
 class ScoreRequest(BaseModel):
-    answers: dict[str, int] = Field(default_factory=dict)
+    answers: dict[str, Any] = Field(default_factory=dict)
 
 
 @app.post("/api/assessment/score")
@@ -464,6 +461,7 @@ class CounselorChatRequest(BaseModel):
     latest_turn_id: str | None = None
     user_confirmed_summary: bool | None = False
     requested_early_guidance: bool | None = False
+    assessment_completed: bool | None = None
 
 
 COUNSELOR_SYSTEM_PROMPT = """You are an AI career-exploration counselor for students and early-career candidates.
@@ -901,6 +899,27 @@ def counselor_chat(req: CounselorChatRequest):
 
     confirmed_evidence = dict(req.confirmed_evidence or {})
     unresolved_questions = list(req.unresolved_questions or [])
+
+    # Enforce mandatory assessment completion in backend API if marked as incomplete
+    is_assessment_completed = req.assessment_completed if req.assessment_completed is not None else profile.get("assessment_completed")
+    if is_assessment_completed is False and not req.confirmed_evidence and not profile.get("riasec_scores"):
+        return {
+            "reply": "Before we begin our personalized career conversation, please complete the Career Discovery Assessment. This provides the essential evidence needed to explore career paths that genuinely match you.",
+            "stage": "purpose",
+            "assessment_required": True,
+            "proposed_action": "pause",
+            "evidence_updates": [],
+            "confirmed_evidence": {},
+            "unresolved_questions": ["Completion of mandatory Career Discovery Assessment"],
+            "is_concluded": False,
+            "progress_percent": 0,
+            "suggested_chips": ["Take Discovery Assessment"],
+            "stage_advice": None,
+            "riasec_scores": None,
+            "riasec_code": None,
+            "summary": None,
+            "matches": []
+        }
 
     # Extract onboarding context
     path = profile.get("path")

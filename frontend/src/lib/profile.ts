@@ -154,7 +154,7 @@ export async function loadLatestAssessment(userId: string): Promise<SavedAssessm
 export async function saveAssessment(
   userId: string,
   a: {
-    answers: Record<string, number>;
+    answers: Record<string, string | number>;
     workStyle: Record<string, string>;
     knowMe?: KnowMe;
     scores: RiasecScores;

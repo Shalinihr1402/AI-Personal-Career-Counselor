@@ -2,10 +2,25 @@ import { API_BASE } from './api';
 
 export type Dim = 'R' | 'I' | 'A' | 'S' | 'E' | 'C';
 
+export interface ScenarioOption {
+  id: string; // 'a' | 'b' | 'c' | 'd'
+  text: string;
+  dim?: Dim;
+  fields?: string[];
+}
+
+export interface ScenarioQuestion {
+  id: string;
+  scenario: string;
+  options: ScenarioOption[];
+}
+
 export interface RiasecQuestion {
   id: string;
-  dim: Dim;
-  text: string;
+  scenario?: string;
+  options?: ScenarioOption[];
+  dim?: Dim;
+  text?: string;
 }
 
 export interface ScaleOption {
@@ -14,9 +29,10 @@ export interface ScaleOption {
 }
 
 export interface QuestionsResponse {
-  questions: RiasecQuestion[];
-  scale: ScaleOption[];
+  questions: ScenarioQuestion[];
   dimensions: Record<Dim, string>;
+  total?: number;
+  scale?: ScaleOption[];
 }
 
 export type RiasecScores = Record<Dim, number>;
@@ -24,6 +40,8 @@ export type RiasecScores = Record<Dim, number>;
 export interface ScoreResult {
   scores: RiasecScores;
   code: string;
+  top_fields?: string[];
+  field_scores?: Record<string, number>;
 }
 
 export interface CareerMatch {
@@ -90,7 +108,7 @@ export async function fetchQuestions(): Promise<QuestionsResponse> {
   return res.json() as Promise<QuestionsResponse>;
 }
 
-export function scoreAssessment(answers: Record<string, number>): Promise<ScoreResult> {
+export function scoreAssessment(answers: Record<string, string | number>): Promise<ScoreResult> {
   return postJSON<ScoreResult>('/api/assessment/score', { answers });
 }
 
