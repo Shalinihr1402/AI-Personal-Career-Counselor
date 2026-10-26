@@ -167,6 +167,96 @@ def run_tests():
             passed += 1
 
     # -------------------------------------------------------------------------
+    # TEST 6: Onboarding Discovery Context Handoff (path='not_sure')
+    # -------------------------------------------------------------------------
+    total += 1
+    print("\n[TEST 6] Onboarding Discovery Context Handoff (path='not_sure')")
+    discovery_req = CounselorChatRequest(
+        messages=[
+            CounselorChatMessage(role="assistant", content="Hello! Let's explore what career directions fit you best. Tell me about something you enjoyed recently."),
+            CounselorChatMessage(role="user", content="I really enjoyed designing our college event poster.")
+        ],
+        student_profile={
+            "educationStage": "degree_ug",
+            "path": "not_sure",
+            "course": "BSc Computer Science",
+            "college": "Bangalore University"
+        }
+    )
+    
+    disc_res = counselor_chat(discovery_req)
+    disc_reply = disc_res["reply"].lower()
+    
+    # Must NOT repeat the Stage A menu question:
+    menu_phrases = ["discovering options, comparing careers", "discovering options", "what would you most like help with today"]
+    repeats_menu = any(phrase in disc_reply for phrase in menu_phrases)
+    has_guidance_evidence = disc_res.get("confirmed_evidence", {}).get("guidance_goal") == "discover career options"
+    
+    if not repeats_menu and has_guidance_evidence:
+        print("  PASS: Counselor respects saved discovery purpose, does not repeat menu.")
+        print(f"  Counselor reply excerpt: '{disc_res['reply'][:120]}...'")
+        passed += 1
+    else:
+        print(f"  FAIL: repeats_menu={repeats_menu}, evidence={disc_res.get('confirmed_evidence')}")
+
+    # -------------------------------------------------------------------------
+    # TEST 7: Adaptive Handling for 'I Don't Know'
+    # -------------------------------------------------------------------------
+    total += 1
+    print("\n[TEST 7] Adaptive Handling for 'I Don't Know'")
+    unsure_req = CounselorChatRequest(
+        messages=[
+            CounselorChatMessage(role="assistant", content="Hello! Tell me about something you've enjoyed doing recently."),
+            CounselorChatMessage(role="user", content="I don't know")
+        ],
+        student_profile={
+            "educationStage": "degree_ug",
+            "path": "not_sure"
+        },
+        confirmed_evidence={"guidance_goal": "discover career options"},
+        current_stage="experiences"
+    )
+    
+    unsure_res = counselor_chat(unsure_req)
+    unsure_reply = unsure_res["reply"].lower()
+    repeats_menu_unsure = any(phrase in unsure_reply for phrase in menu_phrases)
+    
+    if not repeats_menu_unsure:
+        print("  PASS: 'I don't know' received an accessible question rather than a repeated menu.")
+        print(f"  Counselor reply excerpt: '{unsure_res['reply'][:120]}...'")
+        passed += 1
+    else:
+        print(f"  FAIL: 'I don't know' triggered repeated menu: {unsure_reply}")
+
+    # -------------------------------------------------------------------------
+    # TEST 8: Explicit Purpose Change (Discovery -> Comparison)
+    # -------------------------------------------------------------------------
+    total += 1
+    print("\n[TEST 8] Explicit Purpose Change (Discovery -> Comparison)")
+    change_req = CounselorChatRequest(
+        messages=[
+            CounselorChatMessage(role="assistant", content="Tell me about what you enjoyed recently."),
+            CounselorChatMessage(role="user", content="Actually, I want to compare design and development careers.")
+        ],
+        student_profile={
+            "educationStage": "degree_ug",
+            "path": "not_sure"
+        },
+        confirmed_evidence={"guidance_goal": "discover career options"},
+        current_stage="experiences"
+    )
+    
+    change_res = counselor_chat(change_req)
+    new_goal = change_res.get("confirmed_evidence", {}).get("guidance_goal")
+    
+    if new_goal == "compare specific careers":
+        print("  PASS: Counselor adapted to user's explicit goal change to career comparison.")
+        print(f"  Counselor reply excerpt: '{change_res['reply'][:120]}...'")
+        passed += 1
+    else:
+        print(f"  FAIL: Goal did not update: {new_goal}")
+
+    # -------------------------------------------------------------------------
     # SUMMARY
     # -------------------------------------------------------------------------
     print("\n" + "=" * 70)

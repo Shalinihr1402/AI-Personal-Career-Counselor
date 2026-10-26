@@ -17,7 +17,7 @@ import {
 import { API_BASE } from '../lib/api';
 import { useProfile } from '../context/ProfileContext';
 import type { RiasecScores } from '../lib/assessment';
-import type { EducationStage } from '../lib/onboarding';
+import type { EducationStage, CareerPath } from '../lib/onboarding';
 
 interface Message {
   id: string;
@@ -102,10 +102,27 @@ const getInitialMessageForStage = (stage: EducationStage) => {
     case 'diploma':
       return "Hello! As a Polytechnic / Diploma student, you are gaining hands-on technical skills. Are you planning for lateral entry into 2nd year B.Tech (via DCET) or are you aiming for direct core industry jobs?";
     case 'degree_ug':
-      return "Hello! I'm your AI Career Counselor. Whether you're in college or preparing for campus placements, let's map your career: What projects, tech stacks, or domains are you currently exploring?";
+      return "Hello! I'm your AI Career Counselor. Let's explore career directions that genuinely fit who you are. Tell me about an activity, coursework, or hobby you've enjoyed recently.";
     case 'postgrad':
       return "Welcome! Let's align your specialization or career pivot: What target roles or industry sectors are you aiming for?";
   }
+};
+
+const getInitialGreeting = (
+  stage: EducationStage,
+  path?: CareerPath | null,
+  targetRole?: string | null,
+) => {
+  if (path === 'not_sure') {
+    return "Hello! I'm your AI Career Counselor. Let's explore what career directions fit you best. Tell me about an activity, project, or hobby you've enjoyed recently—whether in classes, a personal interest, or helping someone.";
+  }
+  if ((path === 'know_goal' || path === 'need_plan') && targetRole) {
+    return `Hello! I see you're aiming for ${targetRole}. Let's look closely at your path: Tell me what draws you to this role and what steps you've already explored.`;
+  }
+  if (path === 'know_goal' || path === 'need_plan') {
+    return "Hello! I understand you have a career direction in mind. Which specific role or field are you aiming for?";
+  }
+  return getInitialMessageForStage(stage);
 };
 
 const getInitialChipsForStage = (stage: EducationStage) => {
@@ -135,10 +152,10 @@ const getInitialChipsForStage = (stage: EducationStage) => {
       ];
     case 'degree_ug':
       return [
-        'Software Engineering & Full Stack Dev',
-        'Data Science & AI/ML careers',
-        'UI/UX Design & Product Management',
-        'Campus Placement preparation & skills',
+        'Creative & Design roles',
+        'Software & Tech roles',
+        'Data & Analytics',
+        'Business & People roles',
       ];
     case 'postgrad':
       return [
@@ -149,8 +166,20 @@ const getInitialChipsForStage = (stage: EducationStage) => {
   }
 };
 
+const getInitialChips = (stage: EducationStage, path?: CareerPath | null) => {
+  if (path === 'not_sure') {
+    return [
+      '🎨 I like creative & design activities',
+      '🧩 I enjoy solving analytical problems',
+      '🤝 I like working with people & communicating',
+      '🔍 I am not sure yet, let us explore',
+    ];
+  }
+  return getInitialChipsForStage(stage);
+};
+
 export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
-  const { profile, saveProfile, saveAssessment } = useProfile();
+  const { profile, loading: profileLoading, saveProfile, saveAssessment } = useProfile();
 
   // Active educational stage (defaults to profile -> localStorage -> sslc_10th)
   const [activeStage, setActiveStage] = useState<EducationStage>(() => {
@@ -162,16 +191,20 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
     return 'sslc_10th';
   });
 
-  const [messages, setMessages] = useState<Message[]>([
+  const [messages, setMessages] = useState<Message[]>(() => [
     {
       id: '1',
       role: 'assistant',
-      text: getInitialMessageForStage(activeStage),
+      text: getInitialGreeting(
+        profile?.educationStage || 'sslc_10th',
+        profile?.path ?? null,
+        profile?.targetRole,
+      ),
     },
   ]);
 
   const [suggestionChips, setSuggestionChips] = useState<string[]>(() =>
-    getInitialChipsForStage(activeStage),
+    getInitialChips(profile?.educationStage || 'sslc_10th', profile?.path ?? null),
   );
 
   const [inputText, setInputText] = useState('');
@@ -181,8 +214,74 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(true);
   const [conclusion, setConclusion] = useState<ConclusionData | null>(null);
 
+  // Stage engine & evidence state
+  const [currentStage, setCurrentStage] = useState<string>(() =>
+    profile?.path ? 'experiences' : 'purpose',
+  );
+  const [confirmedEvidence, setConfirmedEvidence] = useState<Record<string, unknown>>(() => {
+    if (profile?.path === 'not_sure') return { guidance_goal: 'discover career options' };
+    if (profile?.path === 'know_goal') {
+      return {
+        guidance_goal: 'explore plan for chosen career',
+        ...(profile?.targetRole ? { target_career: profile.targetRole } : {}),
+      };
+    }
+    if (profile?.path === 'need_plan') {
+      return {
+        guidance_goal: 'build training or execution pathway',
+        ...(profile?.targetRole ? { target_career: profile.targetRole } : {}),
+      };
+    }
+    return {};
+  });
+  const [unresolvedQuestions, setUnresolvedQuestions] = useState<string[]>([]);
+  const [userConfirmedSummary, setUserConfirmedSummary] = useState<boolean>(false);
+
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const initializedRef = useRef(false);
+
+  // Ensure loaded profile initializes initial greeting and evidence without duplicates
+  useEffect(() => {
+    if (profileLoading) return;
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      const stage = profile?.educationStage || activeStage;
+      const path = profile?.path ?? null;
+      setActiveStage(stage);
+
+      setMessages((prev) => {
+        const hasUserMsg = prev.some((m) => m.role === 'user');
+        if (!hasUserMsg) {
+          return [
+            {
+              id: '1',
+              role: 'assistant',
+              text: getInitialGreeting(stage, path, profile?.targetRole),
+            },
+          ];
+        }
+        return prev;
+      });
+
+      setSuggestionChips(getInitialChips(stage, path));
+
+      if (path === 'not_sure') {
+        setCurrentStage('experiences');
+        setConfirmedEvidence((prev) => ({ guidance_goal: 'discover career options', ...prev }));
+      } else if (path === 'know_goal' || path === 'need_plan') {
+        setCurrentStage('experiences');
+        setConfirmedEvidence((prev) => ({
+          guidance_goal:
+            path === 'know_goal'
+              ? 'explore plan for chosen career'
+              : 'build training or execution pathway',
+          ...(profile?.targetRole ? { target_career: profile.targetRole } : {}),
+          ...prev,
+        }));
+      }
+    }
+  }, [profileLoading, profile]);
 
   // Switch educational stage anytime
   const handleStageChange = (newStage: EducationStage) => {
@@ -192,7 +291,27 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
       saveProfile({ educationStage: newStage }).catch(() => {});
     }
     setConclusion(null);
-    const newMsg = getInitialMessageForStage(newStage);
+    const path = profile?.path ?? null;
+    const initialStage = path ? 'experiences' : 'purpose';
+    setCurrentStage(initialStage);
+    setConfirmedEvidence(
+      path === 'not_sure'
+        ? { guidance_goal: 'discover career options' }
+        : path === 'know_goal'
+        ? {
+            guidance_goal: 'explore plan for chosen career',
+            ...(profile?.targetRole ? { target_career: profile.targetRole } : {}),
+          }
+        : path === 'need_plan'
+        ? {
+            guidance_goal: 'build training or execution pathway',
+            ...(profile?.targetRole ? { target_career: profile.targetRole } : {}),
+          }
+        : {},
+    );
+    setUnresolvedQuestions([]);
+    setUserConfirmedSummary(false);
+    const newMsg = getInitialGreeting(newStage, path, profile?.targetRole);
     setMessages([
       {
         id: Date.now().toString(),
@@ -200,7 +319,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
         text: newMsg,
       },
     ]);
-    setSuggestionChips(getInitialChipsForStage(newStage));
+    setSuggestionChips(getInitialChips(newStage, path));
     speakText(newMsg);
   };
 
@@ -312,15 +431,41 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
     setLoading(true);
 
     try {
+      const userTextLower = text.toLowerCase();
+      const isConfirming =
+        userConfirmedSummary ||
+        userTextLower.includes('yes') ||
+        userTextLower.includes('accurate') ||
+        userTextLower.includes('correct') ||
+        userTextLower.includes('looks good') ||
+        userTextLower.includes('show me options');
+
+      if (isConfirming && !userConfirmedSummary) {
+        setUserConfirmedSummary(true);
+      }
+
       const payload = {
         messages: updated.map((m) => ({ role: m.role, content: m.text })),
         student_profile: {
           educationStage: activeStage,
+          path: profile?.path,
+          targetRole: profile?.targetRole,
           course: profile?.course,
           college: profile?.college,
           interests: profile?.interests,
           strengthsNote: profile?.strengthsNote,
+          resume: profile?.resume,
         },
+        current_stage: currentStage,
+        confirmed_evidence: confirmedEvidence,
+        unresolved_questions: unresolvedQuestions,
+        latest_turn_id: `turn_${updated.filter((m) => m.role === 'user').length}`,
+        user_confirmed_summary: isConfirming,
+        requested_early_guidance:
+          userTextLower.includes('explore') ||
+          userTextLower.includes('recommend') ||
+          userTextLower.includes('options') ||
+          userTextLower.includes('careers'),
       };
 
       const res = await fetch(`${API_BASE}/api/counselor/chat`, {
@@ -339,7 +484,24 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
-      speakText(assistantMsg.text);
+
+      // Only speak clean reply text, never JSON or raw markdown blocks
+      const cleanSpeech = (data.reply || '')
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/\{[\s\S]*?\}/g, '')
+        .trim();
+      speakText(cleanSpeech || assistantMsg.text);
+
+      // Track stage and evidence updates from backend
+      if (data.stage) {
+        setCurrentStage(data.stage);
+      }
+      if (data.confirmed_evidence && typeof data.confirmed_evidence === 'object') {
+        setConfirmedEvidence(data.confirmed_evidence);
+      }
+      if (data.unresolved_questions && Array.isArray(data.unresolved_questions)) {
+        setUnresolvedQuestions(data.unresolved_questions);
+      }
 
       // Update suggestion chips from backend if provided
       if (data.suggested_chips && Array.isArray(data.suggested_chips) && data.suggested_chips.length > 0) {
@@ -392,6 +554,15 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
       setLoading(false);
     }
   };
+
+  if (profileLoading) {
+    return (
+      <div className="max-w-3xl mx-auto bg-white rounded-3xl border border-slate-200 p-12 text-center shadow-sm">
+        <div className="w-8 h-8 border-2 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-3" />
+        <p className="text-slate-500 text-sm font-semibold">Loading your profile & counselor context...</p>
+      </div>
+    );
+  }
 
   const currentStageInfo = STAGE_OPTIONS.find((s) => s.id === activeStage) || STAGE_OPTIONS[0];
 

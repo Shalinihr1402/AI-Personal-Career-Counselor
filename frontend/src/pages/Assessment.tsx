@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Sparkles, ArrowRight, ArrowLeft, Target,
@@ -104,6 +104,7 @@ const Assessment: React.FC = () => {
           setMatch({ source: saved.source, matches: saved.matches });
           setResultsAt(saved.createdAt);
           setPhase('results');
+          setMode('quiz');
         } else {
           setPhase('intro');
         }
@@ -120,14 +121,17 @@ const Assessment: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const initializedSavedRef = useRef(false);
   useEffect(() => {
-    if (saved && phase !== 'results' && phase !== 'scoring') {
+    if (saved && !initializedSavedRef.current) {
+      initializedSavedRef.current = true;
       setScore({ code: saved.code, scores: saved.scores });
       setMatch({ source: saved.source, matches: saved.matches });
       setResultsAt(saved.createdAt);
       setPhase('results');
+      setMode('quiz');
     }
-  }, [saved, phase]);
+  }, [saved]);
 
   const pageCount = Math.ceil(questions.length / PER_PAGE);
   const pageQuestions = useMemo(
@@ -264,10 +268,7 @@ const Assessment: React.FC = () => {
             <div className="flex bg-slate-200/80 p-1 rounded-2xl border border-slate-200 text-xs font-bold shrink-0">
               <button
                 type="button"
-                onClick={() => {
-                  setMode('voice');
-                  if (phase === 'results') setPhase('intro');
-                }}
+                onClick={() => setMode('voice')}
                 className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
                   mode === 'voice'
                     ? 'bg-purple-600 text-white shadow-sm'
@@ -316,7 +317,7 @@ const Assessment: React.FC = () => {
         )}
 
         {/* Interactive Voice Counselor Mode */}
-        {phase !== 'loading' && phase !== 'error' && phase !== 'results' && mode === 'voice' && (
+        {phase !== 'loading' && phase !== 'error' && mode === 'voice' && (
           <CounselorVoiceChat
             onRestartAssessment={() => {
               setPhase('intro');
@@ -347,7 +348,7 @@ const Assessment: React.FC = () => {
           </div>
         )}
 
-        {phase === 'quiz' && (
+        {mode === 'quiz' && phase === 'quiz' && (
           <div>
             <SectionStepper current="quiz" />
             <div className="mb-5">
@@ -407,7 +408,7 @@ const Assessment: React.FC = () => {
           </div>
         )}
 
-        {phase === 'workstyle' && (
+        {mode === 'quiz' && phase === 'workstyle' && (
           <div>
             <SectionStepper current="workstyle" />
             <p className="text-slate-500 mb-5 text-sm">Four quick preferences to sharpen the match.</p>
@@ -453,7 +454,7 @@ const Assessment: React.FC = () => {
           </div>
         )}
 
-        {(phase === 'values' || phase === 'strengths' || phase === 'identity' || phase === 'situation') && (
+        {mode === 'quiz' && (phase === 'values' || phase === 'strengths' || phase === 'identity' || phase === 'situation') && (
           <div>
             <SectionStepper current={phase} />
             <h2 className="text-xl font-extrabold text-slate-900">{SECTION_INTRO[phase]?.title}</h2>
@@ -505,14 +506,14 @@ const Assessment: React.FC = () => {
           </div>
         )}
 
-        {phase === 'scoring' && (
+        {mode === 'quiz' && phase === 'scoring' && (
           <div className="bg-white rounded-[1.5rem] p-10 border border-slate-100 text-center">
             <div className="w-8 h-8 border-2 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4" />
             <p className="text-slate-500 text-sm">Scoring your profile and matching careers…</p>
           </div>
         )}
 
-        {phase === 'results' && score && match && (
+        {mode === 'quiz' && phase === 'results' && score && match && (
           <div className="space-y-6">
             {goalError && (
               <div className="text-sm text-rose-800 bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-start justify-between gap-3">
@@ -655,10 +656,7 @@ const Assessment: React.FC = () => {
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
               <button
-                onClick={() => {
-                  setMode('voice');
-                  setPhase('intro');
-                }}
+                onClick={() => setMode('voice')}
                 className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm"
               >
                 <Mic className="w-3.5 h-3.5" /> Chat with Voice Counselor
