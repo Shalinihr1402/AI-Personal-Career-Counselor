@@ -43,8 +43,14 @@ interface ProfileRow {
   know_me: (KnowMe & {
     educationStage?: EducationStage;
     streamOrBranch?: string;
+    career_growth_subtype?: any;
+    user_persona?: any;
     skills_and_experience?: any;
     career_discovery_preferences?: any;
+    student_exploration_preferences?: any;
+    career_planning_preferences?: any;
+    career_transition_preferences?: any;
+    [key: string]: any;
   }) | null;
   onboarding_complete: boolean;
 }
@@ -66,6 +72,8 @@ function fromRow(r: ProfileRow): Profile {
   return {
     path: r.path,
     career_mode: careerMode,
+    career_growth_subtype: (km as any)?.career_growth_subtype || undefined,
+    user_persona: (km as any)?.user_persona || undefined,
     college: r.college ?? undefined,
     course: r.course ?? undefined,
     year: r.year ?? undefined,
@@ -81,6 +89,9 @@ function fromRow(r: ProfileRow): Profile {
     interest_details: (km as any)?.interest_details || undefined,
     skills_and_experience: (km as any)?.skills_and_experience || undefined,
     career_discovery_preferences: (km as any)?.career_discovery_preferences || undefined,
+    student_exploration_preferences: (km as any)?.student_exploration_preferences || undefined,
+    career_planning_preferences: (km as any)?.career_planning_preferences || undefined,
+    career_transition_preferences: (km as any)?.career_transition_preferences || undefined,
     onboardingComplete: r.onboarding_complete,
   };
 }
@@ -104,15 +115,37 @@ function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> {
   if ('education_details' in p && p.education_details) {
     const ed = p.education_details;
     if (ed.institution !== undefined) row.college = ed.institution || null;
-    const degreeLabel = ed.degree === 'other' ? (ed.degree_other || 'Other Degree') : ed.degree;
-    const specLabel =
-      ed.specialization === 'other'
-        ? ed.specialization_other || 'Other'
-        : ed.specialization && ed.specialization !== 'Not applicable' && ed.specialization !== 'General'
-        ? ed.specialization
-        : '';
-    row.course = [degreeLabel, specLabel].filter(Boolean).join(' - ') || row.course || null;
-    row.year = ed.study_stage_value || ed.graduation_year || ed.last_attended_stage || row.year || null;
+    let courseTitle = '';
+    if (ed.education_level === 'sslc_10th') {
+      const board = ed.school_board === 'other' ? (ed.school_board_other || 'Other Board') : (ed.school_board?.toUpperCase() || '10th Board');
+      courseTitle = `10th Standard (${board})`;
+    } else if (ed.education_level === 'puc_12th') {
+      const stream = ed.school_stream === 'other' ? (ed.specialization_other || 'Other Stream') : (ed.school_stream || ed.specialization || 'Higher Secondary');
+      courseTitle = `12th / PUC - ${stream}`;
+    } else if (ed.education_level === 'diploma') {
+      const spec = ed.specialization === 'Other' ? (ed.specialization_other || 'Other') : (ed.specialization || 'Polytechnic');
+      courseTitle = `Diploma in ${spec}`;
+    } else {
+      const degreeLabel = ed.degree === 'other' ? (ed.degree_other || 'Other Degree') : ed.degree;
+      const specLabel =
+        ed.specialization === 'other' || ed.specialization === 'Other'
+          ? ed.specialization_other || 'Other'
+          : ed.specialization && ed.specialization !== 'Not applicable' && ed.specialization !== 'General'
+          ? ed.specialization
+          : '';
+      courseTitle = [degreeLabel, specLabel].filter(Boolean).join(' - ');
+    }
+    row.course = courseTitle || row.course || null;
+
+    let yearVal = ed.study_stage_value;
+    if (ed.education_status === 'completed' && ed.graduation_year) {
+      yearVal = `Graduated ${ed.graduation_year}`;
+    } else if (ed.education_status === 'discontinued') {
+      yearVal = ed.last_attended_stage ? `Discontinued (${ed.last_attended_stage})` : 'Discontinued';
+    } else if (ed.education_status === 'gap_year') {
+      yearVal = ed.highest_qualification ? `Gap Year after ${ed.highest_qualification}` : 'On Gap Year';
+    }
+    row.year = yearVal || row.year || null;
   }
 
   if ('interest_details' in p && p.interest_details) {
@@ -141,34 +174,73 @@ function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> {
     }
   }
 
+  if ('career_planning_preferences' in p && p.career_planning_preferences) {
+    const cpp = p.career_planning_preferences;
+    if (cpp.target_career_title && !row.target_role) {
+      row.target_role = cpp.target_career_title;
+    }
+    if (cpp.weekly_commitment_hours && !row.hours_per_week) {
+      row.hours_per_week = cpp.weekly_commitment_hours;
+    }
+  }
+
+  if ('career_transition_preferences' in p && p.career_transition_preferences) {
+    const ctp = p.career_transition_preferences;
+    if (ctp.target_direction && !row.target_role) {
+      row.target_role = ctp.target_direction;
+    }
+    if (ctp.weekly_commitment_hours && !row.hours_per_week) {
+      row.hours_per_week = ctp.weekly_commitment_hours;
+    }
+  }
+
   if (
     'knowMe' in p ||
     'educationStage' in p ||
     'streamOrBranch' in p ||
     'career_mode' in p ||
+    'career_growth_subtype' in p ||
+    'user_persona' in p ||
     'education_details' in p ||
     'interest_details' in p ||
     'skills_and_experience' in p ||
-    'career_discovery_preferences' in p
+    'career_discovery_preferences' in p ||
+    'student_exploration_preferences' in p ||
+    'career_planning_preferences' in p ||
+    'career_transition_preferences' in p
   ) {
     const existingKm = (p.knowMe as any) || {};
     const stage = p.educationStage ?? existingKm.educationStage;
     const stream = p.streamOrBranch ?? existingKm.streamOrBranch;
     const careerMode = p.career_mode ?? existingKm.career_mode;
+    const careerGrowthSubtype = p.career_growth_subtype ?? existingKm.career_growth_subtype;
+    const userPersona = p.user_persona ?? existingKm.user_persona;
     const educationDetails = p.education_details ?? existingKm.education_details;
     const interestDetails = p.interest_details ?? existingKm.interest_details;
     const skillsAndExperience = p.skills_and_experience ?? existingKm.skills_and_experience;
     const careerDiscoveryPreferences =
       p.career_discovery_preferences ?? existingKm.career_discovery_preferences;
+    const studentExplorationPreferences =
+      p.student_exploration_preferences ?? existingKm.student_exploration_preferences;
+    const careerPlanningPreferences =
+      p.career_planning_preferences ?? existingKm.career_planning_preferences;
+    const careerTransitionPreferences =
+      p.career_transition_preferences ?? existingKm.career_transition_preferences;
+
     const mergedKm = {
       ...existingKm,
       ...(stage ? { educationStage: stage } : {}),
       ...(stream ? { streamOrBranch: stream } : {}),
       ...(careerMode ? { career_mode: careerMode } : {}),
+      ...(careerGrowthSubtype ? { career_growth_subtype: careerGrowthSubtype } : {}),
+      ...(userPersona ? { user_persona: userPersona } : {}),
       ...(educationDetails ? { education_details: educationDetails } : {}),
       ...(interestDetails ? { interest_details: interestDetails } : {}),
       ...(skillsAndExperience ? { skills_and_experience: skillsAndExperience } : {}),
       ...(careerDiscoveryPreferences ? { career_discovery_preferences: careerDiscoveryPreferences } : {}),
+      ...(studentExplorationPreferences ? { student_exploration_preferences: studentExplorationPreferences } : {}),
+      ...(careerPlanningPreferences ? { career_planning_preferences: careerPlanningPreferences } : {}),
+      ...(careerTransitionPreferences ? { career_transition_preferences: careerTransitionPreferences } : {}),
     };
     row.know_me = Object.keys(mergedKm).length > 0 ? mergedKm : null;
   }

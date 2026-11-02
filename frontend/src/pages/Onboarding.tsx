@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  UploadCloud, FileText, CheckCircle2, X, Sparkles, ArrowRight, ArrowLeft,
+  UploadCloud, FileText, CheckCircle2, X, Sparkles, ArrowRight, ArrowLeft, ArrowRightLeft,
   LogOut, Target, Search, TrendingUp, Clock,
   Code2, Palette, Calculator, Users, Briefcase, FlaskConical, HeartPulse,
   Dumbbell, PenTool, Mic, Check,
@@ -11,6 +11,13 @@ import {
 } from 'lucide-react';
 import { ResumeReviewModal } from '../components/ResumeReviewModal';
 import type { ExtractedResumeData } from '../lib/resumeReview';
+import {
+  loadUserDraft,
+  loadUserStep,
+  saveUserDraft,
+  saveUserStep,
+  clearUserDraft,
+} from '../lib/onboardingDraft';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
 import { API_BASE } from '../lib/api';
@@ -18,9 +25,13 @@ import { isMissingTable, type Profile } from '../lib/profile';
 import {
   type CareerMode,
   type CareerPath,
+  type CareerGrowthSubtype,
+  type UserPersona,
   type EducationStage,
   CAREER_MODE_TO_PATH,
   PATH_TO_CAREER_MODE,
+  CAREER_GROWTH_SUBTYPES,
+  detectUserPersona,
 } from '../lib/onboarding';
 import { SearchableSelect } from '../components/SearchableSelect';
 import {
@@ -31,6 +42,10 @@ import {
   DEGREE_CATALOG,
   GRADUATION_YEARS,
   HIGHEST_QUALIFICATIONS,
+  SCHOOL_BOARDS,
+  CLASS_10_SUBJECTS,
+  HIGH_SCHOOL_STREAMS,
+  DIPLOMA_SPECS,
   mapLevelToLegacyStage,
   getStudyStageOptions,
 } from '../lib/educationTaxonomy';
@@ -41,6 +56,7 @@ import {
 } from '../lib/interestsTaxonomy';
 import {
   type SkillProficiency,
+  type SkillSource,
   type UserSkill,
   type ExperienceType,
   type ExperienceItem,
@@ -49,6 +65,8 @@ import {
   SKILL_CATEGORIES,
   PROFICIENCY_OPTIONS,
   EXPERIENCE_TYPE_OPTIONS,
+  SCHOOL_EXPERIENCE_OPTIONS,
+  SCHOOL_EXPLORATION_AREAS,
   PROFESSIONAL_DURATION_OPTIONS,
   DEFAULT_SKILLS_AND_EXPERIENCE,
 } from '../lib/skillsTaxonomy';
@@ -73,6 +91,8 @@ type Path = CareerPath;
 interface OnboardingData {
   path: Path | null;
   career_mode?: CareerMode | null;
+  career_growth_subtype?: CareerGrowthSubtype | null;
+  user_persona?: UserPersona | null;
   educationStage: EducationStage;
   education_details?: EducationDetails;
   interest_details?: InterestDetails;
@@ -108,6 +128,8 @@ const defaultInterestDetails: InterestDetails = {
 const emptyData: OnboardingData = {
   path: null,
   career_mode: null,
+  career_growth_subtype: null,
+  user_persona: null,
   educationStage: 'degree_ug',
   education_details: defaultEducationDetails,
   interest_details: defaultInterestDetails,
@@ -172,7 +194,12 @@ const Onboarding: React.FC = () => {
   const alreadyDone = Boolean(profile?.onboardingComplete);
   const [redoing, setRedoing] = useState(false);
 
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState<number>(() => {
+    if (user?.id) {
+      return loadUserStep(user.id, STEPS.length);
+    }
+    return 0;
+  });
   const [finished, setFinished] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [stageViewMode, setStageViewMode] = useState<'year' | 'semester'>('year');
@@ -183,6 +210,10 @@ const Onboarding: React.FC = () => {
   const [notSureSkills, setNotSureSkills] = useState(false);
 
   const [data, setData] = useState<OnboardingData>(() => {
+    if (user?.id) {
+      const userDraft = loadUserDraft<OnboardingData>(user.id);
+      if (userDraft) return userDraft;
+    }
     if (!profile) return emptyData;
     const initialEd = (profile.knowMe as any)?.education_details || defaultEducationDetails;
     const initialInd = (profile.knowMe as any)?.interest_details || {
@@ -194,9 +225,13 @@ const Onboarding: React.FC = () => {
     };
     const initialSe = (profile.knowMe as any)?.skills_and_experience || DEFAULT_SKILLS_AND_EXPERIENCE;
     const initialCdp = (profile.knowMe as any)?.career_discovery_preferences || DEFAULT_CAREER_DISCOVERY_PREFERENCES;
+    const initialGrowthSubtype = profile.career_growth_subtype ?? (profile.knowMe as any)?.career_growth_subtype ?? null;
+    const initialPersona = profile.user_persona ?? (profile.knowMe as any)?.user_persona ?? null;
     return {
       path: profile.path ?? (profile.career_mode ? CAREER_MODE_TO_PATH[profile.career_mode] : null),
       career_mode: profile.career_mode ?? (profile.path ? PATH_TO_CAREER_MODE[profile.path] : null),
+      career_growth_subtype: initialGrowthSubtype,
+      user_persona: initialPersona,
       educationStage: profile.educationStage ?? 'degree_ug',
       education_details: initialEd,
       interest_details: initialInd,
@@ -213,11 +248,21 @@ const Onboarding: React.FC = () => {
     };
   });
 
+  // Restore draft or profile when user authenticates or switches accounts
   React.useEffect(() => {
-    if (profile && !redoing) {
+    if (!user?.id) return;
+    const userDraft = loadUserDraft<OnboardingData>(user.id);
+    const userStep = loadUserStep(user.id, STEPS.length);
+
+    if (userDraft) {
+      setData(userDraft);
+      setStep(userStep);
+    } else if (profile && !redoing) {
       setData((prev) => {
         const activeCareerMode = prev.career_mode ?? profile.career_mode ?? (profile.path ? PATH_TO_CAREER_MODE[profile.path] : null);
         const activePath = prev.path ?? profile.path ?? (activeCareerMode ? CAREER_MODE_TO_PATH[activeCareerMode] : null);
+        const activeGrowthSubtype = prev.career_growth_subtype ?? profile.career_growth_subtype ?? (profile.knowMe as any)?.career_growth_subtype ?? null;
+        const activePersona = prev.user_persona ?? profile.user_persona ?? (profile.knowMe as any)?.user_persona ?? null;
         const resolvedEd =
           prev.education_details ||
           (profile.knowMe as any)?.education_details ||
@@ -237,6 +282,8 @@ const Onboarding: React.FC = () => {
         return {
           path: activePath,
           career_mode: activeCareerMode,
+          career_growth_subtype: activeGrowthSubtype,
+          user_persona: activePersona,
           educationStage: prev.educationStage !== 'degree_ug' ? prev.educationStage : (profile.educationStage ?? 'degree_ug'),
           education_details: resolvedEd,
           interest_details: resolvedInd,
@@ -253,7 +300,22 @@ const Onboarding: React.FC = () => {
         };
       });
     }
-  }, [profile, redoing]);
+  }, [user?.id, profile, redoing]);
+
+  // Debounced auto-save of draft answers (300ms)
+  React.useEffect(() => {
+    if (!user?.id || finished) return;
+    const timer = setTimeout(() => {
+      saveUserDraft(user.id, data);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [data, user?.id, finished]);
+
+  // Immediate auto-save of active step index
+  React.useEffect(() => {
+    if (!user?.id || finished) return;
+    saveUserStep(user.id, step);
+  }, [step, user?.id, finished]);
 
   const updateEducation = (patch: Partial<EducationDetails>) => {
     setData((prev) => {
@@ -262,24 +324,48 @@ const Onboarding: React.FC = () => {
 
       // Reconcile legacy fields
       const legacyStage = mapLevelToLegacyStage(updatedEd.education_level);
-      const degreeConfig = (DEGREE_CATALOG[updatedEd.education_level] || []).find(
-        (d) => d.id === updatedEd.degree
-      );
-      const degreeLabel =
-        updatedEd.degree === 'other'
-          ? updatedEd.degree_other || 'Other Degree'
-          : degreeConfig?.name || updatedEd.degree;
 
-      const specLabel =
-        updatedEd.specialization === 'other'
-          ? updatedEd.specialization_other || 'Other'
-          : updatedEd.specialization &&
-            updatedEd.specialization !== 'Not applicable' &&
-            updatedEd.specialization !== 'General'
-          ? updatedEd.specialization
-          : '';
+      let courseTitle = '';
+      let specLabel = '';
 
-      const courseTitle = [degreeLabel, specLabel].filter(Boolean).join(' - ');
+      if (updatedEd.education_level === 'sslc_10th') {
+        const board = updatedEd.school_board === 'other'
+          ? (updatedEd.school_board_other || 'Other Board')
+          : (updatedEd.school_board ? SCHOOL_BOARDS.find((b) => b.id === updatedEd.school_board)?.shortName || updatedEd.school_board.toUpperCase() : '10th Board');
+        courseTitle = `10th Standard (${board})`;
+        specLabel = (updatedEd.favorite_school_subjects || []).slice(0, 3).join(', ') || 'General';
+      } else if (updatedEd.education_level === 'puc_12th') {
+        const stream = updatedEd.school_stream === 'other'
+          ? (updatedEd.specialization_other || 'Other Stream')
+          : (HIGH_SCHOOL_STREAMS.find((s) => s.id === updatedEd.school_stream)?.label || updatedEd.school_stream || updatedEd.specialization || 'Higher Secondary');
+        courseTitle = `12th / PUC - ${stream}`;
+        specLabel = stream;
+      } else if (updatedEd.education_level === 'diploma') {
+        const spec = updatedEd.specialization === 'Other'
+          ? (updatedEd.specialization_other || 'Other')
+          : (updatedEd.specialization || 'Polytechnic');
+        courseTitle = `Diploma in ${spec}`;
+        specLabel = spec;
+      } else {
+        const degreeConfig = (DEGREE_CATALOG[updatedEd.education_level] || []).find(
+          (d) => d.id === updatedEd.degree
+        );
+        const degreeLabel =
+          updatedEd.degree === 'other'
+            ? updatedEd.degree_other || 'Other Degree'
+            : degreeConfig?.name || updatedEd.degree;
+
+        specLabel =
+          updatedEd.specialization === 'other' || updatedEd.specialization === 'Other'
+            ? updatedEd.specialization_other || 'Other'
+            : updatedEd.specialization &&
+              updatedEd.specialization !== 'Not applicable' &&
+              updatedEd.specialization !== 'General'
+            ? updatedEd.specialization
+            : '';
+
+        courseTitle = [degreeLabel, specLabel].filter(Boolean).join(' - ');
+      }
 
       let yearStr = updatedEd.study_stage_value;
       if (updatedEd.education_status === 'completed' && updatedEd.graduation_year) {
@@ -290,25 +376,222 @@ const Onboarding: React.FC = () => {
         yearStr = updatedEd.highest_qualification ? `Gap Year after ${updatedEd.highest_qualification}` : 'On Gap Year';
       }
 
+      const nextPersona = detectUserPersona({
+        ...prev,
+        education_details: updatedEd,
+      });
+
       return {
         ...prev,
         education_details: updatedEd,
+        user_persona: nextPersona,
         educationStage: legacyStage,
         course: courseTitle,
-        streamOrBranch: specLabel || updatedEd.specialization,
+        streamOrBranch: specLabel || updatedEd.specialization || prev.streamOrBranch,
         college: updatedEd.institution !== undefined ? updatedEd.institution : prev.college,
         year: yearStr || prev.year,
       };
     });
   };
 
+  const isStep0Valid = React.useMemo(() => {
+    if (!data.career_mode && !data.path) return false;
+    const mode = data.career_mode || (data.path ? PATH_TO_CAREER_MODE[data.path] : null);
+    if (mode === 'career_growth_transition') {
+      return Boolean(data.career_growth_subtype);
+    }
+    return true;
+  }, [data.career_mode, data.path, data.career_growth_subtype]);
+
+  const handleSelectCareerMode = (mode: CareerMode) => {
+    const newPath = CAREER_MODE_TO_PATH[mode];
+    const newSubtype = mode === 'career_growth_transition' ? data.career_growth_subtype ?? null : null;
+    const newPersona = detectUserPersona({
+      ...data,
+      career_mode: mode,
+      career_growth_subtype: newSubtype,
+    });
+    setData((prev) => ({
+      ...prev,
+      career_mode: mode,
+      path: newPath,
+      career_growth_subtype: newSubtype,
+      user_persona: newPersona,
+    }));
+  };
+
+  const handleSelectGrowthSubtype = (subtype: CareerGrowthSubtype) => {
+    const newPersona = detectUserPersona({
+      ...data,
+      career_mode: 'career_growth_transition',
+      career_growth_subtype: subtype,
+    });
+    setData((prev) => ({
+      ...prev,
+      career_growth_subtype: subtype,
+      user_persona: newPersona,
+    }));
+  };
+
+  const renderGrowthSubtypeIcon = (subtype: CareerGrowthSubtype) => {
+    switch (subtype) {
+      case 'career_switching':
+        return <ArrowRightLeft className="w-4 h-4 sm:w-5 sm:h-5" />;
+      case 'career_advancement':
+        return <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />;
+      case 'career_break_return':
+        return <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5" />;
+      case 'science_fairs':
+        return {
+          titleLabel: 'Science Fair / Exhibition Project',
+          titlePlaceholder: 'e.g. Solar-powered Water Purification Model, Tesla Coil Demo',
+          orgLabel: 'Exhibition / Competition Level',
+          orgPlaceholder: 'e.g. Inter-School Science Fair, District Science Exhibition',
+          roleLabel: 'Your Role / Team',
+          rolePlaceholder: 'e.g. Project Lead, Model Presenter',
+          durationLabel: 'Grade / Month',
+          durationPlaceholder: 'e.g. 10th Standard / November 2024',
+          techLabel: 'Science Concepts & Materials',
+          techPlaceholder: 'e.g. Solar Cells, Arduino, Chemical Titration',
+          descLabel: 'Demonstration & Learnings',
+          descPlaceholder: 'What was demonstrated or awarded in this fair?',
+        };
+      case 'coding_robotics':
+        return {
+          titleLabel: 'Coding / Robotics Project',
+          titlePlaceholder: 'e.g. Line Follower Robot, Python Quiz Game, School Web Page',
+          orgLabel: 'Club / Platform',
+          orgPlaceholder: 'e.g. School Coding Club, Replit, Tinkercad',
+          roleLabel: 'Role',
+          rolePlaceholder: 'e.g. Solo Builder, Programmer',
+          durationLabel: 'Timeline',
+          durationPlaceholder: 'e.g. 1 month, Holiday project',
+          techLabel: 'Tools & Languages Used',
+          techPlaceholder: 'e.g. Scratch, Python, Arduino, HTML/CSS',
+          descLabel: 'What does this project do?',
+          descPlaceholder: 'Describe what you built and learned.',
+        };
+      case 'competitions':
+        return {
+          titleLabel: 'Competition / Olympiad Name',
+          titlePlaceholder: 'e.g. National Science Olympiad, Inter-school Debate, Hackathon',
+          orgLabel: 'Organizing Body',
+          orgPlaceholder: 'e.g. Science Olympiad Foundation, Rotary Club',
+          roleLabel: 'Participation Role',
+          rolePlaceholder: 'e.g. Solo Participant, Captain',
+          durationLabel: 'Year / Standard',
+          durationPlaceholder: 'e.g. 2024, 11th Standard',
+          techLabel: 'Skills / Topics Tested',
+          techPlaceholder: 'e.g. Logical Reasoning, Math, Public Speaking',
+          descLabel: 'Achievement / Rank',
+          descPlaceholder: 'e.g. Gold Medalist, Finalist, School Rank 1',
+        };
+      case 'extracurricular':
+        return {
+          titleLabel: 'Activity / Club Initiative',
+          titlePlaceholder: 'e.g. School Magazine Editor, Drama Club, Sports Captain',
+          orgLabel: 'School / Club',
+          orgPlaceholder: 'e.g. Cultural Committee, Scouts & Guides, Literary Club',
+          roleLabel: 'Role / Designation',
+          rolePlaceholder: 'e.g. Student Coordinator, Captain, Member',
+          durationLabel: 'Duration',
+          durationPlaceholder: 'e.g. 1 academic year',
+          techLabel: 'Key Skills Exercised',
+          techPlaceholder: 'e.g. Writing, Public Speaking, Team Coordination',
+          descLabel: 'Key Contributions',
+          descPlaceholder: 'Describe your role and impact on the team or event.',
+        };
+      case 'hobbies_self_learning':
+        return {
+          titleLabel: 'Hobby / Self-Learning Pursuit',
+          titlePlaceholder: 'e.g. 3D Modeling in Blender, Mobile Photography, Guitar',
+          orgLabel: 'Platform / Source',
+          orgPlaceholder: 'e.g. YouTube, Coursera, FreeCodeCamp, Self-taught',
+          roleLabel: 'Focus',
+          rolePlaceholder: 'e.g. Independent Learner, Hobbyist',
+          durationLabel: 'Time Invested',
+          durationPlaceholder: 'e.g. 6 months, Weekend hobby',
+          techLabel: 'Tools & Techniques Used',
+          techPlaceholder: 'e.g. Blender, DaVinci Resolve, Lightroom, Logic Pro',
+          descLabel: 'Creations & Learnings',
+          descPlaceholder: 'Describe what you created, practiced, or produced.',
+        };
+      case 'certification':
+        return {
+          titleLabel: 'Course / Certification Title',
+          titlePlaceholder: 'e.g. AWS Certified Cloud Practitioner, CS50 Python',
+          orgLabel: 'Issuing Organization',
+          orgPlaceholder: 'e.g. AWS, HarvardX, Coursera, Google',
+          roleLabel: 'Credential ID / URL',
+          rolePlaceholder: 'e.g. Verification URL or Certificate ID',
+          durationLabel: 'Completion Date',
+          durationPlaceholder: 'e.g. March 2024',
+          techLabel: 'Core Competencies',
+          techPlaceholder: 'e.g. Cloud Architecture, Python, SQL, Statistics',
+          descLabel: 'Key Learnings & Takeaways',
+          descPlaceholder: 'Summarize the skills verified by this certificate.',
+        };
+      default:
+        return <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />;
+    }
+  };
+
   const isStep1Valid = React.useMemo(() => {
     const ed = data.education_details;
     if (!ed) return Boolean(data.course && data.year);
     if (!ed.education_level || !ed.education_status) return false;
+
+    // Discontinued / Dropout
+    if (ed.education_status === 'discontinued') {
+      if (!ed.highest_qualification) return false;
+      if (!ed.last_attended_stage?.trim()) return false;
+      if (!ed.plan_to_resume) return false;
+      return true;
+    }
+
+    // Gap Year
+    if (ed.education_status === 'gap_year') {
+      if (!ed.highest_qualification) return false;
+      if (!ed.plan_to_resume) return false;
+      return true;
+    }
+
+    // Class 10 (SSLC)
+    if (ed.education_level === 'sslc_10th') {
+      if (!ed.school_board) return false;
+      if (ed.school_board === 'other' && !ed.school_board_other?.trim()) return false;
+      if (!ed.favorite_school_subjects || ed.favorite_school_subjects.length === 0) return false;
+      if (ed.education_status === 'currently_studying' && !ed.study_stage_value) return false;
+      if (ed.education_status === 'completed' && !ed.graduation_year) return false;
+      return true;
+    }
+
+    // Class 12 / PUC
+    if (ed.education_level === 'puc_12th') {
+      if (!ed.school_board) return false;
+      if (ed.school_board === 'other' && !ed.school_board_other?.trim()) return false;
+      const stream = ed.school_stream || ed.specialization;
+      if (!stream) return false;
+      if (stream === 'other' && !ed.specialization_other?.trim()) return false;
+      if (ed.education_status === 'currently_studying' && !ed.study_stage_value) return false;
+      if (ed.education_status === 'completed' && !ed.graduation_year) return false;
+      return true;
+    }
+
+    // Diploma / Polytechnic
+    if (ed.education_level === 'diploma') {
+      if (!ed.specialization) return false;
+      if (ed.specialization === 'Other' && !ed.specialization_other?.trim()) return false;
+      if (ed.education_status === 'currently_studying' && !ed.study_stage_value) return false;
+      if (ed.education_status === 'completed' && !ed.graduation_year) return false;
+      return true;
+    }
+
+    // Degrees: Undergraduate, Postgraduate, Doctoral, Other
     if (!ed.degree) return false;
     if (ed.degree === 'other' && !ed.degree_other?.trim()) return false;
-    if (ed.specialization === 'other' && !ed.specialization_other?.trim()) return false;
+    if (!ed.specialization) return false;
+    if ((ed.specialization === 'other' || ed.specialization === 'Other') && !ed.specialization_other?.trim()) return false;
 
     if (ed.education_status === 'currently_studying') {
       return Boolean(ed.study_stage_value);
@@ -316,12 +599,7 @@ const Onboarding: React.FC = () => {
     if (ed.education_status === 'completed') {
       return Boolean(ed.graduation_year);
     }
-    if (ed.education_status === 'discontinued') {
-      return Boolean(ed.last_attended_stage?.trim() && ed.highest_qualification);
-    }
-    if (ed.education_status === 'gap_year') {
-      return Boolean(ed.highest_qualification && ed.plan_to_resume);
-    }
+
     return true;
   }, [data.education_details, data.course, data.year]);
 
@@ -513,6 +791,96 @@ const Onboarding: React.FC = () => {
           descLabel: 'Client Impact & Scope',
           descPlaceholder: 'What was delivered and what outcome was achieved for the client?',
         };
+      case 'science_fairs':
+        return {
+          titleLabel: 'Science Fair / Exhibition Project',
+          titlePlaceholder: 'e.g. Solar-powered Water Purification Model, Tesla Coil Demo',
+          orgLabel: 'Exhibition / Competition Level',
+          orgPlaceholder: 'e.g. Inter-School Science Fair, District Science Exhibition',
+          roleLabel: 'Your Role / Team',
+          rolePlaceholder: 'e.g. Project Lead, Model Presenter',
+          durationLabel: 'Grade / Month',
+          durationPlaceholder: 'e.g. 10th Standard / November 2024',
+          techLabel: 'Science Concepts & Materials',
+          techPlaceholder: 'e.g. Solar Cells, Arduino, Chemical Titration',
+          descLabel: 'Demonstration & Learnings',
+          descPlaceholder: 'What was demonstrated or awarded in this fair?',
+        };
+      case 'coding_robotics':
+        return {
+          titleLabel: 'Coding / Robotics Project',
+          titlePlaceholder: 'e.g. Line Follower Robot, Python Quiz Game, School Web Page',
+          orgLabel: 'Club / Platform',
+          orgPlaceholder: 'e.g. School Coding Club, Replit, Tinkercad',
+          roleLabel: 'Role',
+          rolePlaceholder: 'e.g. Solo Builder, Programmer',
+          durationLabel: 'Timeline',
+          durationPlaceholder: 'e.g. 1 month, Holiday project',
+          techLabel: 'Tools & Languages Used',
+          techPlaceholder: 'e.g. Scratch, Python, Arduino, HTML/CSS',
+          descLabel: 'What does this project do?',
+          descPlaceholder: 'Describe what you built and learned.',
+        };
+      case 'competitions':
+        return {
+          titleLabel: 'Competition / Olympiad Name',
+          titlePlaceholder: 'e.g. National Science Olympiad, Inter-school Debate, Hackathon',
+          orgLabel: 'Organizing Body',
+          orgPlaceholder: 'e.g. Science Olympiad Foundation, Rotary Club',
+          roleLabel: 'Participation Role',
+          rolePlaceholder: 'e.g. Solo Participant, Captain',
+          durationLabel: 'Year / Standard',
+          durationPlaceholder: 'e.g. 2024, 11th Standard',
+          techLabel: 'Skills / Topics Tested',
+          techPlaceholder: 'e.g. Logical Reasoning, Math, Public Speaking',
+          descLabel: 'Achievement / Rank',
+          descPlaceholder: 'e.g. Gold Medalist, Finalist, School Rank 1',
+        };
+      case 'extracurricular':
+        return {
+          titleLabel: 'Activity / Club Initiative',
+          titlePlaceholder: 'e.g. School Magazine Editor, Drama Club, Sports Captain',
+          orgLabel: 'School / Club',
+          orgPlaceholder: 'e.g. Cultural Committee, Scouts & Guides, Literary Club',
+          roleLabel: 'Role / Designation',
+          rolePlaceholder: 'e.g. Student Coordinator, Captain, Member',
+          durationLabel: 'Duration',
+          durationPlaceholder: 'e.g. 1 academic year',
+          techLabel: 'Key Skills Exercised',
+          techPlaceholder: 'e.g. Writing, Public Speaking, Team Coordination',
+          descLabel: 'Key Contributions',
+          descPlaceholder: 'Describe your role and impact on the team or event.',
+        };
+      case 'hobbies_self_learning':
+        return {
+          titleLabel: 'Hobby / Self-Learning Pursuit',
+          titlePlaceholder: 'e.g. 3D Modeling in Blender, Mobile Photography, Guitar',
+          orgLabel: 'Platform / Source',
+          orgPlaceholder: 'e.g. YouTube, Coursera, FreeCodeCamp, Self-taught',
+          roleLabel: 'Focus',
+          rolePlaceholder: 'e.g. Independent Learner, Hobbyist',
+          durationLabel: 'Time Invested',
+          durationPlaceholder: 'e.g. 6 months, Weekend hobby',
+          techLabel: 'Tools & Techniques Used',
+          techPlaceholder: 'e.g. Blender, DaVinci Resolve, Lightroom, Logic Pro',
+          descLabel: 'Creations & Learnings',
+          descPlaceholder: 'Describe what you created, practiced, or produced.',
+        };
+      case 'certification':
+        return {
+          titleLabel: 'Course / Certification Title',
+          titlePlaceholder: 'e.g. AWS Certified Cloud Practitioner, CS50 Python',
+          orgLabel: 'Issuing Organization',
+          orgPlaceholder: 'e.g. AWS, HarvardX, Coursera, Google',
+          roleLabel: 'Credential ID / URL',
+          rolePlaceholder: 'e.g. Verification URL or Certificate ID',
+          durationLabel: 'Completion Date',
+          durationPlaceholder: 'e.g. March 2024',
+          techLabel: 'Core Competencies',
+          techPlaceholder: 'e.g. Cloud Architecture, Python, SQL, Statistics',
+          descLabel: 'Key Learnings & Takeaways',
+          descPlaceholder: 'Summarize the skills verified by this certificate.',
+        };
       default:
         return {
           titleLabel: 'Initiative / Role Title',
@@ -594,6 +962,96 @@ const Onboarding: React.FC = () => {
         return <Briefcase className="w-5 h-5" />;
       case 'CheckCircle2':
         return <CheckCircle2 className="w-5 h-5" />;
+      case 'science_fairs':
+        return {
+          titleLabel: 'Science Fair / Exhibition Project',
+          titlePlaceholder: 'e.g. Solar-powered Water Purification Model, Tesla Coil Demo',
+          orgLabel: 'Exhibition / Competition Level',
+          orgPlaceholder: 'e.g. Inter-School Science Fair, District Science Exhibition',
+          roleLabel: 'Your Role / Team',
+          rolePlaceholder: 'e.g. Project Lead, Model Presenter',
+          durationLabel: 'Grade / Month',
+          durationPlaceholder: 'e.g. 10th Standard / November 2024',
+          techLabel: 'Science Concepts & Materials',
+          techPlaceholder: 'e.g. Solar Cells, Arduino, Chemical Titration',
+          descLabel: 'Demonstration & Learnings',
+          descPlaceholder: 'What was demonstrated or awarded in this fair?',
+        };
+      case 'coding_robotics':
+        return {
+          titleLabel: 'Coding / Robotics Project',
+          titlePlaceholder: 'e.g. Line Follower Robot, Python Quiz Game, School Web Page',
+          orgLabel: 'Club / Platform',
+          orgPlaceholder: 'e.g. School Coding Club, Replit, Tinkercad',
+          roleLabel: 'Role',
+          rolePlaceholder: 'e.g. Solo Builder, Programmer',
+          durationLabel: 'Timeline',
+          durationPlaceholder: 'e.g. 1 month, Holiday project',
+          techLabel: 'Tools & Languages Used',
+          techPlaceholder: 'e.g. Scratch, Python, Arduino, HTML/CSS',
+          descLabel: 'What does this project do?',
+          descPlaceholder: 'Describe what you built and learned.',
+        };
+      case 'competitions':
+        return {
+          titleLabel: 'Competition / Olympiad Name',
+          titlePlaceholder: 'e.g. National Science Olympiad, Inter-school Debate, Hackathon',
+          orgLabel: 'Organizing Body',
+          orgPlaceholder: 'e.g. Science Olympiad Foundation, Rotary Club',
+          roleLabel: 'Participation Role',
+          rolePlaceholder: 'e.g. Solo Participant, Captain',
+          durationLabel: 'Year / Standard',
+          durationPlaceholder: 'e.g. 2024, 11th Standard',
+          techLabel: 'Skills / Topics Tested',
+          techPlaceholder: 'e.g. Logical Reasoning, Math, Public Speaking',
+          descLabel: 'Achievement / Rank',
+          descPlaceholder: 'e.g. Gold Medalist, Finalist, School Rank 1',
+        };
+      case 'extracurricular':
+        return {
+          titleLabel: 'Activity / Club Initiative',
+          titlePlaceholder: 'e.g. School Magazine Editor, Drama Club, Sports Captain',
+          orgLabel: 'School / Club',
+          orgPlaceholder: 'e.g. Cultural Committee, Scouts & Guides, Literary Club',
+          roleLabel: 'Role / Designation',
+          rolePlaceholder: 'e.g. Student Coordinator, Captain, Member',
+          durationLabel: 'Duration',
+          durationPlaceholder: 'e.g. 1 academic year',
+          techLabel: 'Key Skills Exercised',
+          techPlaceholder: 'e.g. Writing, Public Speaking, Team Coordination',
+          descLabel: 'Key Contributions',
+          descPlaceholder: 'Describe your role and impact on the team or event.',
+        };
+      case 'hobbies_self_learning':
+        return {
+          titleLabel: 'Hobby / Self-Learning Pursuit',
+          titlePlaceholder: 'e.g. 3D Modeling in Blender, Mobile Photography, Guitar',
+          orgLabel: 'Platform / Source',
+          orgPlaceholder: 'e.g. YouTube, Coursera, FreeCodeCamp, Self-taught',
+          roleLabel: 'Focus',
+          rolePlaceholder: 'e.g. Independent Learner, Hobbyist',
+          durationLabel: 'Time Invested',
+          durationPlaceholder: 'e.g. 6 months, Weekend hobby',
+          techLabel: 'Tools & Techniques Used',
+          techPlaceholder: 'e.g. Blender, DaVinci Resolve, Lightroom, Logic Pro',
+          descLabel: 'Creations & Learnings',
+          descPlaceholder: 'Describe what you created, practiced, or produced.',
+        };
+      case 'certification':
+        return {
+          titleLabel: 'Course / Certification Title',
+          titlePlaceholder: 'e.g. AWS Certified Cloud Practitioner, CS50 Python',
+          orgLabel: 'Issuing Organization',
+          orgPlaceholder: 'e.g. AWS, HarvardX, Coursera, Google',
+          roleLabel: 'Credential ID / URL',
+          rolePlaceholder: 'e.g. Verification URL or Certificate ID',
+          durationLabel: 'Completion Date',
+          durationPlaceholder: 'e.g. March 2024',
+          techLabel: 'Core Competencies',
+          techPlaceholder: 'e.g. Cloud Architecture, Python, SQL, Statistics',
+          descLabel: 'Key Learnings & Takeaways',
+          descPlaceholder: 'Summarize the skills verified by this certificate.',
+        };
       default:
         return <Sparkles className="w-5 h-5" />;
     }
@@ -692,6 +1150,96 @@ const Onboarding: React.FC = () => {
         return <BookOpen className="w-5 h-5" />;
       case 'Wrench':
         return <Wrench className="w-5 h-5" />;
+      case 'science_fairs':
+        return {
+          titleLabel: 'Science Fair / Exhibition Project',
+          titlePlaceholder: 'e.g. Solar-powered Water Purification Model, Tesla Coil Demo',
+          orgLabel: 'Exhibition / Competition Level',
+          orgPlaceholder: 'e.g. Inter-School Science Fair, District Science Exhibition',
+          roleLabel: 'Your Role / Team',
+          rolePlaceholder: 'e.g. Project Lead, Model Presenter',
+          durationLabel: 'Grade / Month',
+          durationPlaceholder: 'e.g. 10th Standard / November 2024',
+          techLabel: 'Science Concepts & Materials',
+          techPlaceholder: 'e.g. Solar Cells, Arduino, Chemical Titration',
+          descLabel: 'Demonstration & Learnings',
+          descPlaceholder: 'What was demonstrated or awarded in this fair?',
+        };
+      case 'coding_robotics':
+        return {
+          titleLabel: 'Coding / Robotics Project',
+          titlePlaceholder: 'e.g. Line Follower Robot, Python Quiz Game, School Web Page',
+          orgLabel: 'Club / Platform',
+          orgPlaceholder: 'e.g. School Coding Club, Replit, Tinkercad',
+          roleLabel: 'Role',
+          rolePlaceholder: 'e.g. Solo Builder, Programmer',
+          durationLabel: 'Timeline',
+          durationPlaceholder: 'e.g. 1 month, Holiday project',
+          techLabel: 'Tools & Languages Used',
+          techPlaceholder: 'e.g. Scratch, Python, Arduino, HTML/CSS',
+          descLabel: 'What does this project do?',
+          descPlaceholder: 'Describe what you built and learned.',
+        };
+      case 'competitions':
+        return {
+          titleLabel: 'Competition / Olympiad Name',
+          titlePlaceholder: 'e.g. National Science Olympiad, Inter-school Debate, Hackathon',
+          orgLabel: 'Organizing Body',
+          orgPlaceholder: 'e.g. Science Olympiad Foundation, Rotary Club',
+          roleLabel: 'Participation Role',
+          rolePlaceholder: 'e.g. Solo Participant, Captain',
+          durationLabel: 'Year / Standard',
+          durationPlaceholder: 'e.g. 2024, 11th Standard',
+          techLabel: 'Skills / Topics Tested',
+          techPlaceholder: 'e.g. Logical Reasoning, Math, Public Speaking',
+          descLabel: 'Achievement / Rank',
+          descPlaceholder: 'e.g. Gold Medalist, Finalist, School Rank 1',
+        };
+      case 'extracurricular':
+        return {
+          titleLabel: 'Activity / Club Initiative',
+          titlePlaceholder: 'e.g. School Magazine Editor, Drama Club, Sports Captain',
+          orgLabel: 'School / Club',
+          orgPlaceholder: 'e.g. Cultural Committee, Scouts & Guides, Literary Club',
+          roleLabel: 'Role / Designation',
+          rolePlaceholder: 'e.g. Student Coordinator, Captain, Member',
+          durationLabel: 'Duration',
+          durationPlaceholder: 'e.g. 1 academic year',
+          techLabel: 'Key Skills Exercised',
+          techPlaceholder: 'e.g. Writing, Public Speaking, Team Coordination',
+          descLabel: 'Key Contributions',
+          descPlaceholder: 'Describe your role and impact on the team or event.',
+        };
+      case 'hobbies_self_learning':
+        return {
+          titleLabel: 'Hobby / Self-Learning Pursuit',
+          titlePlaceholder: 'e.g. 3D Modeling in Blender, Mobile Photography, Guitar',
+          orgLabel: 'Platform / Source',
+          orgPlaceholder: 'e.g. YouTube, Coursera, FreeCodeCamp, Self-taught',
+          roleLabel: 'Focus',
+          rolePlaceholder: 'e.g. Independent Learner, Hobbyist',
+          durationLabel: 'Time Invested',
+          durationPlaceholder: 'e.g. 6 months, Weekend hobby',
+          techLabel: 'Tools & Techniques Used',
+          techPlaceholder: 'e.g. Blender, DaVinci Resolve, Lightroom, Logic Pro',
+          descLabel: 'Creations & Learnings',
+          descPlaceholder: 'Describe what you created, practiced, or produced.',
+        };
+      case 'certification':
+        return {
+          titleLabel: 'Course / Certification Title',
+          titlePlaceholder: 'e.g. AWS Certified Cloud Practitioner, CS50 Python',
+          orgLabel: 'Issuing Organization',
+          orgPlaceholder: 'e.g. AWS, HarvardX, Coursera, Google',
+          roleLabel: 'Credential ID / URL',
+          rolePlaceholder: 'e.g. Verification URL or Certificate ID',
+          durationLabel: 'Completion Date',
+          durationPlaceholder: 'e.g. March 2024',
+          techLabel: 'Core Competencies',
+          techPlaceholder: 'e.g. Cloud Architecture, Python, SQL, Statistics',
+          descLabel: 'Key Learnings & Takeaways',
+          descPlaceholder: 'Summarize the skills verified by this certificate.',
+        };
       default:
         return <Layers className="w-5 h-5" />;
     }
@@ -960,19 +1508,55 @@ const Onboarding: React.FC = () => {
 
   const finishOnboarding = async () => {
     setSaveError(null);
+    if (!isStep0Valid) {
+      setSaveError(
+        data.career_mode === 'career_growth_transition'
+          ? 'Please select your career transition objective before submitting.'
+          : 'Please select your career goal before submitting.'
+      );
+      return;
+    }
+    if (!isStep1Valid) {
+      setSaveError('Please complete your education details before submitting.');
+      return;
+    }
+    if (!isStep2Valid) {
+      setSaveError('Please select your interests before submitting.');
+      return;
+    }
+    if (!isStep3Valid) {
+      setSaveError('Please complete your skills and experience details before submitting.');
+      return;
+    }
+    if (!isStep4Valid) {
+      setSaveError('Please complete your target preferences before submitting.');
+      return;
+    }
+
     try {
+      const activePersona = data.user_persona || detectUserPersona(data);
       await saveProfile({
         ...data,
+        career_growth_subtype: data.career_growth_subtype,
+        user_persona: activePersona,
         // Keep the previously parsed resume if they didn't upload a new one.
         resume: (parsedData as Profile['resume']) ?? profile?.resume,
         knowMe: {
           ...(profile?.knowMe || {}),
           ...((data as any).knowMe || {}),
+          career_growth_subtype: data.career_growth_subtype,
+          user_persona: activePersona,
           ...(resumeMetadata ? { resume_metadata: resumeMetadata } : {}),
         },
         onboardingComplete: true,
       });
+
+      // Successful confirmation received from Supabase: clear draft and navigate to assessment
+      if (user?.id) {
+        clearUserDraft(user.id);
+      }
       setFinished(true);
+      navigate('/assessment', { replace: true });
     } catch (err) {
       // eslint-disable-next-line no-console
       console.warn('Could not save onboarding profile:', err);
@@ -1192,11 +1776,17 @@ const Onboarding: React.FC = () => {
   };
 
   const restart = () => {
+    if (user?.id) {
+      clearUserDraft(user.id);
+    }
     // Start from their saved answers so "update" doesn't mean "retype everything".
     setData(
       profile
         ? {
             path: profile.path ?? null,
+            career_mode: profile.career_mode ?? (profile.path ? PATH_TO_CAREER_MODE[profile.path] : null),
+            career_growth_subtype: profile.career_growth_subtype ?? (profile.knowMe as any)?.career_growth_subtype ?? null,
+            user_persona: profile.user_persona ?? (profile.knowMe as any)?.user_persona ?? null,
             educationStage: profile.educationStage ?? 'degree_ug',
             streamOrBranch: profile.streamOrBranch ?? '',
             college: profile.college ?? '',
@@ -1289,7 +1879,17 @@ const Onboarding: React.FC = () => {
               Thanks, {data.college || 'friend'}! We're using what you told us to discover careers that fit you best.
             </p>
             <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 mb-8 text-left text-sm text-slate-600 space-y-1.5">
-              {data.path && <p><strong className="text-slate-800">Goal status:</strong> {PATH_OPTIONS.find((p) => p.value === data.career_mode || CAREER_MODE_TO_PATH[p.value] === data.path)?.title}</p>}
+              {data.path && (
+                <p>
+                  <strong className="text-slate-800">Goal status:</strong>{' '}
+                  {PATH_OPTIONS.find((p) => p.value === data.career_mode || CAREER_MODE_TO_PATH[p.value] === data.path)?.title}
+                  {data.career_growth_subtype && (
+                    <span className="text-purple-700 font-semibold">
+                      {' '}— {CAREER_GROWTH_SUBTYPES.find((s) => s.id === data.career_growth_subtype)?.title}
+                    </span>
+                  )}
+                </p>
+              )}
               {(data.course || data.year) && <p><strong className="text-slate-800">Studying:</strong> {[data.course, data.year].filter(Boolean).join(' — ')}</p>}
               {data.interests.length > 0 && <p><strong className="text-slate-800">Interests:</strong> {data.interests.join(', ')}</p>}
               {data.skills_and_experience && data.skills_and_experience.skills.length > 0 && (
@@ -1362,7 +1962,7 @@ const Onboarding: React.FC = () => {
                   <div
                     role="radiogroup"
                     aria-label="What would you like help with in your career journey?"
-                    className="grid sm:grid-cols-3 gap-4 mb-8"
+                    className="grid sm:grid-cols-3 gap-4 mb-4"
                   >
                     {PATH_OPTIONS.map((opt) => {
                       const isSelected =
@@ -1374,19 +1974,11 @@ const Onboarding: React.FC = () => {
                           role="radio"
                           aria-checked={isSelected}
                           tabIndex={0}
-                          onClick={() => {
-                            update({
-                              career_mode: opt.value,
-                              path: CAREER_MODE_TO_PATH[opt.value],
-                            });
-                          }}
+                          onClick={() => handleSelectCareerMode(opt.value)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' || e.key === ' ') {
                               e.preventDefault();
-                              update({
-                                career_mode: opt.value,
-                                path: CAREER_MODE_TO_PATH[opt.value],
-                              });
+                              handleSelectCareerMode(opt.value);
                             }
                           }}
                           className={`relative text-left rounded-2xl border-2 p-5 transition-all cursor-pointer flex flex-col justify-between focus:outline-none focus:ring-2 focus:ring-purple-500/50 ${
@@ -1421,6 +2013,86 @@ const Onboarding: React.FC = () => {
                       );
                     })}
                   </div>
+
+                  {/* Adaptive Sub-intents for "I want to grow or change my career" */}
+                  {data.career_mode === 'career_growth_transition' && (
+                    <div className="mt-8 pt-6 border-t border-slate-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <div className="text-center sm:text-left mb-4">
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-bold uppercase tracking-wider mb-2">
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>Select your transition objective</span>
+                        </div>
+                        <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+                          Which describes your career transition goal?
+                        </h2>
+                        <p className="text-slate-500 text-xs sm:text-sm">
+                          Tell us whether you're switching fields, advancing in your current role, or returning after time off.
+                        </p>
+                      </div>
+
+                      <div
+                        role="radiogroup"
+                        aria-label="Which describes your career transition goal?"
+                        className="grid sm:grid-cols-3 gap-3.5"
+                      >
+                        {CAREER_GROWTH_SUBTYPES.map((sub) => {
+                          const isSubSelected = data.career_growth_subtype === sub.id;
+                          return (
+                            <div
+                              key={sub.id}
+                              role="radio"
+                              aria-checked={isSubSelected}
+                              tabIndex={0}
+                              onClick={() => handleSelectGrowthSubtype(sub.id)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  handleSelectGrowthSubtype(sub.id);
+                                }
+                              }}
+                              className={`relative text-left rounded-2xl border-2 p-4 transition-all cursor-pointer flex flex-col justify-between focus:outline-none focus:ring-2 focus:ring-purple-500/50 ${
+                                isSubSelected
+                                  ? 'border-purple-600 bg-purple-50/80 shadow-xs ring-1 ring-purple-600/30'
+                                  : 'border-slate-200 bg-white hover:border-purple-300 hover:shadow-2xs'
+                              }`}
+                            >
+                              <div>
+                                <div className="flex items-center justify-between mb-2.5">
+                                  <div
+                                    className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
+                                      isSubSelected
+                                        ? 'bg-purple-600 text-white shadow-xs'
+                                        : 'bg-purple-100/70 text-purple-700'
+                                    }`}
+                                  >
+                                    {renderGrowthSubtypeIcon(sub.id)}
+                                  </div>
+                                  {isSubSelected ? (
+                                    <CheckCircle2 className="w-5 h-5 text-purple-600 shrink-0" />
+                                  ) : (
+                                    <div className="w-4 h-4 rounded-full border-2 border-slate-300" />
+                                  )}
+                                </div>
+                                <h3 className="font-bold text-slate-900 text-sm mb-1 leading-snug">
+                                  {sub.title}
+                                </h3>
+                                <p className="text-slate-500 text-xs leading-relaxed">
+                                  {sub.desc}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {!data.career_growth_subtype && (
+                        <p className="text-xs text-amber-600 font-medium mt-3 flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block"></span>
+                          Please select one of the three transition options above to continue.
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -1452,18 +2124,63 @@ const Onboarding: React.FC = () => {
                       }))}
                       onChange={(newLevel) => {
                         const lvl = newLevel as EducationLevel;
-                        const defaultDegrees = DEGREE_CATALOG[lvl] || [];
-                        const firstDeg = defaultDegrees[0];
-                        const firstSpec = firstDeg?.defaultSpecializations?.[0] || 'General';
-                        const stageOpts = getStudyStageOptions(firstDeg, stageViewMode);
-                        updateEducation({
-                          education_level: lvl,
-                          degree: firstDeg?.id || 'other',
-                          degree_other: '',
-                          specialization: firstSpec,
-                          specialization_other: '',
-                          study_stage_value: stageOpts[0]?.id || '1st Year',
-                        });
+                        if (lvl === 'sslc_10th') {
+                          updateEducation({
+                            education_level: lvl,
+                            school_board: 'cbse',
+                            school_board_other: '',
+                            degree: 'sslc_10th_general',
+                            specialization: 'General',
+                            study_stage_value: '10th Standard / Board Appearing',
+                            favorite_school_subjects: ['Mathematics', 'Science (Physics, Chemistry, Biology)'],
+                          });
+                        } else if (lvl === 'puc_12th') {
+                          updateEducation({
+                            education_level: lvl,
+                            school_board: 'cbse',
+                            school_board_other: '',
+                            school_stream: 'science_pcmb',
+                            specialization: 'Science — PCMB (Physics, Chemistry, Math, Biology)',
+                            degree: 'puc_12th_general',
+                            study_stage_value: '2nd PUC / 12th Standard (Board Appearing)',
+                          });
+                        } else if (lvl === 'diploma') {
+                          updateEducation({
+                            education_level: lvl,
+                            degree: 'diploma_engg',
+                            specialization: 'Computer Science & Engineering',
+                            study_stage_value: '1st Year',
+                          });
+                        } else if (lvl === 'postgraduate') {
+                          updateEducation({
+                            education_level: lvl,
+                            degree: 'mtech_me',
+                            specialization: 'Computer Science & Engineering',
+                            study_stage_value: '1st Year',
+                            highest_qualification: 'Undergraduate Degree (e.g. BTech, BSc, BCom, BA)',
+                          });
+                        } else if (lvl === 'doctoral_phd') {
+                          updateEducation({
+                            education_level: lvl,
+                            degree: 'phd',
+                            specialization: 'Computer Science & Engineering',
+                            study_stage_value: 'Coursework & Proposal Defense',
+                            highest_qualification: 'Postgraduate Degree (e.g. MTech, MCA, MBA, MSc)',
+                          });
+                        } else {
+                          const defaultDegrees = DEGREE_CATALOG[lvl] || [];
+                          const firstDeg = defaultDegrees[0];
+                          const firstSpec = firstDeg?.defaultSpecializations?.[0] || 'General';
+                          const stageOpts = getStudyStageOptions(firstDeg, stageViewMode);
+                          updateEducation({
+                            education_level: lvl,
+                            degree: firstDeg?.id || 'btech_be',
+                            degree_other: '',
+                            specialization: firstSpec,
+                            specialization_other: '',
+                            study_stage_value: stageOpts[0]?.id || '1st Year',
+                          });
+                        }
                       }}
                     />
                   </div>
@@ -1490,8 +2207,11 @@ const Onboarding: React.FC = () => {
                                 graduation_year: status.id === 'completed' ? '2025' : undefined,
                                 study_stage_value: status.id === 'currently_studying' ? (stageOpts[0]?.id || '1st Year') : '',
                                 last_attended_stage: status.id === 'discontinued' ? '1st Year / 2nd Sem' : undefined,
-                                highest_qualification: status.id === 'discontinued' || status.id === 'gap_year' ? HIGHEST_QUALIFICATIONS[1] : undefined,
-                                plan_to_resume: status.id === 'gap_year' ? 'yes' : undefined,
+                                highest_qualification:
+                                  status.id === 'discontinued' || status.id === 'gap_year'
+                                    ? HIGHEST_QUALIFICATIONS[1]
+                                    : data.education_details?.highest_qualification,
+                                plan_to_resume: status.id === 'gap_year' ? 'yes' : status.id === 'discontinued' ? 'no' : undefined,
                               });
                             }}
                             className={`p-3 rounded-xl border text-left transition-all flex items-start gap-2.5 ${
@@ -1515,303 +2235,721 @@ const Onboarding: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* 3. Degree / Qualification (Searchable Dropdown) */}
-                  <div className="space-y-3">
-                    <SearchableSelect
-                      label={
-                        data.education_details?.education_level === 'sslc_10th' || data.education_details?.education_level === 'puc_12th'
-                          ? 'Program / Board Certificate'
-                          : 'Degree / Qualification'
-                      }
-                      required
-                      placeholder="Select your degree / course..."
-                      searchPlaceholder="Search degree (e.g. BTech, BCA, MBBS, MBA)..."
-                      value={data.education_details?.degree || ''}
-                      options={(DEGREE_CATALOG[data.education_details?.education_level || 'undergraduate'] || []).map((deg) => ({
-                        value: deg.id,
-                        label: deg.name,
-                        hint: `${deg.durationYears} Years duration`,
-                      }))}
-                      onChange={(newDegId) => {
-                        const degConfig = (DEGREE_CATALOG[data.education_details?.education_level || 'undergraduate'] || []).find(
-                          (d) => d.id === newDegId
-                        );
-                        const firstSpec = degConfig?.defaultSpecializations?.[0] || 'General';
-                        const stageOpts = getStudyStageOptions(degConfig, stageViewMode);
-                        updateEducation({
-                          degree: newDegId,
-                          degree_other: '',
-                          specialization: firstSpec,
-                          specialization_other: '',
-                          study_stage_value: stageOpts[0]?.id || '1st Year',
-                        });
-                      }}
-                    />
+                  {/* 3. ADAPTIVE EDUCATION QUESTIONS */}
 
-                    {/* Custom Degree Input if 'other' */}
-                    {data.education_details?.degree === 'other' && (
-                      <div className="space-y-1.5 animate-in fade-in duration-200">
-                        <label className="block text-xs font-semibold text-slate-700">
-                          Specify Your Degree / Qualification <span className="text-purple-600">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={data.education_details?.degree_other || ''}
-                          onChange={(e) => updateEducation({ degree_other: e.target.value })}
-                          placeholder="e.g. Bachelor of Design (B.Des), B.Voc, etc."
-                          className={inputClass}
-                        />
+                  {/* CASE 1: Discontinued / Dropout OR Gap Year */}
+                  {(data.education_details?.education_status === 'discontinued' || data.education_details?.education_status === 'gap_year') ? (
+                    <div className="p-4 bg-slate-50/90 rounded-2xl border border-slate-200/90 space-y-4 animate-in fade-in duration-200">
+                      <div className="space-y-1">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider">
+                          <span>{data.education_details?.education_status === 'discontinued' ? 'Discontinued / Dropout Details' : 'Gap Year Details'}</span>
+                        </div>
+                        <p className="text-xs text-slate-500">
+                          {data.education_details?.education_status === 'discontinued'
+                            ? 'Help us understand your academic foundation so we can chart the best way forward.'
+                            : 'Tell us about your gap period so we can align our guidance with your timeline.'}
+                        </p>
                       </div>
-                    )}
-                  </div>
 
-                  {/* 4. Specialization / Stream (Searchable Dropdown) */}
-                  <div className="space-y-3">
-                    {(() => {
-                      const currentDegConfig = (
-                        DEGREE_CATALOG[data.education_details?.education_level || 'undergraduate'] || []
-                      ).find((d) => d.id === data.education_details?.degree);
+                      <SearchableSelect
+                        label="Highest Completed Qualification"
+                        required
+                        placeholder="Select highest completed qualification..."
+                        value={data.education_details?.highest_qualification || ''}
+                        options={HIGHEST_QUALIFICATIONS.map((q) => ({
+                          value: q,
+                          label: q,
+                          icon: <GraduationCap className="w-4 h-4 text-purple-600" />,
+                        }))}
+                        onChange={(newQual) => updateEducation({ highest_qualification: newQual })}
+                      />
 
-                      const specs = currentDegConfig?.defaultSpecializations || ['General', 'Other'];
-
-                      return (
+                      {data.education_details?.education_status === 'discontinued' && (
                         <>
-                          <SearchableSelect
-                            label="Specialization / Stream"
-                            required
-                            placeholder="Select your stream / specialization..."
-                            searchPlaceholder="Search stream (e.g. Computer Science, Finance, PCMB)..."
-                            value={data.education_details?.specialization || ''}
-                            options={specs.map((s) => ({
-                              value: s,
-                              label: s,
-                            }))}
-                            onChange={(newSpec) => {
-                              updateEducation({
-                                specialization: newSpec,
-                                specialization_other: '',
-                              });
-                            }}
-                          />
+                          <div className="space-y-1.5">
+                            <label className="block text-[13px] font-semibold text-slate-700">
+                              Last Stage / Semester Attended <span className="text-purple-600">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.education_details?.last_attended_stage || ''}
+                              onChange={(e) => updateEducation({ last_attended_stage: e.target.value })}
+                              placeholder="e.g. 2nd Year Computer Science, 3rd Semester B.Com, 1st Year MBBS"
+                              className={inputClass}
+                            />
+                          </div>
 
-                          {/* Custom Specialization Input if 'Other' */}
-                          {data.education_details?.specialization === 'Other' && (
-                            <div className="space-y-1.5 animate-in fade-in duration-200">
-                              <label className="block text-xs font-semibold text-slate-700">
-                                Specify Your Specialization / Stream <span className="text-purple-600">*</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="space-y-1.5">
+                              <label className="block text-[13px] font-semibold text-slate-700">
+                                Year Discontinued <span className="text-xs text-slate-400 font-normal">(Optional)</span>
+                              </label>
+                              <select
+                                value={data.education_details?.year_discontinued || ''}
+                                onChange={(e) => updateEducation({ year_discontinued: e.target.value })}
+                                className={inputClass}
+                              >
+                                <option value="">Select year (optional)...</option>
+                                {GRADUATION_YEARS.map((yr) => (
+                                  <option key={yr} value={yr}>{yr}</option>
+                                ))}
+                              </select>
+                            </div>
+
+                            <div className="space-y-1.5">
+                              <label className="block text-[13px] font-semibold text-slate-700">
+                                Reason for Leaving <span className="text-xs text-slate-400 font-normal">(Optional)</span>
                               </label>
                               <input
                                 type="text"
-                                value={data.education_details?.specialization_other || ''}
-                                onChange={(e) => updateEducation({ specialization_other: e.target.value })}
-                                placeholder="e.g. Mechatronics, Marine Biology, Visual Arts"
+                                value={data.education_details?.discontinuation_reason || ''}
+                                onChange={(e) => updateEducation({ discontinuation_reason: e.target.value })}
+                                placeholder="e.g. Financial, started working, personal"
                                 className={inputClass}
                               />
                             </div>
-                          )}
+                          </div>
                         </>
-                      );
-                    })()}
-                  </div>
+                      )}
 
-                  {/* 5. Study Stage / Timeline (Dynamic based on Status & Degree) */}
-                  <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80 space-y-4">
-                    {/* CASE A: Currently Studying */}
-                    {data.education_details?.education_status === 'currently_studying' && (() => {
-                      const currentDegConfig = (
-                        DEGREE_CATALOG[data.education_details?.education_level || 'undergraduate'] || []
-                      ).find((d) => d.id === data.education_details?.degree);
-
-                      const hasSemesters = Boolean(currentDegConfig?.totalSemesters);
-                      const stageOptions = getStudyStageOptions(currentDegConfig, stageViewMode);
-
-                      return (
-                        <div className="space-y-2.5">
-                          <div className="flex items-center justify-between">
-                            <label className="block text-[13px] font-semibold text-slate-800">
-                              Current Academic Stage <span className="text-purple-600">*</span>
-                            </label>
-                            {hasSemesters && (
-                              <div className="flex items-center bg-white p-0.5 rounded-lg border border-slate-200 text-xs font-semibold">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setStageViewMode('year');
-                                    const opts = getStudyStageOptions(currentDegConfig, 'year');
-                                    updateEducation({ study_stage_type: 'year', study_stage_value: opts[0]?.id });
-                                  }}
-                                  className={`px-2.5 py-1 rounded-md transition-colors ${
-                                    stageViewMode === 'year'
-                                      ? 'bg-purple-600 text-white shadow-xs'
-                                      : 'text-slate-600 hover:text-purple-600'
-                                  }`}
-                                >
-                                  Year-wise
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setStageViewMode('semester');
-                                    const opts = getStudyStageOptions(currentDegConfig, 'semester');
-                                    updateEducation({ study_stage_type: 'semester', study_stage_value: opts[0]?.id });
-                                  }}
-                                  className={`px-2.5 py-1 rounded-md transition-colors ${
-                                    stageViewMode === 'semester'
-                                      ? 'bg-purple-600 text-white shadow-xs'
-                                      : 'text-slate-600 hover:text-purple-600'
-                                  }`}
-                                >
-                                  Semester-wise
-                                </button>
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="flex flex-wrap gap-2">
-                            {stageOptions.map((stg) => {
-                              const isSelected = data.education_details?.study_stage_value === stg.id;
-                              return (
-                                <button
-                                  key={stg.id}
-                                  type="button"
-                                  onClick={() => updateEducation({ study_stage_value: stg.id })}
-                                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
-                                    isSelected
-                                      ? 'bg-purple-600 border-purple-600 text-white shadow-xs'
-                                      : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300'
-                                  }`}
-                                >
-                                  {stg.label}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      );
-                    })()}
-
-                    {/* CASE B: Graduated / Completed */}
-                    {data.education_details?.education_status === 'completed' && (
-                      <div className="space-y-1.5">
-                        <SearchableSelect
-                          label="Graduation / Passing Year"
-                          required
-                          placeholder="Select graduation year..."
-                          searchPlaceholder="Search passing year..."
-                          value={data.education_details?.graduation_year || ''}
-                          options={GRADUATION_YEARS.map((yr) => ({
-                            value: yr,
-                            label: yr,
-                            icon: <Calendar className="w-4 h-4 text-purple-600" />,
-                          }))}
-                          onChange={(newYear) => updateEducation({ graduation_year: newYear })}
-                        />
-                      </div>
-                    )}
-
-                    {/* CASE C: Discontinued */}
-                    {data.education_details?.education_status === 'discontinued' && (
-                      <div className="space-y-3">
+                      {data.education_details?.education_status === 'gap_year' && (
                         <div className="space-y-1.5">
                           <label className="block text-[13px] font-semibold text-slate-700">
-                            Last Attended Stage / Semester <span className="text-purple-600">*</span>
+                            Gap Year Focus / Purpose <span className="text-xs text-slate-400 font-normal">(Optional)</span>
                           </label>
                           <input
                             type="text"
-                            value={data.education_details?.last_attended_stage || ''}
-                            onChange={(e) => updateEducation({ last_attended_stage: e.target.value })}
-                            placeholder="e.g. 2nd Year, 4th Semester, 1st Year Term 2"
+                            value={data.education_details?.gap_year_reason || ''}
+                            onChange={(e) => updateEducation({ gap_year_reason: e.target.value })}
+                            placeholder="e.g. Preparing for JEE / NEET / CAT / GATE, self-studying coding"
                             className={inputClass}
                           />
                         </div>
-                        <SearchableSelect
-                          label="Highest Completed Qualification"
-                          required
-                          placeholder="Select your highest finished qualification..."
-                          value={data.education_details?.highest_qualification || ''}
-                          options={HIGHEST_QUALIFICATIONS.map((q) => ({
-                            value: q,
-                            label: q,
-                            icon: <GraduationCap className="w-4 h-4 text-purple-600" />,
-                          }))}
-                          onChange={(newQual) => updateEducation({ highest_qualification: newQual })}
+                      )}
+
+                      <div className="space-y-2 pt-1">
+                        <label className="block text-[13px] font-semibold text-slate-700">
+                          Intention to Resume Education or Enter Workforce <span className="text-purple-600">*</span>
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                          {[
+                            { id: 'yes', label: 'Planning to resume formal degree' },
+                            { id: 'no', label: 'Focusing on direct employment / jobs' },
+                            { id: 'undecided', label: 'Undecided / open to guidance' },
+                          ].map((opt) => {
+                            const isSelected = data.education_details?.plan_to_resume === opt.id;
+                            return (
+                              <button
+                                key={opt.id}
+                                type="button"
+                                onClick={() => updateEducation({ plan_to_resume: opt.id as any })}
+                                className={`px-3 py-2 rounded-xl text-xs font-semibold border text-center transition-all ${
+                                  isSelected
+                                    ? 'bg-purple-600 border-purple-600 text-white shadow-xs'
+                                    : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300'
+                                }`}
+                              >
+                                {opt.label}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5 pt-1">
+                        <label className="block text-[13px] font-semibold text-slate-700">
+                          Previous College / Institute Name <span className="text-xs text-slate-400 font-normal">(Optional)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={data.education_details?.institution ?? data.college ?? ''}
+                          onChange={(e) => updateEducation({ institution: e.target.value })}
+                          placeholder="e.g. State University, City College"
+                          className={inputClass}
                         />
                       </div>
-                    )}
-
-                    {/* CASE D: On a Gap Year */}
-                    {data.education_details?.education_status === 'gap_year' && (
-                      <div className="space-y-3">
+                    </div>
+                  ) : data.education_details?.education_level === 'sslc_10th' ? (
+                    /* CASE 2: CLASS 10 (Secondary School / SSLC) */
+                    <div className="space-y-5 animate-in fade-in duration-200">
+                      {/* School Board */}
+                      <div className="space-y-1.5">
                         <SearchableSelect
-                          label="Latest Completed Qualification"
+                          label="School Examination Board"
                           required
-                          placeholder="Select latest completed qualification..."
-                          value={data.education_details?.highest_qualification || ''}
-                          options={HIGHEST_QUALIFICATIONS.map((q) => ({
-                            value: q,
-                            label: q,
-                            icon: <GraduationCap className="w-4 h-4 text-purple-600" />,
+                          placeholder="Select your school board..."
+                          searchPlaceholder="Search school board (e.g. CBSE, ICSE, State Board)..."
+                          value={data.education_details?.school_board || 'cbse'}
+                          options={SCHOOL_BOARDS.map((b) => ({
+                            value: b.id,
+                            label: b.name,
+                            hint: b.description,
                           }))}
-                          onChange={(newQual) => updateEducation({ highest_qualification: newQual })}
+                          onChange={(boardId) => updateEducation({ school_board: boardId, school_board_other: '' })}
                         />
+                        {data.education_details?.school_board === 'other' && (
+                          <div className="space-y-1 pt-1.5 animate-in fade-in duration-150">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Specify School Board <span className="text-purple-600">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.education_details?.school_board_other || ''}
+                              onChange={(e) => updateEducation({ school_board_other: e.target.value })}
+                              placeholder="e.g. Cambridge IGCSE, Maharashtra State Board"
+                              className={inputClass}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* School Name (Optional) */}
+                      <div className="space-y-1.5">
+                        <label className="block text-[13px] font-semibold text-slate-700">
+                          School Name <span className="text-xs text-slate-400 font-normal ml-1">(Optional)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={data.education_details?.institution ?? data.college ?? ''}
+                          onChange={(e) => updateEducation({ institution: e.target.value })}
+                          placeholder="e.g. Kendriya Vidyalaya, Delhi Public School, St. Joseph's School"
+                          className={inputClass}
+                        />
+                      </div>
+
+                      {/* Favorite School Subjects (Multi-select Chips) */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="block text-[13px] font-semibold text-slate-800">
+                            Favorite School Subjects <span className="text-purple-600">*</span>
+                          </label>
+                          <span className="text-xs text-purple-700 font-bold bg-purple-50 px-2 py-0.5 rounded-full">
+                            {(data.education_details?.favorite_school_subjects || []).length} selected
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500">
+                          Pick the subjects you enjoy or are curious about. This helps us recommend the best high school stream and career directions.
+                        </p>
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          {CLASS_10_SUBJECTS.map((sub) => {
+                            const isSelected = (data.education_details?.favorite_school_subjects || []).includes(sub);
+                            return (
+                              <button
+                                key={sub}
+                                type="button"
+                                onClick={() => {
+                                  const current = data.education_details?.favorite_school_subjects || [];
+                                  const updated = isSelected
+                                    ? current.filter((s) => s !== sub)
+                                    : [...current, sub];
+                                  updateEducation({ favorite_school_subjects: updated });
+                                }}
+                                className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all text-left flex items-center gap-1.5 ${
+                                  isSelected
+                                    ? 'bg-purple-600 border-purple-600 text-white shadow-xs ring-1 ring-purple-600/30'
+                                    : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300'
+                                }`}
+                              >
+                                {isSelected ? <Check className="w-3.5 h-3.5" /> : null}
+                                {sub}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Current Standard or Passing Year */}
+                      {data.education_details?.education_status === 'currently_studying' && (
                         <div className="space-y-2">
                           <label className="block text-[13px] font-semibold text-slate-700">
-                            Do you plan to resume formal education? <span className="text-purple-600">*</span>
+                            Current Standard <span className="text-purple-600">*</span>
                           </label>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                            {[
-                              { id: 'yes', label: 'Yes, preparing for admissions' },
-                              { id: 'no', label: 'No, entering workforce' },
-                              { id: 'undecided', label: 'Undecided / exploring' },
-                            ].map((opt) => {
-                              const isSelected = data.education_details?.plan_to_resume === opt.id;
+                          <div className="grid grid-cols-2 gap-2.5">
+                            {['9th Standard', '10th Standard / Board Appearing'].map((std) => {
+                              const isSelected = data.education_details?.study_stage_value === std;
                               return (
                                 <button
-                                  key={opt.id}
+                                  key={std}
                                   type="button"
-                                  onClick={() => updateEducation({ plan_to_resume: opt.id as any })}
-                                  className={`px-3 py-2 rounded-xl text-xs font-semibold border text-center transition-all ${
+                                  onClick={() => updateEducation({ study_stage_value: std })}
+                                  className={`p-3 rounded-xl border text-center text-xs sm:text-sm font-semibold transition-all ${
                                     isSelected
-                                      ? 'bg-purple-600 border-purple-600 text-white shadow-xs'
-                                      : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300'
+                                      ? 'border-purple-600 bg-purple-50/70 text-purple-900 ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
                                   }`}
                                 >
-                                  {opt.label}
+                                  {std}
                                 </button>
                               );
                             })}
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* 6. Institution Details */}
-                  <div className="space-y-1.5">
-                    <label className="block text-[13px] font-semibold text-slate-700">
-                      {data.education_details?.education_level === 'sslc_10th' || data.education_details?.education_level === 'puc_12th'
-                        ? 'School / Board / Junior College Name'
-                        : data.education_details?.education_level === 'diploma'
-                        ? 'Polytechnic / Institute Name'
-                        : 'College / University Name'}
-                      {data.education_details?.education_status === 'discontinued' || data.education_details?.education_status === 'gap_year' ? (
-                        <span className="text-xs text-slate-400 font-normal ml-1.5">(Optional)</span>
-                      ) : (
-                        <span className="text-xs text-slate-400 font-normal ml-1.5">(Recommended)</span>
                       )}
-                    </label>
-                    <input
-                      type="text"
-                      value={data.education_details?.institution ?? data.college ?? ''}
-                      onChange={(e) => updateEducation({ institution: e.target.value })}
-                      placeholder={
-                        data.education_details?.education_level === 'sslc_10th' || data.education_details?.education_level === 'puc_12th'
-                          ? 'e.g. State Board School, CBSE Public School, National PU College'
-                          : 'e.g. VTU, Bangalore University, IIT Bombay, State Tech Campus'
-                      }
-                      className={inputClass}
-                    />
-                  </div>
+
+                      {data.education_details?.education_status === 'completed' && (
+                        <div className="space-y-1.5">
+                          <SearchableSelect
+                            label="Board Passing Year"
+                            required
+                            placeholder="Select passing year..."
+                            value={data.education_details?.graduation_year || ''}
+                            options={GRADUATION_YEARS.map((yr) => ({
+                              value: yr,
+                              label: yr,
+                              icon: <Calendar className="w-4 h-4 text-purple-600" />,
+                            }))}
+                            onChange={(newYear) => updateEducation({ graduation_year: newYear })}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ) : data.education_details?.education_level === 'puc_12th' ? (
+                    /* CASE 3: CLASS 12 / PUC / INTERMEDIATE */
+                    <div className="space-y-5 animate-in fade-in duration-200">
+                      {/* School / Pre-University Board */}
+                      <div className="space-y-1.5">
+                        <SearchableSelect
+                          label="Higher Secondary / Pre-University Board"
+                          required
+                          placeholder="Select board..."
+                          searchPlaceholder="Search board (e.g. CBSE, State Board, ISC)..."
+                          value={data.education_details?.school_board || 'cbse'}
+                          options={SCHOOL_BOARDS.map((b) => ({
+                            value: b.id,
+                            label: b.name,
+                            hint: b.description,
+                          }))}
+                          onChange={(boardId) => updateEducation({ school_board: boardId, school_board_other: '' })}
+                        />
+                        {data.education_details?.school_board === 'other' && (
+                          <div className="space-y-1 pt-1.5 animate-in fade-in duration-150">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Specify Board <span className="text-purple-600">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.education_details?.school_board_other || ''}
+                              onChange={(e) => updateEducation({ school_board_other: e.target.value })}
+                              placeholder="e.g. Telangana State Board, Cambridge A-Levels"
+                              className={inputClass}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Stream / Subject Combination */}
+                      <div className="space-y-1.5">
+                        <SearchableSelect
+                          label="Stream / Subject Combination"
+                          required
+                          placeholder="Select stream (e.g. Science PCMB, Commerce with Math, Arts)..."
+                          searchPlaceholder="Search stream..."
+                          value={data.education_details?.school_stream || 'science_pcmb'}
+                          options={HIGH_SCHOOL_STREAMS.map((s) => ({
+                            value: s.id,
+                            label: s.label,
+                            hint: s.group,
+                          }))}
+                          onChange={(newStream) => {
+                            const cfg = HIGH_SCHOOL_STREAMS.find((s) => s.id === newStream);
+                            updateEducation({
+                              school_stream: newStream,
+                              specialization: cfg?.label || newStream,
+                              specialization_other: '',
+                            });
+                          }}
+                        />
+                        {data.education_details?.school_stream === 'other' && (
+                          <div className="space-y-1 pt-1.5 animate-in fade-in duration-150">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Specify Custom Stream / Subjects <span className="text-purple-600">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.education_details?.specialization_other || ''}
+                              onChange={(e) => updateEducation({ specialization_other: e.target.value })}
+                              placeholder="e.g. Economics, Statistics, Math & Psychology"
+                              className={inputClass}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Junior College / School Name */}
+                      <div className="space-y-1.5">
+                        <label className="block text-[13px] font-semibold text-slate-700">
+                          Junior College / School Name <span className="text-xs text-slate-400 font-normal ml-1">(Optional)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={data.education_details?.institution ?? data.college ?? ''}
+                          onChange={(e) => updateEducation({ institution: e.target.value })}
+                          placeholder="e.g. National PU College, St. Xavier's Junior College, DPS RK Puram"
+                          className={inputClass}
+                        />
+                      </div>
+
+                      {/* Current Stage or Passing Year */}
+                      {data.education_details?.education_status === 'currently_studying' && (
+                        <div className="space-y-2">
+                          <label className="block text-[13px] font-semibold text-slate-700">
+                            Current Academic Stage <span className="text-purple-600">*</span>
+                          </label>
+                          <div className="grid grid-cols-2 gap-2.5">
+                            {['1st PUC / 11th Standard', '2nd PUC / 12th Standard (Board Appearing)'].map((stg) => {
+                              const isSelected = data.education_details?.study_stage_value === stg;
+                              return (
+                                <button
+                                  key={stg}
+                                  type="button"
+                                  onClick={() => updateEducation({ study_stage_value: stg })}
+                                  className={`p-3 rounded-xl border text-center text-xs sm:text-sm font-semibold transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 text-purple-900 ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                                  }`}
+                                >
+                                  {stg}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {data.education_details?.education_status === 'completed' && (
+                        <div className="space-y-1.5">
+                          <SearchableSelect
+                            label="Passing Year"
+                            required
+                            placeholder="Select passing year..."
+                            value={data.education_details?.graduation_year || ''}
+                            options={GRADUATION_YEARS.map((yr) => ({
+                              value: yr,
+                              label: yr,
+                              icon: <Calendar className="w-4 h-4 text-purple-600" />,
+                            }))}
+                            onChange={(newYear) => updateEducation({ graduation_year: newYear })}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ) : data.education_details?.education_level === 'diploma' ? (
+                    /* CASE 4: DIPLOMA / POLYTECHNIC */
+                    <div className="space-y-5 animate-in fade-in duration-200">
+                      {/* Specialization */}
+                      <div className="space-y-1.5">
+                        <SearchableSelect
+                          label="Diploma Specialization / Branch"
+                          required
+                          placeholder="Select diploma branch..."
+                          searchPlaceholder="Search branch (e.g. Mechanical, Computer Science, Pharmacy)..."
+                          value={data.education_details?.specialization || 'Computer Science & Engineering'}
+                          options={DIPLOMA_SPECS.map((s) => ({ value: s, label: s }))}
+                          onChange={(newSpec) => updateEducation({ specialization: newSpec, specialization_other: '' })}
+                        />
+                        {data.education_details?.specialization === 'Other' && (
+                          <div className="space-y-1 pt-1.5 animate-in fade-in duration-150">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Specify Specialization <span className="text-purple-600">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.education_details?.specialization_other || ''}
+                              onChange={(e) => updateEducation({ specialization_other: e.target.value })}
+                              placeholder="e.g. Mining Engineering, Mechatronics"
+                              className={inputClass}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Polytechnic Name */}
+                      <div className="space-y-1.5">
+                        <label className="block text-[13px] font-semibold text-slate-700">
+                          Polytechnic / Institute Name <span className="text-xs text-slate-400 font-normal ml-1">(Optional)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={data.education_details?.institution ?? data.college ?? ''}
+                          onChange={(e) => updateEducation({ institution: e.target.value })}
+                          placeholder="e.g. Government Polytechnic, S.J. Polytechnic"
+                          className={inputClass}
+                        />
+                      </div>
+
+                      {/* Current Year or Completion Year */}
+                      {data.education_details?.education_status === 'currently_studying' && (
+                        <div className="space-y-2">
+                          <label className="block text-[13px] font-semibold text-slate-700">
+                            Current Year <span className="text-purple-600">*</span>
+                          </label>
+                          <div className="grid grid-cols-3 gap-2">
+                            {['1st Year', '2nd Year', 'Final Year (3rd Year)'].map((yr) => {
+                              const isSelected = data.education_details?.study_stage_value === yr;
+                              return (
+                                <button
+                                  key={yr}
+                                  type="button"
+                                  onClick={() => updateEducation({ study_stage_value: yr })}
+                                  className={`p-2.5 rounded-xl border text-center text-xs font-semibold transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 text-purple-900 ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                                  }`}
+                                >
+                                  {yr}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {data.education_details?.education_status === 'completed' && (
+                        <div className="space-y-1.5">
+                          <SearchableSelect
+                            label="Completion / Passing Year"
+                            required
+                            placeholder="Select completion year..."
+                            value={data.education_details?.graduation_year || ''}
+                            options={GRADUATION_YEARS.map((yr) => ({
+                              value: yr,
+                              label: yr,
+                              icon: <Calendar className="w-4 h-4 text-purple-600" />,
+                            }))}
+                            onChange={(newYear) => updateEducation({ graduation_year: newYear })}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    /* CASE 5: UNDERGRADUATE / POSTGRADUATE / DOCTORAL */
+                    <div className="space-y-5 animate-in fade-in duration-200">
+                      {/* Prior Degree for PG & Doctoral */}
+                      {(data.education_details?.education_level === 'postgraduate' || data.education_details?.education_level === 'doctoral_phd') && (
+                        <div className="space-y-1.5">
+                          <SearchableSelect
+                            label="Prior Completed Degree"
+                            required
+                            placeholder="Select prior qualification..."
+                            value={data.education_details?.highest_qualification || 'Undergraduate Degree (e.g. BTech, BSc, BCom, BA)'}
+                            options={HIGHEST_QUALIFICATIONS.map((q) => ({
+                              value: q,
+                              label: q,
+                              icon: <GraduationCap className="w-4 h-4 text-purple-600" />,
+                            }))}
+                            onChange={(newQual) => updateEducation({ highest_qualification: newQual })}
+                          />
+                        </div>
+                      )}
+
+                      {/* Degree / Course */}
+                      <div className="space-y-3">
+                        <SearchableSelect
+                          label={
+                            data.education_details?.education_level === 'postgraduate'
+                              ? 'Postgraduate Degree / Program'
+                              : data.education_details?.education_level === 'doctoral_phd'
+                              ? 'Doctoral Program'
+                              : 'Degree / Qualification'
+                          }
+                          required
+                          placeholder="Select your degree / course..."
+                          searchPlaceholder="Search degree (e.g. BTech, BCA, MBBS, MBA)..."
+                          value={data.education_details?.degree || ''}
+                          options={(DEGREE_CATALOG[data.education_details?.education_level || 'undergraduate'] || []).map((deg) => ({
+                            value: deg.id,
+                            label: deg.name,
+                            hint: `${deg.durationYears} Years duration`,
+                          }))}
+                          onChange={(newDegId) => {
+                            const degConfig = (DEGREE_CATALOG[data.education_details?.education_level || 'undergraduate'] || []).find(
+                              (d) => d.id === newDegId
+                            );
+                            const firstSpec = degConfig?.defaultSpecializations?.[0] || 'General';
+                            const stageOpts = getStudyStageOptions(degConfig, stageViewMode);
+                            updateEducation({
+                              degree: newDegId,
+                              degree_other: '',
+                              specialization: firstSpec,
+                              specialization_other: '',
+                              study_stage_value: stageOpts[0]?.id || '1st Year',
+                            });
+                          }}
+                        />
+
+                        {data.education_details?.degree === 'other' && (
+                          <div className="space-y-1.5 animate-in fade-in duration-200">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Specify Degree / Course <span className="text-purple-600">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.education_details?.degree_other || ''}
+                              onChange={(e) => updateEducation({ degree_other: e.target.value })}
+                              placeholder="e.g. Bachelor of Design (B.Des), B.Voc, etc."
+                              className={inputClass}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Specialization / Major */}
+                      <div className="space-y-3">
+                        {(() => {
+                          const currentDegConfig = (
+                            DEGREE_CATALOG[data.education_details?.education_level || 'undergraduate'] || []
+                          ).find((d) => d.id === data.education_details?.degree);
+
+                          const specs = currentDegConfig?.defaultSpecializations || ['General', 'Other'];
+
+                          return (
+                            <>
+                              <SearchableSelect
+                                label="Specialization / Branch"
+                                required
+                                placeholder="Select specialization..."
+                                searchPlaceholder="Search branch / major (e.g. Computer Science, AI&ML, Finance)..."
+                                value={data.education_details?.specialization || ''}
+                                options={specs.map((s) => ({
+                                  value: s,
+                                  label: s,
+                                }))}
+                                onChange={(newSpec) => {
+                                  updateEducation({
+                                    specialization: newSpec,
+                                    specialization_other: '',
+                                  });
+                                }}
+                              />
+
+                              {(data.education_details?.specialization === 'Other' || data.education_details?.specialization === 'other') && (
+                                <div className="space-y-1.5 animate-in fade-in duration-200">
+                                  <label className="block text-xs font-semibold text-slate-700">
+                                    Specify Specialization <span className="text-purple-600">*</span>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={data.education_details?.specialization_other || ''}
+                                    onChange={(e) => updateEducation({ specialization_other: e.target.value })}
+                                    placeholder="e.g. Mechatronics, Marine Biology, Visual Arts"
+                                    className={inputClass}
+                                  />
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
+                      </div>
+
+                      {/* College / University Name */}
+                      <div className="space-y-1.5">
+                        <label className="block text-[13px] font-semibold text-slate-700">
+                          College / University Name <span className="text-xs text-slate-400 font-normal ml-1">(Optional)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={data.education_details?.institution ?? data.college ?? ''}
+                          onChange={(e) => updateEducation({ institution: e.target.value })}
+                          placeholder="e.g. IIT Bombay, Delhi University, VTU, Christ University"
+                          className={inputClass}
+                        />
+                      </div>
+
+                      {/* Study Stage or Graduation Year */}
+                      {data.education_details?.education_status === 'currently_studying' && (() => {
+                        const currentDegConfig = (
+                          DEGREE_CATALOG[data.education_details?.education_level || 'undergraduate'] || []
+                        ).find((d) => d.id === data.education_details?.degree);
+
+                        const hasSemesters = Boolean(currentDegConfig?.totalSemesters);
+                        const stageOptions = getStudyStageOptions(currentDegConfig, stageViewMode);
+
+                        return (
+                          <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <label className="block text-[13px] font-semibold text-slate-800">
+                                Current Academic Stage <span className="text-purple-600">*</span>
+                              </label>
+                              {hasSemesters && (
+                                <div className="flex items-center bg-white p-0.5 rounded-lg border border-slate-200 text-xs font-semibold">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setStageViewMode('year');
+                                      const opts = getStudyStageOptions(currentDegConfig, 'year');
+                                      updateEducation({ study_stage_type: 'year', study_stage_value: opts[0]?.id });
+                                    }}
+                                    className={`px-2.5 py-1 rounded-md transition-colors ${
+                                      stageViewMode === 'year'
+                                        ? 'bg-purple-600 text-white shadow-xs'
+                                        : 'text-slate-600 hover:text-purple-600'
+                                    }`}
+                                  >
+                                    Year-wise
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setStageViewMode('semester');
+                                      const opts = getStudyStageOptions(currentDegConfig, 'semester');
+                                      updateEducation({ study_stage_type: 'semester', study_stage_value: opts[0]?.id });
+                                    }}
+                                    className={`px-2.5 py-1 rounded-md transition-colors ${
+                                      stageViewMode === 'semester'
+                                        ? 'bg-purple-600 text-white shadow-xs'
+                                        : 'text-slate-600 hover:text-purple-600'
+                                    }`}
+                                  >
+                                    Semester-wise
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex flex-wrap gap-2">
+                              {stageOptions.map((stg) => {
+                                const isSelected = data.education_details?.study_stage_value === stg.id;
+                                return (
+                                  <button
+                                    key={stg.id}
+                                    type="button"
+                                    onClick={() => updateEducation({ study_stage_value: stg.id })}
+                                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                                      isSelected
+                                        ? 'bg-purple-600 border-purple-600 text-white shadow-xs'
+                                        : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300'
+                                    }`}
+                                  >
+                                    {stg.label}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {data.education_details?.education_status === 'completed' && (
+                        <div className="space-y-1.5">
+                          <SearchableSelect
+                            label="Graduation / Passing Year"
+                            required
+                            placeholder="Select graduation year..."
+                            searchPlaceholder="Search passing year..."
+                            value={data.education_details?.graduation_year || ''}
+                            options={GRADUATION_YEARS.map((yr) => ({
+                              value: yr,
+                              label: yr,
+                              icon: <Calendar className="w-4 h-4 text-purple-600" />,
+                            }))}
+                            onChange={(newYear) => updateEducation({ graduation_year: newYear })}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
               {/* --- Step 2: Expandable Interests & Exploration --- */}
@@ -3335,7 +4473,7 @@ const Onboarding: React.FC = () => {
                 <button
                   type="button"
                   onClick={goNext}
-                  disabled={(step === 0 && !(data.career_mode || data.path)) || (step === 1 && !isStep1Valid) || (step === 2 && !isStep2Valid) || (step === 3 && !isStep3Valid) || (step === 4 && !isStep4Valid)}
+                  disabled={(step === 0 && !isStep0Valid) || (step === 1 && !isStep1Valid) || (step === 2 && !isStep2Valid) || (step === 3 && !isStep3Valid) || (step === 4 && !isStep4Valid)}
                   className="bg-[#6D28D9] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#5B21B6] active:scale-[0.98] transition-all shadow-md shadow-purple-600/20 flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#6D28D9] disabled:shadow-none"
                 >
                   Continue <ArrowRight className="w-4 h-4" />

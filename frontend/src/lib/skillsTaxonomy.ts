@@ -5,10 +5,25 @@ export type SkillProficiency =
   | 'expert'
   | 'not_sure';
 
+export type SkillSource =
+  | 'academic_project'
+  | 'personal_project'
+  | 'internship'
+  | 'professional_employment'
+  | 'certification'
+  | 'competition'
+  | 'self_learning'
+  | 'volunteering'
+  | 'school_activity'
+  | 'other';
+
 export interface UserSkill {
   name: string;
+  skill_name?: string;
   category: string;
   proficiency?: SkillProficiency;
+  source?: SkillSource;
+  years_used?: number | string | null;
   is_custom?: boolean;
 }
 
@@ -21,6 +36,12 @@ export type ExperienceType =
   | 'full_time'
   | 'part_time'
   | 'volunteering'
+  | 'science_fairs'
+  | 'coding_robotics'
+  | 'competitions'
+  | 'extracurricular'
+  | 'hobbies_self_learning'
+  | 'certification'
   | 'other';
 
 export interface ExperienceItem {
@@ -48,6 +69,30 @@ export interface SkillsAndExperienceDetails {
   experience_types: ExperienceType[];
   experiences: ExperienceItem[];
   professional_duration: ProfessionalDuration;
+  has_no_experience?: boolean;
+  not_sure_skills?: boolean;
+  // Experienced professionals fields:
+  current_job_role?: string;
+  industry?: string;
+  previous_job_roles?: string;
+  key_responsibilities?: string;
+  major_achievements?: string;
+  leadership_experience?: string;
+  // Career switchers fields:
+  current_profession?: string;
+  previous_experience_summary?: string;
+  target_domain?: string;
+  target_skills_acquired?: string[];
+  skills_to_develop?: string[];
+  transferable_skills?: string[];
+  // Career break returners fields:
+  previous_industry?: string;
+  break_duration?: string;
+  break_reason?: string;
+  recent_learning_certifications?: string;
+  readiness_status?: 'ready_now' | 'need_upskilling' | 'exploring_options';
+  // School students exploration fields:
+  areas_interested_in_exploring?: string[];
 }
 
 export interface SkillCategoryConfig {
@@ -219,11 +264,37 @@ export const EXPERIENCE_TYPE_OPTIONS: { id: ExperienceType; label: string; desc:
   { id: 'academic_projects', label: 'Academic projects', desc: 'Coursework, capstones, lab assignments', icon: '🎓' },
   { id: 'personal_projects', label: 'Personal projects', desc: 'Self-initiated builds, portfolios, hobbies', icon: '💻' },
   { id: 'internship', label: 'Internship', desc: 'Supervised industry training & stints', icon: '🏢' },
+  { id: 'certification', label: 'Certifications & Courses', desc: 'Industry certifications, online bootcamps', icon: '📜' },
   { id: 'freelancing', label: 'Freelancing', desc: 'Client work, gigs, independent contracts', icon: '💼' },
   { id: 'full_time', label: 'Full-time employment', desc: 'Salaried professional work experience', icon: '👔' },
   { id: 'part_time', label: 'Part-time employment', desc: 'Part-time roles alongside study/other pursuits', icon: '⏱️' },
   { id: 'volunteering', label: 'Volunteering', desc: 'Community, non-profit, student clubs', icon: '🤝' },
   { id: 'other', label: 'Other', desc: 'Custom non-traditional work or projects', icon: '✨' },
+];
+
+export const SCHOOL_EXPERIENCE_OPTIONS: { id: ExperienceType; label: string; desc: string; icon: string }[] = [
+  { id: 'no_experience', label: "I haven't participated in practical activities yet", desc: 'Starting fresh without past activities', icon: '🌱' },
+  { id: 'academic_projects', label: 'Academic projects & practicals', desc: 'School lab projects, exhibition models, assignments', icon: '🧪' },
+  { id: 'science_fairs', label: 'Science fairs & exhibitions', desc: 'School / inter-school science models & demonstrations', icon: '🔬' },
+  { id: 'coding_robotics', label: 'Coding, robotics & tech clubs', desc: 'Computer club, Scratch, Python, Arduino, Lego robotics', icon: '🤖' },
+  { id: 'competitions', label: 'Competitions & Olympiads', desc: 'Math Olympiads, debate, quiz, spelling bees, hackathons', icon: '🏆' },
+  { id: 'extracurricular', label: 'Extracurricular & arts', desc: 'Drama, music, school band, fine arts, student council', icon: '🎨' },
+  { id: 'hobbies_self_learning', label: 'Hobbies & self-learning', desc: 'Self-taught skills, reading, writing, building things at home', icon: '💡' },
+];
+
+export const SCHOOL_EXPLORATION_AREAS = [
+  'Artificial Intelligence & Coding',
+  'Robotics & Gadgets',
+  'Space Science & Astronomy',
+  'Medicine, Biology & Health',
+  'Video Game Design & Animation',
+  'Creative Writing & Journalism',
+  'Business, Startups & Finance',
+  'Architecture & Product Design',
+  'Law, Debating & Public Policy',
+  'Psychology & Human Behavior',
+  'Environmental Science & Wildlife',
+  'Sports Analytics & Physical Fitness',
 ];
 
 export const PROFESSIONAL_DURATION_OPTIONS: { id: ProfessionalDuration; label: string }[] = [

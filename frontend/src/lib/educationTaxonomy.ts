@@ -31,7 +31,14 @@ export interface EducationDetails {
   last_attended_stage?: string;
   highest_qualification?: string;
   gap_year_reason?: string;
+  discontinuation_reason?: string;
+  year_discontinued?: string;
+  prior_qualification?: string;
   plan_to_resume?: 'yes' | 'no' | 'undecided';
+  school_board?: string;
+  school_board_other?: string;
+  school_stream?: string;
+  favorite_school_subjects?: string[];
 }
 
 export interface DegreeConfig {
@@ -58,6 +65,46 @@ export const EDUCATION_STATUSES: { id: EducationStatus; label: string; icon: str
   { id: 'completed', label: 'Graduated / Completed', icon: '🎓', desc: 'Finished all academic requirements and exams' },
   { id: 'discontinued', label: 'Discontinued / Dropout', icon: '⏸️', desc: 'Paused or left before degree completion' },
   { id: 'gap_year', label: 'On a gap year', icon: '⏳', desc: 'Taking a planned break or preparing for admissions' },
+];
+
+export interface SchoolBoardConfig {
+  id: string;
+  name: string;
+  shortName: string;
+  description: string;
+}
+
+export const SCHOOL_BOARDS: SchoolBoardConfig[] = [
+  { id: 'cbse', name: 'Central Board of Secondary Education (CBSE)', shortName: 'CBSE', description: 'National curriculum with comprehensive board examinations' },
+  { id: 'icse', name: 'Indian Certificate of Secondary Education (ICSE / ISC)', shortName: 'ICSE / CISCE', description: 'In-depth conceptual application and language focus' },
+  { id: 'state_board', name: 'State Board of Education (SSLC / State Board)', shortName: 'State Board', description: 'Regional curriculum prescribed by state education departments' },
+  { id: 'ib_cambridge', name: 'International Baccalaureate (IB) / Cambridge (IGCSE / A-Levels)', shortName: 'IB / Cambridge', description: 'Global inquiry-based international curriculum' },
+  { id: 'nios', name: 'National Institute of Open Schooling (NIOS)', shortName: 'NIOS', description: 'Flexible self-paced open schooling' },
+  { id: 'other', name: 'Other Recognized School Board', shortName: 'Other', description: 'Alternative or foreign board' },
+];
+
+export const CLASS_10_SUBJECTS = [
+  'Mathematics',
+  'Science (Physics, Chemistry, Biology)',
+  'Social Studies (History, Geography, Civics, Economics)',
+  'Computer Applications / Coding',
+  'English & Literature',
+  'Second Language (Hindi, Regional, French, Sanskrit)',
+  'Art & Visual Expression',
+  'Physical Education & Sports',
+];
+
+export const HIGH_SCHOOL_STREAMS = [
+  { id: 'science_pcmb', label: 'Science — PCMB (Physics, Chemistry, Math, Biology)', group: 'Science' },
+  { id: 'science_pcmc', label: 'Science — PCMC (Physics, Chemistry, Math, Computer Science)', group: 'Science' },
+  { id: 'science_pcme', label: 'Science — PCME (Physics, Chemistry, Math, Electronics)', group: 'Science' },
+  { id: 'science_pcb', label: 'Science — PCB (Physics, Chemistry, Biology - Medical Focus)', group: 'Science' },
+  { id: 'commerce_math', label: 'Commerce — with Mathematics / Business Math', group: 'Commerce' },
+  { id: 'commerce_comp', label: 'Commerce — with Computer Applications / Informatics Practices', group: 'Commerce' },
+  { id: 'commerce_general', label: 'Commerce — General (Accounts, Business Studies, Economics)', group: 'Commerce' },
+  { id: 'arts_humanities', label: 'Arts & Humanities (History, Psychology, Political Science, Sociology)', group: 'Arts' },
+  { id: 'vocational_applied', label: 'Vocational / Applied Sciences / Design', group: 'Vocational' },
+  { id: 'other', label: 'Other Custom Stream', group: 'Other' },
 ];
 
 // Specialization presets
@@ -219,7 +266,7 @@ const SSLC_SPECS = [
   'Other',
 ];
 
-const DIPLOMA_SPECS = [
+export const DIPLOMA_SPECS = [
   'Computer Science & Engineering',
   'Information Technology',
   'Mechanical Engineering',
