@@ -87,59 +87,53 @@ def read_root():
 # --------------------------------------------------------------------------- #
 #  Resume parsing
 # --------------------------------------------------------------------------- #
+from resume_parser import (
+    extract_text_from_file,
+    create_extraction_prompt,
+    build_fallback_parsed_data,
+    format_resume_response,
+    ResumeParseError,
+    PasswordProtectedError,
+    FileSizeExceededError,
+    UnsupportedFormatError,
+    CorruptedFileError,
+)
+
 @app.post("/api/upload-resume")
 async def upload_resume(file: UploadFile = File(...)):
-    if not file.filename.endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Only PDF files are supported.")
-
-    if fitz is None or not _AI_ENABLED:
-        print("WARNING: PyMuPDF missing or AI disabled. Returning mock resume data.")
-        return {
-            "name": "Alex Johnson",
-            "education": ["B.S. Computer Science, University of Technology"],
-            "skills": ["Python", "React", "TypeScript", "FastAPI", "SQL", "Git"],
-            "experience": ["Software Engineering Intern at TechCorp", "Freelance Web Developer"],
-        }
-
+    filename = file.filename or "uploaded_resume.pdf"
     try:
         contents = await file.read()
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
-            temp_file.write(contents)
-            temp_file_path = temp_file.name
+    except Exception as read_err:
+        raise HTTPException(status_code=400, detail=f"Failed to read file: {str(read_err)}")
 
-        text = ""
-        try:
-            doc = fitz.open(temp_file_path)
-            for page in doc:
-                text += page.get_text()
-            doc.close()
-        finally:
-            os.remove(temp_file_path)
+    if not contents:
+        raise HTTPException(status_code=400, detail="Uploaded file is empty.")
 
-        try:
-            prompt = f"""
-            Extract the following information from the resume text below.
-            Format the output strictly as a JSON object with these exact keys:
-            - "name": string (the person's full name)
-            - "education": array of strings
-            - "skills": array of strings
-            - "experience": array of strings
-
-            Resume Text:
-            {text[:_MAX_RESUME_CHARS]}
-            """
-            return _generate_json(prompt, temperature=0)
-        except Exception as ai_err:
-            print(f"AI resume parsing error: {ai_err}")
-            return {
-                "name": "Demo User (AI Failed)",
-                "education": ["B.S. Computer Science"],
-                "skills": ["Extracted text length: " + str(len(text))],
-                "experience": ["Please check GROQ_API_KEY"],
-            }
-
+    try:
+        raw_text, file_type = extract_text_from_file(filename, contents)
+    except FileSizeExceededError as e:
+        raise HTTPException(status_code=413, detail=str(e))
+    except (PasswordProtectedError, UnsupportedFormatError, CorruptedFileError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except ResumeParseError as e:
+        raise HTTPException(status_code=422, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Unexpected parsing error: {str(e)}")
+
+    if not _AI_ENABLED:
+        fallback = build_fallback_parsed_data(raw_text, filename)
+        return format_resume_response(fallback, file_type, len(contents), filename)
+
+    try:
+        prompt = create_extraction_prompt(raw_text)
+        extracted = _generate_json(prompt, temperature=0.0)
+        return format_resume_response(extracted, file_type, len(contents), filename)
+    except Exception as ai_err:
+        print(f"AI resume parsing error: {ai_err}. Using rule-based extraction fallback.")
+        fallback = build_fallback_parsed_data(raw_text, filename)
+        return format_resume_response(fallback, file_type, len(contents), filename)
+
 
 
 # --------------------------------------------------------------------------- #
@@ -177,7 +171,7 @@ class CareerMatchRequest(BaseModel):
     strengths_note: str | None = Field(default=None, max_length=500)
     # "Know me": values, strong/enjoyed subjects, what they're known for, and
     # real-life constraints (earning timeline, budget, relocation, family, setting).
-    know_me: dict[str, str | list[str]] = Field(default_factory=dict)
+    know_me: dict[str, Any] = Field(default_factory=dict)
 
 
 def _ai_career_match(profile: dict):

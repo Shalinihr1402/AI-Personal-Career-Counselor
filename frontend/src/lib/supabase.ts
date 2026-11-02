@@ -1,7 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL as string | undefined;
-const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY as string | undefined;
+const supabaseUrl: string =
+  import.meta.env.VITE_SUPABASE_URL ||
+  'https://gkgwinmbmxdohlygvjge.supabase.co';
+
+const supabaseAnonKey: string =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  'sb_publishable_zJabNtDEHzEHXPLYT2wEvg_W9E8Jqit';
 
 /**
  * True when both env vars are present. When false, the app still renders but
@@ -18,8 +23,8 @@ if (!isSupabaseConfigured) {
 }
 
 export const supabase = createClient(
-  supabaseUrl ?? 'http://localhost:54321',
-  supabaseAnonKey ?? 'public-anon-key',
+  supabaseUrl,
+  supabaseAnonKey,
   {
     auth: {
       persistSession: true,

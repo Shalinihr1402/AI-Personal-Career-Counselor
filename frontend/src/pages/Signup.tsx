@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   BrainCircuit, Compass, TrendingUp, Target,
@@ -6,10 +6,20 @@ import {
   GraduationCap, ClipboardList
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useProfile } from '../context/ProfileContext';
+import { getJourneyStatus } from '../lib/profile';
 
 const Signup: React.FC = () => {
-  const { signUp, signInWithGoogle } = useAuth();
+  const { user, loading: authLoading, signUp, signInWithGoogle } = useAuth();
+  const { profile, assessment, activeGoal, loading: profileLoading } = useProfile();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authLoading && user && !profileLoading) {
+      const status = getJourneyStatus(profile, assessment, activeGoal);
+      navigate(status.nextRoute, { replace: true });
+    }
+  }, [user, authLoading, profile, assessment, activeGoal, profileLoading, navigate]);
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');

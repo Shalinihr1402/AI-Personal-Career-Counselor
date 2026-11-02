@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { BrainCircuit, Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useProfile } from '../context/ProfileContext';
 import {
   getJourneyStatus,
   loadProfile,
@@ -10,10 +11,19 @@ import {
 } from '../lib/profile';
 
 const Login: React.FC = () => {
-  const { signIn, signInWithGoogle, resetPassword } = useAuth();
+  const { user, loading: authLoading, signIn, signInWithGoogle, resetPassword } = useAuth();
+  const { profile, assessment, activeGoal, loading: profileLoading } = useProfile();
   const navigate = useNavigate();
   const location = useLocation();
   const explicitRedirect = (location.state as { from?: string } | null)?.from;
+
+  useEffect(() => {
+    if (!authLoading && user && !profileLoading) {
+      const status = getJourneyStatus(profile, assessment, activeGoal);
+      const target = status.stage === 'complete' ? (explicitRedirect ?? '/dashboard') : status.nextRoute;
+      navigate(target, { replace: true });
+    }
+  }, [user, authLoading, profile, assessment, activeGoal, profileLoading, navigate, explicitRedirect]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

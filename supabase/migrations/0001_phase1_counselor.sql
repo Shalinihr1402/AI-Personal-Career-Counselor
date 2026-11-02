@@ -1,9 +1,4 @@
--- Phase 1 (career counselor): profiles, assessments, career goals.
--- Run once in Supabase: Dashboard -> SQL Editor -> New query -> paste -> Run.
--- Safe to re-run: every statement is idempotent.
 
--- ---------------------------------------------------------------------------
--- profiles: one row per student (onboarding answers + "Know me" profile)
 -- ---------------------------------------------------------------------------
 create table if not exists public.profiles (
   user_id             uuid primary key references auth.users on delete cascade,
@@ -34,7 +29,7 @@ create table if not exists public.assessments (
   scores      jsonb not null,
   code        text not null,
   matches     jsonb not null default '[]',
-  source      text check (source in ('ai', 'rule')),
+  source      text check (source in ('ai','hybrid_vector','rule')),
   created_at  timestamptz not null default now()
 );
 create index if not exists assessments_user_created on public.assessments (user_id, created_at desc);

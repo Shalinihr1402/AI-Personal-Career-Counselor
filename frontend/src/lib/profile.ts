@@ -2,7 +2,7 @@ import type { User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 import type { KnowMe } from './knowMe';
 import type { CareerMatch, RiasecScores } from './assessment';
-import type { CareerPath, EducationStage, OnboardingRecord } from './onboarding';
+import { type CareerMode, type CareerPath, type EducationStage, type OnboardingRecord, CAREER_MODE_TO_PATH, PATH_TO_CAREER_MODE } from './onboarding';
 
 /**
  * Persistence for the counselor phase: the student's profile and their
@@ -11,6 +11,7 @@ import type { CareerPath, EducationStage, OnboardingRecord } from './onboarding'
  */
 
 export interface Profile extends OnboardingRecord {
+  career_mode?: CareerMode | null;
   educationStage?: EducationStage;
   streamOrBranch?: string;
   knowMe?: KnowMe;
@@ -39,7 +40,12 @@ interface ProfileRow {
   target_role: string | null;
   hours_per_week: string | null;
   resume: Profile['resume'] | null;
-  know_me: (KnowMe & { educationStage?: EducationStage; streamOrBranch?: string }) | null;
+  know_me: (KnowMe & {
+    educationStage?: EducationStage;
+    streamOrBranch?: string;
+    skills_and_experience?: any;
+    career_discovery_preferences?: any;
+  }) | null;
   onboarding_complete: boolean;
 }
 
@@ -56,8 +62,10 @@ interface AssessmentRow {
 
 function fromRow(r: ProfileRow): Profile {
   const km = r.know_me;
+  const careerMode = (km as any)?.career_mode ?? (r.path ? PATH_TO_CAREER_MODE[r.path] : undefined);
   return {
     path: r.path,
+    career_mode: careerMode,
     college: r.college ?? undefined,
     course: r.course ?? undefined,
     year: r.year ?? undefined,
@@ -69,13 +77,21 @@ function fromRow(r: ProfileRow): Profile {
     knowMe: r.know_me ?? undefined,
     educationStage: km?.educationStage || undefined,
     streamOrBranch: km?.streamOrBranch || undefined,
+    education_details: (km as any)?.education_details || undefined,
+    interest_details: (km as any)?.interest_details || undefined,
+    skills_and_experience: (km as any)?.skills_and_experience || undefined,
+    career_discovery_preferences: (km as any)?.career_discovery_preferences || undefined,
     onboardingComplete: r.onboarding_complete,
   };
 }
 
 function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> {
   const row: Partial<ProfileRow> = { user_id: userId };
-  if ('path' in p) row.path = p.path ?? null;
+  if ('career_mode' in p && p.career_mode) {
+    row.path = CAREER_MODE_TO_PATH[p.career_mode];
+  } else if ('path' in p) {
+    row.path = p.path ?? null;
+  }
   if ('college' in p) row.college = p.college ?? null;
   if ('course' in p) row.course = p.course ?? null;
   if ('year' in p) row.year = p.year ?? null;
@@ -85,14 +101,74 @@ function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> {
   if ('hoursPerWeek' in p) row.hours_per_week = p.hoursPerWeek ?? null;
   if ('resume' in p) row.resume = p.resume ?? null;
 
-  if ('knowMe' in p || 'educationStage' in p || 'streamOrBranch' in p) {
+  if ('education_details' in p && p.education_details) {
+    const ed = p.education_details;
+    if (ed.institution !== undefined) row.college = ed.institution || null;
+    const degreeLabel = ed.degree === 'other' ? (ed.degree_other || 'Other Degree') : ed.degree;
+    const specLabel =
+      ed.specialization === 'other'
+        ? ed.specialization_other || 'Other'
+        : ed.specialization && ed.specialization !== 'Not applicable' && ed.specialization !== 'General'
+        ? ed.specialization
+        : '';
+    row.course = [degreeLabel, specLabel].filter(Boolean).join(' - ') || row.course || null;
+    row.year = ed.study_stage_value || ed.graduation_year || ed.last_attended_stage || row.year || null;
+  }
+
+  if ('interest_details' in p && p.interest_details) {
+    const ind = p.interest_details;
+    if (ind.additional_interests !== undefined) {
+      row.strengths_note = ind.additional_interests || null;
+    }
+  }
+
+  if ('skills_and_experience' in p && p.skills_and_experience) {
+    const se = p.skills_and_experience;
+    const baseResume = p.resume || row.resume || {};
+    const existingSkills = (baseResume.skills as string[]) || [];
+    const newSkillNames = se.skills.map((s) => s.name);
+    const mergedSkills = Array.from(new Set([...existingSkills, ...newSkillNames]));
+    row.resume = {
+      ...baseResume,
+      ...(mergedSkills.length > 0 ? { skills: mergedSkills } : {}),
+    };
+  }
+
+  if ('career_discovery_preferences' in p && p.career_discovery_preferences) {
+    const cdp = p.career_discovery_preferences;
+    if (cdp.daily_learning_commitment && !row.hours_per_week) {
+      row.hours_per_week = cdp.daily_learning_commitment;
+    }
+  }
+
+  if (
+    'knowMe' in p ||
+    'educationStage' in p ||
+    'streamOrBranch' in p ||
+    'career_mode' in p ||
+    'education_details' in p ||
+    'interest_details' in p ||
+    'skills_and_experience' in p ||
+    'career_discovery_preferences' in p
+  ) {
     const existingKm = (p.knowMe as any) || {};
     const stage = p.educationStage ?? existingKm.educationStage;
     const stream = p.streamOrBranch ?? existingKm.streamOrBranch;
+    const careerMode = p.career_mode ?? existingKm.career_mode;
+    const educationDetails = p.education_details ?? existingKm.education_details;
+    const interestDetails = p.interest_details ?? existingKm.interest_details;
+    const skillsAndExperience = p.skills_and_experience ?? existingKm.skills_and_experience;
+    const careerDiscoveryPreferences =
+      p.career_discovery_preferences ?? existingKm.career_discovery_preferences;
     const mergedKm = {
       ...existingKm,
       ...(stage ? { educationStage: stage } : {}),
       ...(stream ? { streamOrBranch: stream } : {}),
+      ...(careerMode ? { career_mode: careerMode } : {}),
+      ...(educationDetails ? { education_details: educationDetails } : {}),
+      ...(interestDetails ? { interest_details: interestDetails } : {}),
+      ...(skillsAndExperience ? { skills_and_experience: skillsAndExperience } : {}),
+      ...(careerDiscoveryPreferences ? { career_discovery_preferences: careerDiscoveryPreferences } : {}),
     };
     row.know_me = Object.keys(mergedKm).length > 0 ? mergedKm : null;
   }

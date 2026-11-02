@@ -1,5 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useProfile } from '../context/ProfileContext';
+import { getJourneyStatus } from '../lib/profile';
 import { motion } from 'framer-motion';
 import {
   ArrowRight, Check, BrainCircuit, Star, Clock,
@@ -10,6 +13,36 @@ import {
 } from 'lucide-react';
 
 const Home: React.FC = () => {
+  const { user, loading } = useAuth();
+  const { profile, assessment, activeGoal, loading: profileLoading } = useProfile();
+  const navigate = useNavigate();
+
+  // If user is authenticated, redirect automatically to their journey destination
+  useEffect(() => {
+    if (!loading && user && !profileLoading) {
+      const { nextRoute } = getJourneyStatus(profile, assessment, activeGoal);
+      navigate(nextRoute, { replace: true });
+    }
+  }, [user, loading, profile, assessment, activeGoal, profileLoading, navigate]);
+
+  // While exchanging OAuth token or loading user profile, show a clean indicator
+  const hasAuthParams = typeof window !== 'undefined' && (
+    window.location.hash.includes('access_token') ||
+    window.location.search.includes('code=')
+  );
+
+  if (hasAuthParams && (loading || (user && profileLoading))) {
+    return (
+      <div className="min-h-screen bg-[#FAFBFF] flex items-center justify-center font-sans">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-9 h-9 border-3 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
+          <p className="text-sm font-semibold text-slate-700">Signing you in and loading your journey...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { nextRoute } = user && !profileLoading ? getJourneyStatus(profile, assessment, activeGoal) : { nextRoute: '/onboarding' };
   return (
     <div className="min-h-screen bg-[#FAFBFF] font-sans text-slate-900 selection:bg-purple-100 overflow-x-hidden">
       
@@ -30,10 +63,21 @@ const Home: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <Link to="/login" className="text-sm font-semibold text-slate-600 hover:text-slate-900 hidden sm:block">Log in</Link>
-            <Link to="/signup" className="bg-purple-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-purple-700 transition-colors shadow-sm">
-              Get Started
-            </Link>
+            {user ? (
+              <Link
+                to={nextRoute}
+                className="bg-purple-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-purple-700 transition-colors shadow-sm flex items-center gap-1.5"
+              >
+                Go to {nextRoute === '/dashboard' ? 'Dashboard' : nextRoute === '/assessment' ? 'Assessment' : 'Onboarding'} <ArrowRight className="w-4 h-4" />
+              </Link>
+            ) : (
+              <>
+                <Link to="/login" className="text-sm font-semibold text-slate-600 hover:text-slate-900 hidden sm:block">Log in</Link>
+                <Link to="/signup" className="bg-purple-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-purple-700 transition-colors shadow-sm">
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
         </nav>
       </header>
@@ -55,10 +99,16 @@ const Home: React.FC = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
-              <Link to="/signup" className="bg-purple-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-600/30 flex items-center justify-center gap-2">
-                Start Career Discovery <ArrowRight className="w-5 h-5" />
+              <Link
+                to={user ? nextRoute : '/signup'}
+                className="bg-purple-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-600/30 flex items-center justify-center gap-2"
+              >
+                {user ? 'Continue Your Journey' : 'Start Career Discovery'} <ArrowRight className="w-5 h-5" />
               </Link>
-              <Link to="/signup" className="bg-white text-purple-600 border border-purple-100 px-8 py-4 rounded-xl font-bold hover:bg-purple-50 transition-all flex items-center justify-center">
+              <Link
+                to={user ? nextRoute : '/signup'}
+                className="bg-white text-purple-600 border border-purple-100 px-8 py-4 rounded-xl font-bold hover:bg-purple-50 transition-all flex items-center justify-center"
+              >
                 I Know My Career Goal
               </Link>
             </div>

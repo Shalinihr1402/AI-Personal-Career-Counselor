@@ -1,5 +1,49 @@
 export type CareerPath = 'know_goal' | 'not_sure' | 'need_plan';
 
+export type CareerMode = 'career_planning' | 'career_discovery' | 'career_growth_transition';
+
+export const CAREER_MODE_TO_PATH: Record<CareerMode, CareerPath> = {
+  career_planning: 'know_goal',
+  career_discovery: 'not_sure',
+  career_growth_transition: 'need_plan',
+};
+
+export const PATH_TO_CAREER_MODE: Record<CareerPath, CareerMode> = {
+  know_goal: 'career_planning',
+  not_sure: 'career_discovery',
+  need_plan: 'career_growth_transition',
+};
+
+export type {
+  EducationLevel,
+  EducationStatus,
+  StudyStageType,
+  EducationDetails,
+} from './educationTaxonomy';
+
+export type {
+  InterestCategoryConfig,
+  InterestDetails,
+} from './interestsTaxonomy';
+
+export type {
+  SkillProficiency,
+  UserSkill,
+  ExperienceType,
+  ExperienceItem,
+  ProfessionalDuration,
+  SkillsAndExperienceDetails,
+} from './skillsTaxonomy';
+
+export type {
+  CareerMotivationId,
+  CareerPriorityId,
+  WorkEnvironmentId,
+  LearningCommitmentId,
+  CareerTimelineId,
+  CareerDiscoveryPreferences,
+} from './careerPreferencesTaxonomy';
+
 export type EducationStage =
   | 'sslc_10th'
   | 'puc_12th'
@@ -9,7 +53,12 @@ export type EducationStage =
 
 export interface OnboardingRecord {
   path: CareerPath | null;
+  career_mode?: CareerMode | null;
   educationStage?: EducationStage;
+  education_details?: import("./educationTaxonomy").EducationDetails;
+  interest_details?: import("./interestsTaxonomy").InterestDetails;
+  skills_and_experience?: import("./skillsTaxonomy").SkillsAndExperienceDetails;
+  career_discovery_preferences?: import("./careerPreferencesTaxonomy").CareerDiscoveryPreferences;
   streamOrBranch?: string;
   college?: string;
   course?: string;

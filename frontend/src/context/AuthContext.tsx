@@ -54,6 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
       setSession(next);
       setUser(next?.user ?? null);
+      setLoading(false);
     });
 
     return () => sub.subscription.unsubscribe();
@@ -90,11 +91,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       async signInWithGoogle() {
         if (!isSupabaseConfigured) return notConfigured;
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: `${window.location.origin}/onboarding` },
-        });
-        return { error: error?.message ?? null };
+        try {
+          const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+              redirectTo: `${window.location.origin}/onboarding`,
+            },
+          });
+          if (error) {
+            return { error: error.message };
+          }
+          if (data?.url) {
+            window.location.href = data.url;
+          }
+          return { error: null };
+        } catch (err: unknown) {
+          return { error: err instanceof Error ? err.message : 'Google sign-in failed' };
+        }
       },
 
       async resetPassword(email) {
