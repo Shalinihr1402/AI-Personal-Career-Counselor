@@ -42,6 +42,7 @@ export type {
   LearningCommitmentId,
   CareerTimelineId,
   CareerDiscoveryPreferences,
+  CareerPreferences,
 } from './careerPreferencesTaxonomy';
 
 export type EducationStage =
@@ -140,7 +141,7 @@ export function detectUserPersona(record: Partial<OnboardingRecord>): UserPerson
   }
 
   // 2. High school / School students (Rule 4: exploration assessments)
-  if (ed?.education_level === 'sslc_10th') {
+  if (ed?.education_level === 'sslc_10th' || ed?.education_level === 'school_middle') {
     return 'school_student_10th';
   }
   if (ed?.education_level === 'puc_12th') {
@@ -152,8 +153,8 @@ export function detectUserPersona(record: Partial<OnboardingRecord>): UserPerson
     return 'dropout_or_gap_year';
   }
 
-  // 4. Diploma students
-  if (ed?.education_level === 'diploma') {
+  // 4. Diploma / ITI vocational students
+  if (ed?.education_level === 'diploma' || ed?.education_level === 'iti_vocational') {
     return 'diploma_student';
   }
 
@@ -189,6 +190,7 @@ export interface OnboardingRecord {
   interest_details?: import("./interestsTaxonomy").InterestDetails;
   skills_and_experience?: import("./skillsTaxonomy").SkillsAndExperienceDetails;
   career_discovery_preferences?: import("./careerPreferencesTaxonomy").CareerDiscoveryPreferences;
+  career_preferences?: import("./careerPreferencesTaxonomy").CareerPreferences;
   student_exploration_preferences?: StudentExplorationPreferences;
   career_planning_preferences?: CareerPlanningPreferences;
   career_transition_preferences?: CareerTransitionPreferences;

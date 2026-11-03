@@ -74,15 +74,27 @@ import {
   type CareerMotivationId,
   type CareerPriorityId,
   type WorkEnvironmentId,
+  type WorkStyleId,
   type LearningCommitmentId,
   type CareerTimelineId,
   type CareerDiscoveryPreferences,
+  type CareerPreferences,
   CAREER_MOTIVATIONS,
+  SCHOOL_MOTIVATIONS,
+  SCHOOL_STUDY_OPTIONS,
+  SCHOOL_ACTIVITIES_ENJOYED,
   CAREER_PRIORITIES,
   WORK_ENVIRONMENTS,
+  WORK_STYLES,
   LEARNING_COMMITMENTS,
   CAREER_TIMELINES,
+  SWITCHING_CHALLENGES,
+  ADVANCEMENT_GOALS,
+  BREAK_RETURN_CONCERNS,
+  SUPPORT_NEEDS,
+  DROPOUT_PATHWAYS,
   DEFAULT_CAREER_DISCOVERY_PREFERENCES,
+  DEFAULT_CAREER_PREFERENCES,
 } from '../lib/careerPreferencesTaxonomy';
 import { Calendar, GraduationCap, Compass, ChevronDown } from 'lucide-react';
 
@@ -98,6 +110,7 @@ interface OnboardingData {
   interest_details?: InterestDetails;
   skills_and_experience?: SkillsAndExperienceDetails;
   career_discovery_preferences?: CareerDiscoveryPreferences;
+  career_preferences?: CareerPreferences;
   streamOrBranch: string;
   college: string;
   course: string;
@@ -135,6 +148,7 @@ const emptyData: OnboardingData = {
   interest_details: defaultInterestDetails,
   skills_and_experience: DEFAULT_SKILLS_AND_EXPERIENCE,
   career_discovery_preferences: DEFAULT_CAREER_DISCOVERY_PREFERENCES,
+  career_preferences: DEFAULT_CAREER_PREFERENCES,
   streamOrBranch: 'Computer Science & Engineering',
   college: '',
   course: 'BE / BTech - Computer Science & Engineering',
@@ -225,6 +239,7 @@ const Onboarding: React.FC = () => {
     };
     const initialSe = (profile.knowMe as any)?.skills_and_experience || DEFAULT_SKILLS_AND_EXPERIENCE;
     const initialCdp = (profile.knowMe as any)?.career_discovery_preferences || DEFAULT_CAREER_DISCOVERY_PREFERENCES;
+    const initialCp = (profile.knowMe as any)?.career_preferences || DEFAULT_CAREER_PREFERENCES;
     const initialGrowthSubtype = profile.career_growth_subtype ?? (profile.knowMe as any)?.career_growth_subtype ?? null;
     const initialPersona = profile.user_persona ?? (profile.knowMe as any)?.user_persona ?? null;
     return {
@@ -237,6 +252,7 @@ const Onboarding: React.FC = () => {
       interest_details: initialInd,
       skills_and_experience: initialSe,
       career_discovery_preferences: initialCdp,
+      career_preferences: initialCp,
       streamOrBranch: profile.streamOrBranch ?? initialEd.specialization ?? '',
       college: profile.college ?? initialEd.institution ?? '',
       course: profile.course ?? '',
@@ -279,6 +295,10 @@ const Onboarding: React.FC = () => {
           prev.career_discovery_preferences ||
           (profile.knowMe as any)?.career_discovery_preferences ||
           DEFAULT_CAREER_DISCOVERY_PREFERENCES;
+        const resolvedCp =
+          prev.career_preferences ||
+          (profile.knowMe as any)?.career_preferences ||
+          DEFAULT_CAREER_PREFERENCES;
         return {
           path: activePath,
           career_mode: activeCareerMode,
@@ -289,6 +309,7 @@ const Onboarding: React.FC = () => {
           interest_details: resolvedInd,
           skills_and_experience: resolvedSe,
           career_discovery_preferences: resolvedCdp,
+          career_preferences: resolvedCp,
           streamOrBranch: prev.streamOrBranch || (profile.streamOrBranch ?? resolvedEd.specialization ?? ''),
           college: prev.college || (profile.college ?? resolvedEd.institution ?? ''),
           course: prev.course || (profile.course ?? ''),
@@ -902,27 +923,164 @@ const Onboarding: React.FC = () => {
   const isStep3Valid = React.useMemo(() => {
     const se = data.skills_and_experience;
     if (!se) return false;
-    if (!se.experience_types || se.experience_types.length === 0) return false;
-    if (!se.professional_duration) return false;
-    for (const exp of se.experiences) {
+    const persona = data.user_persona || detectUserPersona(data);
+
+    // Rule for all personas: any added experience items must have a non-empty title
+    for (const exp of se.experiences || []) {
       if (!exp.title?.trim()) return false;
     }
-    return true;
-  }, [data.skills_and_experience]);
 
-  const isStep4Valid = React.useMemo(() => {
-    const isDiscovery = data.career_mode === 'career_discovery' || data.path === 'not_sure';
-    if (isDiscovery) {
-      const cdp = data.career_discovery_preferences;
-      if (!cdp) return false;
-      if (!cdp.career_motivations || cdp.career_motivations.length === 0) return false;
-      if (!cdp.preferred_work_environment) return false;
-      if (!cdp.daily_learning_commitment) return false;
-      if (!cdp.career_timeline) return false;
-      return true;
+    // A. School Students (Class 10 & Class 12)
+    // Never require corporate employment or work tenure!
+    if (persona === 'school_student_10th' || persona === 'high_school_12th') {
+      const hasExpTypes = (se.experience_types || []).length > 0;
+      const hasExplorationAreas = (se.areas_interested_in_exploring || []).length > 0;
+      const hasSkills = (se.skills || []).length > 0;
+      const isNotSure = Boolean(se.not_sure_skills || notSureSkills);
+      return hasExpTypes || hasExplorationAreas || hasSkills || isNotSure;
+    }
+
+    // B. Experienced Professionals
+    if (persona === 'experienced_professional') {
+      if (!se.professional_duration || se.professional_duration === 'no_experience') {
+        return false;
+      }
+      const hasExpTypes = (se.experience_types || []).length > 0;
+      const hasEmploymentRecords = (se.experiences || []).length > 0;
+      const hasRole = Boolean(se.current_job_role?.trim() || se.previous_job_roles?.trim());
+      return hasExpTypes || hasEmploymentRecords || hasRole;
+    }
+
+    // C. Career Switchers
+    if (persona === 'career_switcher') {
+      const hasTarget = Boolean(se.target_domain?.trim());
+      const hasCurrent = Boolean(se.current_profession?.trim());
+      const hasExpTypes = (se.experience_types || []).length > 0;
+      const hasSkills = (se.skills || []).length > 0;
+      const isNotSure = Boolean(se.not_sure_skills || notSureSkills);
+      return hasTarget || hasCurrent || hasExpTypes || hasSkills || isNotSure;
+    }
+
+    // D. Career-Break Returners
+    if (persona === 'career_break_returner') {
+      const hasPrevIndustry = Boolean(se.previous_industry?.trim());
+      const hasStatus = Boolean(se.readiness_status);
+      const hasExpTypes = (se.experience_types || []).length > 0;
+      const hasSkills = (se.skills || []).length > 0;
+      const isNotSure = Boolean(se.not_sure_skills || notSureSkills);
+      return hasPrevIndustry || hasStatus || hasExpTypes || hasSkills || isNotSure;
+    }
+
+    // E. College Undergrads, Diploma, Fresh Graduates, Dropouts
+    // Do not interpret absence of employment as lack of ability.
+    if (!se.experience_types || se.experience_types.length === 0) {
+      if ((se.skills || []).length > 0 || se.not_sure_skills || notSureSkills) {
+        return true;
+      }
+      return false;
     }
     return true;
-  }, [data.career_mode, data.path, data.career_discovery_preferences]);
+  }, [data.skills_and_experience, data.user_persona, data.career_growth_subtype, data.education_details, notSureSkills]);
+
+  const isStep4Valid = React.useMemo(() => {
+    const persona = data.user_persona || detectUserPersona(data);
+    const mode = data.career_mode || (data.path ? PATH_TO_CAREER_MODE[data.path] : 'career_discovery');
+    const isSchool = persona === 'school_student_10th' || persona === 'high_school_12th';
+    const cp = data.career_preferences;
+    const cdp = data.career_discovery_preferences;
+
+    // 1. School Students (Class 10 & 12)
+    // Never require corporate employment, salary, or job readiness!
+    if (isSchool) {
+      if (mode === 'career_discovery') {
+        const hasMotivations = (cp?.motivation || cdp?.career_motivations || []).length > 0;
+        const hasStudyOptions = (cp?.preferred_future_study_options || []).length > 0;
+        const hasActivities = (cp?.activities_enjoyed || []).length > 0;
+        const hasCommitment = Boolean(cp?.learning_commitment?.daily_commitment || cdp?.daily_learning_commitment);
+        return hasMotivations || hasStudyOptions || hasActivities || hasCommitment;
+      }
+      if (mode === 'career_planning') {
+        const hasTarget = Boolean(cp?.target_role?.trim() || data.targetRole?.trim());
+        const hasStudyOptions = (cp?.preferred_future_study_options || []).length > 0;
+        const hasReason = Boolean(cp?.reason_for_choice?.trim());
+        return hasTarget || hasStudyOptions || hasReason;
+      }
+      return true;
+    }
+
+    // 2. Career Discovery (General / Adults / Non-school)
+    if (mode === 'career_discovery') {
+      const hasMotivations = (cp?.motivation || cdp?.career_motivations || []).length > 0;
+      const hasPriorities = (cp?.career_priorities || cdp?.career_priorities || []).length > 0;
+      const hasEnv = Boolean(
+        (cp?.preferred_work_environment && cp.preferred_work_environment.length > 0) ||
+        cdp?.preferred_work_environment
+      );
+      const hasCommitment = Boolean(
+        cp?.learning_commitment?.daily_commitment ||
+        cdp?.daily_learning_commitment ||
+        data.hoursPerWeek
+      );
+      const hasTimeline = Boolean(cp?.preparation_timeline || cdp?.career_timeline);
+      return hasMotivations || hasPriorities || hasEnv || hasCommitment || hasTimeline;
+    }
+
+    // 3. Career Planning (Knows target role / freshers / students)
+    if (mode === 'career_planning') {
+      const hasTarget = Boolean(cp?.target_role?.trim() || data.targetRole?.trim());
+      const hasIndustry = Boolean(cp?.target_industry?.trim());
+      const hasReason = Boolean(cp?.reason_for_choice?.trim());
+      const hasSkills = (cp?.skills_to_develop || []).length > 0;
+      return hasTarget || hasIndustry || hasReason || hasSkills;
+    }
+
+    // 4. Career Growth / Transitions
+    if (mode === 'career_growth_transition') {
+      const growthSubtype = data.career_growth_subtype;
+      if (growthSubtype === 'career_switching') {
+        const hasTarget = Boolean(cp?.target_role?.trim() || data.targetRole?.trim());
+        const hasIndustry = Boolean(cp?.target_industry?.trim());
+        const hasReason = Boolean(cp?.transition_reason?.trim());
+        const hasChallenges = (cp?.transition_challenges || []).length > 0;
+        const hasSkills = (cp?.skills_to_acquire || []).length > 0;
+        return hasTarget || hasIndustry || hasReason || hasChallenges || hasSkills;
+      }
+      if (growthSubtype === 'career_advancement') {
+        const hasNextRole = Boolean(cp?.desired_next_role?.trim() || cp?.target_role?.trim() || data.targetRole?.trim());
+        const hasFocus = Boolean(cp?.advancement_focus);
+        const hasGoals = (cp?.growth_goals || []).length > 0;
+        const hasSkills = (cp?.skills_to_develop || []).length > 0;
+        return hasNextRole || hasFocus || hasGoals || hasSkills;
+      }
+      if (growthSubtype === 'career_break_return') {
+        const hasGoal = Boolean(cp?.return_goal?.trim() || cp?.target_role?.trim() || data.targetRole?.trim());
+        const hasConcerns = (cp?.readiness_concerns || []).length > 0;
+        const hasNeeds = (cp?.support_needs || []).length > 0;
+        const hasSkills = (cp?.skills_to_refresh || []).length > 0;
+        return hasGoal || hasConcerns || hasNeeds || hasSkills;
+      }
+      return true;
+    }
+
+    // 5. Dropouts / Alternative pathways
+    if (persona === 'dropout_continuing' || persona === 'gap_year_candidate') {
+      const hasPathways = (cp?.preferred_pathways || []).length > 0;
+      const hasTarget = Boolean(cp?.target_role?.trim() || data.targetRole?.trim());
+      return hasPathways || hasTarget;
+    }
+
+    return true;
+  }, [
+    data.career_mode,
+    data.path,
+    data.user_persona,
+    data.career_growth_subtype,
+    data.career_preferences,
+    data.career_discovery_preferences,
+    data.targetRole,
+    data.hoursPerWeek,
+    data.education_details,
+  ]);
 
   const renderPreferenceIcon = (iconName: string) => {
     switch (iconName) {
@@ -962,168 +1120,143 @@ const Onboarding: React.FC = () => {
         return <Briefcase className="w-5 h-5" />;
       case 'CheckCircle2':
         return <CheckCircle2 className="w-5 h-5" />;
-      case 'science_fairs':
-        return {
-          titleLabel: 'Science Fair / Exhibition Project',
-          titlePlaceholder: 'e.g. Solar-powered Water Purification Model, Tesla Coil Demo',
-          orgLabel: 'Exhibition / Competition Level',
-          orgPlaceholder: 'e.g. Inter-School Science Fair, District Science Exhibition',
-          roleLabel: 'Your Role / Team',
-          rolePlaceholder: 'e.g. Project Lead, Model Presenter',
-          durationLabel: 'Grade / Month',
-          durationPlaceholder: 'e.g. 10th Standard / November 2024',
-          techLabel: 'Science Concepts & Materials',
-          techPlaceholder: 'e.g. Solar Cells, Arduino, Chemical Titration',
-          descLabel: 'Demonstration & Learnings',
-          descPlaceholder: 'What was demonstrated or awarded in this fair?',
-        };
-      case 'coding_robotics':
-        return {
-          titleLabel: 'Coding / Robotics Project',
-          titlePlaceholder: 'e.g. Line Follower Robot, Python Quiz Game, School Web Page',
-          orgLabel: 'Club / Platform',
-          orgPlaceholder: 'e.g. School Coding Club, Replit, Tinkercad',
-          roleLabel: 'Role',
-          rolePlaceholder: 'e.g. Solo Builder, Programmer',
-          durationLabel: 'Timeline',
-          durationPlaceholder: 'e.g. 1 month, Holiday project',
-          techLabel: 'Tools & Languages Used',
-          techPlaceholder: 'e.g. Scratch, Python, Arduino, HTML/CSS',
-          descLabel: 'What does this project do?',
-          descPlaceholder: 'Describe what you built and learned.',
-        };
-      case 'competitions':
-        return {
-          titleLabel: 'Competition / Olympiad Name',
-          titlePlaceholder: 'e.g. National Science Olympiad, Inter-school Debate, Hackathon',
-          orgLabel: 'Organizing Body',
-          orgPlaceholder: 'e.g. Science Olympiad Foundation, Rotary Club',
-          roleLabel: 'Participation Role',
-          rolePlaceholder: 'e.g. Solo Participant, Captain',
-          durationLabel: 'Year / Standard',
-          durationPlaceholder: 'e.g. 2024, 11th Standard',
-          techLabel: 'Skills / Topics Tested',
-          techPlaceholder: 'e.g. Logical Reasoning, Math, Public Speaking',
-          descLabel: 'Achievement / Rank',
-          descPlaceholder: 'e.g. Gold Medalist, Finalist, School Rank 1',
-        };
-      case 'extracurricular':
-        return {
-          titleLabel: 'Activity / Club Initiative',
-          titlePlaceholder: 'e.g. School Magazine Editor, Drama Club, Sports Captain',
-          orgLabel: 'School / Club',
-          orgPlaceholder: 'e.g. Cultural Committee, Scouts & Guides, Literary Club',
-          roleLabel: 'Role / Designation',
-          rolePlaceholder: 'e.g. Student Coordinator, Captain, Member',
-          durationLabel: 'Duration',
-          durationPlaceholder: 'e.g. 1 academic year',
-          techLabel: 'Key Skills Exercised',
-          techPlaceholder: 'e.g. Writing, Public Speaking, Team Coordination',
-          descLabel: 'Key Contributions',
-          descPlaceholder: 'Describe your role and impact on the team or event.',
-        };
-      case 'hobbies_self_learning':
-        return {
-          titleLabel: 'Hobby / Self-Learning Pursuit',
-          titlePlaceholder: 'e.g. 3D Modeling in Blender, Mobile Photography, Guitar',
-          orgLabel: 'Platform / Source',
-          orgPlaceholder: 'e.g. YouTube, Coursera, FreeCodeCamp, Self-taught',
-          roleLabel: 'Focus',
-          rolePlaceholder: 'e.g. Independent Learner, Hobbyist',
-          durationLabel: 'Time Invested',
-          durationPlaceholder: 'e.g. 6 months, Weekend hobby',
-          techLabel: 'Tools & Techniques Used',
-          techPlaceholder: 'e.g. Blender, DaVinci Resolve, Lightroom, Logic Pro',
-          descLabel: 'Creations & Learnings',
-          descPlaceholder: 'Describe what you created, practiced, or produced.',
-        };
-      case 'certification':
-        return {
-          titleLabel: 'Course / Certification Title',
-          titlePlaceholder: 'e.g. AWS Certified Cloud Practitioner, CS50 Python',
-          orgLabel: 'Issuing Organization',
-          orgPlaceholder: 'e.g. AWS, HarvardX, Coursera, Google',
-          roleLabel: 'Credential ID / URL',
-          rolePlaceholder: 'e.g. Verification URL or Certificate ID',
-          durationLabel: 'Completion Date',
-          durationPlaceholder: 'e.g. March 2024',
-          techLabel: 'Core Competencies',
-          techPlaceholder: 'e.g. Cloud Architecture, Python, SQL, Statistics',
-          descLabel: 'Key Learnings & Takeaways',
-          descPlaceholder: 'Summarize the skills verified by this certificate.',
-        };
       default:
         return <Sparkles className="w-5 h-5" />;
     }
   };
 
-  const toggleCareerMotivation = (id: CareerMotivationId) => {
+  const updateCareerPreferences = (patch: Partial<CareerPreferences>) => {
     setData((prev) => {
-      const currentCdp = prev.career_discovery_preferences || DEFAULT_CAREER_DISCOVERY_PREFERENCES;
-      const exists = currentCdp.career_motivations.includes(id);
-      const updated = exists
-        ? currentCdp.career_motivations.filter((m) => m !== id)
-        : [...currentCdp.career_motivations, id];
+      const currentCp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
+      const updatedCp: CareerPreferences = {
+        ...currentCp,
+        ...patch,
+      };
+      const updatedTargetRole = patch.target_role !== undefined ? patch.target_role : prev.targetRole;
       return {
         ...prev,
+        career_preferences: updatedCp,
+        targetRole: updatedTargetRole,
+      };
+    });
+  };
+
+  const toggleMotivation = (id: string) => {
+    setData((prev) => {
+      const currentCp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
+      const currentCdp = prev.career_discovery_preferences || DEFAULT_CAREER_DISCOVERY_PREFERENCES;
+      const currentList = currentCp.motivation || [];
+      const updated = currentList.includes(id)
+        ? currentList.filter((m) => m !== id)
+        : [...currentList, id];
+      return {
+        ...prev,
+        career_preferences: {
+          ...currentCp,
+          motivation: updated,
+        },
         career_discovery_preferences: {
           ...currentCdp,
-          career_motivations: updated,
+          career_motivations: updated as CareerMotivationId[],
         },
       };
     });
   };
 
-  const toggleCareerPriority = (id: CareerPriorityId) => {
+  const togglePriority = (id: string) => {
     setData((prev) => {
+      const currentCp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
       const currentCdp = prev.career_discovery_preferences || DEFAULT_CAREER_DISCOVERY_PREFERENCES;
-      const exists = currentCdp.career_priorities.includes(id);
-      const updated = exists
-        ? currentCdp.career_priorities.filter((p) => p !== id)
-        : [...currentCdp.career_priorities, id];
+      const currentList = currentCp.career_priorities || [];
+      const updated = currentList.includes(id)
+        ? currentList.filter((p) => p !== id)
+        : [...currentList, id];
       return {
         ...prev,
-        career_discovery_preferences: {
-          ...currentCdp,
+        career_preferences: {
+          ...currentCp,
           career_priorities: updated,
         },
-      };
-    });
-  };
-
-  const setWorkEnvironment = (env: WorkEnvironmentId) => {
-    setData((prev) => {
-      const currentCdp = prev.career_discovery_preferences || DEFAULT_CAREER_DISCOVERY_PREFERENCES;
-      return {
-        ...prev,
         career_discovery_preferences: {
           ...currentCdp,
-          preferred_work_environment: env,
+          career_priorities: updated as CareerPriorityId[],
         },
       };
     });
   };
 
-  const setLearningCommitment = (com: LearningCommitmentId) => {
+  const setWorkEnvironmentPref = (envId: string) => {
     setData((prev) => {
+      const currentCp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
       const currentCdp = prev.career_discovery_preferences || DEFAULT_CAREER_DISCOVERY_PREFERENCES;
-      const hoursLabel = LEARNING_COMMITMENTS.find((l) => l.id === com)?.label || prev.hoursPerWeek;
+      const currentList = currentCp.preferred_work_environment || [];
+      const updated = currentList.includes(envId)
+        ? currentList.filter((e) => e !== envId)
+        : [...currentList, envId];
       return {
         ...prev,
+        career_preferences: {
+          ...currentCp,
+          preferred_work_environment: updated,
+        },
+        career_discovery_preferences: {
+          ...currentCdp,
+          preferred_work_environment: envId as WorkEnvironmentId,
+        },
+      };
+    });
+  };
+
+  const toggleWorkStylePref = (styleId: string) => {
+    setData((prev) => {
+      const currentCp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
+      const currentList = currentCp.preferred_work_style || [];
+      const updated = currentList.includes(styleId)
+        ? currentList.filter((s) => s !== styleId)
+        : [...currentList, styleId];
+      return {
+        ...prev,
+        career_preferences: {
+          ...currentCp,
+          preferred_work_style: updated,
+        },
+      };
+    });
+  };
+
+  const setLearningCommitmentPref = (com: LearningCommitmentId) => {
+    setData((prev) => {
+      const currentCp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
+      const currentCdp = prev.career_discovery_preferences || DEFAULT_CAREER_DISCOVERY_PREFERENCES;
+      const label = LEARNING_COMMITMENTS.find((l) => l.id === com)?.label || prev.hoursPerWeek;
+      return {
+        ...prev,
+        career_preferences: {
+          ...currentCp,
+          learning_commitment: {
+            daily_commitment: com,
+            preferred_learning_mode: currentCp.learning_commitment?.preferred_learning_mode || 'online_self_paced',
+          },
+        },
         career_discovery_preferences: {
           ...currentCdp,
           daily_learning_commitment: com,
         },
-        hoursPerWeek: hoursLabel,
+        hoursPerWeek: label,
       };
     });
   };
 
-  const setCareerTimeline = (timeline: CareerTimelineId) => {
+  const setTimelinePref = (timeline: CareerTimelineId) => {
     setData((prev) => {
+      const currentCp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
       const currentCdp = prev.career_discovery_preferences || DEFAULT_CAREER_DISCOVERY_PREFERENCES;
       return {
         ...prev,
+        career_preferences: {
+          ...currentCp,
+          preparation_timeline: timeline,
+        },
         career_discovery_preferences: {
           ...currentCdp,
           career_timeline: timeline,
@@ -1131,6 +1264,118 @@ const Onboarding: React.FC = () => {
       };
     });
   };
+
+  const toggleStudyOption = (optId: string) => {
+    setData((prev) => {
+      const cp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
+      const current = cp.preferred_future_study_options || [];
+      const updated = current.includes(optId) ? current.filter((o) => o !== optId) : [...current, optId];
+      return {
+        ...prev,
+        career_preferences: {
+          ...cp,
+          preferred_future_study_options: updated,
+        },
+      };
+    });
+  };
+
+  const toggleActivityEnjoyed = (actId: string) => {
+    setData((prev) => {
+      const cp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
+      const current = cp.activities_enjoyed || [];
+      const updated = current.includes(actId) ? current.filter((a) => a !== actId) : [...current, actId];
+      return {
+        ...prev,
+        career_preferences: {
+          ...cp,
+          activities_enjoyed: updated,
+        },
+      };
+    });
+  };
+
+  const toggleSwitchingChallenge = (chalId: string) => {
+    setData((prev) => {
+      const cp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
+      const current = cp.transition_challenges || [];
+      const updated = current.includes(chalId) ? current.filter((c) => c !== chalId) : [...current, chalId];
+      return {
+        ...prev,
+        career_preferences: {
+          ...cp,
+          transition_challenges: updated,
+        },
+      };
+    });
+  };
+
+  const toggleAdvancementGoal = (goalId: string) => {
+    setData((prev) => {
+      const cp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
+      const current = cp.growth_goals || [];
+      const updated = current.includes(goalId) ? current.filter((g) => g !== goalId) : [...current, goalId];
+      return {
+        ...prev,
+        career_preferences: {
+          ...cp,
+          growth_goals: updated,
+        },
+      };
+    });
+  };
+
+  const toggleBreakConcern = (conId: string) => {
+    setData((prev) => {
+      const cp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
+      const current = cp.readiness_concerns || [];
+      const updated = current.includes(conId) ? current.filter((c) => c !== conId) : [...current, conId];
+      return {
+        ...prev,
+        career_preferences: {
+          ...cp,
+          readiness_concerns: updated,
+        },
+      };
+    });
+  };
+
+  const toggleSupportNeed = (suppId: string) => {
+    setData((prev) => {
+      const cp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
+      const current = cp.support_needs || [];
+      const updated = current.includes(suppId) ? current.filter((s) => s !== suppId) : [...current, suppId];
+      return {
+        ...prev,
+        career_preferences: {
+          ...cp,
+          support_needs: updated,
+        },
+      };
+    });
+  };
+
+  const toggleDropoutPathway = (pathId: string) => {
+    setData((prev) => {
+      const cp = prev.career_preferences || DEFAULT_CAREER_PREFERENCES;
+      const current = cp.preferred_pathways || [];
+      const updated = current.includes(pathId) ? current.filter((p) => p !== pathId) : [...current, pathId];
+      return {
+        ...prev,
+        career_preferences: {
+          ...cp,
+          preferred_pathways: updated,
+        },
+      };
+    });
+  };
+
+  // Legacy compatibility helpers
+  const toggleCareerMotivation = toggleMotivation as any;
+  const toggleCareerPriority = togglePriority as any;
+  const setWorkEnvironment = setWorkEnvironmentPref as any;
+  const setLearningCommitment = setLearningCommitmentPref as any;
+  const setCareerTimeline = setTimelinePref as any;
 
   const renderCategoryIcon = (iconName: string) => {
     switch (iconName) {
@@ -1150,99 +1395,30 @@ const Onboarding: React.FC = () => {
         return <BookOpen className="w-5 h-5" />;
       case 'Wrench':
         return <Wrench className="w-5 h-5" />;
-      case 'science_fairs':
-        return {
-          titleLabel: 'Science Fair / Exhibition Project',
-          titlePlaceholder: 'e.g. Solar-powered Water Purification Model, Tesla Coil Demo',
-          orgLabel: 'Exhibition / Competition Level',
-          orgPlaceholder: 'e.g. Inter-School Science Fair, District Science Exhibition',
-          roleLabel: 'Your Role / Team',
-          rolePlaceholder: 'e.g. Project Lead, Model Presenter',
-          durationLabel: 'Grade / Month',
-          durationPlaceholder: 'e.g. 10th Standard / November 2024',
-          techLabel: 'Science Concepts & Materials',
-          techPlaceholder: 'e.g. Solar Cells, Arduino, Chemical Titration',
-          descLabel: 'Demonstration & Learnings',
-          descPlaceholder: 'What was demonstrated or awarded in this fair?',
-        };
-      case 'coding_robotics':
-        return {
-          titleLabel: 'Coding / Robotics Project',
-          titlePlaceholder: 'e.g. Line Follower Robot, Python Quiz Game, School Web Page',
-          orgLabel: 'Club / Platform',
-          orgPlaceholder: 'e.g. School Coding Club, Replit, Tinkercad',
-          roleLabel: 'Role',
-          rolePlaceholder: 'e.g. Solo Builder, Programmer',
-          durationLabel: 'Timeline',
-          durationPlaceholder: 'e.g. 1 month, Holiday project',
-          techLabel: 'Tools & Languages Used',
-          techPlaceholder: 'e.g. Scratch, Python, Arduino, HTML/CSS',
-          descLabel: 'What does this project do?',
-          descPlaceholder: 'Describe what you built and learned.',
-        };
-      case 'competitions':
-        return {
-          titleLabel: 'Competition / Olympiad Name',
-          titlePlaceholder: 'e.g. National Science Olympiad, Inter-school Debate, Hackathon',
-          orgLabel: 'Organizing Body',
-          orgPlaceholder: 'e.g. Science Olympiad Foundation, Rotary Club',
-          roleLabel: 'Participation Role',
-          rolePlaceholder: 'e.g. Solo Participant, Captain',
-          durationLabel: 'Year / Standard',
-          durationPlaceholder: 'e.g. 2024, 11th Standard',
-          techLabel: 'Skills / Topics Tested',
-          techPlaceholder: 'e.g. Logical Reasoning, Math, Public Speaking',
-          descLabel: 'Achievement / Rank',
-          descPlaceholder: 'e.g. Gold Medalist, Finalist, School Rank 1',
-        };
-      case 'extracurricular':
-        return {
-          titleLabel: 'Activity / Club Initiative',
-          titlePlaceholder: 'e.g. School Magazine Editor, Drama Club, Sports Captain',
-          orgLabel: 'School / Club',
-          orgPlaceholder: 'e.g. Cultural Committee, Scouts & Guides, Literary Club',
-          roleLabel: 'Role / Designation',
-          rolePlaceholder: 'e.g. Student Coordinator, Captain, Member',
-          durationLabel: 'Duration',
-          durationPlaceholder: 'e.g. 1 academic year',
-          techLabel: 'Key Skills Exercised',
-          techPlaceholder: 'e.g. Writing, Public Speaking, Team Coordination',
-          descLabel: 'Key Contributions',
-          descPlaceholder: 'Describe your role and impact on the team or event.',
-        };
-      case 'hobbies_self_learning':
-        return {
-          titleLabel: 'Hobby / Self-Learning Pursuit',
-          titlePlaceholder: 'e.g. 3D Modeling in Blender, Mobile Photography, Guitar',
-          orgLabel: 'Platform / Source',
-          orgPlaceholder: 'e.g. YouTube, Coursera, FreeCodeCamp, Self-taught',
-          roleLabel: 'Focus',
-          rolePlaceholder: 'e.g. Independent Learner, Hobbyist',
-          durationLabel: 'Time Invested',
-          durationPlaceholder: 'e.g. 6 months, Weekend hobby',
-          techLabel: 'Tools & Techniques Used',
-          techPlaceholder: 'e.g. Blender, DaVinci Resolve, Lightroom, Logic Pro',
-          descLabel: 'Creations & Learnings',
-          descPlaceholder: 'Describe what you created, practiced, or produced.',
-        };
-      case 'certification':
-        return {
-          titleLabel: 'Course / Certification Title',
-          titlePlaceholder: 'e.g. AWS Certified Cloud Practitioner, CS50 Python',
-          orgLabel: 'Issuing Organization',
-          orgPlaceholder: 'e.g. AWS, HarvardX, Coursera, Google',
-          roleLabel: 'Credential ID / URL',
-          rolePlaceholder: 'e.g. Verification URL or Certificate ID',
-          durationLabel: 'Completion Date',
-          durationPlaceholder: 'e.g. March 2024',
-          techLabel: 'Core Competencies',
-          techPlaceholder: 'e.g. Cloud Architecture, Python, SQL, Statistics',
-          descLabel: 'Key Learnings & Takeaways',
-          descPlaceholder: 'Summarize the skills verified by this certificate.',
-        };
       default:
         return <Layers className="w-5 h-5" />;
     }
+  };
+
+  const updateSkillsAndExperience = (patch: Partial<SkillsAndExperienceDetails>) => {
+    setData((prev) => {
+      const currentSe = prev.skills_and_experience || DEFAULT_SKILLS_AND_EXPERIENCE;
+      return {
+        ...prev,
+        skills_and_experience: {
+          ...currentSe,
+          ...patch,
+        },
+      };
+    });
+  };
+
+  const getSourceForPersona = (persona: UserPersona): SkillSource => {
+    if (persona === 'school_student_10th' || persona === 'high_school_12th') return 'school_activity';
+    if (persona === 'experienced_professional') return 'professional_employment';
+    if (persona === 'career_switcher') return 'personal_project';
+    if (persona === 'career_break_returner') return 'professional_employment';
+    return 'academic_project';
   };
 
   const toggleSkill = (category: string, skillName: string) => {
@@ -1253,12 +1429,15 @@ const Onboarding: React.FC = () => {
       if (exists) {
         updatedSkills = currentSe.skills.filter((s) => s.name.toLowerCase() !== skillName.toLowerCase());
       } else {
+        const persona = prev.user_persona || detectUserPersona(prev);
         updatedSkills = [
           ...currentSe.skills,
           {
             name: skillName,
+            skill_name: skillName,
             category,
             proficiency: 'intermediate',
+            source: getSourceForPersona(persona),
             is_custom: false,
           },
         ];
@@ -1277,7 +1456,25 @@ const Onboarding: React.FC = () => {
     setData((prev) => {
       const currentSe = prev.skills_and_experience || DEFAULT_SKILLS_AND_EXPERIENCE;
       const updatedSkills = currentSe.skills.map((s) =>
-        s.name.toLowerCase() === skillName.toLowerCase() ? { ...s, proficiency } : s
+        s.name.toLowerCase() === skillName.toLowerCase()
+          ? { ...s, proficiency, skill_name: s.skill_name || s.name }
+          : s
+      );
+      return {
+        ...prev,
+        skills_and_experience: {
+          ...currentSe,
+          skills: updatedSkills,
+        },
+      };
+    });
+  };
+
+  const setSkillSource = (skillName: string, source: SkillSource) => {
+    setData((prev) => {
+      const currentSe = prev.skills_and_experience || DEFAULT_SKILLS_AND_EXPERIENCE;
+      const updatedSkills = currentSe.skills.map((s) =>
+        s.name.toLowerCase() === skillName.toLowerCase() ? { ...s, source } : s
       );
       return {
         ...prev,
@@ -1298,10 +1495,13 @@ const Onboarding: React.FC = () => {
       if (exists) {
         return prev;
       }
+      const persona = prev.user_persona || detectUserPersona(prev);
       const newSkill: UserSkill = {
         name: val,
+        skill_name: val,
         category: categoryId,
         proficiency: 'intermediate',
+        source: getSourceForPersona(persona),
         is_custom: true,
       };
       const updatedCustom = Array.from(new Set([...currentSe.custom_skills, val]));
@@ -1324,10 +1524,13 @@ const Onboarding: React.FC = () => {
       const currentSe = prev.skills_and_experience || DEFAULT_SKILLS_AND_EXPERIENCE;
       const exists = currentSe.skills.some((s) => s.name.toLowerCase() === trimmed.toLowerCase());
       if (exists) return prev;
+      const persona = prev.user_persona || detectUserPersona(prev);
       const newSkill: UserSkill = {
         name: trimmed,
+        skill_name: trimmed,
         category: 'ops_practical',
         proficiency: 'intermediate',
+        source: getSourceForPersona(persona),
         is_custom: true,
       };
       return {
@@ -1369,6 +1572,23 @@ const Onboarding: React.FC = () => {
     });
   };
 
+  const handleToggleExplorationArea = (area: string) => {
+    setData((prev) => {
+      const currentSe = prev.skills_and_experience || DEFAULT_SKILLS_AND_EXPERIENCE;
+      const currentAreas = currentSe.areas_interested_in_exploring || [];
+      const updatedAreas = currentAreas.includes(area)
+        ? currentAreas.filter((a) => a !== area)
+        : [...currentAreas, area];
+      return {
+        ...prev,
+        skills_and_experience: {
+          ...currentSe,
+          areas_interested_in_exploring: updatedAreas,
+        },
+      };
+    });
+  };
+
   const handleToggleExperienceType = (typeId: ExperienceType) => {
     setData((prev) => {
       const currentSe = prev.skills_and_experience || DEFAULT_SKILLS_AND_EXPERIENCE;
@@ -1402,6 +1622,7 @@ const Onboarding: React.FC = () => {
           experience_types: newTypes,
           experiences: newExperiences,
           professional_duration: newDuration,
+          has_no_experience: newTypes.includes('no_experience'),
         },
       };
     });
@@ -1416,7 +1637,9 @@ const Onboarding: React.FC = () => {
         return prev;
       }
       const validTypes = currentSe.experience_types.filter((t) => t !== 'no_experience');
-      const defaultType = validTypes[0] || 'academic_projects';
+      const persona = prev.user_persona || detectUserPersona(prev);
+      const isSchool = persona === 'school_student_10th' || persona === 'high_school_12th';
+      const defaultType = validTypes[0] || (isSchool ? 'academic_projects' : 'personal_projects');
       const newItem: ExperienceItem = {
         id: 'exp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
         type: defaultType,
@@ -1546,8 +1769,19 @@ const Onboarding: React.FC = () => {
           ...((data as any).knowMe || {}),
           career_growth_subtype: data.career_growth_subtype,
           user_persona: activePersona,
+          educationStage: data.educationStage,
+          streamOrBranch: data.streamOrBranch,
+          education_details: data.education_details,
+          interest_details: data.interest_details,
+          skills_and_experience: data.skills_and_experience,
+          career_preferences: data.career_preferences || DEFAULT_CAREER_PREFERENCES,
+          career_discovery_preferences: data.career_discovery_preferences || DEFAULT_CAREER_DISCOVERY_PREFERENCES,
           ...(resumeMetadata ? { resume_metadata: resumeMetadata } : {}),
         },
+        career_preferences: data.career_preferences || DEFAULT_CAREER_PREFERENCES,
+        targetRole: (data.career_mode === 'career_planning' || data.path === 'know_goal')
+          ? (data.career_preferences?.target_role || data.targetRole)
+          : data.targetRole,
         onboardingComplete: true,
       });
 
@@ -3150,19 +3384,298 @@ const Onboarding: React.FC = () => {
               )}
 
               {/* --- Step 3: Skills & Experience --- */}
-              {step === 3 && (
-                <div className="space-y-8 animate-in fade-in duration-300">
-                  <div className="text-center mb-8">
-                    <div className="inline-flex items-center gap-1.5 text-purple-600 bg-purple-50 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-3 border border-purple-100 shadow-xs">
-                      <Sparkles className="w-3.5 h-3.5" /> Skills & Practical Background
+              {step === 3 && (() => {
+                const persona = data.user_persona || detectUserPersona(data);
+                const isSchool = persona === 'school_student_10th' || persona === 'high_school_12th';
+                const isExperienced = persona === 'experienced_professional';
+                const isSwitcher = persona === 'career_switcher';
+                const isBreakReturner = persona === 'career_break_returner';
+                const experienceOptions = isSchool ? SCHOOL_EXPERIENCE_OPTIONS : EXPERIENCE_TYPE_OPTIONS;
+
+                return (
+                  <div className="space-y-8 animate-in fade-in duration-300">
+                    <div className="text-center mb-8">
+                      <div className="inline-flex items-center gap-1.5 text-purple-600 bg-purple-50 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-3 border border-purple-100 shadow-xs">
+                        {isSchool ? (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5" /> Practical Activities & Exploration
+                          </>
+                        ) : isExperienced ? (
+                          <>
+                            <Briefcase className="w-3.5 h-3.5" /> Professional Background & Skills
+                          </>
+                        ) : isSwitcher ? (
+                          <>
+                            <ArrowRightLeft className="w-3.5 h-3.5" /> Career Transition & Skills
+                          </>
+                        ) : isBreakReturner ? (
+                          <>
+                            <RotateCcw className="w-3.5 h-3.5" /> Career Return & Re-entry
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5" /> Skills & Practical Background
+                          </>
+                        )}
+                      </div>
+                      <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
+                        {isSchool
+                          ? 'What activities and projects have you explored?'
+                          : isExperienced
+                          ? 'What is your professional background?'
+                          : isSwitcher
+                          ? 'Tell us about your transition goals'
+                          : isBreakReturner
+                          ? 'Welcome back! Tell us about your journey'
+                          : 'What skills and experience do you have?'}
+                      </h1>
+                      <p className="text-slate-500 text-sm sm:text-base max-w-xl mx-auto">
+                        {isSchool
+                          ? 'School projects, science fairs, coding clubs, competitions, or hobbies all count! Tell us what you enjoy working on.'
+                          : isExperienced
+                          ? 'Share your work history, domain expertise, leadership, and technical skills so we can chart your next career milestone.'
+                          : isSwitcher
+                          ? 'Highlight your current background, transferable skills, and the new field or profession you want to switch into.'
+                          : isBreakReturner
+                          ? 'Your prior experience is valuable and never discounted. Tell us about your background, break period, and how we can support your re-entry.'
+                          : "Tell us what you can do and what you have worked on. We'll use this information to identify suitable career paths and build your personalized roadmap."}
+                      </p>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
-                      What skills and experience do you have?
-                    </h1>
-                    <p className="text-slate-500 text-sm sm:text-base max-w-xl mx-auto">
-                      Tell us what you can do and what you have worked on. We'll use this information to identify suitable career paths and build your personalized roadmap.
-                    </p>
-                  </div>
+
+                    {/* Persona Overview Card: Experienced Professionals */}
+                    {isExperienced && (
+                      <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+                        <div className="flex items-center gap-2 text-slate-800 font-bold text-sm border-b border-slate-200 pb-2">
+                          <Briefcase className="w-4 h-4 text-purple-600" /> Current Role & Professional Overview
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                          <div className="space-y-1">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Current / Most Recent Job Role <span className="text-purple-600">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.skills_and_experience?.current_job_role || ''}
+                              onChange={(e) => updateSkillsAndExperience({ current_job_role: e.target.value })}
+                              placeholder="e.g. Senior Frontend Engineer, Product Manager, Lead Accountant"
+                              className={inputClass}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Industry / Functional Domain <span className="text-purple-600">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.skills_and_experience?.industry || ''}
+                              onChange={(e) => updateSkillsAndExperience({ industry: e.target.value })}
+                              placeholder="e.g. Fintech, Healthcare IT, SaaS, Manufacturing"
+                              className={inputClass}
+                            />
+                          </div>
+                          <div className="sm:col-span-2 space-y-1">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Previous Job Roles & Employers <span className="text-slate-400 font-normal">(Optional)</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.skills_and_experience?.previous_job_roles || ''}
+                              onChange={(e) => updateSkillsAndExperience({ previous_job_roles: e.target.value })}
+                              placeholder="e.g. Software Engineer at Razorpay, Junior Developer at Acme Corp"
+                              className={inputClass}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Key Responsibilities & Scope <span className="text-slate-400 font-normal">(Optional)</span>
+                            </label>
+                            <textarea
+                              rows={2}
+                              value={data.skills_and_experience?.key_responsibilities || ''}
+                              onChange={(e) => updateSkillsAndExperience({ key_responsibilities: e.target.value })}
+                              placeholder="e.g. Led a team of 4 frontend engineers, owned checkout architecture, reduced latency by 35%."
+                              className={`${inputClass} resize-none`}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Major Achievements & Leadership <span className="text-slate-400 font-normal">(Optional)</span>
+                            </label>
+                            <textarea
+                              rows={2}
+                              value={data.skills_and_experience?.major_achievements || data.skills_and_experience?.leadership_experience || ''}
+                              onChange={(e) => updateSkillsAndExperience({ major_achievements: e.target.value, leadership_experience: e.target.value })}
+                              placeholder="e.g. Spearheaded micro-frontend migration, mentored junior developers, Employee of the Quarter."
+                              className={`${inputClass} resize-none`}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Persona Overview Card: Career Switchers */}
+                    {isSwitcher && (
+                      <div className="p-5 rounded-2xl bg-purple-50/50 border border-purple-200 space-y-4">
+                        <div className="flex items-center gap-2 text-purple-900 font-bold text-sm border-b border-purple-200/80 pb-2">
+                          <ArrowRightLeft className="w-4 h-4 text-purple-600" /> Career Transition Direction
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                          <div className="space-y-1">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Current / Previous Profession & Domain <span className="text-purple-600">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.skills_and_experience?.current_profession || ''}
+                              onChange={(e) => updateSkillsAndExperience({ current_profession: e.target.value })}
+                              placeholder="e.g. Operations Manager in Logistics, Mechanical Design Engineer"
+                              className={inputClass}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Target Career or Domain <span className="text-purple-600">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.skills_and_experience?.target_domain || ''}
+                              onChange={(e) => updateSkillsAndExperience({ target_domain: e.target.value })}
+                              placeholder="e.g. Data Analytics / Business Intelligence, UX Research"
+                              className={inputClass}
+                            />
+                          </div>
+                          <div className="sm:col-span-2 space-y-1">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Summary of Previous Experience <span className="text-slate-400 font-normal">(Optional)</span>
+                            </label>
+                            <textarea
+                              rows={2}
+                              value={data.skills_and_experience?.previous_experience_summary || ''}
+                              onChange={(e) => updateSkillsAndExperience({ previous_experience_summary: e.target.value })}
+                              placeholder="Summarize your past work experience, core strengths, and what drove your decision to switch."
+                              className={`${inputClass} resize-none`}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Skills Acquired for Target Domain <span className="text-slate-400 font-normal">(Comma-separated)</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={(data.skills_and_experience?.target_skills_acquired || []).join(', ')}
+                              onChange={(e) => updateSkillsAndExperience({ target_skills_acquired: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })}
+                              placeholder="e.g. SQL, Power BI, Python, Statistics"
+                              className={inputClass}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Skills You Need or Want to Develop <span className="text-slate-400 font-normal">(Comma-separated)</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={(data.skills_and_experience?.skills_to_develop || []).join(', ')}
+                              onChange={(e) => updateSkillsAndExperience({ skills_to_develop: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })}
+                              placeholder="e.g. Machine Learning, Cloud Deployment, Stakeholder Management"
+                              className={inputClass}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Persona Overview Card: Career-Break Returners */}
+                    {isBreakReturner && (
+                      <div className="p-5 rounded-2xl bg-purple-50/50 border border-purple-200 space-y-4">
+                        <div className="flex items-center gap-2 text-purple-900 font-bold text-sm border-b border-purple-200/80 pb-2">
+                          <RotateCcw className="w-4 h-4 text-purple-600" /> Career Return Overview
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                          <div className="space-y-1">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Previous Job Role & Industry <span className="text-purple-600">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.skills_and_experience?.previous_industry || ''}
+                              onChange={(e) => updateSkillsAndExperience({ previous_industry: e.target.value })}
+                              placeholder="e.g. Senior QA Engineer in Healthcare IT, Accountant at Audit Firm"
+                              className={inputClass}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Break Duration <span className="text-purple-600">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.skills_and_experience?.break_duration || ''}
+                              onChange={(e) => updateSkillsAndExperience({ break_duration: e.target.value })}
+                              placeholder="e.g. 2 years, 18 months, 3 years"
+                              className={inputClass}
+                            />
+                          </div>
+                          <div className="space-y-1 sm:col-span-2">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Reason for Career Break <span className="text-slate-400 font-normal">(Optional)</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={data.skills_and_experience?.break_reason || ''}
+                              onChange={(e) => updateSkillsAndExperience({ break_reason: e.target.value })}
+                              placeholder="e.g. Parental leave, family caregiving, health & recovery, higher education"
+                              className={inputClass}
+                            />
+                          </div>
+                          <div className="sm:col-span-2 space-y-1">
+                            <label className="block text-xs font-semibold text-slate-700">
+                              Recent Learning, Upskilling or Certifications <span className="text-slate-400 font-normal">(Optional)</span>
+                            </label>
+                            <textarea
+                              rows={2}
+                              value={data.skills_and_experience?.recent_learning_certifications || ''}
+                              onChange={(e) => updateSkillsAndExperience({ recent_learning_certifications: e.target.value })}
+                              placeholder="e.g. Completed AWS Certified Cloud Practitioner, Python refresher course, reviewed modern CI/CD pipelines..."
+                              className={`${inputClass} resize-none`}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Return Readiness Status */}
+                        <div className="space-y-2 pt-2">
+                          <label className="block text-xs font-semibold text-slate-700">
+                            Return Readiness Status <span className="text-purple-600">*</span>
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            {[
+                              { id: 'ready_now', title: 'Ready Now', desc: 'Ready for active job applications and interviews immediately.' },
+                              { id: 'need_upskilling', title: 'Need Refresher', desc: 'Want targeted upskilling & practice before applying.' },
+                              { id: 'exploring_options', title: 'Exploring Paths', desc: 'Open to returning to prior field or considering a new direction.' },
+                            ].map((opt) => {
+                              const isSelected = data.skills_and_experience?.readiness_status === opt.id;
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => updateSkillsAndExperience({ readiness_status: opt.id as any })}
+                                  className={`p-3 rounded-xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50 text-purple-900 ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="font-bold text-xs">{opt.title}</span>
+                                    {isSelected && <Check className="w-3.5 h-3.5 text-purple-600" />}
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                   {/* Section 1: Skills Categories */}
                   <div className="space-y-3">
@@ -3496,15 +4009,18 @@ const Onboarding: React.FC = () => {
                   <div className="pt-6 border-t border-slate-200/80">
                     <div className="mb-3">
                       <h3 className="text-base font-bold text-slate-900">
-                        3. Practical Experience Types <span className="text-purple-600">*</span>
+                        {isSchool ? 'Practical Activities & School Pursuits' : 'Practical Experience Types'}{' '}
+                        <span className="text-purple-600">*</span>
                       </h3>
                       <p className="text-xs text-slate-500">
-                        Select all that describe your journey. If you have no past projects or jobs, select "No practical experience".
+                        {isSchool
+                          ? 'Select all that describe your journey. If you haven\'t participated in practical activities yet, select "I haven\'t participated in practical activities yet".'
+                          : 'Select all that describe your journey. If you have no past projects or jobs, select "No practical experience".'}
                       </p>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-                      {EXPERIENCE_TYPE_OPTIONS.map((expOpt) => {
+                      {experienceOptions.map((expOpt) => {
                         const isSelected = (data.skills_and_experience?.experience_types || []).includes(expOpt.id);
                         return (
                           <button
@@ -3590,7 +4106,7 @@ const Onboarding: React.FC = () => {
                                 >
                                   <div className="flex items-center justify-between border-b border-slate-200/80 pb-2.5">
                                     <span className="text-xs font-bold uppercase tracking-wider text-purple-700">
-                                      Item #{idx + 1} · {EXPERIENCE_TYPE_OPTIONS.find((o) => o.id === exp.type)?.label || exp.type}
+                                      Item #{idx + 1} · {experienceOptions.find((o) => o.id === exp.type)?.label || exp.type}
                                     </span>
                                     <button
                                       type="button"
@@ -3618,7 +4134,7 @@ const Onboarding: React.FC = () => {
                                         className={inputClass}
                                       >
                                         {validTypes.map((typeKey) => {
-                                          const opt = EXPERIENCE_TYPE_OPTIONS.find((o) => o.id === typeKey);
+                                          const opt = experienceOptions.find((o) => o.id === typeKey);
                                           return (
                                             <option key={typeKey} value={typeKey}>
                                               {opt?.label || typeKey}
@@ -3726,7 +4242,48 @@ const Onboarding: React.FC = () => {
                       </div>
                     )}
 
-                  {/* Section 5: Professional Experience Duration with Distinction Guidance */}
+                  {/* Section: School Exploration Areas (Class 10 & Class 12 Students) */}
+                  {isSchool && (
+                    <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-base font-bold text-slate-900">
+                            Areas You Are Curious About or Interested in Exploring <span className="text-slate-400 font-normal text-xs">(optional)</span>
+                          </h3>
+                          <p className="text-xs text-slate-500">
+                            Pick any areas that spark your curiosity. We'll recommend relevant high school streams and career paths.
+                          </p>
+                        </div>
+                        <span className="text-xs text-purple-700 font-bold bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
+                          {(data.skills_and_experience?.areas_interested_in_exploring || []).length} selected
+                        </span>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {SCHOOL_EXPLORATION_AREAS.map((area) => {
+                          const isSelected = (data.skills_and_experience?.areas_interested_in_exploring || []).includes(area);
+                          return (
+                            <button
+                              key={area}
+                              type="button"
+                              onClick={() => handleToggleExplorationArea(area)}
+                              className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all text-left flex items-center gap-1.5 ${
+                                isSelected
+                                  ? 'bg-purple-600 border-purple-600 text-white shadow-xs ring-1 ring-purple-600/30'
+                                  : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300'
+                              }`}
+                            >
+                              {isSelected ? <Check className="w-3.5 h-3.5" /> : null}
+                              {area}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Section 5: Professional Experience Duration - Never required or shown for School Students */}
+                  {!isSchool && (
                   <div className="pt-6 border-t border-slate-200/80">
                     <div className="mb-3">
                       <h3 className="text-base font-bold text-slate-900">
@@ -3795,305 +4352,1398 @@ const Onboarding: React.FC = () => {
                       })}
                     </div>
                   </div>
+                  )}
                 </div>
-              )}
+              );
+            })()}
 
-              {/* --- Step 4: Preferences (for Discovery) OR Target & Time (for other modes) --- */}
-              {step === 4 && (
-                <div>
-                  {(data.career_mode === 'career_discovery' || data.path === 'not_sure') ? (
-                    <div className="space-y-8 animate-in fade-in duration-300">
-                      {/* Step Header */}
-                      <div className="text-center mb-8">
-                        <div className="inline-flex items-center gap-1.5 text-purple-600 bg-purple-50 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-3 border border-purple-100 shadow-xs">
-                          <Compass className="w-3.5 h-3.5" /> Career Discovery Preferences
-                        </div>
-                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
-                          Let's understand what matters to you.
-                        </h1>
-                        <p className="text-slate-500 text-sm sm:text-base max-w-xl mx-auto">
-                          You don't need to have a career in mind. Tell us what you expect from your future, and we'll help you discover suitable career paths.
-                        </p>
+              {/* --- Step 4 (User-facing Step 5): Adaptive Career Preferences --- */}
+              {step === 4 && (() => {
+                const persona = data.user_persona || detectUserPersona(data);
+                const isSchool = persona === 'school_student_10th' || persona === 'high_school_12th';
+                const isExperienced = persona === 'experienced_professional';
+                const isSwitcher = persona === 'career_switcher' || data.career_growth_subtype === 'career_switching';
+                const isAdvancement = data.career_growth_subtype === 'career_advancement';
+                const isBreakReturner = persona === 'career_break_returner' || data.career_growth_subtype === 'career_break_return';
+                const isDropout = persona === 'dropout_or_gap_year';
+                const mode = data.career_mode || (data.path ? PATH_TO_CAREER_MODE[data.path] : 'career_discovery');
+                const isDiscovery = mode === 'career_discovery';
+                const isPlanning = mode === 'career_planning';
+                const isGrowth = mode === 'career_growth_transition';
+                const cp = data.career_preferences || DEFAULT_CAREER_PREFERENCES;
+                const cdp = data.career_discovery_preferences || DEFAULT_CAREER_DISCOVERY_PREFERENCES;
+
+                return (
+                  <div className="space-y-8 animate-in fade-in duration-300">
+                    {/* Header Banner - Adaptive */}
+                    <div className="text-center mb-8">
+                      <div className="inline-flex items-center gap-1.5 text-purple-600 bg-purple-50 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-3 border border-purple-100 shadow-xs">
+                        {isSchool ? (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5" /> Future Study & Career Exploration
+                          </>
+                        ) : isPlanning ? (
+                          <>
+                            <Target className="w-3.5 h-3.5" /> Career Planning & Milestones
+                          </>
+                        ) : isSwitcher ? (
+                          <>
+                            <ArrowRightLeft className="w-3.5 h-3.5" /> Career Transition Strategy
+                          </>
+                        ) : isAdvancement ? (
+                          <>
+                            <TrendingUp className="w-3.5 h-3.5" /> Career Advancement Preferences
+                          </>
+                        ) : isBreakReturner ? (
+                          <>
+                            <RotateCcw className="w-3.5 h-3.5" /> Return-to-Work Preferences
+                          </>
+                        ) : (
+                          <>
+                            <Compass className="w-3.5 h-3.5" /> Career Discovery Preferences
+                          </>
+                        )}
                       </div>
-
-                      {/* Section 1: Career Motivation */}
-                      <div className="space-y-3">
-                        <div>
-                          <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
-                            1. What would you like to achieve in your career? <span className="text-purple-600">*</span>
-                          </h3>
-                          <p className="text-xs text-slate-500">
-                            Select all that apply. Choose the primary outcomes guiding your future.
-                          </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                          {CAREER_MOTIVATIONS.map((opt) => {
-                            const isSelected = (data.career_discovery_preferences?.career_motivations || []).includes(opt.id);
-                            return (
-                              <button
-                                key={opt.id}
-                                type="button"
-                                onClick={() => toggleCareerMotivation(opt.id)}
-                                className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 ${
-                                  isSelected
-                                    ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
-                                    : 'border-slate-200 bg-white hover:border-slate-300'
-                                }`}
-                              >
-                                <div
-                                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                                    isSelected ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600'
-                                  }`}
-                                >
-                                  {renderPreferenceIcon(opt.iconName)}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between gap-1">
-                                    <p className={`font-bold text-xs sm:text-sm leading-snug ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
-                                      {opt.label}
-                                    </p>
-                                    <div
-                                      className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
-                                        isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
-                                      }`}
-                                    >
-                                      {isSelected && <Check className="w-2.5 h-2.5" />}
-                                    </div>
-                                  </div>
-                                  <p className="text-[11px] text-slate-500 mt-1 leading-snug">
-                                    {opt.desc}
-                                  </p>
-                                </div>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Section 2: Career Priorities */}
-                      <div className="pt-6 border-t border-slate-200/80 space-y-3">
-                        <div>
-                          <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
-                            2. What matters most to you in a job? <span className="text-slate-400 font-normal text-xs">(optional)</span>
-                          </h3>
-                          <p className="text-xs text-slate-500">
-                            Select any factors that matter to your job satisfaction and fulfillment.
-                          </p>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2.5">
-                          {CAREER_PRIORITIES.map((opt) => {
-                            const isSelected = (data.career_discovery_preferences?.career_priorities || []).includes(opt.id);
-                            return (
-                              <button
-                                key={opt.id}
-                                type="button"
-                                onClick={() => toggleCareerPriority(opt.id)}
-                                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border transition-all flex items-center gap-2 ${
-                                  isSelected
-                                    ? 'bg-purple-600 border-purple-600 text-white shadow-xs'
-                                    : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300 hover:bg-purple-50/40'
-                                }`}
-                              >
-                                <span className={isSelected ? 'text-white' : 'text-purple-600'}>
-                                  {renderPreferenceIcon(opt.iconName)}
-                                </span>
-                                <span>{opt.label}</span>
-                                {isSelected && <Check className="w-3.5 h-3.5 ml-0.5" />}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Section 3: Preferred Work Environment */}
-                      <div className="pt-6 border-t border-slate-200/80 space-y-3">
-                        <div>
-                          <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
-                            3. Where would you prefer to work? <span className="text-purple-600">*</span>
-                          </h3>
-                          <p className="text-xs text-slate-500">
-                            Select your primary work setting preference (choose one).
-                          </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                          {WORK_ENVIRONMENTS.map((opt) => {
-                            const isSelected = data.career_discovery_preferences?.preferred_work_environment === opt.id;
-                            return (
-                              <button
-                                key={opt.id}
-                                type="button"
-                                onClick={() => setWorkEnvironment(opt.id)}
-                                className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 ${
-                                  isSelected
-                                    ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
-                                    : 'border-slate-200 bg-white hover:border-slate-300'
-                                }`}
-                              >
-                                <div
-                                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                                    isSelected ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600'
-                                  }`}
-                                >
-                                  {renderPreferenceIcon(opt.iconName)}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between gap-1">
-                                    <p className={`font-bold text-xs sm:text-sm leading-snug ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
-                                      {opt.label}
-                                    </p>
-                                    <div
-                                      className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
-                                        isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
-                                      }`}
-                                    >
-                                      {isSelected && <Check className="w-2.5 h-2.5" />}
-                                    </div>
-                                  </div>
-                                  <p className="text-[11px] text-slate-500 mt-1 leading-snug">
-                                    {opt.desc}
-                                  </p>
-                                </div>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Section 4: Learning Commitment */}
-                      <div className="pt-6 border-t border-slate-200/80 space-y-3">
-                        <div>
-                          <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
-                            4. How much time can you dedicate to learning? <span className="text-purple-600">*</span>
-                          </h3>
-                          <p className="text-xs text-slate-500">
-                            Be realistic with your schedule so our AI can pace your preparation roadmap (choose one).
-                          </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-                          {LEARNING_COMMITMENTS.map((opt) => {
-                            const isSelected = data.career_discovery_preferences?.daily_learning_commitment === opt.id;
-                            return (
-                              <button
-                                key={opt.id}
-                                type="button"
-                                onClick={() => setLearningCommitment(opt.id)}
-                                className={`p-3.5 rounded-2xl border text-left transition-all ${
-                                  isSelected
-                                    ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
-                                    : 'border-slate-200 bg-white hover:border-slate-300'
-                                }`}
-                              >
-                                <div className="flex items-center justify-between gap-1 mb-1">
-                                  <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
-                                    {opt.label}
-                                  </span>
-                                  <div
-                                    className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
-                                      isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
-                                    }`}
-                                  >
-                                    {isSelected && <Check className="w-2.5 h-2.5" />}
-                                  </div>
-                                </div>
-                                <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Section 5: Career Timeline */}
-                      <div className="pt-6 border-t border-slate-200/80 space-y-3">
-                        <div>
-                          <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
-                            5. When would you like to start your career? <span className="text-purple-600">*</span>
-                          </h3>
-                          <p className="text-xs text-slate-500">
-                            Your timeframe helps us balance fast-track job readiness with deep skill foundations (choose one).
-                          </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-                          {CAREER_TIMELINES.map((opt) => {
-                            const isSelected = data.career_discovery_preferences?.career_timeline === opt.id;
-                            return (
-                              <button
-                                key={opt.id}
-                                type="button"
-                                onClick={() => setCareerTimeline(opt.id)}
-                                className={`p-3.5 rounded-2xl border text-left transition-all ${
-                                  isSelected
-                                    ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
-                                    : 'border-slate-200 bg-white hover:border-slate-300'
-                                }`}
-                              >
-                                <div className="flex items-center justify-between gap-1 mb-1">
-                                  <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
-                                    {opt.label}
-                                  </span>
-                                  <div
-                                    className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
-                                      isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
-                                    }`}
-                                  >
-                                    {isSelected && <Check className="w-2.5 h-2.5" />}
-                                  </div>
-                                </div>
-                                <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
+                      <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
+                        {isSchool
+                          ? 'What are your future study and career interests?'
+                          : isPlanning
+                          ? 'Tell us about your target career goal'
+                          : isSwitcher
+                          ? 'Define your career pivot strategy'
+                          : isAdvancement
+                          ? 'Map your next career milestone'
+                          : isBreakReturner
+                          ? 'Personalize your career re-entry'
+                          : "Let's understand what matters to you"}
+                      </h1>
+                      <p className="text-slate-500 text-sm sm:text-base max-w-xl mx-auto">
+                        {isSchool
+                          ? "Tell us what excites you about the future. We'll recommend suitable high school streams, college degrees, and career paths."
+                          : isPlanning
+                          ? "Share your target role, timeline, and work preferences so we can construct your personalized milestone roadmap."
+                          : isSwitcher
+                          ? "Specify your target domain, the challenges you face, and the pace at which you want to transition."
+                          : isAdvancement
+                          ? "Tell us whether you want to grow as an individual technical expert or move into management and leadership."
+                          : isBreakReturner
+                          ? "Tell us what support, flexibility, and refreshed skills will help you re-enter the workforce with confidence."
+                          : "You don't need to have a career in mind. Tell us what you expect from your future, and we'll help you discover suitable career paths."}
+                      </p>
                     </div>
-                  ) : (
-                    <div>
-                      <div className="text-center mb-8">
-                        <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Target & time</h1>
-                        <p className="text-slate-500">This shapes how we pace your roadmap.</p>
-                      </div>
-                      <div className="space-y-4 max-w-md mx-auto">
-                        <div className="space-y-2">
-                          <label className="block text-[13px] font-semibold text-slate-700">
-                            Target role or career <span className="text-slate-400 font-normal">(optional — leave blank if unsure)</span>
+
+                    {/* ========================================================================= */}
+                    {/* TRACK A: SCHOOL STUDENTS (Class 10 & Class 12)                            */}
+                    {/* ========================================================================= */}
+                    {isSchool && (
+                      <div className="space-y-8">
+                        {/* School Question 1: Desired Career or Dream Role */}
+                        <div className="p-5 rounded-2xl bg-purple-50/40 border border-purple-200/80 space-y-3">
+                          <label className="block text-xs font-bold text-slate-800">
+                            {isPlanning
+                              ? 'Desired Future Career or Role *'
+                              : 'Do you have a dream career or profession in mind? (Optional)'}
                           </label>
+                          <p className="text-xs text-slate-500">
+                            {isPlanning
+                              ? 'Type the career you want to pursue. We will map the required high school stream, college degrees, and skills.'
+                              : "If you have a dream job or role in mind, type it here. If not, feel free to leave it blank!"}
+                          </p>
                           <input
-                            value={data.targetRole}
-                            onChange={(e) => update({ targetRole: e.target.value })}
+                            type="text"
+                            value={cp.target_role || data.targetRole || ''}
+                            onChange={(e) => updateCareerPreferences({ target_role: e.target.value })}
+                            placeholder="e.g. Artificial Intelligence Scientist, Aerospace Engineer, Neurosurgeon, Chartered Accountant"
                             className={inputClass}
-                            placeholder="e.g. Data Analyst, UX Designer"
                           />
+
+                          <div className="pt-2">
+                            <label className="block text-xs font-semibold text-slate-700 mb-1">
+                              Why are you drawn to this career? <span className="text-slate-400 font-normal">(Optional)</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={cp.reason_for_choice || ''}
+                              onChange={(e) => updateCareerPreferences({ reason_for_choice: e.target.value })}
+                              placeholder="e.g. Love building computer programs, want to help sick patients, fascinated by space"
+                              className={inputClass}
+                            />
+                          </div>
                         </div>
-                        <div className="space-y-2">
-                          <label className="block text-[13px] font-semibold text-slate-700 flex items-center gap-1.5">
-                            <Clock className="w-4 h-4 text-purple-500" /> How much time can you commit?
-                          </label>
+
+                        {/* School Question 2: What motivates you most in your education? */}
+                        <div className="space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              1. What would you like to achieve right now? <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Select what matters most to you in your current academic stage.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {SCHOOL_MOTIVATIONS.map((opt) => {
+                              const isSelected = (cp.motivation || []).includes(opt.id);
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => toggleMotivation(opt.id)}
+                                  className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div
+                                    className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                                      isSelected ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600'
+                                    }`}
+                                  >
+                                    {renderPreferenceIcon(opt.iconName)}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between gap-1">
+                                      <p className={`font-bold text-xs sm:text-sm leading-snug ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                        {opt.label}
+                                      </p>
+                                      <div
+                                        className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
+                                          isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
+                                        }`}
+                                      >
+                                        {isSelected && <Check className="w-2.5 h-2.5" />}
+                                      </div>
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+                                      {opt.desc}
+                                    </p>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* School Question 3: Higher Study & Degree Tracks You're Curious About */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                                2. Future study & degree tracks you're curious about <span className="text-slate-400 font-normal text-xs">(optional)</span>
+                              </h3>
+                              <p className="text-xs text-slate-500">
+                                Select any fields you would like to study in higher secondary or college.
+                              </p>
+                            </div>
+                            <span className="text-xs text-purple-700 font-bold bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
+                              {(cp.preferred_future_study_options || []).length} selected
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                            {SCHOOL_STUDY_OPTIONS.map((opt) => {
+                              const isSelected = (cp.preferred_future_study_options || []).includes(opt.id);
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => toggleStudyOption(opt.id)}
+                                  className={`p-3 rounded-xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50 text-purple-900 ring-1 ring-purple-600/30 font-semibold'
+                                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300 text-xs sm:text-sm'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs sm:text-[13px]">{opt.label}</span>
+                                    {isSelected && <Check className="w-3.5 h-3.5 text-purple-600 shrink-0 ml-1" />}
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* School Question 4: Activities You Enjoy Most */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              3. What kind of activities do you enjoy most? <span className="text-slate-400 font-normal text-xs">(optional)</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Tell us how you like to spend your time and energy.
+                            </p>
+                          </div>
+
                           <div className="flex flex-wrap gap-2">
-                            {HOURS_OPTIONS.map((h) => (
-                              <button
-                                key={h}
-                                type="button"
-                                onClick={() => update({ hoursPerWeek: h })}
-                                className={`px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
-                                  data.hoursPerWeek === h
-                                    ? 'bg-purple-600 border-purple-600 text-white'
-                                    : 'bg-white border-slate-200 text-slate-600 hover:border-purple-300'
-                                }`}
-                              >
-                                {h}
-                              </button>
-                            ))}
+                            {SCHOOL_ACTIVITIES_ENJOYED.map((act) => {
+                              const isSelected = (cp.activities_enjoyed || []).includes(act.id);
+                              return (
+                                <button
+                                  key={act.id}
+                                  type="button"
+                                  onClick={() => toggleActivityEnjoyed(act.id)}
+                                  className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all text-left flex items-center gap-1.5 ${
+                                    isSelected
+                                      ? 'bg-purple-600 border-purple-600 text-white shadow-xs ring-1 ring-purple-600/30'
+                                      : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300'
+                                  }`}
+                                >
+                                  {isSelected && <Check className="w-3 h-3" />}
+                                  {act.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* School Question 5: Learning Commitment */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              4. How much time can you spend on self-learning / exploration? <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              This helps us pace your career exploration activities alongside your school homework.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                            {LEARNING_COMMITMENTS.slice(0, 5).map((opt) => {
+                              const isSelected =
+                                cp.learning_commitment?.daily_commitment === opt.id ||
+                                cdp.daily_learning_commitment === opt.id;
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => setLearningCommitmentPref(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between gap-1 mb-1">
+                                    <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                      {opt.label}
+                                    </span>
+                                    <div
+                                      className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
+                                        isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
+                                      }`}
+                                    >
+                                      {isSelected && <Check className="w-2.5 h-2.5" />}
+                                    </div>
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       </div>
+                    )}
+
+                    {/* ========================================================================= */}
+                    {/* TRACK B: CAREER PLANNING (College, Freshers, Experienced, Diploma)        */}
+                    {/* ========================================================================= */}
+                    {isPlanning && !isSchool && (
+                      <div className="space-y-8">
+                        {/* Target Role & Industry Card */}
+                        <div className="p-5 rounded-2xl bg-purple-50/40 border border-purple-200/80 space-y-4">
+                          <div className="flex items-center gap-2 text-purple-900 font-bold text-sm border-b border-purple-200/80 pb-2">
+                            <Target className="w-4 h-4 text-purple-600" /> Target Career Direction
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div className="space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Target Role or Job Title <span className="text-purple-600">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={cp.target_role || data.targetRole || ''}
+                                onChange={(e) => updateCareerPreferences({ target_role: e.target.value })}
+                                placeholder="e.g. Full Stack Java Developer, Product Manager, Data Scientist"
+                                className={inputClass}
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Target Industry or Sector <span className="text-slate-400 font-normal">(Optional)</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={cp.target_industry || ''}
+                                onChange={(e) => updateCareerPreferences({ target_industry: e.target.value })}
+                                placeholder="e.g. Fintech, Healthcare IT, SaaS, Renewable Energy"
+                                className={inputClass}
+                              />
+                            </div>
+                            <div className="sm:col-span-2 space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Why did you choose this career? What draws you to it? <span className="text-slate-400 font-normal">(Optional)</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={cp.reason_for_choice || ''}
+                                onChange={(e) => updateCareerPreferences({ reason_for_choice: e.target.value })}
+                                placeholder="e.g. Strong passion for distributed systems and high market demand"
+                                className={inputClass}
+                              />
+                            </div>
+                            <div className="sm:col-span-2 space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Priority Skills You Want to Develop <span className="text-slate-400 font-normal">(Comma-separated)</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={(cp.skills_to_develop || []).join(', ')}
+                                onChange={(e) => updateCareerPreferences({ skills_to_develop: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })}
+                                placeholder="e.g. Spring Boot, Microservices, System Design, Docker, AWS"
+                                className={inputClass}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Priorities & Expectations */}
+                        <div className="space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              1. What matters most in this career? <span className="text-slate-400 font-normal text-xs">(optional)</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Select the top factors you expect from your target career.
+                            </p>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2.5">
+                            {CAREER_PRIORITIES.map((opt) => {
+                              const isSelected = (cp.career_priorities || []).includes(opt.id);
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => togglePriority(opt.id)}
+                                  className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border transition-all flex items-center gap-2 ${
+                                    isSelected
+                                      ? 'bg-purple-600 border-purple-600 text-white shadow-xs'
+                                      : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300 hover:bg-purple-50/40'
+                                  }`}
+                                >
+                                  <span className={isSelected ? 'text-white' : 'text-purple-600'}>
+                                    {renderPreferenceIcon(opt.iconName)}
+                                  </span>
+                                  <span>{opt.label}</span>
+                                  {isSelected && <Check className="w-3.5 h-3.5 ml-0.5" />}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Preferred Work Environment */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              2. Preferred Work Setting <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Select your preferred work setup for this role.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {WORK_ENVIRONMENTS.map((opt) => {
+                              const isSelected =
+                                (cp.preferred_work_environment || []).includes(opt.id) ||
+                                cdp.preferred_work_environment === opt.id;
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => setWorkEnvironmentPref(opt.id)}
+                                  className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div
+                                    className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                                      isSelected ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600'
+                                    }`}
+                                  >
+                                    {renderPreferenceIcon(opt.iconName)}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between gap-1">
+                                      <p className={`font-bold text-xs sm:text-sm leading-snug ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                        {opt.label}
+                                      </p>
+                                      <div
+                                        className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
+                                          isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
+                                        }`}
+                                      >
+                                        {isSelected && <Check className="w-2.5 h-2.5" />}
+                                      </div>
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+                                      {opt.desc}
+                                    </p>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Preferred Work Style */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              3. Preferred Work Style <span className="text-slate-400 font-normal text-xs">(optional)</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              How do you work best? Select all that describe your preferred dynamics.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {WORK_STYLES.map((opt) => {
+                              const isSelected = (cp.preferred_work_style || []).includes(opt.id);
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => toggleWorkStylePref(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50 text-purple-900 ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="font-bold text-xs sm:text-sm">{opt.label}</span>
+                                    {isSelected && <Check className="w-3.5 h-3.5 text-purple-600" />}
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Learning Commitment & Timeline */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-4">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              4. Available Learning Commitment <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              How much time can you commit weekly towards mastering your target skills?
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                            {LEARNING_COMMITMENTS.map((opt) => {
+                              const isSelected =
+                                cp.learning_commitment?.daily_commitment === opt.id ||
+                                cdp.daily_learning_commitment === opt.id;
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => setLearningCommitmentPref(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between gap-1 mb-1">
+                                    <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                      {opt.label}
+                                    </span>
+                                    <div
+                                      className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
+                                        isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
+                                      }`}
+                                    >
+                                      {isSelected && <Check className="w-2.5 h-2.5" />}
+                                    </div>
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Expected Timeline */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-4">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              5. Target Preparation Timeline <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              When are you aiming to be ready for interviews or applications?
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                            {CAREER_TIMELINES.map((opt) => {
+                              const isSelected =
+                                cp.preparation_timeline === opt.id ||
+                                cdp.career_timeline === opt.id;
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => setTimelinePref(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between gap-1 mb-1">
+                                    <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                      {opt.label}
+                                    </span>
+                                    <div
+                                      className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
+                                        isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
+                                      }`}
+                                    >
+                                      {isSelected && <Check className="w-2.5 h-2.5" />}
+                                    </div>
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ========================================================================= */}
+                    {/* TRACK C1: CAREER SWITCHING (Track 3A)                                     */}
+                    {/* ========================================================================= */}
+                    {isGrowth && isSwitcher && (
+                      <div className="space-y-8">
+                        {/* Target Direction & Reason */}
+                        <div className="p-5 rounded-2xl bg-purple-50/40 border border-purple-200/80 space-y-4">
+                          <div className="flex items-center gap-2 text-purple-900 font-bold text-sm border-b border-purple-200/80 pb-2">
+                            <ArrowRightLeft className="w-4 h-4 text-purple-600" /> Target Direction for Pivot
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div className="space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Target Role / Domain <span className="text-purple-600">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={cp.target_role || data.targetRole || ''}
+                                onChange={(e) => updateCareerPreferences({ target_role: e.target.value })}
+                                placeholder="e.g. Data Analyst, UX Researcher, Cloud Architect"
+                                className={inputClass}
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Target Industry <span className="text-slate-400 font-normal">(Optional)</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={cp.target_industry || ''}
+                                onChange={(e) => updateCareerPreferences({ target_industry: e.target.value })}
+                                placeholder="e.g. Tech / SaaS, FinTech, HealthTech"
+                                className={inputClass}
+                              />
+                            </div>
+                            <div className="sm:col-span-2 space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Primary Reason for Switching <span className="text-slate-400 font-normal">(Optional)</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={cp.transition_reason || ''}
+                                onChange={(e) => updateCareerPreferences({ transition_reason: e.target.value })}
+                                placeholder="e.g. Seeking higher market demand, stronger intellectual curiosity, or better remote flexibility"
+                                className={inputClass}
+                              />
+                            </div>
+                            <div className="sm:col-span-2 space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Target Skills You Plan to Acquire <span className="text-slate-400 font-normal">(Comma-separated)</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={(cp.skills_to_acquire || []).join(', ')}
+                                onChange={(e) => updateCareerPreferences({ skills_to_acquire: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })}
+                                placeholder="e.g. SQL, Python, Tableau, Statistics, Machine Learning"
+                                className={inputClass}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Transition Challenges */}
+                        <div className="space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              1. What are your main transition hurdles? <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Select any roadblocks you are currently experiencing so we can focus your guidance.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {SWITCHING_CHALLENGES.map((opt) => {
+                              const isSelected = (cp.transition_challenges || []).includes(opt.id);
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => toggleSwitchingChallenge(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50 text-purple-900 ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="font-bold text-xs sm:text-sm">{opt.label}</span>
+                                    {isSelected && <Check className="w-3.5 h-3.5 text-purple-600" />}
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Learning Time & Timeline */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-4">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              2. Weekly Learning Commitment <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              How much time can you realistically invest each week in upskilling for your new career?
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                            {LEARNING_COMMITMENTS.map((opt) => {
+                              const isSelected = cp.learning_commitment?.daily_commitment === opt.id;
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => setLearningCommitmentPref(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between gap-1 mb-1">
+                                    <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                      {opt.label}
+                                    </span>
+                                    {isSelected && <Check className="w-3 h-3 text-purple-600" />}
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Expected Transition Timeline */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-4">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              3. Target Transition Timeline <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              What is your target timeframe for securing your new role?
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                            {CAREER_TIMELINES.map((opt) => {
+                              const isSelected = cp.preparation_timeline === opt.id;
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => setTimelinePref(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between gap-1 mb-1">
+                                    <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                      {opt.label}
+                                    </span>
+                                    {isSelected && <Check className="w-3 h-3 text-purple-600" />}
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ========================================================================= */}
+                    {/* TRACK C2: CAREER ADVANCEMENT (Track 3B)                                   */}
+                    {/* ========================================================================= */}
+                    {isGrowth && isAdvancement && (
+                      <div className="space-y-8">
+                        {/* Target Role & Track */}
+                        <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+                          <div className="flex items-center gap-2 text-slate-900 font-bold text-sm border-b border-slate-200 pb-2">
+                            <TrendingUp className="w-4 h-4 text-purple-600" /> Career Progression Goal
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div className="space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Desired Next Role / Title <span className="text-purple-600">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={cp.desired_next_role || cp.target_role || data.targetRole || ''}
+                                onChange={(e) => updateCareerPreferences({ desired_next_role: e.target.value, target_role: e.target.value })}
+                                placeholder="e.g. Senior Software Engineer, Engineering Manager, Director of Growth"
+                                className={inputClass}
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Advancement Focus <span className="text-purple-600">*</span>
+                              </label>
+                              <select
+                                value={cp.advancement_focus || 'leadership'}
+                                onChange={(e) => updateCareerPreferences({ advancement_focus: e.target.value as any })}
+                                className={inputClass}
+                              >
+                                <option value="leadership">People Leadership & Team Management</option>
+                                <option value="specialization">Deep Technical / Functional Specialization (IC)</option>
+                                <option value="both">Hybrid Lead (Tech Lead / Strategic Management)</option>
+                              </select>
+                            </div>
+                            <div className="sm:col-span-2 space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Specific Skills Needed for Next Role <span className="text-slate-400 font-normal">(Comma-separated)</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={(cp.skills_to_develop || []).join(', ')}
+                                onChange={(e) => updateCareerPreferences({ skills_to_develop: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })}
+                                placeholder="e.g. System Architecture, Cross-functional Stakeholder Management, Mentorship, Budgeting"
+                                className={inputClass}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Growth Goals */}
+                        <div className="space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              1. Primary Career Growth Goals <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Select all outcomes that represent meaningful advancement for you.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {ADVANCEMENT_GOALS.map((opt) => {
+                              const isSelected = (cp.growth_goals || []).includes(opt.id);
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => toggleAdvancementGoal(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50 text-purple-900 ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="font-bold text-xs sm:text-sm">{opt.label}</span>
+                                    {isSelected && <Check className="w-3.5 h-3.5 text-purple-600" />}
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Learning Commitment & Timeline */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-4">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              2. Weekly Commitment for Upskilling <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              How much time can you commit alongside your current job to prepare for promotion?
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                            {LEARNING_COMMITMENTS.map((opt) => {
+                              const isSelected = cp.learning_commitment?.daily_commitment === opt.id;
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => setLearningCommitmentPref(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between gap-1 mb-1">
+                                    <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                      {opt.label}
+                                    </span>
+                                    {isSelected && <Check className="w-3 h-3 text-purple-600" />}
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ========================================================================= */}
+                    {/* TRACK C3: CAREER BREAK RETURN (Track 3C)                                  */}
+                    {/* ========================================================================= */}
+                    {isGrowth && isBreakReturner && (
+                      <div className="space-y-8">
+                        {/* Target Role & Flexibility */}
+                        <div className="p-5 rounded-2xl bg-purple-50/40 border border-purple-200/80 space-y-4">
+                          <div className="flex items-center gap-2 text-purple-900 font-bold text-sm border-b border-purple-200/80 pb-2">
+                            <RotateCcw className="w-4 h-4 text-purple-600" /> Desired Return-to-Work Role & Setting
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div className="space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Target Role or Domain <span className="text-purple-600">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={cp.return_goal || cp.target_role || data.targetRole || ''}
+                                onChange={(e) => updateCareerPreferences({ return_goal: e.target.value, target_role: e.target.value })}
+                                placeholder="e.g. Senior QA Engineer, Financial Analyst, HR Coordinator"
+                                className={inputClass}
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Preferred Work Environment <span className="text-purple-600">*</span>
+                              </label>
+                              <select
+                                value={(cp.preferred_work_environment || [])[0] || 'hybrid'}
+                                onChange={(e) => setWorkEnvironmentPref(e.target.value as any)}
+                                className={inputClass}
+                              >
+                                <option value="hybrid">Hybrid (Balanced Office & Home)</option>
+                                <option value="work_from_home">Full Remote / Work From Home</option>
+                                <option value="office_based">Office-based</option>
+                                <option value="freelancing">Freelance / Contract Return</option>
+                              </select>
+                            </div>
+                            <div className="sm:col-span-2 space-y-1">
+                              <label className="block text-xs font-semibold text-slate-700">
+                                Skills You Want to Refresh or Polish <span className="text-slate-400 font-normal">(Comma-separated)</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={(cp.skills_to_refresh || []).join(', ')}
+                                onChange={(e) => updateCareerPreferences({ skills_to_refresh: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })}
+                                placeholder="e.g. Modern React, Python, Cloud Infrastructure, Agile Testing"
+                                className={inputClass}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Return Concerns */}
+                        <div className="space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              1. Current Readiness & Return Concerns <span className="text-slate-400 font-normal text-xs">(optional)</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Tell us what areas you would like to address to feel 100% confident returning.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {BREAK_RETURN_CONCERNS.map((opt) => {
+                              const isSelected = (cp.readiness_concerns || []).includes(opt.id);
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => toggleBreakConcern(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50 text-purple-900 ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="font-bold text-xs sm:text-sm">{opt.label}</span>
+                                    {isSelected && <Check className="w-3.5 h-3.5 text-purple-600" />}
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Support Needs */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              2. Support & Flexibility Requirements <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Select all support mechanisms that will make your transition back to work smoothest.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {SUPPORT_NEEDS.map((opt) => {
+                              const isSelected = (cp.support_needs || []).includes(opt.id);
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => toggleSupportNeed(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50 text-purple-900 ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="font-bold text-xs sm:text-sm">{opt.label}</span>
+                                    {isSelected && <Check className="w-3.5 h-3.5 text-purple-600" />}
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Learning Commitment & Return Timeline */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-4">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              3. Weekly Learning Commitment & Return Timeline <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Pace your refresher modules before entering the interview market.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                            {LEARNING_COMMITMENTS.map((opt) => {
+                              const isSelected = cp.learning_commitment?.daily_commitment === opt.id;
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => setLearningCommitmentPref(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between gap-1 mb-1">
+                                    <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                      {opt.label}
+                                    </span>
+                                    {isSelected && <Check className="w-3 h-3 text-purple-600" />}
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ========================================================================= */}
+                    {/* TRACK D: CAREER DISCOVERY (General / Adults / Dropouts)                   */}
+                    {/* ========================================================================= */}
+                    {isDiscovery && !isSchool && (
+                      <div className="space-y-8">
+                        {/* Section 1: Career Motivation */}
+                        <div className="space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              1. What would you like to achieve in your career? <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Select all that apply. Choose the primary outcomes guiding your future.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {CAREER_MOTIVATIONS.map((opt) => {
+                              const isSelected =
+                                (cp.motivation || []).includes(opt.id) ||
+                                (cdp.career_motivations || []).includes(opt.id);
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => toggleMotivation(opt.id)}
+                                  className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div
+                                    className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                                      isSelected ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600'
+                                    }`}
+                                  >
+                                    {renderPreferenceIcon(opt.iconName)}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between gap-1">
+                                      <p className={`font-bold text-xs sm:text-sm leading-snug ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                        {opt.label}
+                                      </p>
+                                      <div
+                                        className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
+                                          isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
+                                        }`}
+                                      >
+                                        {isSelected && <Check className="w-2.5 h-2.5" />}
+                                      </div>
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+                                      {opt.desc}
+                                    </p>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Section 2: Career Priorities */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              2. What matters most to you in a job? <span className="text-slate-400 font-normal text-xs">(optional)</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Select any factors that matter to your job satisfaction and fulfillment.
+                            </p>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2.5">
+                            {CAREER_PRIORITIES.map((opt) => {
+                              const isSelected =
+                                (cp.career_priorities || []).includes(opt.id) ||
+                                (cdp.career_priorities || []).includes(opt.id);
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => togglePriority(opt.id)}
+                                  className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border transition-all flex items-center gap-2 ${
+                                    isSelected
+                                      ? 'bg-purple-600 border-purple-600 text-white shadow-xs'
+                                      : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300 hover:bg-purple-50/40'
+                                  }`}
+                                >
+                                  <span className={isSelected ? 'text-white' : 'text-purple-600'}>
+                                    {renderPreferenceIcon(opt.iconName)}
+                                  </span>
+                                  <span>{opt.label}</span>
+                                  {isSelected && <Check className="w-3.5 h-3.5 ml-0.5" />}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Section 3: Preferred Work Environment */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              3. Where would you prefer to work? <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Select your primary work setting preference.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {WORK_ENVIRONMENTS.map((opt) => {
+                              const isSelected =
+                                (cp.preferred_work_environment || []).includes(opt.id) ||
+                                cdp.preferred_work_environment === opt.id;
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => setWorkEnvironmentPref(opt.id)}
+                                  className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div
+                                    className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                                      isSelected ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600'
+                                    }`}
+                                  >
+                                    {renderPreferenceIcon(opt.iconName)}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between gap-1">
+                                      <p className={`font-bold text-xs sm:text-sm leading-snug ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                        {opt.label}
+                                      </p>
+                                      <div
+                                        className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
+                                          isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
+                                        }`}
+                                      >
+                                        {isSelected && <Check className="w-2.5 h-2.5" />}
+                                      </div>
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+                                      {opt.desc}
+                                    </p>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Section 4: Preferred Work Style */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              4. Preferred Work Style <span className="text-slate-400 font-normal text-xs">(optional)</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Select how you naturally prefer to work.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {WORK_STYLES.map((opt) => {
+                              const isSelected = (cp.preferred_work_style || []).includes(opt.id);
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => toggleWorkStylePref(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50 text-purple-900 ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="font-bold text-xs sm:text-sm">{opt.label}</span>
+                                    {isSelected && <Check className="w-3.5 h-3.5 text-purple-600" />}
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Section 5: Dropout / Gap-Year Specific Pathways */}
+                        {isDropout && (
+                          <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                            <div>
+                              <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                                5. Alternative Pathways You Are Open To Exploring <span className="text-slate-400 font-normal text-xs">(optional)</span>
+                              </h3>
+                              <p className="text-xs text-slate-500">
+                                Select options you would consider on your pathway forward.
+                              </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                              {DROPOUT_PATHWAYS.map((opt) => {
+                                const isSelected = (cp.preferred_pathways || []).includes(opt.id);
+                                return (
+                                  <button
+                                    key={opt.id}
+                                    type="button"
+                                    onClick={() => toggleDropoutPathway(opt.id)}
+                                    className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                      isSelected
+                                        ? 'border-purple-600 bg-purple-50 text-purple-900 ring-1 ring-purple-600/30'
+                                        : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                                    }`}
+                                  >
+                                    <div className="flex items-center justify-between mb-1">
+                                      <span className="font-bold text-xs sm:text-sm">{opt.label}</span>
+                                      {isSelected && <Check className="w-3.5 h-3.5 text-purple-600" />}
+                                    </div>
+                                    <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Section 6: Learning Commitment */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              {isDropout ? '6. How much time can you dedicate to learning?' : '5. How much time can you dedicate to learning?'}{' '}
+                              <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Be realistic with your schedule so our AI can pace your preparation roadmap.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                            {LEARNING_COMMITMENTS.map((opt) => {
+                              const isSelected =
+                                cp.learning_commitment?.daily_commitment === opt.id ||
+                                cdp.daily_learning_commitment === opt.id;
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => setLearningCommitmentPref(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between gap-1 mb-1">
+                                    <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                      {opt.label}
+                                    </span>
+                                    <div
+                                      className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
+                                        isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
+                                      }`}
+                                    >
+                                      {isSelected && <Check className="w-2.5 h-2.5" />}
+                                    </div>
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Section 7: Career Timeline */}
+                        <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
+                              {isDropout ? '7. When would you like to start your career?' : '6. When would you like to start your career?'}{' '}
+                              <span className="text-purple-600">*</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Your timeframe helps us balance fast-track job readiness with deep skill foundations.
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                            {CAREER_TIMELINES.map((opt) => {
+                              const isSelected =
+                                cp.preparation_timeline === opt.id ||
+                                cdp.career_timeline === opt.id;
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => setTimelinePref(opt.id)}
+                                  className={`p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                      ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
+                                      : 'border-slate-200 bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between gap-1 mb-1">
+                                    <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
+                                      {opt.label}
+                                    </span>
+                                    <div
+                                      className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
+                                        isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
+                                      }`}
+                                    >
+                                      {isSelected && <Check className="w-2.5 h-2.5" />}
+                                    </div>
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Optional Note / Extra Preferences (All Personas) */}
+                    <div className="pt-6 border-t border-slate-200/80 space-y-2">
+                      <label className="block text-[13px] font-semibold text-slate-700">
+                        Any specific preferences, constraints, or goals you'd like us to know? <span className="text-slate-400 font-normal">(optional)</span>
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={cp.other_notes || ''}
+                        onChange={(e) => updateCareerPreferences({ other_notes: e.target.value })}
+                        placeholder="e.g. Interested in overseas education, prefer companies with mental health support, targeting specific city or tech stack..."
+                        className={`${inputClass} resize-none`}
+                      />
                     </div>
-                  )}
-                </div>
-              )}
+                  </div>
+                );
+              })()}
 
               {/* --- Step 5 (0-indexed, 6th step): Multi-format Resume Upload --- */}
               {step === 5 && (

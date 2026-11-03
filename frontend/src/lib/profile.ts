@@ -66,7 +66,7 @@ interface AssessmentRow {
   created_at: string;
 }
 
-function fromRow(r: ProfileRow): Profile {
+export function fromRow(r: ProfileRow): Profile {
   const km = r.know_me;
   const careerMode = (km as any)?.career_mode ?? (r.path ? PATH_TO_CAREER_MODE[r.path] : undefined);
   return {
@@ -89,6 +89,7 @@ function fromRow(r: ProfileRow): Profile {
     interest_details: (km as any)?.interest_details || undefined,
     skills_and_experience: (km as any)?.skills_and_experience || undefined,
     career_discovery_preferences: (km as any)?.career_discovery_preferences || undefined,
+    career_preferences: (km as any)?.career_preferences || undefined,
     student_exploration_preferences: (km as any)?.student_exploration_preferences || undefined,
     career_planning_preferences: (km as any)?.career_planning_preferences || undefined,
     career_transition_preferences: (km as any)?.career_transition_preferences || undefined,
@@ -96,7 +97,7 @@ function fromRow(r: ProfileRow): Profile {
   };
 }
 
-function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> {
+export function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> {
   const row: Partial<ProfileRow> = { user_id: userId };
   if ('career_mode' in p && p.career_mode) {
     row.path = CAREER_MODE_TO_PATH[p.career_mode];
@@ -174,6 +175,16 @@ function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> {
     }
   }
 
+  if ('career_preferences' in p && p.career_preferences) {
+    const cp = p.career_preferences;
+    if (cp.target_role && !row.target_role) {
+      row.target_role = cp.target_role;
+    }
+    if (cp.learning_commitment?.daily_commitment && !row.hours_per_week) {
+      row.hours_per_week = cp.learning_commitment.daily_commitment;
+    }
+  }
+
   if ('career_planning_preferences' in p && p.career_planning_preferences) {
     const cpp = p.career_planning_preferences;
     if (cpp.target_career_title && !row.target_role) {
@@ -205,6 +216,7 @@ function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> {
     'interest_details' in p ||
     'skills_and_experience' in p ||
     'career_discovery_preferences' in p ||
+    'career_preferences' in p ||
     'student_exploration_preferences' in p ||
     'career_planning_preferences' in p ||
     'career_transition_preferences' in p
@@ -220,6 +232,8 @@ function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> {
     const skillsAndExperience = p.skills_and_experience ?? existingKm.skills_and_experience;
     const careerDiscoveryPreferences =
       p.career_discovery_preferences ?? existingKm.career_discovery_preferences;
+    const careerPreferences =
+      p.career_preferences ?? existingKm.career_preferences;
     const studentExplorationPreferences =
       p.student_exploration_preferences ?? existingKm.student_exploration_preferences;
     const careerPlanningPreferences =
@@ -238,6 +252,7 @@ function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> {
       ...(interestDetails ? { interest_details: interestDetails } : {}),
       ...(skillsAndExperience ? { skills_and_experience: skillsAndExperience } : {}),
       ...(careerDiscoveryPreferences ? { career_discovery_preferences: careerDiscoveryPreferences } : {}),
+      ...(careerPreferences ? { career_preferences: careerPreferences } : {}),
       ...(studentExplorationPreferences ? { student_exploration_preferences: studentExplorationPreferences } : {}),
       ...(careerPlanningPreferences ? { career_planning_preferences: careerPlanningPreferences } : {}),
       ...(careerTransitionPreferences ? { career_transition_preferences: careerTransitionPreferences } : {}),

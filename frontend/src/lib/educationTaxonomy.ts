@@ -1,13 +1,67 @@
 import type { EducationStage } from './onboarding';
 
 export type EducationLevel =
+  | 'school_middle'
   | 'sslc_10th'
   | 'puc_12th'
+  | 'iti_vocational'
   | 'diploma'
   | 'undergraduate'
   | 'postgraduate'
   | 'doctoral_phd'
+  | 'professional_certification'
   | 'other';
+
+export type AcademicDomain =
+  | 'engineering_tech'
+  | 'computer_applications'
+  | 'medical_healthcare'
+  | 'pure_applied_sciences'
+  | 'commerce_finance'
+  | 'arts_humanities'
+  | 'legal_studies'
+  | 'agriculture_allied'
+  | 'management_business'
+  | 'design_creative_arts'
+  | 'vocational_trades'
+  | 'general_exploratory'
+  | 'other_specialized';
+
+export const DOMAIN_DISPLAY_NAMES: Record<AcademicDomain, string> = {
+  engineering_tech: 'Engineering & Technology',
+  computer_applications: 'Computer Applications & IT',
+  medical_healthcare: 'Medical, Healthcare & Allied Sciences',
+  pure_applied_sciences: 'Pure & Applied Sciences',
+  commerce_finance: 'Commerce, Banking & Finance',
+  arts_humanities: 'Arts, Humanities & Social Sciences',
+  legal_studies: 'Law & Legal Studies',
+  agriculture_allied: 'Agriculture & Allied Sciences',
+  management_business: 'Management & Business Administration',
+  design_creative_arts: 'Design, Media & Creative Arts',
+  vocational_trades: 'Vocational & Technical Trades',
+  general_exploratory: 'General School Education & Foundations',
+  other_specialized: 'Specialized & Multidisciplinary Studies',
+};
+
+export interface ClassifiedEducationProfile {
+  level: EducationLevel;
+  qualification: string;
+  qualification_name: string;
+  domain: AcademicDomain;
+  domain_name: string;
+  course_or_stream: string;
+  specialization?: string | null;
+  subjects: string[];
+  academic_stage: string;
+  primary_skills: string[];
+  learning_outcomes: string[];
+  confidence: number;
+  requires_clarification: boolean;
+  clarification_prompt?: string | null;
+  suggested_domains: string[];
+  is_custom_or_unfamiliar: boolean;
+  metadata?: Record<string, any>;
+}
 
 export type EducationStatus =
   | 'currently_studying'
@@ -120,6 +174,7 @@ const CS_ENGG_SPECS = [
   'Civil Engineering',
   'Biotechnology Engineering',
   'Chemical Engineering',
+  'Mechatronics Engineering',
   'Aerospace / Aeronautical Engineering',
   'Automobile Engineering',
   'Robotics & Automation',
@@ -309,6 +364,22 @@ export const DEGREE_CATALOG: Record<EducationLevel, DegreeConfig[]> = {
     { id: 'llb', name: 'LLB (3-Year or 5-Year Integrated Law)', durationYears: 5, totalSemesters: 10, defaultSpecializations: LAW_SPECS },
     { id: 'bsc_agri', name: 'BSc Agriculture / Horticulture', durationYears: 4, totalSemesters: 8, defaultSpecializations: ['Agronomy', 'Horticulture', 'Agricultural Economics', 'Entomology', 'Plant Pathology', 'Soil Science', 'Other'] },
     { id: 'bed', name: 'BEd (Bachelor of Education)', durationYears: 2, totalSemesters: 4, defaultSpecializations: ['Science & Mathematics Teaching', 'Social Sciences Teaching', 'Languages Teaching', 'Special Education', 'Other'] },
+    {
+      id: 'bvoc',
+      name: 'B.Voc (Bachelor of Vocation)',
+      durationYears: 3,
+      totalSemesters: 6,
+      defaultSpecializations: [
+        'Renewable Energy Management',
+        'Software Development & IT',
+        'Automotive Manufacturing',
+        'Healthcare & Medical Lab Technology',
+        'Retail Management',
+        'Banking & Financial Services',
+        'Food Processing',
+        'Other',
+      ],
+    },
     { id: 'other', name: 'Other Undergraduate Degree', durationYears: 3, totalSemesters: 6, defaultSpecializations: ['General', 'Other'] },
   ],
   postgraduate: [
@@ -350,6 +421,53 @@ export const DEGREE_CATALOG: Record<EducationLevel, DegreeConfig[]> = {
       defaultSpecializations: SSLC_SPECS,
     },
     { id: 'other', name: 'Other Secondary Education', durationYears: 1, defaultSpecializations: SSLC_SPECS },
+  ],
+  school_middle: [
+    {
+      id: 'middle_school_general',
+      name: 'Middle School (Class 8–9)',
+      durationYears: 2,
+      customPhases: ['8th Standard', '9th Standard'],
+      defaultSpecializations: SSLC_SPECS,
+    },
+    { id: 'other', name: 'Other Middle School Curriculum', durationYears: 2, defaultSpecializations: SSLC_SPECS },
+  ],
+  iti_vocational: [
+    {
+      id: 'iti_trades',
+      name: 'ITI (Industrial Training Institute) Craftsman Training Scheme',
+      durationYears: 2,
+      totalSemesters: 4,
+      defaultSpecializations: [
+        'Electrician',
+        'Fitter',
+        'Welder',
+        'Machinist',
+        'Diesel Mechanic',
+        'Motor Vehicle Mechanic',
+        'COPA (Computer Operator & Programming Assistant)',
+        'Plumber',
+        'Refrigeration & AC Technician',
+        'Other ITI Trade',
+      ],
+    },
+    { id: 'other', name: 'Other Vocational Trade', durationYears: 1, defaultSpecializations: ['General Vocational', 'Other'] },
+  ],
+  professional_certification: [
+    {
+      id: 'ca_cma_cs',
+      name: 'Professional Accounting / Corporate Governance',
+      durationYears: 3,
+      customPhases: ['Foundation / Entry Level', 'Intermediate / Executive', 'Final Level', 'Articleship / Practical Training'],
+      defaultSpecializations: [
+        'Chartered Accountancy (CA)',
+        'Cost and Management Accounting (CMA)',
+        'Company Secretary (CS)',
+        'Chartered Financial Analyst (CFA)',
+        'Other Professional Qualification',
+      ],
+    },
+    { id: 'other', name: 'Other Professional Certification', durationYears: 1, defaultSpecializations: ['General', 'Other'] },
   ],
   doctoral_phd: [
     { id: 'phd', name: 'PhD (Doctor of Philosophy)', durationYears: 4, customPhases: ['Coursework & Proposal Defense', 'Research & Literature Review', 'Data Collection & Experimentation', 'Thesis Writing & Pre-Submission', 'Final Viva Voce'], defaultSpecializations: CS_ENGG_SPECS },
@@ -395,10 +513,12 @@ export const HIGHEST_QUALIFICATIONS = [
  */
 export function mapLevelToLegacyStage(level: EducationLevel): EducationStage {
   switch (level) {
+    case 'school_middle':
     case 'sslc_10th':
       return 'sslc_10th';
     case 'puc_12th':
       return 'puc_12th';
+    case 'iti_vocational':
     case 'diploma':
       return 'diploma';
     case 'undergraduate':
@@ -406,6 +526,7 @@ export function mapLevelToLegacyStage(level: EducationLevel): EducationStage {
     case 'postgraduate':
     case 'doctoral_phd':
       return 'postgrad';
+    case 'professional_certification':
     default:
       return 'degree_ug';
   }
