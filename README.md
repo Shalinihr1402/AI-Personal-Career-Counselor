@@ -1,380 +1,667 @@
-# AI Personal Career Counselor
+AI Personal Career Counselor
 
-An AI-powered career counseling and guidance platform built for college students. It combines psychometric profiling, resume extraction, subconscious identity discovery, and contextual AI reasoning to help students choose the right career path and follow a structured, weekly roadmap toward job readiness.
+An AI-powered career counseling and guidance platform designed to help students, fresh graduates, and working professionals discover suitable career paths and build structured roadmaps toward their professional goals.
 
-- **Frontend:** React 19 + Vite + TypeScript + Tailwind CSS v4 + Framer Motion
-- **Backend:** FastAPI (Python 3.12), PyMuPDF (PDF extraction), Groq (GPT-OSS 120B, JSON mode)
-- **Database & Auth:** Supabase (PostgreSQL, Row Level Security, Supabase Auth)
+The platform combines psychometric profiling, resume intelligence, personal identity discovery, education classification, career knowledge retrieval, and contextual AI reasoning to provide personalized career guidance.
 
-> 📘 **Planning to build or contribute?** Read the full architectural specification and roadmap in [`docs/BLUEPRINT.md`](docs/BLUEPRINT.md).
+Rather than relying on generic career quizzes, the system considers a user's education, interests, skills, experience, strengths, values, preferences, and constraints.
 
----
+Vision & Objectives
 
-## Table of Contents
+Most career guidance platforms provide generic recommendations based on limited questionnaires. Students need a system that understands their individual backgrounds and helps them answer two important questions:
 
-- [Vision & Architecture](#vision--architecture)
-- [Feature Status](#feature-status)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Setup & Installation](#setup--installation)
-  - [1. Database Setup (Supabase)](#1-database-setup-supabase)
-  - [2. Backend Setup (FastAPI)](#2-backend-setup-fastapi)
-  - [3. Frontend Setup (React + Vite)](#3-frontend-setup-react--vite)
-- [Environment Variables](#environment-variables)
-- [Running the Application](#running-the-application)
-- [REST API Reference](#rest-api-reference)
-- [Database Schema & Security (RLS)](#database-schema--security-rls)
-- [Project Roadmap](#project-roadmap)
-- [Notes for Contributors](#notes-for-contributors)
+- Career Counselor: Which career paths align with my interests, qualifications, skills, and personal values?
+- Career Coach: What skills should I develop, and what practical steps should I take to become job-ready?
+
+The long-term goal is to build an adaptive career counseling platform that evaluates evidence, identifies skill gaps, recommends realistic career pathways, and creates personalized learning roadmaps.
 
 ---
 
-## Vision & Architecture
+Tech Stack
 
-Most career guidance products either offer a generic one-time quiz or a static 50-item checklist. Students need a platform that acts first as a **Counselor** (*"Which career actually fits who I am?"*) and then transitions into a **Daily Coach** (*"What do I do today to get closer to being hired?"*).
+Frontend
 
-```mermaid
+- React 19 – Component-based user interface.
+- Vite 8 – Frontend development and build tooling.
+- TypeScript 6 – Static typing.
+- Tailwind CSS v4 – Responsive styling.
+- Framer Motion – UI animations.
+- React Router v7 – Client-side routing.
+- Lucide React – Icons.
+- Supabase JavaScript Client – Authentication and database integration.
+
+Backend
+
+- Python 3.12 – Core backend development.
+- FastAPI – REST API framework.
+- Uvicorn – ASGI server.
+- Pydantic v2 – Data validation and serialization.
+- PyMuPDF – PDF resume text extraction.
+- Sentence Transformers – Semantic embeddings.
+- NumPy – Vector similarity calculations.
+- Groq API – LLM-powered resume extraction, career reranking, and conversational reasoning.
+- python-dotenv – Environment configuration.
+
+Database and Authentication
+
+- Supabase PostgreSQL – Persistent application data.
+- Supabase Auth – Email/password and Google OAuth authentication.
+- Row Level Security (RLS) – User-specific database access control.
+- JSONB – Flexible storage of profile and assessment information.
+
+AI and Machine Learning
+
+Technology| Purpose
+Groq API| LLM reasoning and structured JSON generation
+GPT-OSS 120B| Resume extraction, career reranking, and counselor responses
+Sentence Transformers| Semantic career matching
+all-MiniLM-L6-v2| Career text embeddings
+RIASEC| Holland personality and interest profiling
+Python rule-based engine| Deterministic scoring and eligibility checks
+O*NET| Occupational information and career dataset
+
+---
+
+Architecture Overview
+
 flowchart TD
-    subgraph Frontend ["Frontend (React 19 + Vite + TypeScript)"]
-        UI["Pages: Home, Onboarding, Assessment,\nCareerDetail (/careers/:slug), Dashboard, Roadmap, Today"]
-        AuthCtx["AuthContext\n(Supabase Auth & Sessions)"]
-        ProfCtx["ProfileContext\n(Profiles, Assessments & Goals)"]
-        ProgHook["useProgress\n(Weekly Task Scheduling)"]
+    U["Student / Professional"]
+
+    subgraph Frontend["Frontend - React + TypeScript"]
+        UI["Landing Page, Onboarding, Assessment"]
+        PROFILE["Profile & Know Me"]
+        CAREER["Career Explorer & Details"]
+        DASH["Dashboard & Roadmap"]
     end
 
-    subgraph Backend ["Backend (FastAPI + Python 3.12)"]
-        API["FastAPI Endpoints\nmain.py"]
-        PDF["PyMuPDF (fitz)\nResume Text Parsing"]
-        RIASEC["riasec.py\n24-Item Holland Scoring"]
-        Taxonomy["careers.py\n42 Careers, Slugs, Salaries & Fallback"]
+    subgraph Backend["Backend - FastAPI"]
+        API["REST API"]
+        RESUME["Resume Extraction"]
+        EDU["Indian Education Classifier"]
+        RIASEC["RIASEC Scoring"]
+        CKB["Career Knowledge Base"]
+        MATCH["Hybrid Career Matcher"]
+        EVIDENCE["Future: Evidence Engine"]
     end
 
-    subgraph Cloud ["Cloud & AI Services"]
-        Groq["Groq API (openai/gpt-oss-120b)\nStructured JSON Resume Parsing & Career Matching"]
-        SupaDB[("Supabase PostgreSQL\nprofiles, assessments, career_goals with RLS")]
+    subgraph AI["AI Services"]
+        EMB["Sentence Transformers"]
+        GROQ["Groq API - GPT-OSS 120B"]
     end
 
-    UI --> AuthCtx
-    UI --> ProfCtx
-    UI --> ProgHook
-    AuthCtx <--> SupaDB
-    ProfCtx <--> SupaDB
-    UI -- "REST Requests" --> API
-    API --> PDF
+    subgraph DB["Supabase"]
+        AUTH["Authentication"]
+        PG[("PostgreSQL")]
+    end
+
+    U --> UI
+    UI --> PROFILE
+    UI --> CAREER
+    UI --> DASH
+
+    UI --> API
+    API --> RESUME
+    API --> EDU
     API --> RIASEC
-    API --> Taxonomy
-    API -- "LLM Reasoning" --> Groq
-```
+    API --> CKB
+    API --> MATCH
+
+    MATCH --> EMB
+    MATCH --> GROQ
+    CKB --> MATCH
+    EVIDENCE -. "Planned integration" .-> MATCH
+
+    PROFILE <--> AUTH
+    AUTH <--> PG
+    API <--> PG
 
 ---
 
-## Feature Status
+Feature Status
 
-| Area / Module | Status | Description |
-|---|:---:|---|
-| **Marketing Landing** | ✅ | Modern landing page with value proposition, counselor highlights, and call to action (`/`). |
-| **Authentication & Sessions** | ✅ | Email/password + Google OAuth sign-in via Supabase Auth, password reset, and protected routes. |
-| **Student Onboarding** | ✅ | Survey capturing education, degree, study year, interests, weekly hours, and drag-and-drop resume upload. |
-| **Resume Parsing** | ✅ | Extracts name, education, skills, and experience via PyMuPDF + Groq LLM (with fallback). |
-| **Psychometric Assessment** | ✅ | 24-question Holland/RIASEC assessment with deterministic mathematical scoring (0–100%). |
-| **Subconscious Identity Profiling** | ✅ | Uncovers inner drive via the Equal-Salary test, energy source audit, secret envy compass, and anti-goal deal-breakers. |
-| **AI Career Matching** | ✅ | Groq GPT-OSS 120B ranks top 5 allowed careers with personalized reasons and watch-outs; deterministic rule-based fallback if offline. |
-| **Career Detail Exploration** | ✅ | Dedicated `/careers/:slug` pages with Indian salary tiers (Fresher/Mid/Senior), daily hourly schedules, pros/cons, learning paths, and similar careers. |
-| **Career Catalog & Explorer** | ✅ | Full `/careers` catalog browsing all 1,056 careers with instant search, 36 industry field filters, and pagination. |
-| **Side-by-Side Career Comparison** | ✅ | Interactive comparison modal to compare up to 3 careers simultaneously across salaries, skills, education, and pros/cons. |
-| **Career Goal Confirmation** | ✅ | Explicit goal commitment dialog that writes active goals to Supabase `career_goals` with RLS. |
-| **Roadmap & Timetable** | ✅ | Weekly task packing, interactive checkboxes, and pace adaptation according to year of study (`/roadmap`, `/today`). |
-| **O\*NET Vector Embeddings** | ✅ | Scaled across 1,016 real careers using `all-MiniLM-L6-v2` dense embeddings and semantic search. |
-| **NLP Skill-Gap Analysis** | ✅ | Pinpoints precise missing competencies between uploaded resume and target job requirements with % job readiness. |
-| **Gamified Nature Level Map** | 🚧 *(Stage 4)* | Visual stage map where levels unlock via checkpoints (quizzes/projects). |
-| **AI Career Coach Chatbot** | 🚧 *(Stage 4)* | Context-aware daily coaching chatbot with memory. |
-
----
-
-## Tech Stack
-
-### Backend
-- **FastAPI** + **Uvicorn** — Modern, high-performance async REST API framework.
-- **PyMuPDF (`fitz`)** — High-speed local PDF text extraction.
-- **groq** — Ultra-fast inference on `openai/gpt-oss-120b` utilizing Groq LPUs.
-- **Pydantic v2** — Request/response data validation and serialization.
-- **python-multipart** — File upload handling for PDF resumes.
-- **python-dotenv** — Environment configuration loader.
-
-### Frontend
-- **React 19** + **Vite 8** — Reactive UI framework with fast Hot Module Replacement (HMR).
-- **TypeScript 6** — Strict static typing across components, contexts, and API schemas.
-- **Tailwind CSS v4** — Utility-first modern responsive styling.
-- **React Router v7** — Client-side SPA routing (`react-router-dom`).
-- **@supabase/supabase-js** — Supabase client for authentication, session recovery, and PostgreSQL queries.
-- **Framer Motion** — Smooth layout transitions and interactive animations.
-- **Lucide React** — Consistent icon set.
-- **Oxlint** — High-speed JavaScript/TypeScript linter.
+Feature| Status| Description
+Marketing Landing Page| ✅ Completed| Landing page and product introduction
+Authentication| ✅ Completed| Supabase email/password and Google OAuth
+Student Onboarding| ✅ Completed| Six-step onboarding covering goals, education, interests, skills, preferences, and resume
+Resume Parsing| ✅ Completed| PyMuPDF extraction and Groq-powered structured parsing
+RIASEC Assessment| ✅ Completed| 24-question Holland assessment with deterministic scoring
+Know Me Profiling| ✅ Completed| Personal values, strengths, work preferences, identity, and deal-breakers
+Career Matching| ✅ Existing| Semantic, RIASEC, and skill-based matching with Groq reranking
+Career Detail Pages| ✅ Existing| Career descriptions, salary information, daily routines, pros/cons, and learning paths
+Career Explorer| ✅ Existing| Search and browse career records
+Career Comparison| ✅ Existing| Compare multiple career options
+Career Goal Confirmation| ✅ Existing| Save active career goals in Supabase
+Roadmap & Timetable| ✅ Existing| Weekly task scheduling and progress tracking
+Skill-Gap Analysis| ✅ Existing| Identifies missing competencies against career requirements
+Indian Education Classifier| ✅ Completed| Classifies Indian qualifications and unfamiliar courses
+Career Knowledge Base| 🟡 Implemented; verification pending| Structured career records, Indian pathways, competencies, and eligibility checks
+Personalized Adaptive Assessment| 🔜 Upcoming| Dynamically generated questions based on individual profiles and answers
+Evidence & Competency Engine| 🔜 Upcoming| Evaluates answers and builds competency evidence
+Adaptive Hybrid Recommendation| 🔜 Upcoming| Integrates assessment evidence into existing matching
+Personalized Career Report| 🔜 Upcoming| Detailed explanations, skill gaps, and alternative pathways
+Real-world Validation| 🔜 Upcoming| Pilot testing with students and career experts
+AI Career Coach Chatbot| 🚧 In Development| Context-aware career coaching
 
 ---
 
-## Project Structure
+Existing Career Recommendation Architecture
 
-```
+The existing recommendation system uses a hybrid approach combining machine learning, psychometric information, and AI reasoning.
+
+Stage 1: Local Python Career Matching
+
+The existing "backend/matcher.py" uses:
+
+- Sentence Transformers ("all-MiniLM-L6-v2")
+- RIASEC similarity
+- Direct skill overlap
+- Deal-breaker penalties
+
+The reported scoring formula is:
+
+match_score = (
+    0.50 * semantic_similarity +
+    0.30 * riasec_alignment +
+    0.20 * skill_overlap -
+    dealbreaker_penalty
+)
+
+The local matching engine retrieves up to 15 candidate careers.
+
+Stage 2: Groq AI Reranking
+
+Groq receives the shortlisted candidates and relevant user profile information.
+
+It helps:
+
+- Rerank candidate careers.
+- Generate personalized explanations.
+- Identify potential challenges and watch-outs.
+- Explain required skills.
+- Describe typical responsibilities.
+- Return up to five career recommendations.
+
+The system restricts AI reranking to the supplied candidate list rather than allowing it to invent career titles.
+
+Fallback Mechanism
+
+When Groq is unavailable, the existing deterministic matching and fallback logic can continue providing career recommendations.
+
+Important: The planned assessment evidence integration will extend this architecture rather than replace the existing matcher.
+
+---
+
+Phase 4: Advanced Career Intelligence
+
+The advanced development roadmap focuses on building a personalized, evidence-based career counseling system.
+
+Phase 4.1 — Indian Education Classifier
+
+<badge color="success">Completed</badge>
+
+Developed an education classification layer to understand different Indian academic qualifications.
+
+Supported examples:
+
+- SSLC / Class 10
+- PUC / Class 12
+- ITI
+- Diploma
+- BCA, B.Com, B.Tech, B.Sc
+- MBBS, B.Pharm, LLB
+- MCA, MBA, M.Sc
+- Unfamiliar qualifications requiring clarification
+
+Reported testing: 19/19 tests passed.
+
+Phase 4.2 — Career Knowledge Base
+
+<badge color="warning">Implemented — Final verification pending</badge>
+
+Developed a structured career knowledge layer that combines existing O*NET occupational information with curated Indian career pathways.
+
+Reported implementation:
+
+- 1,016 existing O*NET career records preserved.
+- 10 curated Indian benchmark career pathways.
+- 1,026 total Career Knowledge Base records.
+- Reusable competency registry.
+- Education-to-career pathway mapping.
+- Professional eligibility and licensing checks.
+- Career retrieval by qualification and competency.
+- Stage-aware eligibility checking.
+
+Main implementation files:
+
+backend/
+├── career_knowledge_base.py
+├── data/
+│   ├── onet_careers.json
+│   └── career_knowledge_base.json
+└── test_career_knowledge_base.py
+
+supabase/
+└── migrations/
+    └── 0002_phase4_career_knowledge.sql
+
+Reported testing:
+
+- Career Knowledge Base: 20/20 tests passed.
+- Education Classifier regression: 19/19 tests passed.
+
+The generated career projections and regulatory mappings still require independent source and data-quality verification. Supabase migration deployment and record seeding must also be confirmed.
+
+Phase 4.3 — Personalized Adaptive Assessment
+
+<badge>Upcoming</badge>
+
+Build an adaptive assessment engine that generates questions according to each user's individual profile.
+
+The assessment should consider:
+
+- Education and academic background.
+- Interests and motivation.
+- Technical and non-technical skills.
+- Resume and project experience.
+- Personal values and strengths.
+- Career preferences.
+- Previous assessment answers.
+- Missing evidence and uncertainty.
+
+Planned capabilities:
+
+- Groq-powered personalized question generation.
+- One-question-at-a-time assessment.
+- Adaptive follow-up questions.
+- Answer evaluation.
+- Dynamic question selection.
+- Session persistence.
+- Configurable stopping criteria.
+
+The goal is to avoid giving every student the same static questionnaire.
+
+Phase 4.4 — Evidence and Competency Engine
+
+<badge>Upcoming</badge>
+
+Build an evidence-based engine to evaluate user answers and identify competencies.
+
+It should distinguish:
+
+- Self-reported skills.
+- Demonstrated skills.
+- Project-based evidence.
+- Academic evidence.
+- Work experience.
+- Unverified claims.
+- Missing competencies.
+
+Python will enforce scoring rules and structured evaluation, while Groq can assist with interpreting open-ended answers using explicit evaluation rubrics.
+
+Phase 4.5 — Hybrid Recommendation Integration
+
+<badge>Upcoming</badge>
+
+Integrate validated assessment evidence into the existing career matcher.
+
+The system should combine:
+
+- Semantic similarity.
+- RIASEC alignment.
+- Skill matching.
+- Career knowledge and eligibility.
+- Demonstrated competencies.
+- User preferences and constraints.
+- Assessment uncertainty.
+
+The integration must avoid double-counting existing evidence or introducing arbitrary scoring weights.
+
+Phase 4.6 — Personalized Career Report
+
+<badge>Upcoming</badge>
+
+Generate an understandable career counseling report containing:
+
+- Recommended career paths.
+- Reasons behind each recommendation.
+- Supporting and conflicting evidence.
+- Education and eligibility requirements.
+- Existing strengths.
+- Missing competencies.
+- Alternative career pathways.
+- Suggested projects and certifications.
+- Personalized learning roadmap.
+
+The report should communicate uncertainty rather than claim to identify one guaranteed perfect career.
+
+Phase 4.7 — Real-world Validation
+
+<badge>Upcoming</badge>
+
+Validate the system through:
+
+- Student pilot testing.
+- Career counselor reviews.
+- Recommendation quality evaluation.
+- Assessment consistency checks.
+- Eligibility accuracy checks.
+- Before-and-after recommendation comparisons.
+- User feedback and usability testing.
+
+Do not claim scientific accuracy without appropriate evaluation.
+
+---
+
+Project Structure
+
 AI-Personal-Career-Counselor/
+│
 ├── backend/
-│   ├── main.py              # FastAPI application & REST endpoints
-│   ├── careers.py           # 42-career taxonomy, slugs, Indian salary tiers, daily routines & fallback
-│   ├── riasec.py            # 24 RIASEC items, dimensions & deterministic scoring logic
-│   ├── requirements.txt     # Python dependencies
-│   ├── .env.example         # Example backend environment variables
-│   └── venv/                # Local Python virtual environment
+│   ├── main.py
+│   ├── careers.py
+│   ├── matcher.py
+│   ├── riasec.py
+│   ├── education_classifier.py
+│   ├── career_knowledge_base.py
+│   ├── resume_parser.py
+│   ├── requirements.txt
+│   ├── .env.example
+│   │
+│   ├── data/
+│   │   ├── onet_careers.json
+│   │   ├── career_embeddings.npy
+│   │   └── career_knowledge_base.json
+│   │
+│   ├── test_education_classifier.py
+│   └── test_career_knowledge_base.py
+│
 ├── frontend/
 │   ├── src/
-│   │   ├── App.tsx          # Client-side router and root providers
-│   │   ├── main.tsx         # React DOM entry point
-│   │   ├── index.css        # Tailwind CSS imports & global design tokens
+│   │   ├── App.tsx
+│   │   ├── main.tsx
 │   │   ├── context/
-│   │   │   ├── AuthContext.tsx    # Supabase authentication session management
-│   │   │   └── ProfileContext.tsx # Database profile & assessment loader/persister
+│   │   │   ├── AuthContext.tsx
+│   │   │   └── ProfileContext.tsx
+│   │   │
 │   │   ├── components/
-│   │   │   ├── AppHeader.tsx      # Navigation header with profile status
-│   │   │   ├── KnowMeSection.tsx  # Interactive UI for values, strengths, identity, and situation
-│   │   │   ├── ProtectedRoute.tsx # Route guard redirecting unauthenticated users
-│   │   │   └── ThisWeekPanel.tsx  # Weekly task checklist and timetable component
 │   │   ├── pages/
-│   │   │   ├── Home.tsx           # Marketing landing page
-│   │   │   ├── Login.tsx          # User sign-in & password recovery
-│   │   │   ├── Signup.tsx         # User registration with Supabase Auth
-│   │   │   ├── Onboarding.tsx     # Student survey & PDF resume upload
-│   │   │   ├── Assessment.tsx     # 6-step discovery: Interests, Workstyle, Values, Strengths, Identity, Situation
-│   │   │   ├── CareerDetail.tsx   # Detailed career page (/careers/:slug) with Indian salaries & goal commitment
-│   │   │   ├── Dashboard.tsx      # Student status, Holland code, matched careers & quick links
-│   │   │   ├── Roadmap.tsx        # Milestone progression, skill toggles & weekly hours
-│   │   │   └── Today.tsx          # Weekly focused tasks & daily actions
 │   │   ├── lib/
-│   │   │   ├── api.ts             # Backend base URL configuration
-│   │   │   ├── assessment.ts      # API call helpers and RIASEC types
-│   │   │   ├── knowMe.ts          # Schemas, option sets, and API formatters for KnowMe & Identity
-│   │   │   ├── onboarding.ts      # Onboarding types & pace calculations
-│   │   │   ├── planner.ts         # Greedy weekly task scheduler & timetable generator
-│   │   │   ├── profile.ts         # Supabase database queries for profiles, assessments, and career_goals
-│   │   │   ├── supabase.ts        # Supabase client instantiation
-│   │   │   └── useProgress.ts     # Task completion and timetable progress hook
 │   │   └── data/
-│   │       └── roadmaps.ts        # Curated skill roadmaps
+│   │
 │   ├── package.json
-│   ├── tsconfig.json
 │   └── vite.config.ts
+│
 ├── supabase/
 │   └── migrations/
-│       └── 0001_phase1_counselor.sql # Idempotent PostgreSQL schema with Row Level Security (RLS)
+│       ├── 0001_phase1_counselor.sql
+│       └── 0002_phase4_career_knowledge.sql
+│
 ├── docs/
-│   └── BLUEPRINT.md         # Comprehensive product plan, data models, and module specifications
-└── README.md
-```
+│   └── BLUEPRINT.md
+│
+├── README.md
+└── .gitignore
+
+This structure reflects the reported project modules. Verify actual filenames and migration deployment against the repository before release.
 
 ---
 
-## Prerequisites
+REST API Reference
 
-| Tool | Recommended Version | Notes |
-|---|:---:|---|
-| **Python** | 3.11+ / 3.12 | Required for FastAPI backend and PyMuPDF |
-| **Node.js** | 20+ | Required for Vite 8 and React 19 |
-| **npm** | 10+ | Bundled with Node.js |
-| **Supabase Account** | Cloud (Free tier) | For PostgreSQL database and Supabase Auth |
-| **Groq API Key** | Optional (Free tier) | Powers LLM resume extraction and matching; app falls back to rule-based logic without it |
+Health Check
+
+"GET /"
+
+Returns backend operational status and AI availability.
+
+Resume Extraction
+
+"POST /api/upload-resume"
+
+Accepts a PDF resume and extracts structured information.
+
+Example response:
+
+{
+  "name": "Alex Johnson",
+  "education": ["B.Tech Computer Science"],
+  "skills": ["Python", "FastAPI", "PostgreSQL"],
+  "experience": ["Software Development Intern"]
+}
+
+Psychometric Assessment
+
+"GET /api/assessment/questions"
+
+Returns the existing 24 Holland/RIASEC questions.
+
+"POST /api/assessment/score"
+
+Calculates deterministic RIASEC scores and the Holland code.
+
+Career Matching
+
+"POST /api/career-match"
+
+Accepts user profile information, interests, RIASEC scores, and resume skills.
+
+Returns personalized career recommendations.
+
+Career Explorer
+
+"GET /api/careers"
+
+Returns the existing career catalog.
+
+"GET /api/careers/{slug}"
+
+Returns detailed information about a career.
+
+Additional Career Knowledge Base Module
+
+The new Python module provides programmatic retrieval and eligibility methods:
+
+get_career_knowledge(career_id)
+
+search_careers_by_qualification(
+    qualification_name,
+    domain=None
+)
+
+search_careers_by_competencies(
+    competency_ids,
+    min_overlap=1
+)
+
+check_career_eligibility(
+    career_id,
+    user_education
+)
+
+These are reported Python module methods, not confirmed public HTTP endpoints.
 
 ---
 
-## Setup & Installation
+Database Schema & Security
 
-### 1. Database Setup (Supabase)
+The project uses Supabase PostgreSQL.
 
-1. Create a free project at [supabase.com](https://supabase.com/).
-2. In the Supabase Dashboard, open the **SQL Editor** (`>_` icon on the left menu).
-3. Click **New query**, paste the entire contents of [`supabase/migrations/0001_phase1_counselor.sql`](supabase/migrations/0001_phase1_counselor.sql), and click **Run**.
-4. Verify under **Table Editor** that `profiles`, `assessments`, and `career_goals` are present.
+Existing tables
 
-### 2. Backend Setup (FastAPI)
+"profiles"
 
-```bash
+Stores student profile information, education, interests, resume information, and personal identity data.
+
+"assessments"
+
+Stores assessment answers, RIASEC scores, Holland codes, and assessment results.
+
+"career_goals"
+
+Stores confirmed career commitments and active career goals.
+
+Career Knowledge Base
+
+The Phase 4.2 migration introduces:
+
+"career_knowledge"
+
+Stores structured career records, including career identity, domain, SOC code, and JSONB career information.
+
+The migration is available at:
+
+supabase/migrations/0002_phase4_career_knowledge.sql
+
+Migration execution, record seeding, and RLS behavior must be verified in the target Supabase project.
+
+Security
+
+- Supabase Auth manages user sessions.
+- RLS protects user-specific profile and assessment data.
+- API keys remain in backend environment variables.
+- Database access should follow least-privilege principles.
+
+---
+
+Setup & Installation
+
+Prerequisites
+
+Tool| Recommended Version
+Python| 3.12
+Node.js| 20+
+npm| 10+
+Supabase| Cloud project
+Groq API Key| Optional for AI features
+
+1. Clone the repository
+
+git clone YOUR_REPOSITORY_URL
+cd AI-Personal-Career-Counselor
+
+2. Supabase Setup
+
+1. Create a Supabase project.
+2. Open the SQL Editor.
+3. Apply the required migration files in order.
+4. Verify tables, indexes, and RLS policies.
+5. Configure authentication providers.
+
+3. Backend Setup
+
 cd backend
 
-# Create virtual environment
 python -m venv venv
 
-# Activate virtual environment
-# Windows (PowerShell):
+# Windows PowerShell
 .\venv\Scripts\Activate.ps1
-# Windows (cmd):
-venv\Scripts\activate.bat
-# macOS / Linux:
-source venv/bin/activate
 
-# Install dependencies
 python -m pip install -r requirements.txt
-```
 
-Create `backend/.env` (see [Environment Variables](#environment-variables)):
-```env
-GROQ_API_KEY=your_groq_api_key_here
-```
+Create "backend/.env":
 
-### 3. Frontend Setup (React + Vite)
-
-```bash
-cd frontend
-
-# Install Node dependencies
-npm install
-```
-
-Create `frontend/.env` (see [Environment Variables](#environment-variables)):
-```env
-VITE_SUPABASE_URL=https://your-project-id.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-public-key
-VITE_API_BASE=http://localhost:8000
-```
-
----
-
-## Environment Variables
-
-### Backend (`backend/.env`)
-```env
-# Optional — enables LLM resume parsing and contextual career matching.
-# Without it, the backend operates in deterministic rule-based fallback mode.
-GROQ_API_KEY=gsk_your_groq_api_key
+GROQ_API_KEY=your_groq_api_key
 GROQ_MODEL=openai/gpt-oss-120b
-```
 
-### Frontend (`frontend/.env`)
-```env
-# Required for user authentication, profile loading, and goal persistence:
+4. Frontend Setup
+
+cd frontend
+
+npm install
+
+Create "frontend/.env":
+
 VITE_SUPABASE_URL=https://your-project-id.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-public-key
-
-# Optional — overrides the backend address if hosted elsewhere:
 VITE_API_BASE=http://localhost:8000
-```
 
 ---
 
-## Running the Application
+Running the Application
 
-Open two terminal windows:
+Terminal 1 — Backend
 
-### Terminal 1 — Backend
-```bash
 cd backend
-# With venv activated:
+
+# Activate virtual environment first
 uvicorn main:app --reload --port 8000
-```
-- API Base: `http://localhost:8000/`
-- Interactive Swagger Documentation: `http://localhost:8000/docs`
 
-### Terminal 2 — Frontend
-```bash
+Backend:
+
+"http://localhost:8000"
+
+Swagger documentation:
+
+"http://localhost:8000/docs"
+
+Terminal 2 — Frontend
+
 cd frontend
+
 npm run dev
-```
-- Web Application: `http://localhost:5173/`
+
+Frontend:
+
+"http://localhost:5173"
 
 ---
 
-## REST API Reference
+Testing
 
-### Health Check
-- **`GET /`**  
-  Returns API operational status and whether AI is enabled.
-  ```json
-  { "message": "Welcome to AI Personal Career Counselor API", "ai_enabled": true }
-  ```
+Run the Phase 4 education classifier tests:
 
-### Resume Extraction
-- **`POST /api/upload-resume`**  
-  Accepts a `multipart/form-data` PDF file. Extracts structured personal information using PyMuPDF and Groq LLM.
-  ```json
-  {
-    "name": "Alex Johnson",
-    "education": ["B.Tech Computer Science, Anna University"],
-    "skills": ["Python", "FastAPI", "PostgreSQL", "React", "Docker"],
-    "experience": ["Web Development Intern at TechCorp"]
-  }
-  ```
+cd backend
 
-### Psychometric Discovery
-- **`GET /api/assessment/questions`**  
-  Returns the 24 Holland/RIASEC questions, scale options (0 = Dislike, 1 = Neutral, 2 = Like), and dimension descriptions.
-- **`POST /api/assessment/score`**  
-  Body: `{ "answers": { "r1": 2, "i1": 2, "a1": 1, ... } }`  
-  Calculates deterministic 0–100% scores for each Holland dimension and returns the 3-letter Holland code (e.g. `IRC`).
+python -m unittest test_education_classifier.py
 
-### Career Matching
-- **`POST /api/career-match`**  
-  Body: `{ riasec_scores, code, interests, work_style, know_me, resume_skills }`  
-  Ranks top 5 best-fitting careers from the taxonomy using Groq LLM. Evaluates values, strengths, real-world constraints, and strictly avoids anti-goal deal-breakers. Returns `{ "source": "ai" | "rule", "matches": [...] }`.
+Run the Career Knowledge Base tests:
 
-### Careers Catalog & Exploration
-- **`GET /api/careers`**  
-  Returns all 42 careers in the catalog with their titles, fields, slugs, Holland codes, and summaries.
-- **`GET /api/careers/{slug}`**  
-  Returns deep exploration data for a specific career:
-  - Expected salaries in India (Entry, Mid, Senior)
-  - Hour-by-hour "Day in the Life" routine
-  - Key required skills and growth outlook
-  - Honest pros & cons
-  - Recommended learning path
+python -m unittest test_career_knowledge_base.py
+
+Also run the existing matcher, API, and frontend build tests before merging changes.
+
+Frontend checks:
+
+cd frontend
+
+npm run lint
+npm run build
 
 ---
 
-## Database Schema & Security (RLS)
+Project Development Roadmap
 
-The database runs on **PostgreSQL (Supabase)** with **Row Level Security (RLS)** enabled on all tables:
-
-1. **`public.profiles`**: One record per student. Stores college, course, year, interests, resume JSON, and holistic "Know Me" data (values, strengths, situation, identity, deal-breakers).
-2. **`public.assessments`**: Stores historical assessment runs with raw answers, RIASEC scores, Holland code, and AI matched careers.
-3. **`public.career_goals`**: Stores confirmed career commitments with confirmation timestamps and student reasoning. Enforces a single active goal per student via a unique partial index:
-   ```sql
-   CREATE UNIQUE INDEX career_goals_one_active ON public.career_goals (user_id) WHERE status = 'active';
-   ```
-
-All tables enforce `auth.uid() = user_id` policies so students can never read or mutate another student's data.
+Phase| Module| Status
+4.1| Indian Education Classifier| Completed
+4.2| Career Knowledge Base| Implemented; verification pending
+4.3| Personalized Adaptive Assessment| Upcoming
+4.4| Evidence and Competency Engine| Upcoming
+4.5| Hybrid Recommendation Integration| Upcoming
+4.6| Personalized Career Report| Upcoming
+4.7| Real-world Validation| Upcoming
 
 ---
 
-## Project Roadmap
+Notes for Contributors
 
-- [x] **Stage 1: Foundation & Infrastructure**
-  - [x] Supabase Auth & session lifecycle.
-  - [x] PostgreSQL database migration with RLS.
-  - [x] Full-stack local development environment with Hot Reloading.
-- [x] **Stage 2: Career Counselor Experience**
-  - [x] 24-item RIASEC psychometric scoring engine.
-  - [x] "Know Me" profiling: personal values, strengths, constraints.
-  - [x] Inner Drive discovery: equal-salary dream, flow state energy sources, anti-goal deal-breakers, secret envy compass.
-  - [x] Career exploration pages (`/careers/:slug`) with Indian salary breakdowns and daily schedules.
-  - [x] Career goal confirmation flow saving to `career_goals`.
-- [ ] **Stage 3: Advanced ML & Real Datasets (Next Up)**
-  - [ ] Integrate **O\*NET 28.0 Database** (900+ careers).
-  - [ ] Implement dense vector embeddings using `sentence-transformers` (`all-MiniLM-L6-v2`) and Supabase `pgvector`.
-  - [ ] Two-stage Retrieve & Re-Rank pipeline (Bi-Encoder retrieval + Cross-Encoder precision filter).
-  - [ ] NLP-powered skill-gap analyzer matching student resumes against live market skills.
-- [ ] **Stage 4: The Daily Coach**
-  - [ ] Gamified level map where stages unlock via checkpoint quizzes or portfolio projects.
-  - [ ] Daily habit streak tracker and adaptive timetable rescheduling.
-  - [ ] Context-aware AI coach chatbot with conversation history.
+- Inspect the existing architecture before introducing new services or dependencies.
+- Preserve the existing hybrid career-matching engine.
+- Do not duplicate existing career records.
+- Use structured career data as the source of truth.
+- Never fabricate education eligibility, professional licensing, or salary information.
+- Keep Groq API keys on the backend.
+- Preserve existing Supabase profile and assessment compatibility.
+- Use deterministic Python logic for objective calculations.
+- Use LLMs for language understanding and explanations, not as unquestioned sources of truth.
+- Write automated tests for new functionality.
+- Never commit ".env", virtual environments, or "node_modules".
 
 ---
 
-## Notes for Contributors
+License
 
-- **Secrets & Environments:** Never commit `.env`, `venv/`, or `node_modules/`. All are included in `.gitignore`.
-- **Linting & Code Quality:**
-  - Frontend: Run `npm run lint` (`oxlint`) and `npm run build` (`tsc -b && vite build`) before opening pull requests.
-  - Backend: Ensure any new endpoints include type annotations and Pydantic schemas.
-- **Taxonomy Source of Truth:** `backend/careers.py` is the single source of truth for allowed career titles and detail schemas.
+This project is licensed under the MIT License. See "LICENSE" (LICENSE) for details.
 
 ---
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+AI Personal Career Counselor — Understand Yourself. Discover Your Career. Build Your Future.
