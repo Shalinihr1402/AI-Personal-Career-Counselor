@@ -124,3 +124,139 @@ export function fetchCareerMatches(payload: {
 }): Promise<MatchResult> {
   return postJSON<MatchResult>('/api/career-match', payload);
 }
+
+// --------------------------------------------------------------------------- //
+//  Phase 4.3: Adaptive Assessment & Evidence-Based Competency Types
+// --------------------------------------------------------------------------- //
+
+export interface AdaptiveOption {
+  id: string; // 'a' | 'b' | 'c' | 'd'
+  text: string;
+  dimension_weights?: Record<string, number>;
+  competency_id?: string;
+  competency_level?: string; // 'beginner' | 'intermediate' | 'advanced'
+  evidence_level: 'self_reported' | 'declared_only' | 'awareness_conceptual' | 'applied_scenario' | 'verified_practical';
+  occupational_fields?: string[];
+  practical_verification_note?: string;
+}
+
+export interface AdaptiveQuestion {
+  id: string;
+  stage: string;
+  category: 'interest_exploration' | 'competency_demonstration' | 'practical_scenario' | 'workstyle_fit';
+  prompt: string;
+  options: AdaptiveOption[];
+  target_dimensions: string[];
+  target_competency_ids?: string[];
+  prerequisite_stream?: string;
+  prerequisite_domain?: string;
+  explanation_tip?: string;
+}
+
+export interface AdaptiveQuestionsResponse {
+  stage: string;
+  questions: AdaptiveQuestion[];
+  total: number;
+  dimensions: Record<Dim, string>;
+}
+
+export interface DemonstratedCompetency {
+  competency_id: string;
+  level: string;
+  evidence_level: string;
+  rubric_points: number;
+  question_id: string;
+  selected_option: string;
+  practical_verification_note?: string;
+}
+
+export interface SelfReportedSkill {
+  skill: string;
+  evidence_level: string;
+  source: string;
+}
+
+export interface EvidenceBreakdown {
+  self_reported_skills: SelfReportedSkill[];
+  conceptual_knowledge: DemonstratedCompetency[];
+  applied_scenario: DemonstratedCompetency[];
+  verified_practical: DemonstratedCompetency[];
+}
+
+export interface StatutoryPathway {
+  career_id: string;
+  title: string;
+  slug: string;
+  is_eligible: boolean;
+  eligibility_type: string;
+  reason: string;
+  missing_prerequisites?: string[];
+  recommended_bridge_steps?: string[];
+  regulatory_body?: string | null;
+  statutory_act?: string | null;
+}
+
+export interface StatutoryEligibility {
+  eligible_pathways: StatutoryPathway[];
+  alternative_pathways: StatutoryPathway[];
+  statutory_restrictions: StatutoryPathway[];
+}
+
+export interface AdaptiveScoreResult {
+  scores: RiasecScores;
+  code: string;
+  stage: string;
+  top_fields: string[];
+  field_scores: Record<string, number>;
+  top_dimensions: Array<{ dimension: string; score: number; label: string }>;
+  demonstrated_competencies: Record<string, DemonstratedCompetency>;
+  evidence_breakdown: EvidenceBreakdown;
+  statutory_eligibility: StatutoryEligibility;
+  practical_disclaimer: string;
+}
+
+export function buildProfilePayload(
+  profile: Record<string, any> | null | undefined,
+  knowMe?: Record<string, any> | null
+): Record<string, unknown> {
+  if (!profile) return {};
+  const ed = profile.education_details || {};
+  return {
+    education_level: ed.level || profile.educationStage || ed.education_level || undefined,
+    education_status: ed.status || ed.education_status || undefined,
+    school_board: ed.school_board || profile.schoolBoard || undefined,
+    school_stream: ed.school_stream || profile.schoolStream || profile.streamOrBranch || undefined,
+    diploma_discipline: ed.diploma_discipline || undefined,
+    degree: ed.undergraduate_degree || ed.degree || profile.degree || undefined,
+    course: profile.course || ed.course || undefined,
+    specialization: ed.undergraduate_discipline || profile.specialization || profile.streamOrBranch || undefined,
+    subjects: ed.subjects_studied || ed.subjects || undefined,
+    career_mode: profile.career_mode || undefined,
+    career_growth_subtype: profile.career_growth_subtype || undefined,
+    interests: profile.interests || profile.interest_details?.selected_interests || [],
+    skills: profile.resume?.skills || profile.skills_and_experience?.skills || [],
+    resume_skills: profile.resume?.skills || [],
+    know_me: knowMe || profile.knowMe || {},
+    strengths_note: profile.strengthsNote || undefined,
+  };
+}
+
+export async function fetchAdaptiveQuestions(
+  profilePayload: Record<string, unknown>,
+  maxQuestions = 12
+): Promise<AdaptiveQuestionsResponse> {
+  return postJSON<AdaptiveQuestionsResponse>('/api/assessment/adaptive-questions', {
+    profile: profilePayload,
+    max_questions: maxQuestions,
+  });
+}
+
+export async function scoreAdaptiveAssessment(
+  answers: Record<string, string>,
+  profilePayload: Record<string, unknown>
+): Promise<AdaptiveScoreResult> {
+  return postJSON<AdaptiveScoreResult>('/api/assessment/adaptive-score', {
+    answers,
+    profile: profilePayload,
+  });
+}

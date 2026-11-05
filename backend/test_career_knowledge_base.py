@@ -328,6 +328,20 @@ class TestCareerKnowledgeBase(unittest.TestCase):
         self.assertFalse(res_ca.is_eligible)
         self.assertTrue(res_ca.mandatory_licensing_required)
 
+        # Non-Dental candidate attempting to practice as dental surgeon
+        res_dental = check_career_eligibility("bds-dentist", btech_profile)
+        self.assertFalse(res_dental.is_eligible)
+        self.assertEqual(res_dental.eligibility_type, "restricted_ineligible")
+        self.assertTrue(res_dental.mandatory_licensing_required)
+        self.assertIn("Dental", res_dental.licensing_details["regulatory_body"])
+
+        # Non-Nursing candidate attempting to practice as registered nurse
+        res_nurse = check_career_eligibility("registered-nurse", btech_profile)
+        self.assertFalse(res_nurse.is_eligible)
+        self.assertEqual(res_nurse.eligibility_type, "restricted_ineligible")
+        self.assertTrue(res_nurse.mandatory_licensing_required)
+        self.assertIn("Nursing", res_nurse.licensing_details["regulatory_body"])
+
     # ------------------------------------------------------------------------
     # Scenario 19: Unique IDs and Full Coverage Preservation
     # ------------------------------------------------------------------------

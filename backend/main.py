@@ -48,6 +48,7 @@ def _generate_json(prompt: str, temperature: float = 0.2) -> dict:
 
 
 from riasec import RIASEC_QUESTIONS, SCENARIO_QUESTIONS, DIM_LABEL, score_riasec
+from adaptive_assessment import adaptive_engine
 from careers import (
     CAREERS,
     CAREER_TITLES,
@@ -99,40 +100,54 @@ from resume_parser import (
     CorruptedFileError,
 )
 
-@app.post("/api/upload-resume")
-async def upload_resume(file: UploadFile = File(...)):
-    filename = file.filename or "uploaded_resume.pdf"
-    try:
-        contents = await file.read()
-    except Exception as read_err:
-        raise HTTPException(status_code=400, detail=f"Failed to read file: {str(read_err)}")
+try:
+    import multipart
+    _HAS_MULTIPART = True
+except ImportError:
+    _HAS_MULTIPART = False
 
-    if not contents:
-        raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+if _HAS_MULTIPART:
+    @app.post("/api/upload-resume")
+    async def upload_resume(file: UploadFile = File(...)):
+        filename = file.filename or "uploaded_resume.pdf"
+        try:
+            contents = await file.read()
+        except Exception as read_err:
+            raise HTTPException(status_code=400, detail=f"Failed to read file: {str(read_err)}")
 
-    try:
-        raw_text, file_type = extract_text_from_file(filename, contents)
-    except FileSizeExceededError as e:
-        raise HTTPException(status_code=413, detail=str(e))
-    except (PasswordProtectedError, UnsupportedFormatError, CorruptedFileError) as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except ResumeParseError as e:
-        raise HTTPException(status_code=422, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected parsing error: {str(e)}")
+        if not contents:
+            raise HTTPException(status_code=400, detail="Uploaded file is empty.")
 
-    if not _AI_ENABLED:
-        fallback = build_fallback_parsed_data(raw_text, filename)
-        return format_resume_response(fallback, file_type, len(contents), filename)
+        try:
+            raw_text, file_type = extract_text_from_file(filename, contents)
+        except FileSizeExceededError as e:
+            raise HTTPException(status_code=413, detail=str(e))
+        except (PasswordProtectedError, UnsupportedFormatError, CorruptedFileError) as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        except ResumeParseError as e:
+            raise HTTPException(status_code=422, detail=str(e))
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Unexpected parsing error: {str(e)}")
 
-    try:
-        prompt = create_extraction_prompt(raw_text)
-        extracted = _generate_json(prompt, temperature=0.0)
-        return format_resume_response(extracted, file_type, len(contents), filename)
-    except Exception as ai_err:
-        print(f"AI resume parsing error: {ai_err}. Using rule-based extraction fallback.")
-        fallback = build_fallback_parsed_data(raw_text, filename)
-        return format_resume_response(fallback, file_type, len(contents), filename)
+        if not _AI_ENABLED:
+            fallback = build_fallback_parsed_data(raw_text, filename)
+            return format_resume_response(fallback, file_type, len(contents), filename)
+
+        try:
+            prompt = create_extraction_prompt(raw_text)
+            extracted = _generate_json(prompt, temperature=0.0)
+            return format_resume_response(extracted, file_type, len(contents), filename)
+        except Exception as ai_err:
+            print(f"AI resume parsing error: {ai_err}. Using rule-based extraction fallback.")
+            fallback = build_fallback_parsed_data(raw_text, filename)
+            return format_resume_response(fallback, file_type, len(contents), filename)
+else:
+    @app.post("/api/upload-resume")
+    async def upload_resume():
+        raise HTTPException(
+            status_code=501,
+            detail="python-multipart is required for file uploads but is not installed."
+        )
 
 
 
@@ -156,6 +171,48 @@ class ScoreRequest(BaseModel):
 @app.post("/api/assessment/score")
 def assessment_score(req: ScoreRequest):
     return score_riasec(req.answers)
+
+
+class AdaptiveQuestionsRequest(BaseModel):
+    profile: dict[str, Any] = Field(default_factory=dict)
+    max_questions: int = Field(default=12, ge=4, le=30)
+
+
+class AdaptiveScoreRequest(BaseModel):
+    answers: dict[str, Any] = Field(default_factory=dict)
+    profile: dict[str, Any] = Field(default_factory=dict)
+
+
+@app.post("/api/assessment/adaptive-questions")
+def assessment_adaptive_questions(req: AdaptiveQuestionsRequest):
+    """
+    Selects stage-calibrated, deduplicated questions based on student profile.
+    """
+    questions = adaptive_engine.select_adaptive_questions(
+        profile=req.profile,
+        max_questions=req.max_questions
+    )
+    stage = adaptive_engine.resolve_stage(req.profile)
+    q_data = [q.to_dict() for q in questions]
+    return {
+        "stage": stage.value,
+        "questions": q_data,
+        "total": len(q_data),
+        "dimensions": DIM_LABEL,
+    }
+
+
+@app.post("/api/assessment/adaptive-score")
+def assessment_adaptive_score(req: AdaptiveScoreRequest):
+    """
+    Deterministically scores student adaptive assessment answers.
+    Separates self-reported skills from demonstrated competencies,
+    enforces statutory evidence caps, and verifies career eligibility.
+    """
+    return adaptive_engine.score_adaptive_assessment(
+        answers=req.answers,
+        profile=req.profile
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -456,6 +513,9 @@ class CounselorChatRequest(BaseModel):
     user_confirmed_summary: bool | None = False
     requested_early_guidance: bool | None = False
     assessment_completed: bool | None = None
+    adaptive_evidence: dict[str, Any] | None = None
+    riasec_scores: dict[str, float] | None = None
+    riasec_code: str | None = None
 
 
 COUNSELOR_SYSTEM_PROMPT = """You are an AI career-exploration counselor for students and early-career candidates.
@@ -706,7 +766,13 @@ If the candidate explicitly requests early suggestions:
 6. EVIDENCE AND SAFETY RULES
 ────────────────────────────────────────
 
-- Ground interpretations in candidate statements or confirmed records.
+- Ground interpretations in candidate statements, assessment evidence, or confirmed records.
+- Distinguish self-reported skills from demonstrated competencies: self-reported skills are candidate self-perceptions, not proven capabilities.
+- Never claim multiple-choice question answers prove practical or professional mastery.
+- When verified practical evidence is empty (count 0), do NOT describe practical evidence as present.
+- Respect statutory restrictions and licensing requirements: if a candidate asks about a career listed under statutory restrictions (e.g. MBBS/Doctor without PCB/NEET, Advocate without LLB, CA without ICAI foundation), explain the formal statutory requirement and guide them toward recognized alternative or bridge pathways.
+- Never invent legal eligibility or licensing requirements.
+- Clearly communicate when assessment evidence is missing or outdated.
 - Distinguish reported preferences from demonstrated performance.
 - Distinguish facts from tentative inferences.
 - Do not interpret one unsuccessful task as lack of career potential.
@@ -872,6 +938,129 @@ def retry_with_allowed_actions(parsed: dict, permitted_actions: list[str], curre
     return parsed
 
 
+def build_counselor_grounding_context(req: CounselorChatRequest) -> dict[str, Any]:
+    """
+    Builds structured, trusted grounding context for the AI counselor, incorporating:
+    1. User's education stage
+    2. Deterministic Holland RIASEC scores & code
+    3. Self-reported skills (strictly labeled non-verified)
+    4. Conceptual knowledge evidence (from MCQ assessment)
+    5. Applied scenario problem-solving evidence
+    6. Verified practical artifacts (count 0 with explicit disclaimer when empty)
+    7. Eligible career pathways
+    8. Alternative & bridge pathways
+    9. Statutory restrictions with regulatory body & reason
+    """
+    profile = req.student_profile or {}
+    education_stage = profile.get("educationStage") or "sslc_10th"
+    if education_stage not in STAGE_KNOWLEDGE:
+        education_stage = "sslc_10th"
+    stage_info = STAGE_KNOWLEDGE[education_stage]
+
+    adaptive = req.adaptive_evidence if isinstance(req.adaptive_evidence, dict) else {}
+    has_adaptive = bool(adaptive)
+
+    # 1. Deterministic Holland RIASEC scores & code (Groq cannot invent or alter these)
+    riasec_scores = (
+        req.riasec_scores
+        or (adaptive.get("scores") if has_adaptive else None)
+        or profile.get("riasec_scores")
+    )
+    riasec_code = (
+        req.riasec_code
+        or (adaptive.get("code") if has_adaptive else None)
+        or profile.get("riasec_code")
+    )
+
+    # 2. Evidence Tiers
+    evidence_breakdown = adaptive.get("evidence_breakdown", {}) if has_adaptive else {}
+    self_reported = (
+        evidence_breakdown.get("self_reported")
+        or profile.get("skills")
+        or (profile.get("resume", {}).get("skills") if isinstance(profile.get("resume"), dict) else [])
+        or profile.get("interests")
+        or []
+    )
+    awareness_conceptual = evidence_breakdown.get("awareness_conceptual", []) if has_adaptive else []
+    applied_scenario = evidence_breakdown.get("applied_scenario", []) if has_adaptive else []
+    verified_practical = evidence_breakdown.get("verified_practical", []) if has_adaptive else []
+
+    # 3. Statutory Eligibility
+    statutory_eligibility = adaptive.get("statutory_eligibility", {}) if has_adaptive else {}
+    eligible_pathways = statutory_eligibility.get("eligible_pathways", []) if has_adaptive else []
+    alternative_pathways = statutory_eligibility.get("alternative_pathways", []) if has_adaptive else []
+    statutory_restrictions = statutory_eligibility.get("statutory_restrictions", []) if has_adaptive else []
+
+    return {
+        "education_stage": {
+            "key": education_stage,
+            "title": stage_info["title"],
+            "calibrated_stage": adaptive.get("stage") or education_stage,
+        },
+        "assessment_evidence": {
+            "has_adaptive_evidence": has_adaptive,
+            "status": "adaptive_completed" if has_adaptive else ("legacy_completed" if riasec_scores else "missing"),
+            "holland_code": riasec_code or "Unknown",
+            "deterministic_riasec_scores": riasec_scores,
+            "evidence_tiers": {
+                "self_reported": {
+                    "items": self_reported,
+                    "tier_label": "Self-Reported Only (NOT verified by assessment)",
+                    "note": "Candidate claimed interest or skill during onboarding/resume. Treat as self-perception, NOT proven capability."
+                },
+                "awareness_conceptual": {
+                    "items": awareness_conceptual,
+                    "tier_label": "Conceptual Knowledge (Multiple-Choice Demonstrated)",
+                    "note": "Demonstrated recall and conceptual understanding through objective questions."
+                },
+                "applied_scenario": {
+                    "items": applied_scenario,
+                    "tier_label": "Applied Scenario Problem-Solving",
+                    "note": "Demonstrated situational reasoning and applied judgment in simulated workplace scenarios."
+                },
+                "verified_practical": {
+                    "items": verified_practical,
+                    "count": len(verified_practical),
+                    "tier_label": "Verified Practical Evidence",
+                    "note": "0 verified practical artifacts. Multiple-choice and scenario questions DO NOT prove practical or professional mastery."
+                }
+            },
+            "demonstrated_competencies_count": len(adaptive.get("demonstrated_competencies", {})) if has_adaptive else 0,
+        },
+        "statutory_pathways": {
+            "eligible_pathways": [
+                {"title": p.get("title"), "slug": p.get("slug")}
+                for p in eligible_pathways
+            ] if isinstance(eligible_pathways, list) else [],
+            "alternative_bridge_pathways": [
+                {"title": p.get("title"), "slug": p.get("slug"), "bridge": p.get("bridge_steps")}
+                for p in alternative_pathways
+            ] if isinstance(alternative_pathways, list) else [],
+            "statutory_restrictions": [
+                {
+                    "title": p.get("title"),
+                    "slug": p.get("slug"),
+                    "regulatory_body": p.get("regulatory_body"),
+                    "statutory_reason": p.get("reason") or p.get("statutory_reason") or "",
+                    "missing_prerequisites": p.get("missing_prerequisites") or [],
+                    "required_qualification": p.get("required_qualification")
+                }
+                for p in statutory_restrictions
+            ] if isinstance(statutory_restrictions, list) else []
+        },
+        "grounding_guardrails": [
+            "Explain recommendations using the candidate's actual assessment evidence.",
+            "Strictly distinguish self-reported skills from demonstrated competencies.",
+            "NEVER claim MCQ responses prove practical or professional mastery.",
+            "NEVER describe verified practical evidence as present when the evidence list is empty (0 artifacts).",
+            "Respect statutory restrictions: if candidate asks about a barred career, explain the formal regulatory requirement and guide to valid alternative pathways.",
+            "Never invent legal eligibility or licensing requirements.",
+            "If assessment is missing or outdated, politely encourage completing the Career Discovery Assessment.",
+            "Keep voice responses concise, conversational, and natural (approx 30-70 words)."
+        ]
+    }
+
+
 @app.post("/api/counselor/chat")
 def counselor_chat(req: CounselorChatRequest):
     user_msgs = [m for m in req.messages if m.role == "user"]
@@ -973,6 +1162,8 @@ def counselor_chat(req: CounselorChatRequest):
     ]
     catalog_str = "\n".join(catalog_sample)
 
+    grounding_context = build_counselor_grounding_context(req)
+
     counselor_context = {
         "current_stage": current_stage,
         "permitted_actions": permitted_actions,
@@ -987,6 +1178,9 @@ def counselor_chat(req: CounselorChatRequest):
             "resume_skills": resume_skills,
             "resume_uploaded": bool(profile.get("resume_uploaded", False) or bool(resume_skills))
         },
+        "assessment_evidence": grounding_context["assessment_evidence"],
+        "statutory_pathways": grounding_context["statutory_pathways"],
+        "grounding_guardrails": grounding_context["grounding_guardrails"],
         "confirmed_evidence": confirmed_evidence,
         "unresolved_questions": unresolved_questions,
         "latest_turn_id": latest_turn_id,
@@ -999,6 +1193,18 @@ def counselor_chat(req: CounselorChatRequest):
             forbidden_rules = "\n".join(f"- NEVER mention or ask about: {item}" for item in stage_info["strictly_forbidden"])
             focus_rules = "\n".join(f"- MUST focus on: {item}" for item in stage_info["focus_areas"])
 
+            statutory_restrictions_list = [
+                f"- {r['title']} [RESTRICTED by {r.get('regulatory_body') or 'Regulatory Body'}]: {r.get('statutory_reason')}"
+                for r in grounding_context["statutory_pathways"]["statutory_restrictions"]
+            ]
+            statutory_rules = "\n".join(statutory_restrictions_list) if statutory_restrictions_list else "- None reported for current profile."
+
+            alt_pathways_list = [
+                f"- {a['title']} (bridge: {', '.join(a.get('bridge') or ['Direct pathway'])})"
+                for a in grounding_context["statutory_pathways"]["alternative_bridge_pathways"]
+            ]
+            alt_rules = "\n".join(alt_pathways_list) if alt_pathways_list else "- Standard entry pathways."
+
             prompt = f"""{COUNSELOR_SYSTEM_PROMPT}
 
 AVAILABLE CAREER CATALOG IN THE APPLICATION:
@@ -1010,6 +1216,18 @@ CRITICAL STAGE BOUNDARIES FOR THIS CANDIDATE ({stage_info['title']}):
 STAGE GUIDELINES:
 {focus_rules}
 - {stage_info['guidance']}
+
+ASSESSMENT EVIDENCE & STATUTORY GROUNDING (MUST STRICTLY RESPECT):
+- Holland RIASEC Code & Scores: {grounding_context['assessment_evidence']['holland_code']} (Deterministic: {grounding_context['assessment_evidence']['deterministic_riasec_scores']})
+- Assessment Evidence Status: {grounding_context['assessment_evidence']['status']}
+- Self-Reported Skills (Unverified): {grounding_context['assessment_evidence']['evidence_tiers']['self_reported']['items']}
+- Conceptual Knowledge (MCQ Demonstrated): {grounding_context['assessment_evidence']['evidence_tiers']['awareness_conceptual']['items']}
+- Applied Scenario Problem-Solving: {grounding_context['assessment_evidence']['evidence_tiers']['applied_scenario']['items']}
+- Verified Practical Artifacts: {grounding_context['assessment_evidence']['evidence_tiers']['verified_practical']['count']} verified artifacts ({grounding_context['assessment_evidence']['evidence_tiers']['verified_practical']['note']})
+- Statutory Restrictions (Barred Careers):
+{statutory_rules}
+- Recognized Alternative & Bridge Pathways:
+{alt_rules}
 
 CURRENT APPLICATION CONTEXT (TRUSTED CONTEXT):
 {json.dumps(counselor_context, indent=2)}
@@ -1058,7 +1276,18 @@ Return ONLY valid JSON matching Section 7 format.
 
             if proposed_action == "present_preliminary_options":
                 recs = parsed.get("recommendations", [])
-                riasec_scores = parsed.get("riasec_scores") or {"R": 50, "I": 50, "A": 50, "S": 50, "E": 50, "C": 50}
+                det_scores = (
+                    req.riasec_scores
+                    or (req.adaptive_evidence.get("scores") if isinstance(req.adaptive_evidence, dict) else None)
+                    or profile.get("riasec_scores")
+                )
+                det_code = (
+                    req.riasec_code
+                    or (req.adaptive_evidence.get("code") if isinstance(req.adaptive_evidence, dict) else None)
+                    or profile.get("riasec_code")
+                )
+                riasec_scores = det_scores or parsed.get("riasec_scores") or {"R": 50, "I": 50, "A": 50, "S": 50, "E": 50, "C": 50}
+                riasec_code = det_code or parsed.get("riasec_code", "AIC")
                 matches = []
                 seen_slugs = set()
 
@@ -1174,7 +1403,7 @@ Return ONLY valid JSON matching Section 7 format.
                     "suggested_chips": parsed.get("suggested_chips") or [],
                     "stage_advice": stage_advice,
                     "riasec_scores": riasec_scores,
-                    "riasec_code": parsed.get("riasec_code", "AIC"),
+                    "riasec_code": riasec_code,
                     "summary": parsed.get("summary", "Summary grounded in candidate-reported experiences."),
                     "matches": matches[:4],
                     "recommendations": parsed.get("recommendations", [])
@@ -1226,6 +1455,18 @@ Return ONLY valid JSON matching Section 7 format.
     # Fallback if offline
     if user_wants_options or current_stage == "preliminary_exploration":
         top_curated = CAREERS[:4]
+        det_scores = (
+            req.riasec_scores
+            or (req.adaptive_evidence.get("scores") if isinstance(req.adaptive_evidence, dict) else None)
+            or profile.get("riasec_scores")
+        )
+        det_code = (
+            req.riasec_code
+            or (req.adaptive_evidence.get("code") if isinstance(req.adaptive_evidence, dict) else None)
+            or profile.get("riasec_code")
+        )
+        riasec_scores = det_scores or {"R": 40, "I": 75, "A": 85, "S": 60, "E": 50, "C": 45}
+        riasec_code = det_code or "AIC"
         return {
             "reply": "Thank you for sharing your thoughts! Based on your natural inclinations and academic stage, here are high-potential career directions that genuinely fit who you are.",
             "stage": "preliminary_exploration",
@@ -1233,16 +1474,16 @@ Return ONLY valid JSON matching Section 7 format.
             "evidence_updates": [],
             "confirmed_evidence": confirmed_evidence,
             "unresolved_questions": unresolved_questions,
-            "is_concluded": True,
-            "progress_percent": 100,
-            "suggested_chips": [],
-            "stage_advice": {
-                "recommended_path": "Arts & Humanities with Media Electives OR Polytechnic Diploma in Sound Engineering" if education_stage == "sslc_10th" else "Undergraduate Degree Program",
-                "next_immediate_step": "Explore 11th State Board / CBSE Arts or State Technical Board Diplomas",
-                "creative_balance": "Pursue structured vocal/music training 3-4 hours/week alongside academics"
-            },
-            "riasec_scores": {"R": 40, "I": 75, "A": 85, "S": 60, "E": 50, "C": 45},
-            "riasec_code": "AIC",
+                "is_concluded": True,
+                "progress_percent": 100,
+                "suggested_chips": [],
+                "stage_advice": {
+                    "recommended_path": "Arts & Humanities with Media Electives OR Polytechnic Diploma in Sound Engineering" if education_stage == "sslc_10th" else "Undergraduate Degree Program",
+                    "next_immediate_step": "Explore 11th State Board / CBSE Arts or State Technical Board Diplomas",
+                    "creative_balance": "Pursue structured vocal/music training 3-4 hours/week alongside academics"
+                },
+                "riasec_scores": riasec_scores,
+                "riasec_code": riasec_code,
             "summary": "You show high natural aptitude for creative expression and structured execution.",
             "matches": [
                 {

@@ -191,6 +191,8 @@ class SourceMetadata:
     regional_scope: str = "India (National)"
     confidence: float = 0.95
     regulatory_status: str = RegulatoryStatus.UNREGULATED_SKILL_FIRST.value
+    record_provenance: str = "projected_onet"          # "curated_benchmark" vs "projected_onet"
+    verification_status: str = "inferred_heuristics"    # "manually_verified" vs "inferred_heuristics"
     notes: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
@@ -776,7 +778,10 @@ CURATED_CAREER_RECORDS: Dict[str, CareerKnowledgeRecord] = {
             source_name="NCS India (Code 2512.0101) & NASSCOM FutureSkills Prime",
             source_url="https://www.ncs.gov.in/",
             verification_date="2026-11-01",
+            confidence=0.98,
             regulatory_status=RegulatoryStatus.UNREGULATED_SKILL_FIRST.value,
+            record_provenance="curated_benchmark",
+            verification_status="manually_verified",
             notes="Industry standards aligned with NASSCOM and Ministry of Electronics & IT (MeitY) competency guidelines.",
         ),
     ),
@@ -941,7 +946,10 @@ CURATED_CAREER_RECORDS: Dict[str, CareerKnowledgeRecord] = {
             source_name="National Medical Commission (NMC) & Ministry of Health & Family Welfare (MoHFW)",
             source_url="https://www.nmc.org.in/",
             verification_date="2026-11-01",
+            confidence=0.98,
             regulatory_status=RegulatoryStatus.MANDATORY_STATUTORY.value,
+            record_provenance="curated_benchmark",
+            verification_status="manually_verified",
             notes="Governed strictly under the National Medical Commission Act, 2019.",
         ),
     ),
@@ -1088,7 +1096,10 @@ CURATED_CAREER_RECORDS: Dict[str, CareerKnowledgeRecord] = {
             source_name="Bar Council of India (BCI) & Advocates Act 1961",
             source_url="http://www.barcouncilofindia.org/",
             verification_date="2026-11-01",
+            confidence=0.98,
             regulatory_status=RegulatoryStatus.MANDATORY_STATUTORY.value,
+            record_provenance="curated_benchmark",
+            verification_status="manually_verified",
             notes="Governed strictly under the Advocates Act, 1961.",
         ),
     ),
@@ -1233,7 +1244,10 @@ CURATED_CAREER_RECORDS: Dict[str, CareerKnowledgeRecord] = {
             source_name="Institute of Chartered Accountants of India (ICAI)",
             source_url="https://www.icai.org/",
             verification_date="2026-11-01",
+            confidence=0.98,
             regulatory_status=RegulatoryStatus.MANDATORY_STATUTORY.value,
+            record_provenance="curated_benchmark",
+            verification_status="manually_verified",
             notes="Governed strictly under the Chartered Accountants Act, 1949.",
         ),
     ),
@@ -1371,7 +1385,10 @@ CURATED_CAREER_RECORDS: Dict[str, CareerKnowledgeRecord] = {
             source_name="Directorate General of Training (DGT) & NCVET",
             source_url="https://dgt.gov.in/",
             verification_date="2026-11-01",
+            confidence=0.98,
             regulatory_status=RegulatoryStatus.INDUSTRY_STANDARD.value,
+            record_provenance="curated_benchmark",
+            verification_status="manually_verified",
             notes="Standard Craftsman Training Scheme (CTS) curriculum prescribed by DGT, Ministry of Skill Development & Entrepreneurship.",
         ),
     ),
@@ -1504,7 +1521,10 @@ CURATED_CAREER_RECORDS: Dict[str, CareerKnowledgeRecord] = {
             source_name="Indian Council of Agricultural Research (ICAR)",
             source_url="https://icar.org.in/",
             verification_date="2026-11-01",
+            confidence=0.98,
             regulatory_status=RegulatoryStatus.INDUSTRY_STANDARD.value,
+            record_provenance="curated_benchmark",
+            verification_status="manually_verified",
             notes="Curriculum governed under the 5th Deans' Committee Recommendations of ICAR.",
         ),
     ),
@@ -1629,7 +1649,10 @@ CURATED_CAREER_RECORDS: Dict[str, CareerKnowledgeRecord] = {
             source_name="All India Council for Technical Education (AICTE)",
             source_url="https://www.aicte-india.org/",
             verification_date="2026-11-01",
+            confidence=0.98,
             regulatory_status=RegulatoryStatus.INDUSTRY_STANDARD.value,
+            record_provenance="curated_benchmark",
+            verification_status="manually_verified",
             notes="3-Year Diploma curriculum governed under AICTE technical education norms.",
         ),
     ),
@@ -1769,7 +1792,10 @@ CURATED_CAREER_RECORDS: Dict[str, CareerKnowledgeRecord] = {
             source_name="Pharmacy Council of India (PCI) & Pharmacy Act 1948",
             source_url="https://www.pci.nic.in/",
             verification_date="2026-11-01",
+            confidence=0.98,
             regulatory_status=RegulatoryStatus.MANDATORY_STATUTORY.value,
+            record_provenance="curated_benchmark",
+            verification_status="manually_verified",
             notes="Governed strictly under the Pharmacy Act, 1948 and Pharmacy Practice Regulations.",
         ),
     ),
@@ -1898,7 +1924,10 @@ CURATED_CAREER_RECORDS: Dict[str, CareerKnowledgeRecord] = {
             source_name="AICTE & National Skill Development Corporation (NSDC)",
             source_url="https://www.nsdcindia.org/",
             verification_date="2026-11-01",
+            confidence=0.98,
             regulatory_status=RegulatoryStatus.INDUSTRY_STANDARD.value,
+            record_provenance="curated_benchmark",
+            verification_status="manually_verified",
             notes="Mechatronics curriculum aligned with AICTE and Sector Skill Council for Capital Goods & Automotives.",
         ),
     ),
@@ -2023,11 +2052,304 @@ CURATED_CAREER_RECORDS: Dict[str, CareerKnowledgeRecord] = {
             source_name="Ministry of New & Renewable Energy (MNRE) & Skill Council for Green Jobs (SCGJ)",
             source_url="https://mnre.gov.in/",
             verification_date="2026-11-01",
+            confidence=0.98,
             regulatory_status=RegulatoryStatus.INDUSTRY_STANDARD.value,
+            record_provenance="curated_benchmark",
+            verification_status="manually_verified",
             notes="Aligned with UGC B.Voc National Skills Qualifications Framework (NSQF Level 7).",
         ),
     ),
+    # ------------------------------------------------------------------------
+    # 11. Dental Surgeon / BDS - Mandatory NDC/DCI Licensing
+    # ------------------------------------------------------------------------
+    "bds-dentist": CareerKnowledgeRecord(
+        id="bds-dentist",
+        slug="bds-dentist",
+        soc_code="29-1021.00",
+        nco_code="2261.0101",
+        canonical_title="Dental Surgeon (BDS Doctor)",
+        alternative_job_titles=[
+            "Dentist",
+            "Dental Practitioner",
+            "Orthodontist (PG)",
+            "Oral & Maxillofacial Surgeon (PG)",
+            "Prosthodontist (PG)",
+        ],
+        category="Healthcare & Medicine",
+        industry="Hospital & Healthcare Services",
+        domain=AcademicDomain.MEDICAL_HEALTHCARE.value,
+        description="Diagnoses, prevents, and treats diseases, injuries, and malformations of teeth, gums, and oral cavity tissues in accordance with DCI and National Dental Commission clinical standards.",
+        work_profile=WorkProfile(
+            main_responsibilities=[
+                "Perform oral examinations, review dental radiographs (OPG/IOPA), and diagnose dental caries, periodontal diseases, and oral lesions.",
+                "Execute operative restorative procedures, root canal treatments (RCT), composite restorations, and crowns/bridges.",
+                "Administer local dental anesthesia, perform minor oral surgical extractions, and manage postoperative pain.",
+                "Educate patients on preventive oral hygiene, fluoride treatments, and dietary habits.",
+                "Maintain strict sterilization, autoclave protocols, and biohazard medical waste compliance.",
+            ],
+            typical_daily_activities=[
+                {"time": "09:00 AM", "activity": "Sterilization check of dental autoclaves, handpieces, and setup of morning surgical trays."},
+                {"time": "09:30 AM", "activity": "Patient consultations, diagnostic intraoral X-ray assessments, and treatment planning."},
+                {"time": "11:30 AM", "activity": "Operative dental procedures: cavity preparations, aesthetic composite fillings, and crown impressions."},
+                {"time": "02:30 PM", "activity": "Endodontic therapies (root canals) and minor oral surgical tooth extractions."},
+                {"time": "04:30 PM", "activity": "Post-procedure reviews, lab communication for prosthetic fabrication, and patient documentation."},
+            ],
+            work_environment="Indoor / Dental clinic, multi-specialty hospital, or dental college operatory.",
+            common_employment_sectors=[
+                "Private Dental Clinics & Polyclinics",
+                "Corporate Healthcare Chains (Apollo White Dental, Clove Dental)",
+                "Government District Hospitals & CHCs (via State PSC)",
+                "Academic Dental Colleges & Research Institutes",
+            ],
+            entry_level_job_titles=["Junior Resident (Dental)", "Associate Dentist", "Clinical Dental Officer"],
+            career_progression=[
+                "Dental Intern (1 year)",
+                "Junior Dental Surgeon / Associate Dentist (0-3 years)",
+                "Senior Dental Surgeon / Private Practice Principal (3-7 years)",
+                "MDS Specialist / Clinical Director / Professor (7+ years)",
+            ],
+        ),
+        competencies=[
+            Competency(
+                id="clinical_dentistry",
+                name="Clinical Dental Diagnosis & Operative Dentistry",
+                category="technical",
+                description="Diagnosing dental conditions, interpreting digital radiographs, and executing restorative fillings.",
+                proficiency_level="advanced",
+                importance="mandatory",
+                demonstration_methods=["Clinical case documentation during BDS rotatory internship", "State Dental Council verified BDS degree"],
+                assessment_rubric={"beginner": "Understands tooth anatomy and basic caries diagnosis.", "intermediate": "Performs aesthetic class I-V composite restorations and crown preps.", "advanced": "Executes complex full-mouth rehabilitation and microscopic endodontics."}
+            ),
+            Competency(
+                id="oral_surgery_basics",
+                name="Local Anesthesia & Minor Oral Surgery",
+                category="technical",
+                description="Administering nerve blocks (inferior alveolar, posterior superior) and performing uncomplicated extractions.",
+                proficiency_level="intermediate",
+                importance="mandatory",
+                demonstration_methods=["Logbook of verified tooth extractions and surgical procedures under clinical faculty"],
+                assessment_rubric={}
+            ),
+            Competency(
+                id="patient_communication",
+                name="Chairside Patient Empathy & Pain Management",
+                category="soft",
+                description="Managing patient dental anxiety, clear communication of procedural risks, and informed consent.",
+                proficiency_level="intermediate",
+                importance="essential",
+                demonstration_methods=["Structured patient satisfaction reviews and simulated OSCE clinical evaluation"],
+                assessment_rubric={}
+            ),
+        ],
+        education_pathways=EducationPathway(
+            relevant_class_10_subjects=["Science (Physics, Chemistry, Biology)", "Mathematics", "English"],
+            relevant_class_12_streams=["Science — PCB (Physics, Chemistry, Biology mandatory) with English"],
+            relevant_diploma_iti=[],
+            required_undergraduate=["Bachelor of Dental Surgery (BDS) from a DCI/NDC-recognized dental college"],
+            preferred_undergraduate=["Bachelor of Dental Surgery (BDS)"],
+            alternative_undergraduate=[],
+            relevant_postgraduate=[
+                "Master of Dental Surgery (MDS) in Orthodontics & Dentofacial Orthopedics",
+                "Master of Dental Surgery (MDS) in Conservative Dentistry & Endodontics",
+                "Master of Dental Surgery (MDS) in Oral & Maxillofacial Surgery",
+                "Master of Dental Surgery (MDS) in Prosthodontics & Crown Bridge",
+            ],
+            alternative_entry_pathways=[],
+            academic_prerequisites=[
+                "Mandatory qualification in National Eligibility cum Entrance Test (NEET-UG)",
+                "Minimum 50% aggregate marks in 10+2 PCB (40% for reserved categories) as prescribed by DCI/NDC regulations",
+                "Completion of 4 years academic coursework followed by 1 full year of compulsory rotating paid internship",
+            ],
+            mandatory_licensing=StatutoryLicensing(
+                is_mandatory=True,
+                regulatory_body="National Dental Commission (NDC) / Dental Council of India (DCI) & State Dental Council",
+                statutory_act="National Dental Commission Act, 2023 (formerly Dentists Act, 1948)",
+                licensing_exam="NEET-UG for admission / National Exit Test (Dental - NExT) under NDC Act",
+                internship_requirement="1 Year Compulsory Paid Rotatory Dental Internship in an approved teaching dental hospital",
+                notes="MANDATORY STATUTORY REQUIREMENT: Under the National Dental Commission Act 2023 and Dentists Act 1948, practicing dentistry in India strictly requires registration with a State Dental Council / National Dental Register.",
+            ),
+            eligibility_limitations=[
+                "Candidates without 10+2 Physics, Chemistry, Biology are legally ineligible for NEET-UG and BDS admissions.",
+                "Engineers, Arts, Commerce, Diploma, and ITI graduates cannot transition into BDS without repeating 10+2 PCB and clearing NEET-UG.",
+            ],
+        ),
+        experience_profile=ExperienceProfile(
+            fresher_eligible=True,
+            entry_experience_level="no_experience",
+            internship_pathways=["1-Year Compulsory Rotatory Paid Dental Internship"],
+            portfolio_expectations=["Certified DCI Dental Internship Logbook with verified procedural quotas"],
+            career_switch_friendliness="none",
+            transferable_experience_notes="Non-dental degrees cannot transition into clinical dental surgery under Indian statutory regulations.",
+        ),
+        work_preferences=WorkPreferences(
+            riasec_code="IRS",
+            people_vs_data="people",
+            team_vs_independent="team",
+            practical_vs_theoretical="practical",
+            creative_vs_structured="structured",
+            indoor_vs_outdoor="indoor",
+        ),
+        transition_routes=[],
+        related_career_slugs=["general-medical-practitioner", "pharmacist"],
+        source_metadata=SourceMetadata(
+            source_name="National Dental Commission (NDC) & Dental Council of India (DCI)",
+            source_url="https://dciindia.gov.in/",
+            verification_date="2026-11-01",
+            regional_scope="India (National)",
+            confidence=0.98,
+            regulatory_status=RegulatoryStatus.MANDATORY_STATUTORY.value,
+            record_provenance="curated_benchmark",
+            verification_status="manually_verified",
+            notes="Governed strictly under the National Dental Commission Act, 2023 (Act No. 33 of 2023) and Dentists Act 1948.",
+        ),
+    ),
+
+    # ------------------------------------------------------------------------
+    # 12. Registered Nurse & Midwife - Mandatory NNMC/INC Licensing
+    # ------------------------------------------------------------------------
+    "registered-nurse": CareerKnowledgeRecord(
+        id="registered-nurse",
+        slug="registered-nurse",
+        soc_code="29-1141.00",
+        nco_code="2221.0101",
+        canonical_title="Registered Nurse & Midwife (RN & RM)",
+        alternative_job_titles=[
+            "Staff Nurse",
+            "Nursing Officer",
+            "Clinical Nurse",
+            "Critical Care Nurse",
+            "Pediatric Nurse",
+        ],
+        category="Healthcare & Medicine",
+        industry="Hospital & Healthcare Services",
+        domain=AcademicDomain.MEDICAL_HEALTHCARE.value,
+        description="Assesses patient health problems, administers medications and treatments, assists physicians with procedures, and provides bedside care in compliance with Indian Nursing Council standards.",
+        work_profile=WorkProfile(
+            main_responsibilities=[
+                "Assess vital signs, perform clinical triage, and monitor patient health trajectory in inpatient wards and ICUs.",
+                "Administer prescribed oral, intravenous (IV), intramuscular (IM), and subcutaneous medications calculating safe dosages.",
+                "Execute wound dressings, catheterizations, IV cannulations, and nasogastric tube placements following aseptic protocols.",
+                "Maintain accurate clinical flow charts, EHR nursing notes, and execute safe shift handovers.",
+                "Respond to emergency medical codes (Code Blue), initiate basic life support (BLS), and assist in resuscitation.",
+            ],
+            typical_daily_activities=[
+                {"time": "07:00 AM", "activity": "Bedside shift handover, review patient charts, and administer morning medication rounds."},
+                {"time": "09:30 AM", "activity": "Assist physicians and consultants during clinical rounds, note updated orders and diagnostic tests."},
+                {"time": "11:30 AM", "activity": "Wound care dressings, IV fluid monitoring, and assisting patients with clinical recovery protocols."},
+                {"time": "01:30 PM", "activity": "Lunch break and continuous monitoring of patient telemetry and vital parameters."},
+                {"time": "02:30 PM", "activity": "Document nursing interventions in hospital EHR, prepare afternoon handover report."},
+            ],
+            work_environment="Indoor / Multi-specialty hospital wards, intensive care units (ICUs), emergency departments, or community clinics.",
+            common_employment_sectors=[
+                "Government Hospitals & AIIMS Institutes (via NORCET Nursing Officer Exam)",
+                "Private Healthcare Chains (Apollo, Fortis, Max, Manipal)",
+                "State Health Mission & Primary Health Centres (PHCs)",
+                "International Healthcare Systems (NHS UK, Gulf GCC, USA NCLEX-RN)",
+            ],
+            entry_level_job_titles=["Staff Nurse Grade II", "Junior Nursing Officer", "Graduate Nurse Trainee"],
+            career_progression=[
+                "Staff Nurse / Junior Nursing Officer (0-3 years)",
+                "Senior Staff Nurse / In-Charge Nurse (3-7 years)",
+                "Nursing Supervisor / Assistant Nursing Superintendent (7-12 years)",
+                "Chief Nursing Officer (CNO) / Director of Nursing (12+ years)",
+            ],
+        ),
+        competencies=[
+            Competency(
+                id="patient_assessment_monitoring",
+                name="Patient Assessment & Vital Signs Monitoring",
+                category="technical",
+                description="Assessing vital signs, identifying deterioration cues, Glasgow Coma Scale (GCS), and early warning scores.",
+                proficiency_level="advanced",
+                importance="mandatory",
+                demonstration_methods=["Clinical rotations logbook verified by nursing superintendent", "State Nursing Council registration certificate"],
+                assessment_rubric={"beginner": "Records temperature, pulse, respiration, and BP accurately.", "intermediate": "Identifies early sepsis warning signs, interprets telemetry ECG, and titrates IV pressors.", "advanced": "Leads ICU critical nursing care, hemodialysis support, and ECMO patient monitoring."}
+            ),
+            Competency(
+                id="medication_administration",
+                name="Pharmacology Dosage & Sterile Administration",
+                category="technical",
+                description="Executing the 10 Rights of Medication Administration, pediatric weight-based calculations, and IV infusion maintenance.",
+                proficiency_level="advanced",
+                importance="mandatory",
+                demonstration_methods=["Hospital medication safety clearance and clinical OSCE pharmacology exam"],
+                assessment_rubric={}
+            ),
+            Competency(
+                id="emergency_resuscitation",
+                name="Basic & Advanced Life Support (BLS / ACLS)",
+                category="technical",
+                description="High-quality chest compressions, bag-valve mask ventilation, automated external defibrillator (AED) operation.",
+                proficiency_level="intermediate",
+                importance="essential",
+                demonstration_methods=["AHA / Indian Resuscitation Council certified BLS/ACLS provider card"],
+                assessment_rubric={}
+            ),
+        ],
+        education_pathways=EducationPathway(
+            relevant_class_10_subjects=["Science", "Mathematics", "English"],
+            relevant_class_12_streams=["Science — PCB (Physics, Chemistry, Biology with English mandatory, min 45% aggregate)"],
+            relevant_diploma_iti=[],
+            required_undergraduate=["Bachelor of Science in Nursing (B.Sc Nursing - 4 Years)"],
+            preferred_undergraduate=["Bachelor of Science in Nursing (B.Sc Nursing)"],
+            alternative_undergraduate=["General Nursing and Midwifery (GNM - 3-Year Diploma) followed by Post-Basic B.Sc Nursing"],
+            relevant_postgraduate=[
+                "Master of Science in Nursing (M.Sc Nursing) in Medical-Surgical Nursing",
+                "Master of Science in Nursing (M.Sc Nursing) in Community Health Nursing",
+                "Master of Science in Nursing (M.Sc Nursing) in Obstetrics & Gynecological Nursing",
+                "Master of Science in Nursing (M.Sc Nursing) in Child Health (Pediatric) Nursing",
+            ],
+            alternative_entry_pathways=[],
+            academic_prerequisites=[
+                "10+2 with Science (PCB) and English with minimum 45% marks (40% for SC/ST)",
+                "State Nursing Entrance Exam / NEET-UG (where mandated by university/state)",
+                "Completion of mandatory clinical rotational postings in recognized multi-specialty teaching hospital",
+            ],
+            mandatory_licensing=StatutoryLicensing(
+                is_mandatory=True,
+                regulatory_body="National Nursing and Midwifery Commission (NNMC) / Indian Nursing Council (INC) & State Nursing Council",
+                statutory_act="National Nursing and Midwifery Commission Act, 2023 (formerly Indian Nursing Council Act, 1947)",
+                licensing_exam="State Nursing Council Registration Examination / National Registration Assessment",
+                internship_requirement="Integrated clinical internship included in 4th year B.Sc Nursing curriculum",
+                notes="MANDATORY STATUTORY REQUIREMENT: Under the National Nursing and Midwifery Commission Act 2023, practicing clinical nursing strictly requires registration as Registered Nurse and Registered Midwife (RN & RM) with the State Nurses and Midwives Council.",
+            ),
+            eligibility_limitations=[
+                "Candidates without 10+2 Physics, Chemistry, Biology are legally ineligible for B.Sc Nursing admissions.",
+                "Non-science graduates cannot transition into clinical nursing without formal GNM/B.Sc Nursing qualification.",
+            ],
+        ),
+        experience_profile=ExperienceProfile(
+            fresher_eligible=True,
+            entry_experience_level="no_experience",
+            internship_pathways=["Hospital clinical rotational postings during degree program"],
+            portfolio_expectations=["Certified clinical nursing skills logbook endorsed by nursing principal"],
+            career_switch_friendliness="none",
+            transferable_experience_notes="Clinical nursing requires accredited degree/diploma and council licensure under Indian statutory regulations.",
+        ),
+        work_preferences=WorkPreferences(
+            riasec_code="SIR",
+            people_vs_data="people",
+            team_vs_independent="team",
+            practical_vs_theoretical="practical",
+            creative_vs_structured="structured",
+            indoor_vs_outdoor="indoor",
+        ),
+        transition_routes=[],
+        related_career_slugs=["general-medical-practitioner", "pharmacist"],
+        source_metadata=SourceMetadata(
+            source_name="Indian Nursing Council (INC) & National Nursing and Midwifery Commission (NNMC)",
+            source_url="https://www.indiannursingcouncil.org/",
+            verification_date="2026-11-01",
+            regional_scope="India (National)",
+            confidence=0.98,
+            regulatory_status=RegulatoryStatus.MANDATORY_STATUTORY.value,
+            record_provenance="curated_benchmark",
+            verification_status="manually_verified",
+            notes="Governed strictly under the National Nursing and Midwifery Commission Act, 2023 (Act No. 26 of 2023) and State Nurses Registration Acts.",
+        ),
+    ),
 }
+
 
 
 # ============================================================================
@@ -2213,8 +2535,11 @@ def _project_onet_career_to_record(onet_item: dict) -> CareerKnowledgeRecord:
             source_name=f"O*NET 28.0 Database (SOC {soc}) & National Career Service (NCS) India",
             source_url="https://www.onetonline.org/",
             verification_date="2026-11-01",
+            confidence=0.65,
             regulatory_status=RegulatoryStatus.UNREGULATED_SKILL_FIRST.value,
-            notes="Standard occupation profile mapped from O*NET taxonomy to Indian education equivalents.",
+            record_provenance="projected_onet",
+            verification_status="inferred_heuristics",
+            notes="Automatically projected from O*NET 28.0; educational pathways and competencies are inferred heuristics requiring domain review.",
         ),
     )
 
@@ -2268,7 +2593,9 @@ class CareerKnowledgeBase:
                 print(f"Warning: Failed to load onet_careers.json into KnowledgeBase: {e}")
 
         self._initialized = True
-        print(f"Career Knowledge Base initialized: {len(self._all_records)} verified career records loaded.")
+        curated_cnt = len([r for r in self._all_records if r.source_metadata.record_provenance == "curated_benchmark"])
+        projected_cnt = len([r for r in self._all_records if r.source_metadata.record_provenance == "projected_onet"])
+        print(f"Career Knowledge Base initialized: {len(self._all_records)} total records loaded ({curated_cnt} curated Indian benchmarks, {projected_cnt} projected O*NET records with inferred pathways).")
 
     def _register_record(self, record: CareerKnowledgeRecord):
         self._by_slug[record.slug] = record
@@ -2508,8 +2835,14 @@ class CareerKnowledgeBase:
         if classified.level == EducationLevel.HIGHER_SECONDARY.value:
             spec_lower = (classified.specialization or "").lower()
 
-            # Medical (MBBS / Dental / Clinical) stream restrictions
-            if ("medical-practitioner" in career.slug or "mbbs" in career.slug or "dental" in career.slug):
+            # Medical, Dental, and Nursing stream restrictions
+            if (
+                "medical-practitioner" in career.slug
+                or "mbbs" in career.slug
+                or "dentist" in career.slug
+                or "dental" in career.slug
+                or "nurse" in career.slug
+            ):
                 is_biology_stream = (
                     ("pcb" in spec_lower or "biology" in spec_lower or "pcmb" in spec_lower)
                     or ("medical" in spec_lower and "non-medical" not in spec_lower)
@@ -2518,14 +2851,14 @@ class CareerKnowledgeBase:
                     return EligibilityResult(
                         is_eligible=True,
                         eligibility_type="preferred_pathway",
-                        reason=f"Class 12 Science (PCB) students are directly eligible to appear for NEET-UG to pursue {career.canonical_title}.",
-                        recommended_bridge_steps=["Prepare and appear for NEET-UG examination."],
+                        reason=f"Class 12 Science (PCB) students are directly eligible to pursue entrance examinations for {career.canonical_title}.",
+                        recommended_bridge_steps=["Prepare and appear for relevant entrance examination (NEET-UG / State Nursing CET)."],
                     )
                 else:
                     return EligibilityResult(
                         is_eligible=False,
                         eligibility_type="restricted_ineligible",
-                        reason="NEET-UG and MBBS/BDS admission statutorily requires Physics, Chemistry, and Biology in 10+2.",
+                        reason=f"Admission into degree programs leading to {career.canonical_title} statutorily requires Physics, Chemistry, and Biology in 10+2.",
                         prerequisites_met=False,
                         missing_prerequisites=["10+2 with Biology / PCB"],
                         recommended_bridge_steps=["Additional qualification in 10+2 Biology via recognized Open Board (NIOS) if eligible."],
@@ -2619,6 +2952,40 @@ class CareerKnowledgeBase:
                         prerequisites_met=False,
                         missing_prerequisites=["LLB Degree (3-Year or 5-Year)", "Bar Council Enrollment", "AIBE Examination"],
                         recommended_bridge_steps=["Enroll in a 3-Year LLB (if already a graduate) or 5-Year Integrated Law program."],
+                    )
+
+            # Dentistry (Dental Surgeon / BDS)
+            if "dentist" in career.slug or "dental" in career.slug:
+                if qual not in ["bds", "mds"]:
+                    return EligibilityResult(
+                        is_eligible=False,
+                        eligibility_type="restricted_ineligible",
+                        reason=(
+                            f"Practicing as a {career.canonical_title} statutorily requires a BDS degree "
+                            f"recognized by the {licensing.regulatory_body} under the {licensing.statutory_act}."
+                        ),
+                        mandatory_licensing_required=True,
+                        licensing_details=lic_dict,
+                        prerequisites_met=False,
+                        missing_prerequisites=["BDS Degree", "1-Year Paid Rotatory Internship", "State Dental Council Registration"],
+                        recommended_bridge_steps=["Clear NEET-UG and enroll in a DCI/NDC-recognized 5-year BDS program."],
+                    )
+
+            # Nursing (Registered Nurse & Midwife)
+            if "nurse" in career.slug or "nursing" in career.slug:
+                if qual not in ["bsc_nursing", "msc_nursing", "gnm"]:
+                    return EligibilityResult(
+                        is_eligible=False,
+                        eligibility_type="restricted_ineligible",
+                        reason=(
+                            f"Practicing as a {career.canonical_title} statutorily requires an INC/NNMC-recognized "
+                            f"nursing qualification and registration under the {licensing.statutory_act}."
+                        ),
+                        mandatory_licensing_required=True,
+                        licensing_details=lic_dict,
+                        prerequisites_met=False,
+                        missing_prerequisites=["B.Sc Nursing or GNM Qualification", "State Nursing Council Registration (RN & RM)"],
+                        recommended_bridge_steps=["Enroll in an accredited 4-Year B.Sc Nursing or 3-Year GNM program."],
                     )
 
             # Pharmacy (Pharmacist)

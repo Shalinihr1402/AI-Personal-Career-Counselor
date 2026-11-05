@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   Sparkles, ArrowRight, ArrowLeft, Target,
   AlertTriangle, RotateCcw, Compass, Mic, FileText,
-  Lock, CheckCircle2, Check,
+  Lock, CheckCircle2, Check, ShieldCheck, GraduationCap,
+  Info,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
@@ -14,8 +15,10 @@ import { confirmCareerGoal } from '../lib/profile';
 import { EMPTY_KNOW_ME, MAX_VALUES, SITUATION_QUESTIONS, knowMeForApi, type KnowMe } from '../lib/knowMe';
 import {
   fetchQuestions, scoreAssessment, fetchCareerMatches,
+  fetchAdaptiveQuestions, scoreAdaptiveAssessment, buildProfilePayload,
   DIM_LABEL, DIM_ORDER, WORK_STYLE_QUESTIONS,
   type ScenarioQuestion, type ScoreResult, type MatchResult, type Dim, type CareerMatch,
+  type AdaptiveQuestion, type AdaptiveScoreResult,
 } from '../lib/assessment';
 
 type Phase =
@@ -25,6 +28,52 @@ type Phase =
 
 const STORAGE_ANSWERS_KEY = 'career_discovery_answers';
 const STORAGE_INDEX_KEY = 'career_discovery_index';
+
+const STAGE_LABELS: Record<string, { title: string; subtitle: string }> = {
+  school_10th: {
+    title: 'School Education • Class 8–10',
+    subtitle: 'Age-appropriate exploratory scenarios designed to uncover natural inclinations without premature technical jargon.',
+  },
+  higher_secondary_12th: {
+    title: 'Higher Secondary • Class 11–12',
+    subtitle: 'Stream-calibrated scenarios balancing academic streams (PCM, PCB, Commerce, Arts) with competitive readiness.',
+  },
+  diploma_polytechnic: {
+    title: 'Polytechnic & ITI Technical',
+    subtitle: 'Applied engineering and practical trade scenarios evaluating hands-on technical problem solving.',
+  },
+  college_ug_pg: {
+    title: 'Higher Education • Degree & Professional',
+    subtitle: 'Domain competency scenarios evaluating production problem-solving, clinical empathy, or statutory compliance.',
+  },
+  career_transition: {
+    title: 'Career Growth & Professional Transition',
+    subtitle: 'Transferable skill scenarios focusing on portfolio demonstration and bridge competencies.',
+  },
+  general: {
+    title: 'Comprehensive Career Discovery',
+    subtitle: 'Holistic interest and competency evaluation mapped to 1,016 occupational pathways.',
+  },
+};
+
+const CATEGORY_BADGES: Record<string, { label: string; className: string }> = {
+  competency_demonstration: {
+    label: 'Competency Evaluation',
+    className: 'bg-blue-50 text-blue-700 border-blue-200',
+  },
+  practical_scenario: {
+    label: 'Situational Judgment',
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  },
+  interest_exploration: {
+    label: 'Interest Discovery',
+    className: 'bg-purple-50 text-purple-700 border-purple-200',
+  },
+  workstyle_fit: {
+    label: 'Workstyle Fit',
+    className: 'bg-amber-50 text-amber-700 border-amber-200',
+  },
+};
 
 /** The discovery journey as the student sees it (one entry per visible section). */
 const SECTIONS: { id: Phase; label: string }[] = [
@@ -73,6 +122,10 @@ const Assessment: React.FC = () => {
   const [mode, setMode] = useState<'voice' | 'quiz'>('quiz');
   const [phase, setPhase] = useState<Phase>('loading');
   const [questions, setQuestions] = useState<ScenarioQuestion[]>([]);
+  const [adaptiveQuestions, setAdaptiveQuestions] = useState<AdaptiveQuestion[]>([]);
+  const [calibratedStage, setCalibratedStage] = useState<string>('general');
+  const [adaptiveScore, setAdaptiveScore] = useState<AdaptiveScoreResult | null>(null);
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [workStyle, setWorkStyle] = useState<Record<string, string>>({});
@@ -96,23 +149,89 @@ const Assessment: React.FC = () => {
     }
   }, [profile?.knowMe]);
 
-  // Load questions and restore state or saved results
+  const questionsLoadedRef = useRef(false);
+
+  // Load questions calibrated to user's stage and restore state or saved results
   useEffect(() => {
     let cancelled = false;
-    fetchQuestions()
+
+    if (saved) {
+      // Returning student: show their saved results
+      setScore({ code: saved.code, scores: saved.scores });
+      setMatch({ source: saved.source, matches: saved.matches });
+      setResultsAt(saved.createdAt);
+      if (saved.adaptiveEvidence) {
+        setAdaptiveScore(saved.adaptiveEvidence);
+        if (saved.adaptiveEvidence.stage) {
+          setCalibratedStage(saved.adaptiveEvidence.stage);
+        }
+      }
+      setPhase('results');
+      setMode('quiz');
+      return;
+    }
+
+    if (questionsLoadedRef.current) return;
+
+    const payload = buildProfilePayload(profile, knowMe);
+    fetchAdaptiveQuestions(payload)
       .then((data) => {
         if (cancelled) return;
-        setQuestions(data.questions || []);
+        questionsLoadedRef.current = true;
+        setCalibratedStage(data.stage || 'general');
+        const adaptiveList = data.questions || [];
+        setAdaptiveQuestions(adaptiveList);
+        setQuestions(
+          adaptiveList.map((q) => ({
+            id: q.id,
+            scenario: q.prompt,
+            options: q.options.map((opt) => ({
+              id: opt.id,
+              text: opt.text,
+              fields: opt.occupational_fields,
+            })),
+          }))
+        );
 
-        if (saved) {
-          // Returning student: show their saved results
-          setScore({ code: saved.code, scores: saved.scores });
-          setMatch({ source: saved.source, matches: saved.matches });
-          setResultsAt(saved.createdAt);
-          setPhase('results');
-          setMode('quiz');
-        } else {
-          // Attempt refresh recovery from localStorage
+        // Attempt refresh recovery from localStorage
+        try {
+          const cachedAnswers = localStorage.getItem(STORAGE_ANSWERS_KEY);
+          const cachedIndex = localStorage.getItem(STORAGE_INDEX_KEY);
+          if (cachedAnswers) {
+            const parsed = JSON.parse(cachedAnswers);
+            if (parsed && typeof parsed === 'object') {
+              setAnswers(parsed);
+              const answeredCount = Object.keys(parsed).length;
+              if (answeredCount > 0) {
+                setPhase('quiz');
+              } else {
+                setPhase('intro');
+              }
+            } else {
+              setPhase('intro');
+            }
+          } else {
+            setPhase('intro');
+          }
+
+          if (cachedIndex) {
+            const idx = parseInt(cachedIndex, 10);
+            if (!isNaN(idx) && idx >= 0) {
+              setCurrentQuestionIndex(idx);
+            }
+          }
+        } catch {
+          setPhase('intro');
+        }
+      })
+      .catch(async () => {
+        // Fallback to legacy endpoint if adaptive endpoint is unreachable
+        try {
+          const fallbackData = await fetchQuestions();
+          if (cancelled) return;
+          questionsLoadedRef.current = true;
+          setQuestions(fallbackData.questions || []);
+
           try {
             const cachedAnswers = localStorage.getItem(STORAGE_ANSWERS_KEY);
             const cachedIndex = localStorage.getItem(STORAGE_INDEX_KEY);
@@ -142,18 +261,17 @@ const Assessment: React.FC = () => {
           } catch {
             setPhase('intro');
           }
+        } catch (e: unknown) {
+          if (cancelled) return;
+          setError(e instanceof Error ? e.message : 'Could not load the assessment.');
+          setPhase('error');
         }
-      })
-      .catch((e: unknown) => {
-        if (cancelled) return;
-        setError(e instanceof Error ? e.message : 'Could not load the assessment.');
-        setPhase('error');
       });
 
     return () => {
       cancelled = true;
     };
-  }, [saved]);
+  }, [saved, profile]);
 
   const initializedSavedRef = useRef(false);
   useEffect(() => {
@@ -186,6 +304,8 @@ const Assessment: React.FC = () => {
   };
 
   const submit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
     setPhase('scoring');
     setError(null);
     setSaveWarning(null);
@@ -193,7 +313,16 @@ const Assessment: React.FC = () => {
     let m: MatchResult;
 
     try {
-      s = await scoreAssessment(answers);
+      const payload = buildProfilePayload(profile, knowMe);
+      const adaptiveRes = await scoreAdaptiveAssessment(answers, payload);
+      setAdaptiveScore(adaptiveRes);
+      s = {
+        scores: adaptiveRes.scores,
+        code: adaptiveRes.code,
+        top_fields: adaptiveRes.top_fields,
+        field_scores: adaptiveRes.field_scores,
+      };
+
       m = await fetchCareerMatches({
         riasec_scores: s.scores,
         code: s.code,
@@ -204,16 +333,33 @@ const Assessment: React.FC = () => {
         strengths_note: profile?.strengthsNote || undefined,
         know_me: knowMeForApi(knowMe),
       });
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Something went wrong. Is the backend running?');
-      setPhase('error');
-      return;
+    } catch {
+      try {
+        // Fallback to legacy scoring if adaptive endpoint fails
+        s = await scoreAssessment(answers);
+        m = await fetchCareerMatches({
+          riasec_scores: s.scores,
+          code: s.code,
+          interests: profile?.interests ?? [],
+          education: [profile?.course, profile?.year].filter(Boolean).join(' — ') || undefined,
+          work_style: workStyle,
+          resume_skills: profile?.resume?.skills ?? [],
+          strengths_note: profile?.strengthsNote || undefined,
+          know_me: knowMeForApi(knowMe),
+        });
+      } catch (fallbackErr: unknown) {
+        setError(fallbackErr instanceof Error ? fallbackErr.message : 'Something went wrong. Is the backend running?');
+        setPhase('error');
+        setSubmitting(false);
+        return;
+      }
     }
 
     setScore(s);
     setMatch(m);
     setResultsAt(new Date().toISOString());
     setPhase('results');
+    setSubmitting(false);
 
     // Clear local storage cache upon successful completion
     try {
@@ -233,6 +379,7 @@ const Assessment: React.FC = () => {
         code: s.code,
         matches: m.matches,
         source: m.source,
+        adaptiveEvidence: adaptiveRes,
       });
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -276,6 +423,7 @@ const Assessment: React.FC = () => {
     setAnswers({});
     setWorkStyle({});
     setScore(null);
+    setAdaptiveScore(null);
     setMatch(null);
     setResultsAt(null);
     setCurrentQuestionIndex(0);
@@ -312,9 +460,12 @@ const Assessment: React.FC = () => {
 
   const topLetters = score ? score.code.split('') : [];
   const currentQuestion = questions[currentQuestionIndex];
+  const currentAdaptive = adaptiveQuestions[currentQuestionIndex];
   const isCurrentAnswered = currentQuestion && Boolean(answers[currentQuestion.id]);
   const answeredCount = Object.keys(answers).length;
   const totalQuestions = questions.length || 12;
+  const stageInfo = STAGE_LABELS[calibratedStage] || STAGE_LABELS.general;
+  const categoryInfo = currentAdaptive ? CATEGORY_BADGES[currentAdaptive.category] : null;
 
   return (
     <div className="min-h-screen bg-[#F8F9FE] font-sans pb-16">
@@ -429,31 +580,31 @@ const Assessment: React.FC = () => {
           <div className="bg-white rounded-[1.5rem] p-8 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-lg">
-                12
+                {totalQuestions}
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">12 High-Value Discovery Scenarios</h2>
-                <p className="text-xs text-slate-500">Takes about 3–4 minutes • Mandatory before counselor conversation</p>
+                <h2 className="text-lg font-bold text-slate-900">{stageInfo.title}</h2>
+                <p className="text-xs text-slate-500">
+                  {totalQuestions} questions calibrated to your profile • ~3–4 minutes
+                </p>
               </div>
             </div>
 
             <p className="text-slate-600 mb-4 leading-relaxed">
-              Explore 12 real-world scenarios designed to reveal what you genuinely enjoy doing, how you solve problems,
-              and what outcomes energize you. Covers all major career domains across healthcare, engineering, arts,
-              entrepreneurship, public service, sciences, and logistics.
+              {stageInfo.subtitle}
             </p>
             <ul className="text-sm text-slate-500 space-y-2 mb-6">
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span><strong>No technical knowledge required:</strong> Choose what sounds most exciting to you.</span>
+                <span><strong>Stage-Calibrated:</strong> Questions are tailored specifically to your educational stage and stream.</span>
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span><strong>Holistic scoring:</strong> Evaluates your full profile across 1,016 O*NET careers.</span>
+                <span><strong>No Duplicate Questions:</strong> Deduplicated against your onboarding interests and skills.</span>
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span><strong>Refresh recovery:</strong> Your answers are saved automatically as you go.</span>
+                <span><strong>Evidence-Grounded:</strong> Distinguishes conceptual knowledge from practical workplace problem-solving.</span>
               </li>
             </ul>
             <button
@@ -463,7 +614,7 @@ const Assessment: React.FC = () => {
               }}
               className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#5B21B6] transition-all shadow-md shadow-purple-600/20"
             >
-              Start Discovery Assessment <ArrowRight className="w-4 h-4" />
+              Start Adaptive Assessment <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -489,9 +640,30 @@ const Assessment: React.FC = () => {
 
             {/* Scenario Card */}
             <div className="bg-white rounded-[1.5rem] p-6 sm:p-8 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] mb-6">
-              <div className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-100 mb-4">
-                Scenario {currentQuestionIndex + 1}
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                <div className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-100">
+                  Scenario {currentQuestionIndex + 1}
+                </div>
+                {categoryInfo && (
+                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${categoryInfo.className}`}>
+                    {categoryInfo.label}
+                  </span>
+                )}
+                <span className="text-[11px] font-semibold text-slate-400 ml-auto hidden sm:inline">
+                  {stageInfo.title}
+                </span>
               </div>
+
+              {currentAdaptive?.explanation_tip && (
+                <div className="mb-4 p-3.5 bg-purple-50/60 border border-purple-100 rounded-xl flex items-start gap-2.5 text-xs text-purple-900 leading-relaxed">
+                  <Info className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-bold">Counselor Context: </span>
+                    <span>{currentAdaptive.explanation_tip}</span>
+                  </div>
+                </div>
+              )}
+
               <h2 className="text-lg sm:text-xl font-bold text-slate-900 leading-snug mb-6">
                 {currentQuestion.scenario}
               </h2>
@@ -809,6 +981,269 @@ const Assessment: React.FC = () => {
                   : 'Careers below were matched using rule-based profile alignment.'}
               </p>
             </div>
+
+            {/* Competency Evidence Hierarchy Card */}
+            {adaptiveScore && adaptiveScore.evidence_breakdown && (
+              <div className="bg-white rounded-[1.5rem] p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+                      <ShieldCheck className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="font-bold text-slate-900 text-base">Competency Evidence Hierarchy</h2>
+                      <p className="text-xs text-slate-500">
+                        Separating self-reported skills, conceptual knowledge, and applied situational judgment
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-purple-700 bg-purple-50 px-3 py-1 rounded-full border border-purple-100 self-start sm:self-auto">
+                    4-Tier Evidence Model
+                  </span>
+                </div>
+
+                {/* Tier 1: Self-Reported Skills */}
+                <div>
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-slate-400" />
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                        Tier 1: Self-Reported Skills ({adaptiveScore.evidence_breakdown.self_reported_skills.length})
+                      </h3>
+                    </div>
+                    <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">Declared in onboarding / resume</span>
+                  </div>
+                  {adaptiveScore.evidence_breakdown.self_reported_skills.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {adaptiveScore.evidence_breakdown.self_reported_skills.map((s) => (
+                        <span
+                          key={s.skill}
+                          className="text-xs font-medium text-slate-700 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 flex items-center gap-1.5"
+                        >
+                          <Check className="w-3.5 h-3.5 text-slate-400" />
+                          <span>{s.skill}</span>
+                          <span className="text-[10px] text-slate-400 font-normal ml-0.5">• Self-Reported</span>
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-slate-400 italic">No self-reported skills declared in onboarding.</p>
+                  )}
+                </div>
+
+                {/* Tier 2: Conceptual Knowledge */}
+                <div className="pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-blue-500" />
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                        Tier 2: Conceptual Knowledge ({adaptiveScore.evidence_breakdown.conceptual_knowledge.length})
+                      </h3>
+                    </div>
+                    <span className="text-[11px] text-blue-600 font-medium hidden sm:inline">Multiple-choice domain recall</span>
+                  </div>
+                  {adaptiveScore.evidence_breakdown.conceptual_knowledge.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {adaptiveScore.evidence_breakdown.conceptual_knowledge.map((c) => (
+                        <div key={c.competency_id} className="p-3 bg-blue-50/50 rounded-xl border border-blue-100">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-bold text-blue-950 capitalize">
+                              {c.competency_id.replace(/_/g, ' ')}
+                            </span>
+                            <span className="text-[10px] font-bold text-blue-700 bg-blue-100/70 px-2 py-0.5 rounded-md">
+                              +{c.rubric_points} pts
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-blue-800/80">
+                            Level: <span className="font-semibold capitalize">{c.level}</span> • Conceptual Awareness
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-slate-400 italic">Broad discovery pathway; no specialized conceptual items triggered.</p>
+                  )}
+                </div>
+
+                {/* Tier 3: Applied Scenario Problem-Solving */}
+                <div className="pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-purple-600" />
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-purple-950">
+                        Tier 3: Applied Scenario Problem-Solving ({adaptiveScore.evidence_breakdown.applied_scenario.length})
+                      </h3>
+                    </div>
+                    <span className="text-[11px] text-purple-700 font-medium hidden sm:inline">Situational judgment & code troubleshooting</span>
+                  </div>
+                  {adaptiveScore.evidence_breakdown.applied_scenario.length > 0 ? (
+                    <div className="space-y-2.5">
+                      {adaptiveScore.evidence_breakdown.applied_scenario.map((c) => (
+                        <div key={c.competency_id} className="p-3.5 bg-purple-50/50 rounded-xl border border-purple-100">
+                          <div className="flex items-center justify-between mb-1.5">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-bold text-purple-950 capitalize">
+                                {c.competency_id.replace(/_/g, ' ')}
+                              </span>
+                              <span className="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-md">
+                                Applied Scenario • {c.level}
+                              </span>
+                            </div>
+                            <span className="text-xs font-bold text-purple-800">+{c.rubric_points} pts</span>
+                          </div>
+                          {c.practical_verification_note && (
+                            <p className="text-[11px] text-purple-900/80 leading-relaxed bg-white/80 p-2 rounded-lg border border-purple-100 mt-1.5">
+                              <span className="font-bold">Next Stage Requirement: </span>
+                              {c.practical_verification_note}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-slate-400 italic">No applied scenario items completed in this questionnaire.</p>
+                  )}
+                </div>
+
+                {/* Tier 4: Verified Practical Demonstration (CAPPED BY MCQ) */}
+                <div className="pt-4 border-t border-slate-100">
+                  <div className="p-4 bg-slate-50/90 rounded-2xl border border-slate-200">
+                    <div className="flex items-start gap-3">
+                      <Lock className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                            Tier 4: Verified Practical Demonstration
+                          </h3>
+                          <span className="text-[10px] font-bold bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">
+                            0 Verified Practical Artifacts (Capped by MCQ Standards)
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-600 leading-relaxed">
+                          Multiple-choice responses assess conceptual awareness and situational problem-solving. In compliance with industry standards and statutory licensing frameworks (NMC, BCI, ICAI, AICTE), verified practical proficiency cannot be proven through multiple-choice answers alone and requires verified code repositories, clinical rotation logs, or certified articleship records.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Statutory Career Pathways & Regulatory Eligibility Card */}
+            {adaptiveScore && adaptiveScore.statutory_eligibility && (
+              <div className="bg-white rounded-[1.5rem] p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                      <GraduationCap className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="font-bold text-slate-900 text-base">Statutory Career Eligibility & Pathways</h2>
+                      <p className="text-xs text-slate-500">
+                        Validated against Indian statutory licensing frameworks (NMC, BCI, ICAI, AICTE, NCVT)
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 self-start sm:self-auto">
+                    Regulatory Verification
+                  </span>
+                </div>
+
+                {/* Direct / Preferred Pathways */}
+                {adaptiveScore.statutory_eligibility.eligible_pathways.length > 0 && (
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-800 mb-2.5 flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      Direct & Preferred Pathways ({adaptiveScore.statutory_eligibility.eligible_pathways.length})
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {adaptiveScore.statutory_eligibility.eligible_pathways.map((p) => (
+                        <div key={p.slug} className="p-3.5 bg-emerald-50/60 rounded-xl border border-emerald-100">
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <h4 className="text-xs font-bold text-emerald-950">{p.title}</h4>
+                            <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md shrink-0">
+                              Direct Eligible
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-emerald-900/80 leading-relaxed">{p.reason}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Alternative & Bridge Pathways */}
+                {adaptiveScore.statutory_eligibility.alternative_pathways.length > 0 && (
+                  <div className="pt-4 border-t border-slate-100">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-800 mb-2.5 flex items-center gap-1.5">
+                      <Compass className="w-3.5 h-3.5 text-indigo-600" />
+                      Alternative & Bridge Pathways ({adaptiveScore.statutory_eligibility.alternative_pathways.length})
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {adaptiveScore.statutory_eligibility.alternative_pathways.map((p) => (
+                        <div key={p.slug} className="p-3.5 bg-indigo-50/60 rounded-xl border border-indigo-100">
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <h4 className="text-xs font-bold text-indigo-950">{p.title}</h4>
+                            <span className="text-[10px] font-bold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-md shrink-0">
+                              Bridge Pathway
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-indigo-900/80 leading-relaxed">{p.reason}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Statutory Restrictions */}
+                {adaptiveScore.statutory_eligibility.statutory_restrictions.length > 0 && (
+                  <div className="pt-4 border-t border-slate-100">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-amber-900 mb-2.5 flex items-center gap-1.5">
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                      Statutory Restrictions & Licensing Requirements ({adaptiveScore.statutory_eligibility.statutory_restrictions.length})
+                    </h3>
+                    <div className="space-y-3">
+                      {adaptiveScore.statutory_eligibility.statutory_restrictions.map((p) => (
+                        <div key={p.slug} className="p-3.5 bg-amber-50/70 rounded-xl border border-amber-200/70">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
+                            <h4 className="text-xs font-bold text-amber-950">{p.title}</h4>
+                            {p.regulatory_body && (
+                              <span className="text-[10px] font-bold text-amber-900 bg-amber-100/90 px-2 py-0.5 rounded-md border border-amber-200/60 self-start sm:self-auto">
+                                {p.regulatory_body}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-amber-900/90 leading-relaxed mb-2">{p.reason}</p>
+                          {p.missing_prerequisites && p.missing_prerequisites.length > 0 && (
+                            <div className="text-[11px] text-amber-950 bg-white/80 p-2 rounded-lg border border-amber-200/60 mb-2">
+                              <span className="font-bold">Missing Prerequisites: </span>
+                              {p.missing_prerequisites.join(', ')}
+                            </div>
+                          )}
+                          {p.recommended_bridge_steps && p.recommended_bridge_steps.length > 0 && (
+                            <div className="text-[11px] text-indigo-950 bg-indigo-50/70 p-2 rounded-lg border border-indigo-200/60">
+                              <span className="font-bold text-indigo-900">Recommended Pathway: </span>
+                              {p.recommended_bridge_steps.join(' • ')}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Practical Evidence Disclaimer Banner */}
+            {adaptiveScore && adaptiveScore.practical_disclaimer && (
+              <div className="p-4 bg-slate-100/90 border border-slate-200/80 rounded-2xl flex items-start gap-3">
+                <Info className="w-5 h-5 text-slate-600 shrink-0 mt-0.5" />
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  <span className="font-bold">Statutory Evidence Notice: </span>
+                  {adaptiveScore.practical_disclaimer}
+                </p>
+              </div>
+            )}
 
             {/* Career matches */}
             <div className="space-y-4">

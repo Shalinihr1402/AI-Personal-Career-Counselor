@@ -179,7 +179,7 @@ const getInitialChips = (stage: EducationStage, path?: CareerPath | null) => {
 };
 
 export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
-  const { profile, loading: profileLoading, saveProfile, saveAssessment } = useProfile();
+  const { profile, assessment, loading: profileLoading, saveProfile, saveAssessment } = useProfile();
 
   // Active educational stage (defaults to profile -> localStorage -> sslc_10th)
   const [activeStage, setActiveStage] = useState<EducationStage>(() => {
@@ -455,6 +455,9 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
           interests: profile?.interests,
           strengthsNote: profile?.strengthsNote,
           resume: profile?.resume,
+          riasec_scores: assessment?.scores,
+          riasec_code: assessment?.code,
+          assessment_completed: Boolean(assessment),
         },
         current_stage: currentStage,
         confirmed_evidence: confirmedEvidence,
@@ -466,6 +469,10 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
           userTextLower.includes('recommend') ||
           userTextLower.includes('options') ||
           userTextLower.includes('careers'),
+        assessment_completed: Boolean(assessment),
+        adaptive_evidence: assessment?.adaptiveEvidence || null,
+        riasec_scores: assessment?.scores || null,
+        riasec_code: assessment?.code || null,
       };
 
       const res = await fetch(`${API_BASE}/api/counselor/chat`, {

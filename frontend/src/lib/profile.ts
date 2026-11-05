@@ -1,7 +1,7 @@
 import type { User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 import type { KnowMe } from './knowMe';
-import type { CareerMatch, RiasecScores } from './assessment';
+import type { CareerMatch, RiasecScores, AdaptiveScoreResult } from './assessment';
 import { type CareerMode, type CareerPath, type EducationStage, type OnboardingRecord, CAREER_MODE_TO_PATH, PATH_TO_CAREER_MODE } from './onboarding';
 
 /**
@@ -26,6 +26,7 @@ export interface SavedAssessment {
   source: 'ai' | 'hybrid_vector' | 'rule';
   workStyle: Record<string, string>;
   knowMe?: KnowMe;
+  adaptiveEvidence?: AdaptiveScoreResult | null;
   createdAt: string;
 }
 
@@ -63,6 +64,7 @@ interface AssessmentRow {
   source: 'ai' | 'hybrid_vector' | 'rule';
   work_style: Record<string, string>;
   know_me: KnowMe | null;
+  adaptive_evidence?: AdaptiveScoreResult | null;
   created_at: string;
 }
 
@@ -265,6 +267,11 @@ export function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> 
 }
 
 function assessmentFromRow(r: AssessmentRow): SavedAssessment {
+  const adaptiveEvidence =
+    r.adaptive_evidence ??
+    ((r.know_me as any)?.adaptive_evidence as AdaptiveScoreResult | undefined) ??
+    null;
+
   return {
     id: r.id,
     code: r.code,
@@ -273,6 +280,7 @@ function assessmentFromRow(r: AssessmentRow): SavedAssessment {
     source: r.source,
     workStyle: r.work_style ?? {},
     knowMe: r.know_me ?? undefined,
+    adaptiveEvidence,
     createdAt: r.created_at,
   };
 }
@@ -303,15 +311,27 @@ export async function saveProfile(userId: string, patch: Partial<Profile>): Prom
 }
 
 export async function loadLatestAssessment(userId: string): Promise<SavedAssessment | null> {
-  const { data, error } = await supabase
+  // Query with adaptive_evidence column; fallback gracefully if column not yet migrated
+  let res = await supabase
     .from('assessments')
-    .select('id, code, scores, matches, source, work_style, know_me, created_at')
+    .select('id, code, scores, matches, source, work_style, know_me, adaptive_evidence, created_at')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (error) throw error;
-  return data ? assessmentFromRow(data as AssessmentRow) : null;
+
+  if (res.error && (res.error.code === '42703' || res.error.code === 'PGRST204' || res.error.message?.includes('adaptive_evidence'))) {
+    res = await supabase
+      .from('assessments')
+      .select('id, code, scores, matches, source, work_style, know_me, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+  }
+
+  if (res.error) throw res.error;
+  return res.data ? assessmentFromRow(res.data as AssessmentRow) : null;
 }
 
 export async function saveAssessment(
@@ -324,24 +344,47 @@ export async function saveAssessment(
     code: string;
     matches: CareerMatch[];
     source: 'ai' | 'hybrid_vector' | 'rule';
+    adaptiveEvidence?: AdaptiveScoreResult | null;
   },
 ): Promise<SavedAssessment> {
-  const { data, error } = await supabase
+  // Store copy inside know_me for seamless zero-downtime backwards compatibility
+  const enrichedKnowMe = a.knowMe ? { ...a.knowMe } : {};
+  if (a.adaptiveEvidence) {
+    (enrichedKnowMe as any).adaptive_evidence = a.adaptiveEvidence;
+  }
+
+  const baseRow = {
+    user_id: userId,
+    answers: a.answers,
+    work_style: a.workStyle,
+    know_me: Object.keys(enrichedKnowMe).length > 0 ? enrichedKnowMe : null,
+    scores: a.scores,
+    code: a.code,
+    matches: a.matches,
+    source: a.source,
+  };
+
+  // Primary attempt: write to adaptive_evidence column
+  let res = await supabase
     .from('assessments')
     .insert({
-      user_id: userId,
-      answers: a.answers,
-      work_style: a.workStyle,
-      know_me: a.knowMe ?? null,
-      scores: a.scores,
-      code: a.code,
-      matches: a.matches,
-      source: a.source,
+      ...baseRow,
+      adaptive_evidence: a.adaptiveEvidence ?? null,
     })
-    .select('id, code, scores, matches, source, work_style, know_me, created_at')
+    .select('id, code, scores, matches, source, work_style, know_me, adaptive_evidence, created_at')
     .single();
-  if (error) throw error;
-  return assessmentFromRow(data as AssessmentRow);
+
+  // If column adaptive_evidence doesn't exist yet on remote db, fallback to base insert
+  if (res.error && (res.error.code === '42703' || res.error.code === 'PGRST204' || res.error.message?.includes('adaptive_evidence'))) {
+    res = await supabase
+      .from('assessments')
+      .insert(baseRow)
+      .select('id, code, scores, matches, source, work_style, know_me, created_at')
+      .single();
+  }
+
+  if (res.error) throw res.error;
+  return assessmentFromRow(res.data as AssessmentRow);
 }
 
 /**
