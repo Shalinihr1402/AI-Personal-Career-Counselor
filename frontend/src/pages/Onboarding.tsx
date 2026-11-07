@@ -1,4 +1,3 @@
-import AppFooter from '../components/AppFooter';
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -8,7 +7,7 @@ import {
   Dumbbell, PenTool, Mic, Check,
   BarChart2, BookOpen, Wrench, Plus, Trash2, HelpCircle, Layers,
   Coins, Rocket, ShieldCheck, Smile, Heart, Lightbulb, Home, Building2, Laptop, DollarSign, Globe,
-  AlertTriangle, RotateCcw, RefreshCw, Eye,
+  AlertTriangle, RotateCcw, RefreshCw,
 } from 'lucide-react';
 import { ResumeReviewModal } from '../components/ResumeReviewModal';
 import type { ExtractedResumeData } from '../lib/resumeReview';
@@ -75,7 +74,6 @@ import {
   type CareerMotivationId,
   type CareerPriorityId,
   type WorkEnvironmentId,
-  type WorkStyleId,
   type LearningCommitmentId,
   type CareerTimelineId,
   type CareerDiscoveryPreferences,
@@ -162,48 +160,69 @@ const emptyData: OnboardingData = {
 
 const STEPS = ['Your goal', 'About you', 'Interests', 'Skills & experience', 'Target & time', 'Resume'] as const;
 
-const ONBOARDING_STEP_META = [
+const ONBOARDING_WORKFLOW = [
   {
-    title: 'Career Mode & Direction',
-    subtitle: 'Select the goal that reflects where you are today so we calibrate your journey.',
-    guidanceTitle: 'Personalized Focus',
-    guidance: 'Whether you want open exploration or an execution plan for a specific role, this calibrates our guidance engine.',
-    tip: 'Not sure which career fits? Select Career Discovery for holistic RIASEC alignment.',
+    stepIndex: 0,
+    title: 'Your goal',
+    desc: 'Career direction & mode',
+    icon: Target,
   },
   {
-    title: 'Educational Background',
-    subtitle: 'Your academic level unlocks stage-calibrated pathways and statutory criteria.',
-    guidanceTitle: 'Stage Calibration',
-    guidanceDesc: 'Class 8–10, 11–12, Polytechnic, and College students receive distinct question taxonomies and statutory guidelines.',
-    tip: 'We verify professional statutory requirements (e.g. NMC, BCI, ICAI, AICTE) based on your stream.',
+    stepIndex: 1,
+    title: 'About you',
+    desc: 'Academic level & stream',
+    icon: GraduationCap,
   },
   {
-    title: 'Field & Domain Interests',
-    subtitle: 'Select the domains and subjects that genuinely excite your curiosity.',
-    guidanceTitle: 'Holland RIASEC Mapping',
-    guidance: 'Your chosen domains align with 1,016 occupational codes across realistic, investigative, artistic, social, enterprising, and conventional paths.',
-    tip: 'Choose at least one field to discover tailored career clusters.',
+    stepIndex: 2,
+    title: 'Interests',
+    desc: 'Field & domain exploration',
+    icon: Compass,
   },
   {
-    title: 'Skills & Practical Experience',
-    subtitle: 'Declare your skills and projects to help us evaluate your career readiness.',
-    guidanceTitle: 'Competency Distinction',
-    guidance: 'Our 4-tier engine separates self-reported skills from demonstrated practical evidence.',
-    tip: 'Include course projects, open-source work, or self-directed learning.',
+    stepIndex: 3,
+    title: 'Skills & experience',
+    desc: 'Competencies & projects',
+    icon: Briefcase,
   },
   {
-    title: 'Workstyle & Target Timeline',
-    subtitle: 'Define your operating rhythm, weekly hours, and target completion pace.',
-    guidanceTitle: 'Weekly Execution Plan',
-    guidance: 'We structure your personalized learning timetable to match the hours you can realistically commit each week.',
-    tip: 'Setting 5–10 hours per week creates a sustainable learning roadmap.',
+    stepIndex: 4,
+    title: 'Target & timeline',
+    desc: 'Weekly pace & rhythm',
+    icon: Clock,
   },
   {
-    title: 'Resume & Portfolio Verification',
-    subtitle: 'Upload your resume to automatically extract verified skills and enrich your profile.',
-    guidanceTitle: 'Automated Extraction',
-    guidance: 'Our parser identifies verified project evidence while letting you review every extracted skill.',
-    tip: 'Optional step: You can skip this and upload your resume anytime from your profile.',
+    stepIndex: 5,
+    title: 'Resume',
+    desc: 'Resume upload & auto-fill',
+    icon: FileText,
+  },
+];
+
+const STEP_HEADERS = [
+  {
+    title: 'What would you like help with in your career journey?',
+    desc: "Choose the option that best describes your current situation. We'll personalize your career guidance accordingly.",
+  },
+  {
+    title: 'Where are you in your education?',
+    desc: 'Counseling guidance is completely tailored based on your current academic stage and stream.',
+  },
+  {
+    title: 'What fields and domains interest you most?',
+    desc: 'Pick the subjects and occupational areas that excite your curiosity. We map them to 1,016 pathways.',
+  },
+  {
+    title: 'What skills and experience do you have?',
+    desc: 'Declare your current competencies and practical project experiences to evaluate your readiness.',
+  },
+  {
+    title: 'What is your target timeline and weekly commitment?',
+    desc: 'Specify your available hours and operating rhythm so we structure an achievable learning schedule.',
+  },
+  {
+    title: 'Upload your resume (optional)',
+    desc: "We'll parse your resume with AI and let you review and reconcile extracted skills with your profile.",
   },
 ];
 
@@ -242,10 +261,9 @@ const INTEREST_OPTIONS: { value: string; icon: React.ReactNode }[] = [
   { value: 'Public Speaking', icon: <Mic className="w-4 h-4" /> },
 ];
 
-const HOURS_OPTIONS = ['Less than 5 hrs/week', '5-10 hrs/week', '10-20 hrs/week', '20+ hrs/week'];
 
 const inputClass =
-  'w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal';
+  'w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-violet-500/20 focus:border-violet-600 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal shadow-2xs';
 
 const Onboarding: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -269,6 +287,7 @@ const Onboarding: React.FC = () => {
   const [customSkillInput, setCustomSkillInput] = useState<{ [catId: string]: string }>({});
   const [trayCustomSkill, setTrayCustomSkill] = useState('');
   const [notSureSkills, setNotSureSkills] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
   const [data, setData] = useState<OnboardingData>(() => {
     if (user?.id) {
@@ -501,7 +520,7 @@ const Onboarding: React.FC = () => {
     }));
   };
 
-  const renderGrowthSubtypeIcon = (subtype: CareerGrowthSubtype) => {
+  const renderGrowthSubtypeIcon = (subtype: CareerGrowthSubtype): React.ReactNode => {
     switch (subtype) {
       case 'career_switching':
         return <ArrowRightLeft className="w-4 h-4 sm:w-5 sm:h-5" />;
@@ -509,96 +528,6 @@ const Onboarding: React.FC = () => {
         return <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />;
       case 'career_break_return':
         return <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5" />;
-      case 'science_fairs':
-        return {
-          titleLabel: 'Science Fair / Exhibition Project',
-          titlePlaceholder: 'e.g. Solar-powered Water Purification Model, Tesla Coil Demo',
-          orgLabel: 'Exhibition / Competition Level',
-          orgPlaceholder: 'e.g. Inter-School Science Fair, District Science Exhibition',
-          roleLabel: 'Your Role / Team',
-          rolePlaceholder: 'e.g. Project Lead, Model Presenter',
-          durationLabel: 'Grade / Month',
-          durationPlaceholder: 'e.g. 10th Standard / November 2024',
-          techLabel: 'Science Concepts & Materials',
-          techPlaceholder: 'e.g. Solar Cells, Arduino, Chemical Titration',
-          descLabel: 'Demonstration & Learnings',
-          descPlaceholder: 'What was demonstrated or awarded in this fair?',
-        };
-      case 'coding_robotics':
-        return {
-          titleLabel: 'Coding / Robotics Project',
-          titlePlaceholder: 'e.g. Line Follower Robot, Python Quiz Game, School Web Page',
-          orgLabel: 'Club / Platform',
-          orgPlaceholder: 'e.g. School Coding Club, Replit, Tinkercad',
-          roleLabel: 'Role',
-          rolePlaceholder: 'e.g. Solo Builder, Programmer',
-          durationLabel: 'Timeline',
-          durationPlaceholder: 'e.g. 1 month, Holiday project',
-          techLabel: 'Tools & Languages Used',
-          techPlaceholder: 'e.g. Scratch, Python, Arduino, HTML/CSS',
-          descLabel: 'What does this project do?',
-          descPlaceholder: 'Describe what you built and learned.',
-        };
-      case 'competitions':
-        return {
-          titleLabel: 'Competition / Olympiad Name',
-          titlePlaceholder: 'e.g. National Science Olympiad, Inter-school Debate, Hackathon',
-          orgLabel: 'Organizing Body',
-          orgPlaceholder: 'e.g. Science Olympiad Foundation, Rotary Club',
-          roleLabel: 'Participation Role',
-          rolePlaceholder: 'e.g. Solo Participant, Captain',
-          durationLabel: 'Year / Standard',
-          durationPlaceholder: 'e.g. 2024, 11th Standard',
-          techLabel: 'Skills / Topics Tested',
-          techPlaceholder: 'e.g. Logical Reasoning, Math, Public Speaking',
-          descLabel: 'Achievement / Rank',
-          descPlaceholder: 'e.g. Gold Medalist, Finalist, School Rank 1',
-        };
-      case 'extracurricular':
-        return {
-          titleLabel: 'Activity / Club Initiative',
-          titlePlaceholder: 'e.g. School Magazine Editor, Drama Club, Sports Captain',
-          orgLabel: 'School / Club',
-          orgPlaceholder: 'e.g. Cultural Committee, Scouts & Guides, Literary Club',
-          roleLabel: 'Role / Designation',
-          rolePlaceholder: 'e.g. Student Coordinator, Captain, Member',
-          durationLabel: 'Duration',
-          durationPlaceholder: 'e.g. 1 academic year',
-          techLabel: 'Key Skills Exercised',
-          techPlaceholder: 'e.g. Writing, Public Speaking, Team Coordination',
-          descLabel: 'Key Contributions',
-          descPlaceholder: 'Describe your role and impact on the team or event.',
-        };
-      case 'hobbies_self_learning':
-        return {
-          titleLabel: 'Hobby / Self-Learning Pursuit',
-          titlePlaceholder: 'e.g. 3D Modeling in Blender, Mobile Photography, Guitar',
-          orgLabel: 'Platform / Source',
-          orgPlaceholder: 'e.g. YouTube, Coursera, FreeCodeCamp, Self-taught',
-          roleLabel: 'Focus',
-          rolePlaceholder: 'e.g. Independent Learner, Hobbyist',
-          durationLabel: 'Time Invested',
-          durationPlaceholder: 'e.g. 6 months, Weekend hobby',
-          techLabel: 'Tools & Techniques Used',
-          techPlaceholder: 'e.g. Blender, DaVinci Resolve, Lightroom, Logic Pro',
-          descLabel: 'Creations & Learnings',
-          descPlaceholder: 'Describe what you created, practiced, or produced.',
-        };
-      case 'certification':
-        return {
-          titleLabel: 'Course / Certification Title',
-          titlePlaceholder: 'e.g. AWS Certified Cloud Practitioner, CS50 Python',
-          orgLabel: 'Issuing Organization',
-          orgPlaceholder: 'e.g. AWS, HarvardX, Coursera, Google',
-          roleLabel: 'Credential ID / URL',
-          rolePlaceholder: 'e.g. Verification URL or Certificate ID',
-          durationLabel: 'Completion Date',
-          durationPlaceholder: 'e.g. March 2024',
-          techLabel: 'Core Competencies',
-          techPlaceholder: 'e.g. Cloud Architecture, Python, SQL, Statistics',
-          descLabel: 'Key Learnings & Takeaways',
-          descPlaceholder: 'Summarize the skills verified by this certificate.',
-        };
       default:
         return <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />;
     }
@@ -1110,7 +1039,7 @@ const Onboarding: React.FC = () => {
     }
 
     // 5. Dropouts / Alternative pathways
-    if (persona === 'dropout_continuing' || persona === 'gap_year_candidate') {
+    if (persona === 'dropout_or_gap_year') {
       const hasPathways = (cp?.preferred_pathways || []).length > 0;
       const hasTarget = Boolean(cp?.target_role?.trim() || data.targetRole?.trim());
       return hasPathways || hasTarget;
@@ -1281,8 +1210,8 @@ const Onboarding: React.FC = () => {
         career_preferences: {
           ...currentCp,
           learning_commitment: {
+            hours_per_week: currentCp.learning_commitment?.hours_per_week ?? null,
             daily_commitment: com,
-            preferred_learning_mode: currentCp.learning_commitment?.preferred_learning_mode || 'online_self_paced',
           },
         },
         career_discovery_preferences: {
@@ -1417,12 +1346,6 @@ const Onboarding: React.FC = () => {
     });
   };
 
-  // Legacy compatibility helpers
-  const toggleCareerMotivation = toggleMotivation as any;
-  const toggleCareerPriority = togglePriority as any;
-  const setWorkEnvironment = setWorkEnvironmentPref as any;
-  const setLearningCommitment = setLearningCommitmentPref as any;
-  const setCareerTimeline = setTimelinePref as any;
 
   const renderCategoryIcon = (iconName: string) => {
     switch (iconName) {
@@ -1517,21 +1440,6 @@ const Onboarding: React.FC = () => {
     });
   };
 
-  const setSkillSource = (skillName: string, source: SkillSource) => {
-    setData((prev) => {
-      const currentSe = prev.skills_and_experience || DEFAULT_SKILLS_AND_EXPERIENCE;
-      const updatedSkills = currentSe.skills.map((s) =>
-        s.name.toLowerCase() === skillName.toLowerCase() ? { ...s, source } : s
-      );
-      return {
-        ...prev,
-        skills_and_experience: {
-          ...currentSe,
-          skills: updatedSkills,
-        },
-      };
-    });
-  };
 
   const handleAddCustomSkill = (categoryId: string) => {
     const val = (customSkillInput[categoryId] || '').trim();
@@ -1771,7 +1679,6 @@ const Onboarding: React.FC = () => {
     navigate('/login', { replace: true });
   };
 
-  const update = (patch: Partial<OnboardingData>) => setData((d) => ({ ...d, ...patch }));
 
   const goNext = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const goBack = () => setStep((s) => Math.max(s - 1, 0));
@@ -2096,11 +2003,8 @@ const Onboarding: React.FC = () => {
     setRedoing(true);
   };
 
-  const progressPct = ((step + 1) / STEPS.length) * 100;
-  const currentMeta = ONBOARDING_STEP_META[step] || ONBOARDING_STEP_META[0];
-
   return (
-    <div className="min-h-screen bg-ambient-glow font-sans flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] font-sans flex flex-col">
       {/* Top Application Bar */}
       <header className="bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
@@ -2111,7 +2015,7 @@ const Onboarding: React.FC = () => {
             <div className="flex flex-col">
               <span className="font-extrabold text-slate-900 text-sm tracking-tight flex items-center gap-1.5">
                 <span>Personal Career Counselor</span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-violet-700 bg-violet-50 px-1.5 py-0.2 rounded border border-violet-100 hidden sm:inline">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-violet-700 bg-violet-50 px-1.5 py-0.5 rounded border border-violet-100 hidden sm:inline">
                   AI SaaS
                 </span>
               </span>
@@ -2121,43 +2025,76 @@ const Onboarding: React.FC = () => {
             </div>
           </Link>
 
-          {/* Center progress indicator */}
-          <div className="hidden md:flex items-center gap-3">
-            <div className="flex items-center gap-1.5 px-3 py-1 bg-violet-50 rounded-full border border-violet-100 text-xs font-bold text-violet-900">
-              <span>Step {step + 1} of {STEPS.length}</span>
-              <span className="text-violet-400">•</span>
-              <span className="text-violet-700">{STEPS[step]}</span>
-            </div>
-            <div className="flex items-center gap-1 text-[11px] text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Auto-saved to draft</span>
-            </div>
-          </div>
-
-          {/* User Controls */}
-          {user && (
-            <div className="flex items-center gap-3 text-xs">
+          {/* User Controls & Help */}
+          <div className="flex items-center gap-3 text-xs">
+            {user && (
               <span className="text-slate-500 font-medium hidden sm:inline">
-                Signed in as <strong className="text-slate-800 font-bold">{user.email?.split('@')[0]}</strong>
+                Signed in as <strong className="text-slate-800 font-bold">{user.email}</strong>
               </span>
+            )}
+
+            {/* Help Button & Popover */}
+            <div className="relative">
               <button
+                type="button"
+                onClick={() => setShowHelpModal((prev) => !prev)}
+                className="inline-flex items-center gap-1.5 text-slate-600 hover:text-slate-900 font-semibold transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer"
+              >
+                <HelpCircle className="w-3.5 h-3.5 text-slate-500" />
+                <span>Help</span>
+              </button>
+              {showHelpModal && (
+                <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-slate-200 p-4 text-xs z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-100 mb-2">
+                    <span className="font-bold text-slate-900">Need Assistance?</span>
+                    <button
+                      type="button"
+                      onClick={() => setShowHelpModal(false)}
+                      className="text-slate-400 hover:text-slate-600 cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <p className="text-slate-600 mb-2 leading-relaxed">
+                    This onboarding calibrates your personal profile against 1,016 validated Indian & global career pathways.
+                  </p>
+                  <div className="bg-violet-50 text-violet-900 p-2.5 rounded-lg text-[11px] font-medium space-y-1 mb-2">
+                    <p className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      <span>Answers auto-save continuously to drafts.</span>
+                    </p>
+                    <p className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
+                      <span>Completed steps can be revisited anytime.</span>
+                    </p>
+                  </div>
+                  <p className="text-[10px] text-slate-400">
+                    AI Personal Career Counselor • Confidential & Private
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {user && (
+              <button
+                type="button"
                 onClick={handleSignOut}
-                className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-900 font-semibold transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-slate-600 hover:text-slate-900 font-semibold transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
-                <span>Sign out</span>
+                <span className="hidden sm:inline">Sign out</span>
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
+      {/* Main Centered Container */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 my-6 lg:my-8 w-full flex-1 flex flex-col justify-center">
 
         {/* Already completed onboarding on a previous visit */}
         {alreadyDone && !redoing && !finished ? (
-          <div className="max-w-2xl mx-auto bg-white rounded-2xl p-10 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_6px_20px_rgba(0,0,0,0.02)] border border-slate-200/80 text-center my-8">
+          <div className="max-w-2xl mx-auto w-full bg-white rounded-2xl p-8 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.03)] border border-slate-200/80 text-center">
             <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mb-4 mx-auto">
               <CheckCircle2 className="w-8 h-8" />
             </div>
@@ -2185,7 +2122,7 @@ const Onboarding: React.FC = () => {
           </div>
         ) : finished ? (
           /* --- Completion screen --- */
-          <div className="max-w-2xl mx-auto bg-white rounded-2xl p-10 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_6px_20px_rgba(0,0,0,0.02)] border border-slate-200/80 text-center animate-in fade-in zoom-in duration-300 my-8">
+          <div className="max-w-2xl mx-auto w-full bg-white rounded-2xl p-8 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.03)] border border-slate-200/80 text-center animate-in fade-in zoom-in duration-300">
             <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4 mx-auto">
               <CheckCircle2 className="w-8 h-8" />
             </div>
@@ -2242,37 +2179,186 @@ const Onboarding: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left Column: Main Form Area */}
-            <div className="lg:col-span-8 space-y-6">
-              {/* Step Header */}
-              <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
-                <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-violet-50 text-violet-700 border border-violet-100 uppercase tracking-wide">
-                    Step {step + 1} of {STEPS.length}
+          /* Kustomer-style Centered 2-Column Application Container */
+          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col lg:flex-row min-h-[720px] w-full">
+            
+            {/* Mobile Header Progress Bar (screens < lg) */}
+            <div className="lg:hidden bg-[#F8F9FB] border-b border-slate-200/80 p-4">
+              <div className="flex items-center justify-between mb-2.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-violet-700 bg-violet-50 px-2.5 py-0.5 rounded-md border border-violet-100">
+                    Step {step + 1} of 6
                   </span>
-                  <span className="text-xs text-slate-400">•</span>
-                  <span className="text-xs font-semibold text-slate-500">
+                  <span className="text-xs font-bold text-slate-800">
                     {STEPS[step]}
                   </span>
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  {currentMeta.title}
-                </h1>
-                <p className="text-sm text-slate-500 mt-1 leading-relaxed">
-                  {currentMeta.subtitle}
-                </p>
-                {/* Mobile progress bar */}
-                <div className="mt-4 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden lg:hidden">
-                  <div
-                    className="h-full bg-violet-700 rounded-full transition-all duration-300"
-                    style={{ width: `${progressPct}%` }}
-                  />
+                <div className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Draft saved</span>
+                </div>
+              </div>
+              {/* Progress Bar Segments */}
+              <div className="grid grid-cols-6 gap-1.5 pt-0.5">
+                {STEPS.map((stepName, idx) => {
+                  const isDone = idx < step;
+                  const isCurrent = idx === step;
+                  return (
+                    <button
+                      key={stepName}
+                      type="button"
+                      disabled={!isDone && !isCurrent}
+                      onClick={() => {
+                        if (isDone) setStep(idx);
+                      }}
+                      className={`h-2 rounded-full transition-all ${
+                        isCurrent
+                          ? 'bg-violet-700 ring-2 ring-violet-200 shadow-2xs'
+                          : isDone
+                          ? 'bg-emerald-500 cursor-pointer hover:bg-emerald-600'
+                          : 'bg-slate-200 cursor-not-allowed'
+                      }`}
+                      title={`Step ${idx + 1}: ${stepName}`}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* LEFT COLUMN: Vertical Onboarding Journey Progress Panel (desktop) */}
+            <aside className="hidden lg:flex w-[320px] shrink-0 bg-[#F8F9FB] border-r border-slate-200/80 p-6 sm:p-8 flex-col justify-between">
+              <div>
+                <div className="mb-6">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-violet-700 bg-violet-50 px-2.5 py-1 rounded-md border border-violet-100 inline-block mb-1.5">
+                    Onboarding Journey
+                  </span>
+                  <h2 className="text-base font-extrabold text-slate-900 tracking-tight">
+                    Profile Calibration
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Complete these 6 steps to configure your personalized counselor.
+                  </p>
+                </div>
+
+                {/* Vertical Stepper with continuous vertical line */}
+                <div className="relative space-y-6">
+                  {/* Vertical connecting line */}
+                  <div className="absolute left-[19px] top-4 bottom-4 w-0.5 bg-slate-200 -z-0" />
+
+                  {ONBOARDING_WORKFLOW.map((wfStep, idx) => {
+                    const isDone = idx < step;
+                    const isCurrent = idx === step;
+                    const StepIcon = wfStep.icon;
+
+                    return (
+                      <button
+                        key={wfStep.title}
+                        type="button"
+                        disabled={!isDone && !isCurrent}
+                        onClick={() => {
+                          if (isDone) setStep(idx);
+                        }}
+                        className={`relative z-10 flex items-start gap-3.5 text-left w-full transition-all group ${
+                          isDone
+                            ? 'cursor-pointer'
+                            : isCurrent
+                            ? 'cursor-default'
+                            : 'cursor-not-allowed opacity-60'
+                        }`}
+                      >
+                        {/* Step Icon circle */}
+                        <div
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all font-bold text-xs ${
+                            isDone
+                              ? 'bg-emerald-50 text-emerald-600 border border-emerald-200 group-hover:bg-emerald-100 group-hover:scale-105 shadow-xs'
+                              : isCurrent
+                              ? 'bg-violet-700 text-white shadow-md shadow-violet-600/30 ring-4 ring-violet-100'
+                              : 'bg-white text-slate-400 border border-slate-200'
+                          }`}
+                        >
+                          {isDone ? (
+                            <Check className="w-4 h-4 stroke-[2.5]" />
+                          ) : (
+                            <StepIcon className="w-4 h-4" />
+                          )}
+                        </div>
+
+                        {/* Step text */}
+                        <div className="pt-0.5 min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-1">
+                            <span
+                              className={`text-xs font-bold leading-tight ${
+                                isCurrent
+                                  ? 'text-violet-950 font-extrabold'
+                                  : isDone
+                                  ? 'text-slate-800 group-hover:text-violet-700'
+                                  : 'text-slate-400'
+                              }`}
+                            >
+                              {wfStep.title}
+                            </span>
+                            {isDone && (
+                              <span className="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-1.5 py-0.2 rounded-full border border-emerald-100">
+                                Done
+                              </span>
+                            )}
+                          </div>
+                          <p
+                            className={`text-[11px] leading-snug mt-0.5 truncate ${
+                              isCurrent
+                                ? 'text-violet-700/80 font-medium'
+                                : isDone
+                                ? 'text-slate-500'
+                                : 'text-slate-400'
+                            }`}
+                          >
+                            {wfStep.desc}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Form Card */}
-              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs">
+              {/* Bottom indicator of Left Panel */}
+              <div className="pt-6 border-t border-slate-200/60 mt-6 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Answers auto-saved to draft</span>
+                </div>
+                <p className="text-[11px] text-slate-400 leading-tight">
+                  You can jump back to completed steps at any time to revise your answers.
+                </p>
+              </div>
+            </aside>
+
+            {/* RIGHT COLUMN: Current Step Form */}
+            <main className="flex-1 p-6 sm:p-10 lg:p-12 flex flex-col justify-between bg-white overflow-y-auto min-w-0">
+              <div className="space-y-6">
+                {/* Step Header Bar */}
+                <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-violet-50 text-violet-700 border border-violet-100 uppercase tracking-wide">
+                      Step {step + 1} of 6
+                    </span>
+                    <span className="text-xs text-slate-300">•</span>
+                    <span className="text-xs font-bold text-slate-700">
+                      {STEPS[step]}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="text-xs text-slate-400 font-medium hidden sm:inline truncate max-w-xs">
+                      {STEP_HEADERS[step]?.title || 'Personal Career Setup'}
+                    </div>
+                    <span className="text-[11px] font-bold text-violet-700 bg-violet-50 px-2.5 py-0.5 rounded-full border border-violet-100">
+                      {Math.round(((step) / 6) * 100)}% Complete
+                    </span>
+                  </div>
+                </div>
+
+                {/* Form Fields Area */}
+                <div className="min-w-0">
 
               {/* --- Step 0: Path --- */}
               {step === 0 && (
@@ -3487,7 +3573,7 @@ const Onboarding: React.FC = () => {
                 return (
                   <div className="space-y-8 animate-in fade-in duration-300">
                     <div className="text-center mb-8">
-                      <div className="inline-flex items-center gap-1.5 text-purple-600 bg-purple-50 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-3 border border-purple-100 shadow-xs">
+                      <div className="inline-flex items-center gap-1.5 text-violet-700 bg-violet-50 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-3 border border-violet-100 shadow-2xs">
                         {isSchool ? (
                           <>
                             <Sparkles className="w-3.5 h-3.5" /> Practical Activities & Exploration
@@ -3536,14 +3622,14 @@ const Onboarding: React.FC = () => {
 
                     {/* Persona Overview Card: Experienced Professionals */}
                     {isExperienced && (
-                      <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
-                        <div className="flex items-center gap-2 text-slate-800 font-bold text-sm border-b border-slate-200 pb-2">
-                          <Briefcase className="w-4 h-4 text-purple-600" /> Current Role & Professional Overview
+                      <div className="p-5 sm:p-6 rounded-2xl bg-slate-50/70 border border-slate-200/90 space-y-4">
+                        <div className="flex items-center gap-2 text-slate-800 font-bold text-sm border-b border-slate-200/80 pb-2.5">
+                          <Briefcase className="w-4 h-4 text-violet-600" /> Current Role & Professional Overview
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                           <div className="space-y-1">
                             <label className="block text-xs font-semibold text-slate-700">
-                              Current / Most Recent Job Role <span className="text-purple-600">*</span>
+                              Current / Most Recent Job Role <span className="text-violet-600">*</span>
                             </label>
                             <input
                               type="text"
@@ -3555,7 +3641,7 @@ const Onboarding: React.FC = () => {
                           </div>
                           <div className="space-y-1">
                             <label className="block text-xs font-semibold text-slate-700">
-                              Industry / Functional Domain <span className="text-purple-600">*</span>
+                              Industry / Functional Domain <span className="text-violet-600">*</span>
                             </label>
                             <input
                               type="text"
@@ -3607,14 +3693,14 @@ const Onboarding: React.FC = () => {
 
                     {/* Persona Overview Card: Career Switchers */}
                     {isSwitcher && (
-                      <div className="p-5 rounded-2xl bg-purple-50/50 border border-purple-200 space-y-4">
-                        <div className="flex items-center gap-2 text-purple-900 font-bold text-sm border-b border-purple-200/80 pb-2">
-                          <ArrowRightLeft className="w-4 h-4 text-purple-600" /> Career Transition Direction
+                      <div className="p-5 sm:p-6 rounded-2xl bg-violet-50/30 border border-violet-200/80 space-y-4">
+                        <div className="flex items-center gap-2 text-violet-950 font-bold text-sm border-b border-violet-200/80 pb-2.5">
+                          <ArrowRightLeft className="w-4 h-4 text-violet-600" /> Career Transition Direction
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                           <div className="space-y-1">
                             <label className="block text-xs font-semibold text-slate-700">
-                              Current / Previous Profession & Domain <span className="text-purple-600">*</span>
+                              Current / Previous Profession & Domain <span className="text-violet-600">*</span>
                             </label>
                             <input
                               type="text"
@@ -3626,7 +3712,7 @@ const Onboarding: React.FC = () => {
                           </div>
                           <div className="space-y-1">
                             <label className="block text-xs font-semibold text-slate-700">
-                              Target Career or Domain <span className="text-purple-600">*</span>
+                              Target Career or Domain <span className="text-violet-600">*</span>
                             </label>
                             <input
                               type="text"
@@ -3678,14 +3764,14 @@ const Onboarding: React.FC = () => {
 
                     {/* Persona Overview Card: Career-Break Returners */}
                     {isBreakReturner && (
-                      <div className="p-5 rounded-2xl bg-purple-50/50 border border-purple-200 space-y-4">
-                        <div className="flex items-center gap-2 text-purple-900 font-bold text-sm border-b border-purple-200/80 pb-2">
-                          <RotateCcw className="w-4 h-4 text-purple-600" /> Career Return Overview
+                      <div className="p-5 sm:p-6 rounded-2xl bg-violet-50/30 border border-violet-200/80 space-y-4">
+                        <div className="flex items-center gap-2 text-violet-950 font-bold text-sm border-b border-violet-200/80 pb-2.5">
+                          <RotateCcw className="w-4 h-4 text-violet-600" /> Career Return Overview
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                           <div className="space-y-1">
                             <label className="block text-xs font-semibold text-slate-700">
-                              Previous Job Role & Industry <span className="text-purple-600">*</span>
+                              Previous Job Role & Industry <span className="text-violet-600">*</span>
                             </label>
                             <input
                               type="text"
@@ -3697,7 +3783,7 @@ const Onboarding: React.FC = () => {
                           </div>
                           <div className="space-y-1">
                             <label className="block text-xs font-semibold text-slate-700">
-                              Break Duration <span className="text-purple-600">*</span>
+                              Break Duration <span className="text-violet-600">*</span>
                             </label>
                             <input
                               type="text"
@@ -3736,7 +3822,7 @@ const Onboarding: React.FC = () => {
                         {/* Return Readiness Status */}
                         <div className="space-y-2 pt-2">
                           <label className="block text-xs font-semibold text-slate-700">
-                            Return Readiness Status <span className="text-purple-600">*</span>
+                            Return Readiness Status <span className="text-violet-600">*</span>
                           </label>
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                             {[
@@ -3750,15 +3836,15 @@ const Onboarding: React.FC = () => {
                                   key={opt.id}
                                   type="button"
                                   onClick={() => updateSkillsAndExperience({ readiness_status: opt.id as any })}
-                                  className={`p-3 rounded-xl border text-left transition-all ${
+                                  className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
                                     isSelected
-                                      ? 'border-purple-600 bg-purple-50 text-purple-900 ring-1 ring-purple-600/30'
-                                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                                      ? 'border-violet-600 bg-violet-50 text-violet-950 ring-2 ring-violet-500/20 shadow-2xs'
+                                      : 'border-slate-200 bg-white text-slate-700 hover:border-violet-200'
                                   }`}
                                 >
                                   <div className="flex items-center justify-between mb-1">
                                     <span className="font-bold text-xs">{opt.title}</span>
-                                    {isSelected && <Check className="w-3.5 h-3.5 text-purple-600" />}
+                                    {isSelected && <Check className="w-3.5 h-3.5 text-violet-700 stroke-[2.5]" />}
                                   </div>
                                   <p className="text-[11px] text-slate-500 leading-snug">{opt.desc}</p>
                                 </button>
@@ -3769,691 +3855,697 @@ const Onboarding: React.FC = () => {
                       </div>
                     )}
 
-                  {/* Section 1: Skills Categories */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-base font-bold text-slate-900">
-                          1. Select your skills <span className="text-slate-400 font-normal text-xs">(optional)</span>
-                        </h3>
-                        <p className="text-xs text-slate-500">
-                          Click any category below to select skills or type your own custom skills.
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Category Grid with Dynamic Selected Counts on ALL 8 Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                      {SKILL_CATEGORIES.map((cat) => {
-                        const isExpanded = expandedSkillCategory === cat.id;
-                        const selectedInCat = (data.skills_and_experience?.skills || []).filter(
-                          (s) => s.category === cat.id
-                        );
-                        return (
-                          <div
-                            key={cat.id}
-                            className={`border rounded-2xl transition-all ${
-                              selectedInCat.length > 0
-                                ? 'border-purple-300 bg-purple-50/30'
-                                : 'border-slate-200 bg-white hover:border-slate-300'
-                            }`}
-                          >
-                            <button
-                              type="button"
-                              onClick={() => setExpandedSkillCategory(isExpanded ? null : cat.id)}
-                              className="w-full p-4 flex items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-purple-500/40 rounded-2xl"
-                            >
-                              <div className="flex items-center gap-3 flex-1 min-w-0">
-                                <div
-                                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                                    selectedInCat.length > 0
-                                      ? 'bg-purple-600 text-white shadow-xs'
-                                      : 'bg-slate-100 text-slate-600'
-                                  }`}
-                                >
-                                  {renderCategoryIcon(cat.iconName)}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between gap-1 mb-1">
-                                    <p className="font-bold text-slate-800 text-xs sm:text-sm leading-snug truncate">
-                                      {cat.label}
-                                    </p>
-                                    <span
-                                      className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 transition-colors ${
-                                        selectedInCat.length > 0
-                                          ? 'bg-purple-600 text-white shadow-xs'
-                                          : 'bg-slate-100 text-slate-500'
-                                      }`}
-                                    >
-                                      {selectedInCat.length}
-                                    </span>
-                                  </div>
-                                  <p className="text-[11px] text-slate-400">
-                                    {selectedInCat.length > 0
-                                      ? `${selectedInCat.length} selected`
-                                      : '0 selected · Click to browse'}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="text-slate-400 pl-2">
-                                {isExpanded ? (
-                                  <ChevronDown className="w-4 h-4 rotate-180 transition-transform" />
-                                ) : (
-                                  <ChevronDown className="w-4 h-4 transition-transform" />
-                                )}
-                              </div>
-                            </button>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {/* Expandable Drawer */}
-                    {expandedSkillCategory && (() => {
-                      const activeCat = SKILL_CATEGORIES.find((c) => c.id === expandedSkillCategory);
-                      if (!activeCat) return null;
-                      const currentSkills = data.skills_and_experience?.skills || [];
-                      return (
-                        <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 animate-in fade-in duration-200">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center">
-                                {renderCategoryIcon(activeCat.iconName)}
-                              </div>
-                              <h4 className="font-bold text-slate-800 text-sm">{activeCat.label} Skills</h4>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => setExpandedSkillCategory(null)}
-                              className="text-xs text-slate-500 hover:text-slate-800 font-semibold inline-flex items-center gap-1"
-                            >
-                              Close <X className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            {activeCat.skills.map((skillName) => {
-                              const isSelected = currentSkills.some(
-                                (s) => s.name.toLowerCase() === skillName.toLowerCase()
-                              );
-                              return (
-                                <button
-                                  key={skillName}
-                                  type="button"
-                                  onClick={() => toggleSkill(activeCat.id, skillName)}
-                                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 ${
-                                    isSelected
-                                      ? 'bg-purple-600 border-purple-600 text-white shadow-xs'
-                                      : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300 hover:bg-purple-50/50'
-                                  }`}
-                                >
-                                  {skillName}
-                                  {isSelected && <Check className="w-3 h-3" />}
-                                </button>
-                              );
-                            })}
-                          </div>
-
-                          {/* Custom Skill Input in Drawer */}
-                          <div className="pt-3 border-t border-slate-200 flex items-center gap-2">
-                            <input
-                              type="text"
-                              value={customSkillInput[activeCat.id] || ''}
-                              onChange={(e) => setCustomSkillInput((prev) => ({ ...prev, [activeCat.id]: e.target.value }))}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  e.preventDefault();
-                                  handleAddCustomSkill(activeCat.id);
-                                }
-                              }}
-                              placeholder={`Add custom ${activeCat.label.toLowerCase()} skill...`}
-                              className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => handleAddCustomSkill(activeCat.id)}
-                              className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs inline-flex items-center gap-1 transition-colors shadow-xs"
-                            >
-                              <Plus className="w-3.5 h-3.5" /> Add
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })()}
-
-                    {/* Active Skills Tray with Individual Removal, Clear All & Quick Custom Skill */}
-                    {data.skills_and_experience && data.skills_and_experience.skills.length > 0 && (
-                      <div className="p-4 rounded-2xl bg-purple-50/50 border border-purple-200/70 shadow-xs space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Sparkles className="w-4 h-4 text-purple-600" />
-                            <span className="text-xs font-bold uppercase tracking-wider text-purple-800">
-                              Active Skills Tray ({data.skills_and_experience.skills.length})
-                            </span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={handleClearAllSkills}
-                            className="text-xs font-bold text-slate-500 hover:text-red-600 transition-colors inline-flex items-center gap-1"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" /> Clear All
-                          </button>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2">
-                          {data.skills_and_experience.skills.map((s) => {
-                            const catObj = SKILL_CATEGORIES.find((c) => c.id === s.category);
-                            const catLabel = catObj?.label || (s.is_custom ? 'Custom' : 'Skill');
-                            return (
-                              <span
-                                key={s.name}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white border border-purple-200 text-purple-900 shadow-xs"
-                              >
-                                <span>{s.name}</span>
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-100/80 text-purple-700 font-medium">
-                                  {catLabel}
-                                </span>
-                                {s.proficiency && (
-                                  <span className="text-[10px] text-purple-500 font-normal">
-                                    · {s.proficiency}
-                                  </span>
-                                )}
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveSkill(s.name)}
-                                  className="text-slate-400 hover:text-red-600 transition-colors ml-0.5"
-                                  aria-label={`Remove ${s.name}`}
-                                >
-                                  <X className="w-3.5 h-3.5" />
-                                </button>
-                              </span>
-                            );
-                          })}
-                        </div>
-
-                        {/* Direct Custom Skill Input right in Active Skills Tray */}
-                        <div className="pt-2 border-t border-purple-200/60 flex items-center gap-2">
-                          <input
-                            type="text"
-                            value={trayCustomSkill}
-                            onChange={(e) => setTrayCustomSkill(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                e.preventDefault();
-                                handleAddTrayCustomSkill();
-                              }
-                            }}
-                            placeholder="Can't find your skill? Type custom skill name..."
-                            className="flex-1 px-3 py-1.5 rounded-xl border border-purple-200 text-xs text-slate-800 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleAddTrayCustomSkill}
-                            className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs inline-flex items-center gap-1 transition-colors shadow-xs"
-                          >
-                            <Plus className="w-3.5 h-3.5" /> Add Custom Skill
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Unsure option - Does NOT block progress and users can still select skills */}
-                    <div>
-                      <button
-                        type="button"
-                        onClick={() => setNotSureSkills((prev) => !prev)}
-                        className={`w-full p-4 rounded-2xl border text-left flex items-center justify-between transition-all ${
-                          notSureSkills
-                            ? 'border-purple-600 bg-purple-50/70 text-purple-900 ring-1 ring-purple-600/30'
-                            : 'border-slate-200 bg-slate-50/50 hover:bg-slate-50 text-slate-700'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                              notSureSkills ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-500'
-                            }`}
-                          >
-                            <HelpCircle className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <p className="text-xs sm:text-sm font-bold">I'm not sure what my skills are yet</p>
-                            <p className="text-[11px] text-slate-500 mt-0.5">
-                              That's completely fine! Skills are optional. Our career counselor will evaluate your natural strengths and aptitudes during your assessment. You can proceed directly or still explore and select any skills below.
-                            </p>
-                          </div>
-                        </div>
-                        <div
-                          className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ml-2 ${
-                            notSureSkills ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
-                          }`}
-                        >
-                          {notSureSkills && <Check className="w-3 h-3" />}
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Section 2: Skill Proficiency */}
-                  <div className="pt-6 border-t border-slate-200/80">
-                    <div className="mb-2">
-                      <h3 className="text-base font-bold text-slate-900">
-                        2. Skill Proficiency <span className="text-slate-400 font-normal text-xs">(optional)</span>
-                      </h3>
-                      <p className="text-xs text-slate-500">
-                        Rate your current confidence in your selected skills, or skip this section.
-                      </p>
-                    </div>
-
-                    {(!data.skills_and_experience?.skills || data.skills_and_experience.skills.length === 0) ? (
-                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-500">
-                        Select one or more skills above to rate your proficiency, or proceed to experience.
-                      </div>
-                    ) : (
-                      <div className="space-y-3 mt-3">
-                        {data.skills_and_experience.skills.map((skill) => {
-                          return (
-                            <div
-                              key={skill.name}
-                              className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-                            >
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <span className="font-bold text-slate-900 text-sm">{skill.name}</span>
-                                  {skill.is_custom && (
-                                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-200 text-slate-600 font-semibold">
-                                      Custom
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="text-[11px] text-slate-500">
-                                  {PROFICIENCY_OPTIONS.find((p) => p.id === skill.proficiency)?.desc || 'Select proficiency'}
-                                </p>
-                              </div>
-
-                              <div className="flex flex-wrap gap-1.5 shrink-0">
-                                {PROFICIENCY_OPTIONS.map((opt) => {
-                                  const isSelected = skill.proficiency === opt.id;
-                                  return (
-                                    <button
-                                      key={opt.id}
-                                      type="button"
-                                      onClick={() => setSkillProficiency(skill.name, opt.id)}
-                                      className={`px-2.5 py-1 rounded-xl text-xs font-semibold border transition-all ${
-                                        isSelected
-                                          ? 'bg-purple-600 border-purple-600 text-white shadow-xs'
-                                          : 'bg-white border-slate-200 text-slate-600 hover:border-purple-300'
-                                      }`}
-                                    >
-                                      {opt.label}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Section 3: Experience Types */}
-                  <div className="pt-6 border-t border-slate-200/80">
-                    <div className="mb-3">
-                      <h3 className="text-base font-bold text-slate-900">
-                        {isSchool ? 'Practical Activities & School Pursuits' : 'Practical Experience Types'}{' '}
-                        <span className="text-purple-600">*</span>
-                      </h3>
-                      <p className="text-xs text-slate-500">
-                        {isSchool
-                          ? 'Select all that describe your journey. If you haven\'t participated in practical activities yet, select "I haven\'t participated in practical activities yet".'
-                          : 'Select all that describe your journey. If you have no past projects or jobs, select "No practical experience".'}
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-                      {experienceOptions.map((expOpt) => {
-                        const isSelected = (data.skills_and_experience?.experience_types || []).includes(expOpt.id);
-                        return (
-                          <button
-                            key={expOpt.id}
-                            type="button"
-                            onClick={() => handleToggleExperienceType(expOpt.id)}
-                            className={`p-3.5 rounded-2xl border text-left transition-all flex items-start gap-3 ${
-                              isSelected
-                                ? 'border-purple-600 bg-purple-50/70 shadow-xs ring-1 ring-purple-600/30'
-                                : 'border-slate-200 bg-white hover:border-slate-300'
-                            }`}
-                          >
-                            <span className="text-xl shrink-0 mt-0.5">{expOpt.icon}</span>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between">
-                                <span className={`text-xs sm:text-sm font-bold truncate ${isSelected ? 'text-purple-900' : 'text-slate-800'}`}>
-                                  {expOpt.label}
-                                </span>
-                                <div
-                                  className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 ${
-                                    isSelected ? 'border-purple-600 bg-purple-600 text-white' : 'border-slate-300 bg-white'
-                                  }`}
-                                >
-                                  {isSelected && <Check className="w-2.5 h-2.5" />}
-                                </div>
-                              </div>
-                              <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                                {expOpt.desc}
-                              </p>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Section 4: Dynamic Experience Details Forms */}
-                  {!(data.skills_and_experience?.experience_types || []).includes('no_experience') &&
-                    (data.skills_and_experience?.experience_types || []).length > 0 && (
-                      <div className="pt-6 border-t border-slate-200/80">
-                        <div className="flex items-center justify-between mb-3">
-                          <div>
-                            <h3 className="text-base font-bold text-slate-900">
-                              4. Project & Work Details <span className="text-slate-400 font-normal text-xs">(optional)</span>
-                            </h3>
-                            <p className="text-xs text-slate-500">
-                              Add any projects, internships, or jobs you'd like us to factor in.
-                            </p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={handleAddExperienceItem}
-                            className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold inline-flex items-center gap-1.5 shadow-xs transition-colors shrink-0"
-                          >
-                            <Plus className="w-3.5 h-3.5" /> Add Project / Role
-                          </button>
-                        </div>
-
-                        {(data.skills_and_experience?.experiences || []).length === 0 ? (
-                          <div className="p-6 rounded-2xl bg-slate-50 border border-dashed border-slate-300 text-center">
-                            <p className="text-xs font-medium text-slate-600 mb-2">
-                              No projects or roles added yet.
-                            </p>
-                            <button
-                              type="button"
-                              onClick={handleAddExperienceItem}
-                              className="text-xs font-bold text-purple-600 hover:text-purple-700 hover:underline"
-                            >
-                              + Add your first project or experience
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="space-y-4">
-                            {data.skills_and_experience?.experiences.map((exp, idx) => {
-                              const config = getExperienceTypeConfig(exp.type);
-                              const validTypes = (data.skills_and_experience?.experience_types || []).filter(
-                                (t) => t !== 'no_experience'
-                              );
-                              return (
-                                <div
-                                  key={exp.id}
-                                  className="p-5 rounded-2xl bg-slate-50/70 border border-slate-200 relative space-y-3"
-                                >
-                                  <div className="flex items-center justify-between border-b border-slate-200/80 pb-2.5">
-                                    <span className="text-xs font-bold uppercase tracking-wider text-purple-700">
-                                      Item #{idx + 1} · {experienceOptions.find((o) => o.id === exp.type)?.label || exp.type}
-                                    </span>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleRemoveExperienceItem(exp.id)}
-                                      className="text-slate-400 hover:text-red-600 p-1 rounded-lg transition-colors"
-                                      title="Delete record"
-                                      aria-label={`Delete record ${idx + 1}`}
-                                    >
-                                      <Trash2 className="w-4 h-4" />
-                                    </button>
-                                  </div>
-
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div>
-                                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                                        Experience Type
-                                      </label>
-                                      <select
-                                        value={exp.type}
-                                        onChange={(e) =>
-                                          handleUpdateExperienceItem(exp.id, {
-                                            type: e.target.value as ExperienceType,
-                                          })
-                                        }
-                                        className={inputClass}
-                                      >
-                                        {validTypes.map((typeKey) => {
-                                          const opt = experienceOptions.find((o) => o.id === typeKey);
-                                          return (
-                                            <option key={typeKey} value={typeKey}>
-                                              {opt?.label || typeKey}
-                                            </option>
-                                          );
-                                        })}
-                                      </select>
-                                    </div>
-
-                                    <div>
-                                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                                        {config.titleLabel} <span className="text-red-500">*</span>
-                                      </label>
-                                      <input
-                                        type="text"
-                                        value={exp.title}
-                                        onChange={(e) => handleUpdateExperienceItem(exp.id, { title: e.target.value })}
-                                        placeholder={config.titlePlaceholder}
-                                        className={inputClass}
-                                      />
-                                    </div>
-
-                                    <div>
-                                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                                        {config.orgLabel} <span className="text-slate-400 font-normal">(optional)</span>
-                                      </label>
-                                      <input
-                                        type="text"
-                                        value={exp.organization || ''}
-                                        onChange={(e) =>
-                                          handleUpdateExperienceItem(exp.id, { organization: e.target.value })
-                                        }
-                                        placeholder={config.orgPlaceholder}
-                                        className={inputClass}
-                                      />
-                                    </div>
-
-                                    <div>
-                                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                                        {config.roleLabel} <span className="text-slate-400 font-normal">(optional)</span>
-                                      </label>
-                                      <input
-                                        type="text"
-                                        value={exp.role || ''}
-                                        onChange={(e) => handleUpdateExperienceItem(exp.id, { role: e.target.value })}
-                                        placeholder={config.rolePlaceholder}
-                                        className={inputClass}
-                                      />
-                                    </div>
-
-                                    <div>
-                                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                                        {config.durationLabel} <span className="text-slate-400 font-normal">(optional)</span>
-                                      </label>
-                                      <input
-                                        type="text"
-                                        value={exp.duration || ''}
-                                        onChange={(e) =>
-                                          handleUpdateExperienceItem(exp.id, { duration: e.target.value })
-                                        }
-                                        placeholder={config.durationPlaceholder}
-                                        className={inputClass}
-                                      />
-                                    </div>
-
-                                    <div>
-                                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                                        {config.techLabel} <span className="text-slate-400 font-normal">(optional)</span>
-                                      </label>
-                                      <input
-                                        type="text"
-                                        value={(exp.technologies || []).join(', ')}
-                                        onChange={(e) => {
-                                          const tags = e.target.value
-                                            .split(',')
-                                            .map((t) => t.trim())
-                                            .filter(Boolean);
-                                          handleUpdateExperienceItem(exp.id, { technologies: tags });
-                                        }}
-                                        placeholder={config.techPlaceholder}
-                                        className={inputClass}
-                                      />
-                                    </div>
-                                  </div>
-
-                                  <div>
-                                    <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                                      {config.descLabel} <span className="text-slate-400 font-normal">(optional)</span>
-                                    </label>
-                                    <textarea
-                                      rows={2}
-                                      value={exp.description || ''}
-                                      onChange={(e) =>
-                                        handleUpdateExperienceItem(exp.id, { description: e.target.value })
-                                      }
-                                      placeholder={config.descPlaceholder}
-                                      className={`${inputClass} resize-none`}
-                                    />
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                  {/* Section: School Exploration Areas (Class 10 & Class 12 Students) */}
-                  {isSchool && (
-                    <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                    {/* Section 1: Skills Categories */}
+                    <div className="space-y-3.5">
                       <div className="flex items-center justify-between">
                         <div>
                           <h3 className="text-base font-bold text-slate-900">
-                            Areas You Are Curious About or Interested in Exploring <span className="text-slate-400 font-normal text-xs">(optional)</span>
+                            1. Select your skills <span className="text-slate-400 font-normal text-xs">(optional)</span>
                           </h3>
                           <p className="text-xs text-slate-500">
-                            Pick any areas that spark your curiosity. We'll recommend relevant high school streams and career paths.
+                            Click any category below to select skills or type your own custom skills.
                           </p>
                         </div>
-                        <span className="text-xs text-purple-700 font-bold bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
-                          {(data.skills_and_experience?.areas_interested_in_exploring || []).length} selected
-                        </span>
                       </div>
 
-                      <div className="flex flex-wrap gap-2 pt-1">
-                        {SCHOOL_EXPLORATION_AREAS.map((area) => {
-                          const isSelected = (data.skills_and_experience?.areas_interested_in_exploring || []).includes(area);
+                      {/* Category Grid with Dynamic Selected Counts and No Label Truncation */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3.5">
+                        {SKILL_CATEGORIES.map((cat) => {
+                          const isExpanded = expandedSkillCategory === cat.id;
+                          const selectedInCat = (data.skills_and_experience?.skills || []).filter(
+                            (s) => s.category === cat.id
+                          );
                           return (
-                            <button
-                              key={area}
-                              type="button"
-                              onClick={() => handleToggleExplorationArea(area)}
-                              className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all text-left flex items-center gap-1.5 ${
-                                isSelected
-                                  ? 'bg-purple-600 border-purple-600 text-white shadow-xs ring-1 ring-purple-600/30'
-                                  : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300'
+                            <div
+                              key={cat.id}
+                              className={`border rounded-2xl transition-all ${
+                                selectedInCat.length > 0
+                                  ? 'border-violet-300 bg-violet-50/40 shadow-xs ring-1 ring-violet-500/10'
+                                  : 'border-slate-200/90 bg-white hover:border-violet-200 hover:shadow-2xs'
                               }`}
                             >
-                              {isSelected ? <Check className="w-3.5 h-3.5" /> : null}
-                              {area}
+                              <button
+                                type="button"
+                                onClick={() => setExpandedSkillCategory(isExpanded ? null : cat.id)}
+                                className="w-full p-4 flex items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-violet-500/30 rounded-2xl cursor-pointer"
+                              >
+                                <div className="flex items-center gap-3.5 flex-1 min-w-0">
+                                  <div
+                                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                                      selectedInCat.length > 0
+                                        ? 'bg-violet-700 text-white shadow-xs'
+                                        : 'bg-slate-100 text-slate-600'
+                                    }`}
+                                  >
+                                    {renderCategoryIcon(cat.iconName)}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between gap-1 mb-1">
+                                      <p className="font-bold text-slate-800 text-xs sm:text-sm leading-snug">
+                                        {cat.label}
+                                      </p>
+                                      <span
+                                        className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 transition-colors ${
+                                          selectedInCat.length > 0
+                                            ? 'bg-violet-700 text-white shadow-xs'
+                                            : 'bg-slate-100 text-slate-500'
+                                        }`}
+                                      >
+                                        {selectedInCat.length}
+                                      </span>
+                                    </div>
+                                    <p className="text-[11px] text-slate-400">
+                                      {selectedInCat.length > 0
+                                        ? `${selectedInCat.length} selected`
+                                        : '0 selected · Click to browse'}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="text-slate-400 pl-2">
+                                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-violet-600' : ''}`} />
+                                </div>
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Expandable Drawer */}
+                      {expandedSkillCategory && (() => {
+                        const activeCat = SKILL_CATEGORIES.find((c) => c.id === expandedSkillCategory);
+                        if (!activeCat) return null;
+                        const currentSkills = data.skills_and_experience?.skills || [];
+                        return (
+                          <div className="p-5 rounded-2xl bg-slate-50/90 border border-slate-200/90 shadow-xs animate-in fade-in duration-200">
+                            <div className="flex items-center justify-between mb-3.5">
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-7 h-7 rounded-lg bg-violet-100 text-violet-700 flex items-center justify-center">
+                                  {renderCategoryIcon(activeCat.iconName)}
+                                </div>
+                                <div>
+                                  <h4 className="font-bold text-slate-800 text-sm">{activeCat.label} Skills</h4>
+                                  <p className="text-[11px] text-slate-500">Tap skills to select or unselect</p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setExpandedSkillCategory(null)}
+                                className="text-xs text-slate-500 hover:text-slate-800 font-semibold inline-flex items-center gap-1 px-2.5 py-1 rounded-lg hover:bg-slate-200/60 transition-colors cursor-pointer"
+                              >
+                                Close <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              {activeCat.skills.map((skillName) => {
+                                const isSelected = currentSkills.some(
+                                  (s) => s.name.toLowerCase() === skillName.toLowerCase()
+                                );
+                                return (
+                                  <button
+                                    key={skillName}
+                                    type="button"
+                                    onClick={() => toggleSkill(activeCat.id, skillName)}
+                                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5 cursor-pointer ${
+                                      isSelected
+                                        ? 'bg-violet-700 border-violet-700 text-white shadow-2xs'
+                                        : 'bg-white border-slate-200 text-slate-700 hover:border-violet-300 hover:bg-violet-50/30'
+                                    }`}
+                                  >
+                                    {skillName}
+                                    {isSelected && <Check className="w-3 h-3 stroke-[2.5]" />}
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            {/* Custom Skill Input in Drawer */}
+                            <div className="pt-3 border-t border-slate-200/80 flex items-center gap-2">
+                              <input
+                                type="text"
+                                value={customSkillInput[activeCat.id] || ''}
+                                onChange={(e) => setCustomSkillInput((prev) => ({ ...prev, [activeCat.id]: e.target.value }))}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleAddCustomSkill(activeCat.id);
+                                  }
+                                }}
+                                placeholder={`Add custom ${activeCat.label.toLowerCase()} skill...`}
+                                className="flex-1 px-3.5 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-600"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleAddCustomSkill(activeCat.id)}
+                                className="px-4 py-2 rounded-xl bg-violet-700 hover:bg-violet-800 text-white font-bold text-xs inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
+                              >
+                                <Plus className="w-3.5 h-3.5" /> Add
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Active Skills Tray with Individual Removal, Clear All & Quick Custom Skill */}
+                      {data.skills_and_experience && data.skills_and_experience.skills.length > 0 && (
+                        <div className="p-4 sm:p-5 rounded-2xl bg-violet-50/40 border border-violet-200/80 shadow-xs space-y-3.5">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Sparkles className="w-4 h-4 text-violet-600" />
+                              <span className="text-xs font-bold uppercase tracking-wider text-violet-900">
+                                Active Skills Tray ({data.skills_and_experience.skills.length})
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={handleClearAllSkills}
+                              className="text-xs font-bold text-slate-500 hover:text-red-600 transition-colors inline-flex items-center gap-1 cursor-pointer"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Clear All
+                            </button>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2">
+                            {data.skills_and_experience.skills.map((s) => {
+                              const catObj = SKILL_CATEGORIES.find((c) => c.id === s.category);
+                              const catLabel = catObj?.label || (s.is_custom ? 'Custom' : 'Skill');
+                              return (
+                                <span
+                                  key={s.name}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-violet-200/90 text-slate-900 shadow-2xs group"
+                                >
+                                  <span>{s.name}</span>
+                                  <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium">
+                                    {catLabel}
+                                  </span>
+                                  {s.proficiency && (
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-violet-100 text-violet-700 font-medium capitalize">
+                                      {s.proficiency.replace('_', ' ')}
+                                    </span>
+                                  )}
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveSkill(s.name)}
+                                    className="text-slate-400 hover:text-red-600 transition-colors ml-0.5 p-0.5 rounded cursor-pointer"
+                                    aria-label={`Remove ${s.name}`}
+                                  >
+                                    <X className="w-3.5 h-3.5" />
+                                  </button>
+                                </span>
+                              );
+                            })}
+                          </div>
+
+                          {/* Direct Custom Skill Input right in Active Skills Tray */}
+                          <div className="pt-2 border-t border-violet-200/60 flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={trayCustomSkill}
+                              onChange={(e) => setTrayCustomSkill(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  handleAddTrayCustomSkill();
+                                }
+                              }}
+                              placeholder="Can't find your skill? Type custom skill name..."
+                              className="flex-1 px-3.5 py-2 rounded-xl border border-violet-200 text-xs text-slate-800 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-600"
+                            />
+                            <button
+                              type="button"
+                              onClick={handleAddTrayCustomSkill}
+                              className="px-4 py-2 rounded-xl bg-violet-700 hover:bg-violet-800 text-white font-bold text-xs inline-flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer shrink-0"
+                            >
+                              <Plus className="w-3.5 h-3.5" /> Add Skill
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Unsure option - Does NOT block progress and users can still select skills */}
+                      <div>
+                        <button
+                          type="button"
+                          onClick={() => setNotSureSkills((prev) => !prev)}
+                          className={`w-full p-4 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                            notSureSkills
+                              ? 'border-violet-600 bg-violet-50/60 text-violet-950 ring-2 ring-violet-500/20 shadow-xs'
+                              : 'border-slate-200/90 bg-slate-50/50 hover:bg-slate-50 text-slate-700'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3.5">
+                            <div
+                              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                                notSureSkills ? 'bg-violet-700 text-white shadow-xs' : 'bg-slate-100 text-slate-500'
+                              }`}
+                            >
+                              <HelpCircle className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="text-xs sm:text-sm font-bold text-slate-900">I'm not sure what my skills are yet</p>
+                              <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                                That's completely fine! Skills are optional. Our career counselor will evaluate your natural strengths and aptitudes during your assessment. You can proceed directly or still explore and select any skills above.
+                              </p>
+                            </div>
+                          </div>
+                          <div
+                            className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ml-3 transition-colors ${
+                              notSureSkills ? 'border-violet-700 bg-violet-700 text-white' : 'border-slate-300 bg-white'
+                            }`}
+                          >
+                            {notSureSkills && <Check className="w-3 h-3 stroke-[2.5]" />}
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Section 2: Skill Proficiency */}
+                    <div className="pt-6 border-t border-slate-200/80">
+                      <div className="mb-3">
+                        <h3 className="text-base font-bold text-slate-900">
+                          2. Skill Proficiency <span className="text-slate-400 font-normal text-xs">(optional)</span>
+                        </h3>
+                        <p className="text-xs text-slate-500">
+                          Rate your current confidence in your selected skills, or skip this section.
+                        </p>
+                      </div>
+
+                      {(!data.skills_and_experience?.skills || data.skills_and_experience.skills.length === 0) ? (
+                        <div className="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 text-center text-xs text-slate-500">
+                          Select one or more skills in Step 1 above to rate your proficiency, or skip directly to experience below.
+                        </div>
+                      ) : (
+                        <div className="space-y-2.5 mt-3">
+                          {data.skills_and_experience.skills.map((skill) => {
+                            return (
+                              <div
+                                key={skill.name}
+                                className="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-300 transition-all"
+                              >
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-bold text-slate-900 text-sm">{skill.name}</span>
+                                    {skill.is_custom && (
+                                      <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-100 text-slate-600 font-semibold border border-slate-200">
+                                        Custom
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-[11px] text-slate-500 mt-0.5">
+                                    {PROFICIENCY_OPTIONS.find((p) => p.id === skill.proficiency)?.desc || 'Select proficiency level'}
+                                  </p>
+                                </div>
+
+                                {/* Segmented Pill Selector */}
+                                <div className="inline-flex p-1 bg-slate-100/80 rounded-xl border border-slate-200/60 shrink-0 self-start sm:self-auto gap-0.5">
+                                  {PROFICIENCY_OPTIONS.map((opt) => {
+                                    const isSelected = skill.proficiency === opt.id;
+                                    return (
+                                      <button
+                                        key={opt.id}
+                                        type="button"
+                                        onClick={() => setSkillProficiency(skill.name, opt.id)}
+                                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                                          isSelected
+                                            ? 'bg-violet-700 text-white shadow-2xs'
+                                            : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                                        }`}
+                                      >
+                                        {opt.label}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Section 3: Experience Types */}
+                    <div className="pt-6 border-t border-slate-200/80">
+                      <div className="mb-3">
+                        <h3 className="text-base font-bold text-slate-900">
+                          {isSchool ? 'Practical Activities & School Pursuits' : 'Practical Experience Types'}{' '}
+                          <span className="text-violet-700">*</span>
+                        </h3>
+                        <p className="text-xs text-slate-500">
+                          {isSchool
+                            ? 'Select all that describe your journey. If you haven\'t participated in practical activities yet, select "I haven\'t participated in practical activities yet".'
+                            : 'Select all that describe your journey. If you have no past projects or jobs, select "No practical experience".'}
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                        {experienceOptions.map((expOpt) => {
+                          const isSelected = (data.skills_and_experience?.experience_types || []).includes(expOpt.id);
+                          return (
+                            <button
+                              key={expOpt.id}
+                              type="button"
+                              onClick={() => handleToggleExperienceType(expOpt.id)}
+                              className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 cursor-pointer ${
+                                isSelected
+                                  ? 'border-violet-600 bg-violet-50/50 shadow-xs ring-2 ring-violet-500/20'
+                                  : 'border-slate-200/90 bg-white hover:border-violet-200 hover:shadow-2xs'
+                              }`}
+                            >
+                              <span className="text-2xl shrink-0 mt-0.5">{expOpt.icon}</span>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between">
+                                  <span className={`text-xs sm:text-sm font-bold truncate ${isSelected ? 'text-violet-950' : 'text-slate-900'}`}>
+                                    {expOpt.label}
+                                  </span>
+                                  <div
+                                    className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-1.5 transition-colors ${
+                                      isSelected ? 'border-violet-700 bg-violet-700 text-white' : 'border-slate-300 bg-white'
+                                    }`}
+                                  >
+                                    {isSelected && <Check className="w-2.5 h-2.5 stroke-[2.5]" />}
+                                  </div>
+                                </div>
+                                <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+                                  {expOpt.desc}
+                                </p>
+                              </div>
                             </button>
                           );
                         })}
                       </div>
                     </div>
-                  )}
 
-                  {/* Section 5: Professional Experience Duration - Never required or shown for School Students */}
-                  {!isSchool && (
-                  <div className="pt-6 border-t border-slate-200/80">
-                    <div className="mb-3">
-                      <h3 className="text-base font-bold text-slate-900">
-                        5. Total Professional Employment Experience <span className="text-purple-600">*</span>
-                      </h3>
-                      <p className="text-xs text-slate-500">
-                        Academic coursework and personal side projects do not count as corporate or salaried employment.
-                      </p>
-                    </div>
-
-                    {/* Contextual Guidance Callout */}
-                    {(() => {
-                      const types = data.skills_and_experience?.experience_types || [];
-                      const hasEmployment = types.some((t) => ['full_time', 'part_time', 'freelancing'].includes(t));
-                      const hasInternship = types.includes('internship');
-                      const onlyAcademicOrPersonal =
-                        types.length > 0 &&
-                        types.every((t) => ['academic_projects', 'personal_projects', 'volunteering', 'other'].includes(t));
-
-                      if (onlyAcademicOrPersonal) {
-                        return (
-                          <div className="p-3.5 rounded-2xl bg-purple-50/70 border border-purple-200/80 mb-3 text-left">
-                            <div className="flex items-center gap-2 text-purple-800 font-bold text-xs mb-1">
-                              <Sparkles className="w-3.5 h-3.5 text-purple-600" /> Academic & Personal Projects
+                    {/* Section 4: Dynamic Experience Details Forms */}
+                    {!(data.skills_and_experience?.experience_types || []).includes('no_experience') &&
+                      (data.skills_and_experience?.experience_types || []).length > 0 && (
+                        <div className="pt-6 border-t border-slate-200/80">
+                          <div className="flex items-center justify-between mb-3.5">
+                            <div>
+                              <h3 className="text-base font-bold text-slate-900">
+                                4. Project & Work Details <span className="text-slate-400 font-normal text-xs">(optional)</span>
+                              </h3>
+                              <p className="text-xs text-slate-500">
+                                Add any projects, internships, or jobs you'd like us to factor in.
+                              </p>
                             </div>
-                            <p className="text-xs text-purple-950/80 leading-relaxed">
-                              Academic coursework and personal builds demonstrate practical capability, but do <strong>not</strong> count as corporate or salaried employment. We have preset this to <strong>"No professional experience"</strong>.
+                            <button
+                              type="button"
+                              onClick={handleAddExperienceItem}
+                              className="px-4 py-2 rounded-xl bg-violet-700 hover:bg-violet-800 text-white text-xs font-bold inline-flex items-center gap-1.5 shadow-xs transition-colors shrink-0 cursor-pointer"
+                            >
+                              <Plus className="w-3.5 h-3.5" /> Add Project / Role
+                            </button>
+                          </div>
+
+                          {(data.skills_and_experience?.experiences || []).length === 0 ? (
+                            <div className="p-8 rounded-2xl bg-slate-50/60 border border-dashed border-slate-300 text-center">
+                              <p className="text-xs font-medium text-slate-600 mb-2">
+                                No projects or roles added yet.
+                              </p>
+                              <button
+                                type="button"
+                                onClick={handleAddExperienceItem}
+                                className="text-xs font-bold text-violet-700 hover:text-violet-800 hover:underline cursor-pointer"
+                              >
+                                + Add your first project or experience
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="space-y-4">
+                              {data.skills_and_experience?.experiences.map((exp, idx) => {
+                                const config = getExperienceTypeConfig(exp.type);
+                                const validTypes = (data.skills_and_experience?.experience_types || []).filter(
+                                  (t) => t !== 'no_experience'
+                                );
+                                return (
+                                  <div
+                                    key={exp.id}
+                                    className="p-5 sm:p-6 rounded-2xl bg-slate-50/60 border border-slate-200/90 relative space-y-4"
+                                  >
+                                    <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
+                                      <span className="text-xs font-bold uppercase tracking-wider text-violet-900">
+                                        Item #{idx + 1} · {experienceOptions.find((o) => o.id === exp.type)?.label || exp.type}
+                                      </span>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleRemoveExperienceItem(exp.id)}
+                                        className="text-slate-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
+                                        title="Delete record"
+                                        aria-label={`Delete record ${idx + 1}`}
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </button>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                      <div>
+                                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                                          Experience Type
+                                        </label>
+                                        <select
+                                          value={exp.type}
+                                          onChange={(e) =>
+                                            handleUpdateExperienceItem(exp.id, {
+                                              type: e.target.value as ExperienceType,
+                                            })
+                                          }
+                                          className={inputClass}
+                                        >
+                                          {validTypes.map((typeKey) => {
+                                            const opt = experienceOptions.find((o) => o.id === typeKey);
+                                            return (
+                                              <option key={typeKey} value={typeKey}>
+                                                {opt?.label || typeKey}
+                                              </option>
+                                            );
+                                          })}
+                                        </select>
+                                      </div>
+
+                                      <div>
+                                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                                          {config.titleLabel} <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                          type="text"
+                                          value={exp.title}
+                                          onChange={(e) => handleUpdateExperienceItem(exp.id, { title: e.target.value })}
+                                          placeholder={config.titlePlaceholder}
+                                          className={inputClass}
+                                        />
+                                      </div>
+
+                                      <div>
+                                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                                          {config.orgLabel} <span className="text-slate-400 font-normal">(optional)</span>
+                                        </label>
+                                        <input
+                                          type="text"
+                                          value={exp.organization || ''}
+                                          onChange={(e) =>
+                                            handleUpdateExperienceItem(exp.id, { organization: e.target.value })
+                                          }
+                                          placeholder={config.orgPlaceholder}
+                                          className={inputClass}
+                                        />
+                                      </div>
+
+                                      <div>
+                                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                                          {config.roleLabel} <span className="text-slate-400 font-normal">(optional)</span>
+                                        </label>
+                                        <input
+                                          type="text"
+                                          value={exp.role || ''}
+                                          onChange={(e) => handleUpdateExperienceItem(exp.id, { role: e.target.value })}
+                                          placeholder={config.rolePlaceholder}
+                                          className={inputClass}
+                                        />
+                                      </div>
+
+                                      <div>
+                                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                                          {config.durationLabel} <span className="text-slate-400 font-normal">(optional)</span>
+                                        </label>
+                                        <input
+                                          type="text"
+                                          value={exp.duration || ''}
+                                          onChange={(e) =>
+                                            handleUpdateExperienceItem(exp.id, { duration: e.target.value })
+                                          }
+                                          placeholder={config.durationPlaceholder}
+                                          className={inputClass}
+                                        />
+                                      </div>
+
+                                      <div>
+                                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                                          {config.techLabel} <span className="text-slate-400 font-normal">(optional)</span>
+                                        </label>
+                                        <input
+                                          type="text"
+                                          value={(exp.technologies || []).join(', ')}
+                                          onChange={(e) => {
+                                            const tags = e.target.value
+                                              .split(',')
+                                              .map((t) => t.trim())
+                                              .filter(Boolean);
+                                            handleUpdateExperienceItem(exp.id, { technologies: tags });
+                                          }}
+                                          placeholder={config.techPlaceholder}
+                                          className={inputClass}
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                                        {config.descLabel} <span className="text-slate-400 font-normal">(optional)</span>
+                                      </label>
+                                      <textarea
+                                        rows={2}
+                                        value={exp.description || ''}
+                                        onChange={(e) =>
+                                          handleUpdateExperienceItem(exp.id, { description: e.target.value })
+                                        }
+                                        placeholder={config.descPlaceholder}
+                                        className={`${inputClass} resize-none`}
+                                      />
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                    {/* Section: School Exploration Areas (Class 10 & Class 12 Students) */}
+                    {isSchool && (
+                      <div className="pt-6 border-t border-slate-200/80 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="text-base font-bold text-slate-900">
+                              Areas You Are Curious About or Interested in Exploring <span className="text-slate-400 font-normal text-xs">(optional)</span>
+                            </h3>
+                            <p className="text-xs text-slate-500">
+                              Pick any areas that spark your curiosity. We'll recommend relevant high school streams and career paths.
                             </p>
                           </div>
-                        );
-                      }
+                          <span className="text-xs text-violet-700 font-bold bg-violet-50 px-2.5 py-0.5 rounded-full border border-violet-100">
+                            {(data.skills_and_experience?.areas_interested_in_exploring || []).length} selected
+                          </span>
+                        </div>
 
-                      if (hasInternship && !hasEmployment) {
-                        return (
-                          <div className="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 mb-3 text-left">
-                            <div className="flex items-center gap-2 text-indigo-800 font-bold text-xs mb-1">
-                              <Briefcase className="w-3.5 h-3.5 text-indigo-600" /> Internship Distinction
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          {SCHOOL_EXPLORATION_AREAS.map((area) => {
+                            const isSelected = (data.skills_and_experience?.areas_interested_in_exploring || []).includes(area);
+                            return (
+                              <button
+                                key={area}
+                                type="button"
+                                onClick={() => handleToggleExplorationArea(area)}
+                                className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all text-left flex items-center gap-1.5 cursor-pointer ${
+                                  isSelected
+                                    ? 'bg-violet-700 border-violet-700 text-white shadow-xs ring-1 ring-violet-600/30'
+                                    : 'bg-white border-slate-200 text-slate-700 hover:border-violet-300'
+                                }`}
+                              >
+                                {isSelected ? <Check className="w-3.5 h-3.5 stroke-[2.5]" /> : null}
+                                {area}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Section 5: Professional Experience Duration - Never required or shown for School Students */}
+                    {!isSchool && (
+                    <div className="pt-6 border-t border-slate-200/80">
+                      <div className="mb-3">
+                        <h3 className="text-base font-bold text-slate-900">
+                          5. Total Professional Employment Experience <span className="text-violet-700">*</span>
+                        </h3>
+                        <p className="text-xs text-slate-500">
+                          Academic coursework and personal side projects do not count as corporate or salaried employment.
+                        </p>
+                      </div>
+
+                      {/* Contextual Guidance Callout */}
+                      {(() => {
+                        const types = data.skills_and_experience?.experience_types || [];
+                        const hasEmployment = types.some((t) => ['full_time', 'part_time', 'freelancing'].includes(t));
+                        const hasInternship = types.includes('internship');
+                        const onlyAcademicOrPersonal =
+                          types.length > 0 &&
+                          types.every((t) => ['academic_projects', 'personal_projects', 'volunteering', 'other'].includes(t));
+
+                        if (onlyAcademicOrPersonal) {
+                          return (
+                            <div className="p-3.5 rounded-2xl bg-violet-50/70 border border-violet-200/80 mb-3 text-left">
+                              <div className="flex items-center gap-2 text-violet-900 font-bold text-xs mb-1">
+                                <Sparkles className="w-3.5 h-3.5 text-violet-600" /> Academic & Personal Projects
+                              </div>
+                              <p className="text-xs text-violet-950/80 leading-relaxed">
+                                Academic coursework and personal builds demonstrate practical capability, but do <strong>not</strong> count as corporate or salaried employment. We have preset this to <strong>"No professional experience"</strong>.
+                              </p>
                             </div>
-                            <p className="text-xs text-indigo-950/80 leading-relaxed">
-                              Internships are supervised industry training stints. Unless you held regular salaried employment, you may select <strong>"No professional experience"</strong> or select the specific duration of your internship.
-                            </p>
-                          </div>
-                        );
-                      }
+                          );
+                        }
 
-                      return null;
-                    })()}
+                        if (hasInternship && !hasEmployment) {
+                          return (
+                            <div className="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 mb-3 text-left">
+                              <div className="flex items-center gap-2 text-indigo-800 font-bold text-xs mb-1">
+                                <Briefcase className="w-3.5 h-3.5 text-indigo-600" /> Internship Distinction
+                              </div>
+                              <p className="text-xs text-indigo-950/80 leading-relaxed">
+                                Internships are supervised industry training stints. Unless you held regular salaried employment, you may select <strong>"No professional experience"</strong> or select the specific duration of your internship.
+                              </p>
+                            </div>
+                          );
+                        }
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                      {PROFESSIONAL_DURATION_OPTIONS.map((durOpt) => {
-                        const isSelected = data.skills_and_experience?.professional_duration === durOpt.id;
-                        return (
-                          <button
-                            key={durOpt.id}
-                            type="button"
-                            onClick={() => handleSetProfessionalDuration(durOpt.id)}
-                            className={`px-4 py-3 rounded-2xl border text-xs sm:text-sm font-semibold transition-all text-center ${
-                              isSelected
-                                ? 'bg-purple-600 border-purple-600 text-white shadow-xs'
-                                : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300'
-                            }`}
-                          >
-                            {durOpt.label}
-                          </button>
-                        );
-                      })}
+                        return null;
+                      })()}
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                        {PROFESSIONAL_DURATION_OPTIONS.map((durOpt) => {
+                          const isSelected = data.skills_and_experience?.professional_duration === durOpt.id;
+                          return (
+                            <button
+                              key={durOpt.id}
+                              type="button"
+                              onClick={() => handleSetProfessionalDuration(durOpt.id)}
+                              className={`p-3.5 rounded-2xl border text-left transition-all flex items-center justify-between cursor-pointer ${
+                                isSelected
+                                  ? 'bg-violet-50/60 border-violet-600 text-violet-950 ring-2 ring-violet-500/20 shadow-xs'
+                                  : 'bg-white border-slate-200/90 text-slate-700 hover:border-violet-200 hover:shadow-2xs'
+                              }`}
+                            >
+                              <span className="text-xs sm:text-sm font-bold">{durOpt.label}</span>
+                              <div
+                                className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-2 transition-colors ${
+                                  isSelected ? 'border-violet-700 bg-violet-700' : 'border-slate-300 bg-white'
+                                }`}
+                              >
+                                {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
+                    )}
                   </div>
-                  )}
-                </div>
-              );
-            })()}
+                );
+              })()}
 
               {/* --- Step 4 (User-facing Step 5): Adaptive Career Preferences --- */}
               {step === 4 && (() => {
                 const persona = data.user_persona || detectUserPersona(data);
                 const isSchool = persona === 'school_student_10th' || persona === 'high_school_12th';
-                const isExperienced = persona === 'experienced_professional';
                 const isSwitcher = persona === 'career_switcher' || data.career_growth_subtype === 'career_switching';
                 const isAdvancement = data.career_growth_subtype === 'career_advancement';
                 const isBreakReturner = persona === 'career_break_returner' || data.career_growth_subtype === 'career_break_return';
@@ -6190,165 +6282,69 @@ const Onboarding: React.FC = () => {
                   )}
                 </div>
               )}
-            </div>
-
-            {saveError && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-xl mt-6 text-sm font-medium border border-red-100 text-center">
-                {saveError}
-              </div>
-            )}
-
-            {/* Nav */}
-            <div className="flex items-center justify-between mt-6">
-              <button
-                type="button"
-                onClick={goBack}
-                disabled={step === 0}
-                className={`inline-flex items-center gap-1.5 font-semibold text-sm transition-colors ${
-                  step === 0 ? 'invisible' : 'text-slate-500 hover:text-slate-900'
-                }`}
-              >
-                <ArrowLeft className="w-4 h-4" /> Back
-              </button>
-
-              {step < STEPS.length - 1 ? (
-                <button
-                  type="button"
-                  onClick={goNext}
-                  disabled={(step === 0 && !isStep0Valid) || (step === 1 && !isStep1Valid) || (step === 2 && !isStep2Valid) || (step === 3 && !isStep3Valid) || (step === 4 && !isStep4Valid)}
-                  className="bg-[#6D28D9] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#5B21B6] active:scale-[0.98] transition-all shadow-md shadow-purple-600/20 flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#6D28D9] disabled:shadow-none"
-                >
-                  Continue <ArrowRight className="w-4 h-4" />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={finishOnboarding}
-                  className="bg-[#6D28D9] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#5B21B6] active:scale-[0.98] transition-all shadow-md shadow-purple-600/20 flex items-center gap-2"
-                >
-                  {parsedData ? 'Finish & View Careers' : 'Skip & finish'} <ArrowRight className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-
-            {step === 0 && (
-              <p className="text-center mt-6">
-                <Link to="/" className="text-slate-400 hover:text-slate-600 text-xs font-semibold transition-colors">
-                  ← Back to home
-                </Link>
-              </p>
-            )}
-            </div>
-
-            {/* Right Column: Contextual Guidance & Live Profile Sidebar */}
-            <div className="lg:col-span-4 hidden lg:block space-y-5 sticky top-24">
-              {/* Card 1: Interactive Stepper */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
-                  Onboarding Progress
-                </h3>
-                <ol className="space-y-3">
-                  {STEPS.map((sName, sIdx) => {
-                    const isDone = sIdx < step;
-                    const isCurrent = sIdx === step;
-                    return (
-                      <li key={sName} className="flex items-center gap-3">
-                        <span
-                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                            isDone
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : isCurrent
-                              ? 'bg-violet-700 text-white ring-4 ring-violet-100'
-                              : 'bg-slate-100 text-slate-400'
-                          }`}
-                        >
-                          {isDone ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : sIdx + 1}
-                        </span>
-                        <span
-                          className={`text-xs font-semibold ${
-                            isCurrent
-                              ? 'text-violet-950 font-bold'
-                              : isDone
-                              ? 'text-slate-700'
-                              : 'text-slate-400'
-                          }`}
-                        >
-                          {sName}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ol>
-              </div>
-
-              {/* Card 2: Contextual Guidance */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-3">
-                <div className="flex items-center gap-2 text-violet-700">
-                  <Lightbulb className="w-4 h-4" />
-                  <span className="font-bold text-xs uppercase tracking-wider">Context & Guidance</span>
-                </div>
-                <h4 className="font-bold text-slate-900 text-sm">
-                  {currentMeta.guidanceTitle}
-                </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  {currentMeta.guidance}
-                </p>
-                <div className="p-3 bg-violet-50/60 rounded-xl border border-violet-100/80 text-[11px] text-violet-900 leading-snug">
-                  <span className="font-bold">Pro-tip: </span>
-                  <span>{currentMeta.tip}</span>
                 </div>
               </div>
 
-              {/* Card 3: Live Configured Profile Snapshot */}
-              <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    Configured Snapshot
-                  </span>
-                  <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">
-                    Live
-                  </span>
-                </div>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between py-1 border-b border-slate-100">
-                    <span className="text-slate-400">Career Mode</span>
-                    <span className="font-semibold text-slate-800 text-right max-w-[150px] truncate">
-                      {data.career_mode ? PATH_OPTIONS.find(p => p.value === data.career_mode)?.title : (data.path ? PATH_LABEL[data.path] : 'Pending')}
-                    </span>
+              {/* Navigation Actions */}
+              <div className="pt-8 border-t border-slate-100 mt-8">
+                {saveError && (
+                  <div className="mb-4 p-3 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-medium flex items-center gap-2 animate-in fade-in">
+                    <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
+                    <span>{saveError}</span>
                   </div>
-                  <div className="flex justify-between py-1 border-b border-slate-100">
-                    <span className="text-slate-400">Education</span>
-                    <span className="font-semibold text-slate-800 text-right max-w-[150px] truncate">
-                      {data.course || data.education_details?.degree?.replace(/_/g, ' ') || 'Pending'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-slate-100">
-                    <span className="text-slate-400">Interests</span>
-                    <span className="font-semibold text-slate-800">
-                      {data.interests.length > 0 ? `${data.interests.length} selected` : 'None yet'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between py-1">
-                    <span className="text-slate-400">Skills</span>
-                    <span className="font-semibold text-slate-800">
-                      {data.skills_and_experience?.skills.length || 0} declared
-                    </span>
-                  </div>
-                </div>
-              </div>
+                )}
 
-              {/* Card 4: Security & Compliance */}
-              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/60 flex items-start gap-2 text-xs text-slate-500">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span className="text-[11px] leading-relaxed">
-                  Encrypted & private. Never shared with third parties or advertisers.
-                </span>
+                <div className="flex items-center justify-between gap-4">
+                  {step > 0 ? (
+                    <button
+                      type="button"
+                      onClick={goBack}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 hover:text-slate-900 transition-colors text-sm cursor-pointer"
+                    >
+                      <ArrowLeft className="w-4 h-4" />
+                      <span>Back</span>
+                    </button>
+                  ) : (
+                    <Link
+                      to="/"
+                      className="text-slate-400 hover:text-slate-600 text-xs font-semibold transition-colors"
+                    >
+                      ← Back to home
+                    </Link>
+                  )}
+
+                  {step < STEPS.length - 1 ? (
+                    <button
+                      type="button"
+                      onClick={goNext}
+                      disabled={
+                        (step === 0 && !isStep0Valid) ||
+                        (step === 1 && !isStep1Valid) ||
+                        (step === 2 && !isStep2Valid) ||
+                        (step === 3 && !isStep3Valid) ||
+                        (step === 4 && !isStep4Valid)
+                      }
+                      className="bg-violet-700 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-violet-800 active:scale-[0.98] transition-all shadow-md shadow-violet-700/20 flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-violet-700 disabled:shadow-none text-sm cursor-pointer"
+                    >
+                      <span>Continue</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={finishOnboarding}
+                      className="bg-violet-700 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-violet-800 active:scale-[0.98] transition-all shadow-md shadow-violet-700/20 flex items-center gap-2 text-sm cursor-pointer"
+                    >
+                      <span>{parsedData ? 'Finish & View Careers' : 'Skip & finish'}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
+            </main>
           </div>
         )}
       </div>
-      <AppFooter />
     </div>
   );
 };

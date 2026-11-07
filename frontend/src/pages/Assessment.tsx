@@ -2,9 +2,9 @@ import AppFooter from '../components/AppFooter';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Sparkles, ArrowRight, ArrowLeft, Target,
+  Sparkles, ArrowRight, ArrowLeft,
   AlertTriangle, RotateCcw, Compass, Mic, FileText,
-  Lock, CheckCircle2, Check, ShieldCheck, GraduationCap,
+  Lock, CheckCircle2, Check,
   Info,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -24,8 +24,8 @@ import { EMPTY_KNOW_ME, MAX_VALUES, SITUATION_QUESTIONS, knowMeForApi, type Know
 import {
   fetchQuestions, scoreAssessment, fetchCareerMatches,
   fetchAdaptiveQuestions, scoreAdaptiveAssessment, buildProfilePayload,
-  DIM_LABEL, DIM_ORDER, WORK_STYLE_QUESTIONS,
-  type ScenarioQuestion, type ScoreResult, type MatchResult, type Dim, type CareerMatch,
+  WORK_STYLE_QUESTIONS,
+  type ScenarioQuestion, type ScoreResult, type MatchResult, type CareerMatch,
   type AdaptiveQuestion, type AdaptiveScoreResult,
 } from '../lib/assessment';
 
@@ -474,7 +474,6 @@ const Assessment: React.FC = () => {
     situation: 'identity',
   };
 
-  const topLetters = score?.code ? score.code.split('') : [];
   const currentQuestion = questions[currentQuestionIndex];
   const currentAdaptive = adaptiveQuestions[currentQuestionIndex];
   const isCurrentAnswered = currentQuestion && Boolean(answers[currentQuestion.id]);

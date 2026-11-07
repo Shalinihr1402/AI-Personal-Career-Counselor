@@ -4,21 +4,16 @@ import {
   Sparkles,
   CheckCircle2,
   AlertTriangle,
-  FileText,
-  GraduationCap,
   Briefcase,
   Layers,
   ArrowRight,
   Check,
   Plus,
-  HelpCircle,
-  Award,
 } from 'lucide-react';
 import type { EducationDetails } from '../lib/educationTaxonomy';
-import type { SkillsAndExperienceDetails, ExperienceItem, ExperienceType } from '../lib/skillsTaxonomy';
+import type { SkillsAndExperienceDetails, ExperienceItem } from '../lib/skillsTaxonomy';
 import {
   type ExtractedResumeData,
-  type ResumeComparisonReport,
   compareResumeWithOnboarding,
 } from '../lib/resumeReview';
 
@@ -137,7 +132,7 @@ export const ResumeReviewModal: React.FC<ResumeReviewModalProps> = ({
       if (selectedProjects[proj.id]) {
         experiencesToAdd.push({
           id: proj.id,
-          type: 'personal_project',
+          type: 'personal_projects',
           title: proj.title,
           organization: '',
           role: proj.role,
@@ -589,21 +584,21 @@ export const ResumeReviewModal: React.FC<ResumeReviewModalProps> = ({
                     Additional Highlights Detected
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                    {(extractedResume.additional_info.certifications || []).length > 0 && (
+                    {(extractedResume.additional_info?.certifications || []).length > 0 && (
                       <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
                         <span className="font-bold text-slate-700 block mb-1">Certifications:</span>
                         <ul className="list-disc list-inside text-slate-600 space-y-0.5">
-                          {extractedResume.additional_info.certifications.slice(0, 3).map((c, i) => (
+                          {(extractedResume.additional_info?.certifications || []).slice(0, 3).map((c, i) => (
                             <li key={i} className="truncate">{c}</li>
                           ))}
                         </ul>
                       </div>
                     )}
-                    {(extractedResume.additional_info.achievements || []).length > 0 && (
+                    {(extractedResume.additional_info?.achievements || []).length > 0 && (
                       <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
                         <span className="font-bold text-slate-700 block mb-1">Achievements:</span>
                         <ul className="list-disc list-inside text-slate-600 space-y-0.5">
-                          {extractedResume.additional_info.achievements.slice(0, 3).map((a, i) => (
+                          {(extractedResume.additional_info?.achievements || []).slice(0, 3).map((a, i) => (
                             <li key={i} className="truncate">{a}</li>
                           ))}
                         </ul>

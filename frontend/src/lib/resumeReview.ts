@@ -4,7 +4,7 @@
  */
 
 import type { EducationDetails } from './educationTaxonomy';
-import type { SkillsAndExperienceDetails, UserSkill, ExperienceItem, ExperienceType } from './skillsTaxonomy';
+import type { SkillsAndExperienceDetails, ExperienceType } from './skillsTaxonomy';
 
 export interface ExtractedPersonalSummary {
   name?: string | null;
@@ -262,7 +262,7 @@ export function compareResumeWithOnboarding(
     if (proj.title) {
       suggestedProjects.push({
         id: `res_proj_${idx}_${Date.now()}`,
-        type: 'personal_project',
+        type: 'personal_projects',
         title: proj.title.trim(),
         organization: '',
         role: (proj.role || 'Contributor').trim(),

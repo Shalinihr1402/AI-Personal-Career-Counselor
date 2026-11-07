@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BrainCircuit, ShieldCheck, Scale, Sparkles, Compass } from 'lucide-react';
+import { BrainCircuit, ShieldCheck, Scale } from 'lucide-react';
 
 export const AppFooter: React.FC = () => {
   return (
