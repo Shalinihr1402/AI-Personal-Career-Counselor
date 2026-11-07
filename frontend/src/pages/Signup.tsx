@@ -77,30 +77,20 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FE] flex items-center justify-center p-6 lg:p-12 font-sans relative overflow-hidden">
-
-      {/* Decorative background blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-100/60 rounded-full blur-[80px]"></div>
-      <div className="absolute bottom-[-10%] left-[30%] w-[600px] h-[600px] bg-indigo-50/60 rounded-full blur-[100px]"></div>
-      <div className="absolute top-[20%] right-[-5%] w-[400px] h-[400px] bg-blue-50/60 rounded-full blur-[80px]"></div>
-
-      {/* Subtle Star */}
-      <div className="absolute top-[10%] left-[45%] text-purple-200">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7.4-6.3-4.8-6.3 4.8 2.3-7.4-6-4.6h7.6z"/></svg>
-      </div>
+    <div className="min-h-screen bg-ambient-glow flex items-center justify-center p-6 lg:p-12 font-sans relative">
 
       <div className="w-full max-w-[1200px] flex flex-col lg:flex-row items-center gap-12 lg:gap-24 z-10 relative">
 
         {/* Left Side Content */}
         <div className="w-full lg:w-1/2 pt-8 lg:pt-0">
           <div className="flex items-center gap-2 mb-10">
-            <BrainCircuit className="w-8 h-8 text-purple-600" />
+            <BrainCircuit className="w-8 h-8 text-violet-700" />
             <span className="text-xl font-bold tracking-tight text-slate-900">AI Personal Career Counselor</span>
           </div>
 
           <h1 className="text-5xl md:text-[56px] font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
             Your career <br/>
-            <span className="text-[#6D28D9]">deserves more</span> <br/>
+            <span className="text-violet-700">deserves more</span> <br/>
             than luck.
           </h1>
 
@@ -111,7 +101,7 @@ const Signup: React.FC = () => {
           <div className="space-y-6 mb-12">
             <div className="flex items-center gap-5">
               <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center shrink-0 border border-purple-200/50 shadow-sm">
-                <Compass className="w-5 h-5 text-purple-600" />
+                <Compass className="w-5 h-5 text-violet-700" />
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-[15px] mb-0.5">Discover the right career</h3>
@@ -121,7 +111,7 @@ const Signup: React.FC = () => {
 
             <div className="flex items-center gap-5">
               <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center shrink-0 border border-purple-200/50 shadow-sm">
-                <TrendingUp className="w-5 h-5 text-purple-600" />
+                <TrendingUp className="w-5 h-5 text-violet-700" />
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-[15px] mb-0.5">Plan with clarity</h3>
@@ -131,7 +121,7 @@ const Signup: React.FC = () => {
 
             <div className="flex items-center gap-5">
               <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center shrink-0 border border-purple-200/50 shadow-sm">
-                <Target className="w-5 h-5 text-purple-600" />
+                <Target className="w-5 h-5 text-violet-700" />
               </div>
               <div>
                 <h3 className="font-bold text-slate-900 text-[15px] mb-0.5">Stay on track</h3>
@@ -165,10 +155,10 @@ const Signup: React.FC = () => {
           </div>
 
           {/* Form Card */}
-          <div className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 relative z-10 w-full">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 relative z-10 w-full">
             <div className="mb-6">
               <h2 className="text-2xl font-extrabold text-slate-900 mb-1 tracking-tight">Create your account</h2>
-              <p className="text-slate-500 font-medium text-sm">Let's map out your future, <span className="text-purple-600">step by step.</span></p>
+              <p className="text-slate-500 font-medium text-sm">Let's map out your future, <span className="text-violet-700">step by step.</span></p>
             </div>
 
             {error && (
@@ -190,7 +180,7 @@ const Signup: React.FC = () => {
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                       <User className="w-4 h-4" />
                     </div>
-                    <input id="firstName" type="text" autoComplete="given-name" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="First name" />
+                    <input id="firstName" type="text" autoComplete="given-name" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-600 focus:border-violet-600 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="First name" />
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -199,7 +189,7 @@ const Signup: React.FC = () => {
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                       <User className="w-4 h-4" />
                     </div>
-                    <input id="lastName" type="text" autoComplete="family-name" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="Last name" />
+                    <input id="lastName" type="text" autoComplete="family-name" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-600 focus:border-violet-600 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="Last name" />
                   </div>
                 </div>
               </div>
@@ -210,7 +200,7 @@ const Signup: React.FC = () => {
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                     <Mail className="w-4 h-4" />
                   </div>
-                  <input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="you@example.com" />
+                  <input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-600 focus:border-violet-600 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="you@example.com" />
                 </div>
               </div>
 
@@ -220,7 +210,7 @@ const Signup: React.FC = () => {
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                     <Lock className="w-4 h-4" />
                   </div>
-                  <input id="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="Create a strong password (min. 8 chars)" />
+                  <input id="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-600 focus:border-violet-600 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="Create a strong password (min. 8 chars)" />
                   <button type="button" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? 'Hide password' : 'Show password'} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 cursor-pointer hover:text-slate-600 transition-colors">
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -233,7 +223,7 @@ const Signup: React.FC = () => {
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                     <Lock className="w-4 h-4" />
                   </div>
-                  <input id="confirmPassword" type={showPassword ? 'text' : 'password'} autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="Re-enter your password" />
+                  <input id="confirmPassword" type={showPassword ? 'text' : 'password'} autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-600 focus:border-violet-600 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="Re-enter your password" />
                 </div>
                 {confirmPassword.length > 0 && password !== confirmPassword && (
                   <p className="text-[12px] font-medium text-red-500">Passwords do not match.</p>
@@ -241,14 +231,14 @@ const Signup: React.FC = () => {
               </div>
 
               <label className="flex items-start gap-2.5 text-[13px] text-slate-500 font-medium cursor-pointer">
-                <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500" />
-                <span>I agree to the <a href="#" className="text-[#6D28D9] font-semibold hover:underline">Terms</a> and <a href="#" className="text-[#6D28D9] font-semibold hover:underline">Privacy Policy</a>.</span>
+                <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 w-4 h-4 rounded border-slate-300 text-violet-700 focus:ring-violet-600" />
+                <span>I agree to the <a href="#" className="text-violet-700 font-semibold hover:underline">Terms</a> and <a href="#" className="text-violet-700 font-semibold hover:underline">Privacy Policy</a>.</span>
               </label>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#6D28D9] text-white font-bold py-3 px-4 rounded-xl hover:bg-[#5B21B6] active:scale-[0.98] transition-all mt-3 shadow-md shadow-purple-600/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-violet-700 text-white font-bold py-3 px-4 rounded-xl hover:bg-violet-800 active:scale-[0.98] transition-all mt-3 shadow-md shadow-purple-600/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
@@ -288,7 +278,7 @@ const Signup: React.FC = () => {
             <div className="mt-6 text-center">
               <p className="text-slate-600 text-[13px] font-medium">
                 Already have a roadmap?{' '}
-                <Link to="/login" className="text-[#6D28D9] font-bold hover:underline">
+                <Link to="/login" className="text-violet-700 font-bold hover:underline">
                   Log in
                 </Link>
               </p>

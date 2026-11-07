@@ -1,3 +1,4 @@
+import AppFooter from '../components/AppFooter';
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -81,11 +82,11 @@ const Roadmap: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FE] font-sans">
+    <div className="min-h-screen bg-ambient-glow font-sans flex flex-col">
       <AppHeader />
 
-      <main className="max-w-5xl mx-auto px-6 py-10">
-        <div className="flex items-center gap-2 text-purple-500 mb-1">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
+        <div className="flex items-center gap-2 text-violet-600 mb-1">
           <Target className="w-5 h-5" />
           <span className="text-sm font-bold uppercase tracking-wider">Your roadmap</span>
         </div>
@@ -99,7 +100,7 @@ const Roadmap: React.FC = () => {
 
         {/* Change target role */}
         {configured && (
-          <div className="bg-white rounded-[1.25rem] p-4 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] mb-6 flex flex-wrap items-end gap-3">
+          <div className="bg-white rounded-[1.25rem] p-4 border border-slate-200/80 shadow-[0_4px_20px_rgb(0,0,0,0.03)] mb-6 flex flex-wrap items-end gap-3">
             <div className="flex-1 min-w-[220px]">
               <label htmlFor="role" className="block text-[13px] font-semibold text-slate-700 mb-1.5">
                 Target role
@@ -119,7 +120,7 @@ const Roadmap: React.FC = () => {
               type="button"
               onClick={saveRole}
               disabled={savingRole || roleInput.trim() === (onboarding?.targetRole ?? '').trim()}
-              className="px-5 py-2.5 rounded-xl bg-[#6D28D9] text-white font-bold text-sm hover:bg-[#5B21B6] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 py-2.5 rounded-xl bg-violet-700 text-white font-bold text-sm hover:bg-violet-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {savingRole ? 'Saving…' : roleSaved ? 'Saved ✓' : 'Update roadmap'}
             </button>
@@ -154,9 +155,9 @@ const Roadmap: React.FC = () => {
             {/* Stages */}
             <section className="space-y-5">
               {roadmap.stages.map((stage, si) => (
-                <div key={stage.id} className="bg-white rounded-[1.5rem] p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                <div key={stage.id} className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="w-6 h-6 rounded-full bg-purple-100 text-purple-700 text-xs font-bold flex items-center justify-center">
+                    <span className="w-6 h-6 rounded-full bg-violet-100 text-violet-800 text-xs font-bold flex items-center justify-center">
                       {si + 1}
                     </span>
                     <h2 className="font-extrabold text-slate-900">{stage.title}</h2>
@@ -191,7 +192,7 @@ const Roadmap: React.FC = () => {
                                 type="button"
                                 onClick={() => toggleSkill(skill.id)}
                                 title={isSkipped ? 'Add back to schedule' : 'Skip — I already know this'}
-                                className="text-slate-300 hover:text-purple-500 transition-colors"
+                                className="text-slate-300 hover:text-violet-600 transition-colors"
                               >
                                 {isSkipped ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                               </button>
@@ -227,7 +228,7 @@ const Roadmap: React.FC = () => {
                                         target="_blank"
                                         rel="noreferrer noopener"
                                         onClick={(e) => e.stopPropagation()}
-                                        className="text-slate-300 hover:text-purple-500 shrink-0"
+                                        className="text-slate-300 hover:text-violet-600 shrink-0"
                                       >
                                         <ExternalLink className="w-3 h-3" />
                                       </a>
@@ -257,14 +258,14 @@ const Roadmap: React.FC = () => {
                     <details
                       key={w.index}
                       open={w.index === curIdx}
-                      className="bg-white rounded-xl border border-slate-100 shadow-[0_2px_12px_rgb(0,0,0,0.02)] group"
+                      className="bg-white rounded-xl border border-slate-200/80 shadow-[0_2px_12px_rgb(0,0,0,0.02)] group"
                     >
                       <summary className="flex items-center gap-3 px-4 py-3 cursor-pointer list-none">
                         <ChevronDown className="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform shrink-0" />
                         <span className="font-bold text-slate-800 text-sm shrink-0">
                           Week {w.index}
                           {w.index === curIdx && (
-                            <span className="ml-2 text-[10px] font-bold uppercase tracking-wide bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
+                            <span className="ml-2 text-[10px] font-bold uppercase tracking-wide bg-violet-100 text-violet-800 px-1.5 py-0.5 rounded">
                               now
                             </span>
                           )}
@@ -311,13 +312,14 @@ const Roadmap: React.FC = () => {
             </section>
 
             <p className="text-center">
-              <Link to="/today" className="text-[#6D28D9] font-bold text-sm hover:underline">
+              <Link to="/today" className="text-violet-700 font-bold text-sm hover:underline">
                 Go to today's tasks →
               </Link>
             </p>
           </div>
         </div>
       </main>
+      <AppFooter />
     </div>
   );
 };

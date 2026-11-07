@@ -22,10 +22,10 @@ interface Props {
 }
 
 const chip = (active: boolean) =>
-  `inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold border transition-colors ${
+  `inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border transition-all duration-150 cursor-pointer ${
     active
-      ? 'bg-purple-600 border-purple-600 text-white'
-      : 'bg-white border-slate-200 text-slate-600 hover:border-purple-300'
+      ? 'bg-violet-700 border-violet-800 text-white shadow-xs'
+      : 'bg-white border-slate-200/80 text-slate-700 hover:border-slate-300 hover:bg-slate-50/80'
   }`;
 
 function toggle(list: string[], item: string, max?: number): string[] {
@@ -36,10 +36,10 @@ function toggle(list: string[], item: string, max?: number): string[] {
 
 function Card({ title, hint, children }: { title: string; hint?: string; children: ReactNode }) {
   return (
-    <div className="bg-white rounded-2xl p-5 border border-slate-100">
-      <p className="text-sm font-semibold text-slate-800">{title}</p>
-      {hint && <p className="text-xs text-slate-400 mt-0.5">{hint}</p>}
-      <div className="mt-3">{children}</div>
+    <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+      <p className="text-sm font-bold text-slate-900">{title}</p>
+      {hint && <p className="text-xs text-slate-500 mt-0.5">{hint}</p>}
+      <div className="mt-3.5">{children}</div>
     </div>
   );
 }
@@ -90,10 +90,10 @@ export default function KnowMeSection({ section, value, onChange }: Props) {
                 onClick={() => onChange({ values: toggle(value.values, o.value, MAX_VALUES) })}
                 className={`text-left rounded-2xl border-2 p-4 transition-all ${
                   active
-                    ? 'border-purple-600 bg-purple-50/60'
+                    ? 'border-violet-600 bg-violet-50/50 shadow-xs'
                     : disabled
                       ? 'border-slate-100 bg-white opacity-50 cursor-not-allowed'
-                      : 'border-slate-200 bg-white hover:border-purple-300'
+                      : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
@@ -166,7 +166,7 @@ export default function KnowMeSection({ section, value, onChange }: Props) {
                   className={`text-left rounded-xl border p-3 text-xs font-semibold transition-all ${
                     active
                       ? 'border-purple-600 bg-purple-50/80 text-purple-900 shadow-sm'
-                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                      : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50/60'
                   }`}
                 >
                   {opt}
@@ -191,7 +191,7 @@ export default function KnowMeSection({ section, value, onChange }: Props) {
                   className={`text-left rounded-xl border p-3 text-xs font-semibold transition-all ${
                     active
                       ? 'border-purple-600 bg-purple-50/80 text-purple-900 shadow-sm'
-                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                      : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50/60'
                   }`}
                 >
                   {opt}
@@ -230,7 +230,7 @@ export default function KnowMeSection({ section, value, onChange }: Props) {
                   className={`text-left rounded-xl border p-3 text-xs font-semibold transition-all ${
                     active
                       ? 'border-purple-600 bg-purple-50/80 text-purple-900 shadow-sm'
-                      : 'border-slate-200 bg-white text-slate-700 hover:border-purple-300'
+                      : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50/60'
                   }`}
                 >
                   {opt}

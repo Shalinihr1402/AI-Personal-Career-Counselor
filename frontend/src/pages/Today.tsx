@@ -1,3 +1,4 @@
+import AppFooter from '../components/AppFooter';
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { CalendarCheck } from 'lucide-react';
@@ -42,11 +43,11 @@ const Today: React.FC = () => {
   const hasPlan = Boolean(onboarding);
 
   return (
-    <div className="min-h-screen bg-[#F8F9FE] font-sans">
+    <div className="min-h-screen bg-ambient-glow font-sans flex flex-col">
       <AppHeader />
 
-      <main className="max-w-2xl mx-auto px-6 py-10">
-        <div className="flex items-center gap-2 text-purple-500 mb-1">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
+        <div className="flex items-center gap-2 text-violet-600 mb-1">
           <CalendarCheck className="w-5 h-5" />
           <span className="text-sm font-bold uppercase tracking-wider">Today's work</span>
         </div>
@@ -56,11 +57,11 @@ const Today: React.FC = () => {
         </p>
 
         {!hasPlan ? (
-          <div className="bg-white rounded-[1.5rem] p-8 border border-slate-100 text-center">
+          <div className="bg-white rounded-2xl p-8 border border-slate-200/80 text-center">
             <p className="text-slate-500 mb-4">Finish onboarding to generate your plan.</p>
             <Link
               to="/onboarding"
-              className="inline-block bg-[#6D28D9] text-white font-bold py-2.5 px-5 rounded-xl hover:bg-[#5B21B6] transition-colors"
+              className="inline-block bg-violet-700 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-violet-800 transition-colors"
             >
               Complete onboarding
             </Link>
@@ -77,13 +78,14 @@ const Today: React.FC = () => {
               hoursFromProfile={hoursFromProfile}
             />
             <p className="text-center mt-6">
-              <Link to="/roadmap" className="text-[#6D28D9] font-bold text-sm hover:underline">
+              <Link to="/roadmap" className="text-violet-700 font-bold text-sm hover:underline">
                 See the full roadmap →
               </Link>
             </p>
           </>
         )}
       </main>
+      <AppFooter />
     </div>
   );
 };

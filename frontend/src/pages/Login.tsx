@@ -97,31 +97,12 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FE] flex items-center justify-center p-6 font-sans relative overflow-hidden">
-
-      {/* Decorative background blobs & vectors */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-100/60 rounded-full blur-[80px]"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-indigo-50/60 rounded-full blur-[100px]"></div>
-
-      {/* Decorative dashed lines (Top Left) */}
-      <svg className="absolute top-[15%] left-[5%] text-purple-200 hidden md:block" width="200" height="200" viewBox="0 0 200 200" fill="none">
-        <path d="M 0,200 C 50,100 150,50 200,0" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 6" />
-      </svg>
-      {/* Decorative dashed lines (Bottom Right) */}
-      <svg className="absolute bottom-[10%] right-[10%] text-purple-200 hidden md:block" width="200" height="200" viewBox="0 0 200 200" fill="none">
-        <path d="M 0,0 C 50,100 150,150 200,200" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 6" />
-      </svg>
-
-      {/* Stars */}
-      <div className="absolute top-[20%] right-[25%] text-purple-300 hidden lg:block"><Sparkles className="w-5 h-5" /></div>
-      <div className="absolute top-[25%] right-[22%] text-purple-400 hidden lg:block"><Sparkles className="w-3 h-3" /></div>
-      <div className="absolute bottom-[25%] left-[20%] text-purple-400 hidden lg:block"><Sparkles className="w-4 h-4" /></div>
-
-      <div className="w-full max-w-[440px] bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden relative z-10 flex flex-col">
+    <div className="min-h-screen bg-ambient-glow flex items-center justify-center p-6 font-sans relative">
+      <div className="w-full max-w-[440px] bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.02),0_6px_24px_rgba(0,0,0,0.02)] border border-slate-200/80 overflow-hidden relative z-10 flex flex-col">
 
         <div className="p-6 sm:p-8 flex-1">
           <div className="flex flex-col items-center mb-6 text-center">
-            <Link to="/" className="w-12 h-12 bg-[#6D28D9] rounded-2xl flex items-center justify-center mb-4 shadow-md shadow-purple-600/20 hover:scale-105 transition-transform">
+            <Link to="/" className="w-12 h-12 bg-violet-700 rounded-2xl flex items-center justify-center mb-4 shadow-md shadow-purple-600/20 hover:scale-105 transition-transform">
               <BrainCircuit className="w-6 h-6 text-white" />
             </Link>
             <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">Welcome back</h2>
@@ -152,7 +133,7 @@ const Login: React.FC = () => {
                   autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-600 focus:border-violet-600 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal"
                   placeholder="you@example.com"
                 />
               </div>
@@ -161,7 +142,7 @@ const Login: React.FC = () => {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <label htmlFor="password" className="block text-[13px] font-semibold text-slate-700">Password</label>
-                <button type="button" onClick={handleForgotPassword} className="text-[13px] font-semibold text-[#6D28D9] hover:underline">Forgot password?</button>
+                <button type="button" onClick={handleForgotPassword} className="text-[13px] font-semibold text-violet-700 hover:underline">Forgot password?</button>
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -173,7 +154,7 @@ const Login: React.FC = () => {
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-600 focus:border-violet-600 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal"
                   placeholder="••••••••"
                 />
                 <button
@@ -190,7 +171,7 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#6D28D9] text-white font-bold py-3 px-4 rounded-xl hover:bg-[#5B21B6] active:scale-[0.98] transition-all mt-3 shadow-md shadow-purple-600/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full bg-violet-700 text-white font-bold py-3 px-4 rounded-xl hover:bg-violet-800 active:scale-[0.98] transition-all mt-3 shadow-md shadow-purple-600/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -231,7 +212,7 @@ const Login: React.FC = () => {
         <div className="bg-[#F8F9FE] p-5 sm:px-8 border-t border-slate-100 text-center">
           <p className="text-slate-500 text-[13px] font-medium">
             Don't have an account yet?{' '}
-            <Link to="/signup" className="text-[#6D28D9] font-bold hover:underline">
+            <Link to="/signup" className="text-violet-700 font-bold hover:underline">
               Sign up for free
             </Link>
           </p>

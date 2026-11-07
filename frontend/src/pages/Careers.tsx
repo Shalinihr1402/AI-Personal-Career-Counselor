@@ -1,3 +1,4 @@
+import AppFooter from '../components/AppFooter';
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
@@ -184,9 +185,9 @@ export default function Careers() {
       <AppHeader />
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-b from-purple-900 via-indigo-900 to-slate-900 text-white py-14 px-6 border-b border-purple-800/40">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-400/30 px-3.5 py-1.5 rounded-full text-xs font-semibold text-purple-200 mb-4 backdrop-blur-md">
+      <div className="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white py-14 px-6 border-b border-purple-800/40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center gap-2 bg-violet-500/20 border border-purple-400/30 px-3.5 py-1.5 rounded-full text-xs font-semibold text-purple-200 mb-4 backdrop-blur-md">
             <Compass className="w-4 h-4 text-purple-300" />
             O*NET 31.0 Database (1,000+ Careers)
           </div>
@@ -225,12 +226,12 @@ export default function Careers() {
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-6xl mx-auto px-6 mt-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 px-6 mt-8">
         {/* Filter Chips & Sort Controls */}
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 mb-8 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-wider">
-              <SlidersHorizontal className="w-4 h-4 text-purple-600" />
+              <SlidersHorizontal className="w-4 h-4 text-violet-700" />
               Filter by Industry Field
             </div>
 
@@ -250,7 +251,7 @@ export default function Careers() {
           </div>
 
           {/* Field Category Pills */}
-          <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+          <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-200/80">
             <button
               onClick={() => handleFieldSelect('all')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
@@ -286,13 +287,13 @@ export default function Careers() {
             {selectedField !== 'all' && (
               <span>
                 {' '}
-                in <span className="text-purple-600 font-bold">{selectedField}</span>
+                in <span className="text-violet-700 font-bold">{selectedField}</span>
               </span>
             )}
             {searchQuery && (
               <span>
                 {' '}
-                matching "<span className="text-purple-600 font-bold">{searchQuery}</span>"
+                matching "<span className="text-violet-700 font-bold">{searchQuery}</span>"
               </span>
             )}
           </p>
@@ -346,14 +347,14 @@ export default function Careers() {
                   key={career.slug}
                   className={`bg-white rounded-2xl border p-5 flex flex-col justify-between transition-all hover:shadow-md ${
                     isSelectedForCompare
-                      ? 'border-purple-500 ring-2 ring-purple-500/20 bg-purple-50/20'
+                      ? 'border-purple-500 ring-2 ring-purple-500/20 bg-violet-50/20'
                       : 'border-slate-200/90 hover:border-purple-300'
                   }`}
                 >
                   <div>
                     {/* Field & Holland Badge */}
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-purple-100 text-purple-700 truncate max-w-[170px]">
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-violet-100 text-violet-800 truncate max-w-[170px]">
                         {career.field}
                       </span>
                       {career.code && (
@@ -364,7 +365,7 @@ export default function Careers() {
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-base font-black text-slate-900 group-hover:text-purple-600 transition-colors line-clamp-1">
+                    <h3 className="text-base font-black text-slate-900 group-hover:text-violet-700 transition-colors line-clamp-1">
                       {career.title}
                     </h3>
 
@@ -374,7 +375,7 @@ export default function Careers() {
                     </p>
 
                     {/* Estimated Salary */}
-                    <div className="mt-3.5 p-2.5 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between text-xs">
+                    <div className="mt-3.5 p-2.5 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between text-xs">
                       <span className="text-slate-500 flex items-center gap-1 text-[11px] font-medium">
                         <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
                         Mid-Level (India):
@@ -398,7 +399,7 @@ export default function Careers() {
                   </div>
 
                   {/* Card Actions */}
-                  <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2">
+                  <div className="mt-5 pt-3.5 border-t border-slate-200/80 flex items-center justify-between gap-2">
                     <button
                       onClick={() => toggleCompare(career.slug)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
@@ -420,7 +421,7 @@ export default function Careers() {
 
                     <Link
                       to={`/careers/${career.slug}`}
-                      className="inline-flex items-center gap-1 text-xs font-bold text-purple-600 hover:text-purple-800 transition-colors"
+                      className="inline-flex items-center gap-1 text-xs font-bold text-violet-700 hover:text-purple-800 transition-colors"
                     >
                       Explore Details <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
@@ -491,7 +492,7 @@ export default function Careers() {
               <button
                 onClick={handleOpenCompareModal}
                 disabled={compareLoading}
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 disabled:opacity-50"
+                className="px-4 py-2 bg-purple-600 hover:bg-violet-500 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 disabled:opacity-50"
               >
                 <Layers className="w-3.5 h-3.5" />
                 {compareLoading ? 'Loading...' : `Compare (${compareSlugs.length})`}
@@ -508,6 +509,7 @@ export default function Careers() {
         onClose={() => setIsCompareModalOpen(false)}
         onRemove={removeCompareSlug}
       />
+      <AppFooter />
     </div>
   );
 }

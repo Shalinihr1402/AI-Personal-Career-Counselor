@@ -1,3 +1,4 @@
+import AppFooter from '../components/AppFooter';
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -160,6 +161,52 @@ const emptyData: OnboardingData = {
 };
 
 const STEPS = ['Your goal', 'About you', 'Interests', 'Skills & experience', 'Target & time', 'Resume'] as const;
+
+const ONBOARDING_STEP_META = [
+  {
+    title: 'Career Mode & Direction',
+    subtitle: 'Select the goal that reflects where you are today so we calibrate your journey.',
+    guidanceTitle: 'Personalized Focus',
+    guidance: 'Whether you want open exploration or an execution plan for a specific role, this calibrates our guidance engine.',
+    tip: 'Not sure which career fits? Select Career Discovery for holistic RIASEC alignment.',
+  },
+  {
+    title: 'Educational Background',
+    subtitle: 'Your academic level unlocks stage-calibrated pathways and statutory criteria.',
+    guidanceTitle: 'Stage Calibration',
+    guidanceDesc: 'Class 8–10, 11–12, Polytechnic, and College students receive distinct question taxonomies and statutory guidelines.',
+    tip: 'We verify professional statutory requirements (e.g. NMC, BCI, ICAI, AICTE) based on your stream.',
+  },
+  {
+    title: 'Field & Domain Interests',
+    subtitle: 'Select the domains and subjects that genuinely excite your curiosity.',
+    guidanceTitle: 'Holland RIASEC Mapping',
+    guidance: 'Your chosen domains align with 1,016 occupational codes across realistic, investigative, artistic, social, enterprising, and conventional paths.',
+    tip: 'Choose at least one field to discover tailored career clusters.',
+  },
+  {
+    title: 'Skills & Practical Experience',
+    subtitle: 'Declare your skills and projects to help us evaluate your career readiness.',
+    guidanceTitle: 'Competency Distinction',
+    guidance: 'Our 4-tier engine separates self-reported skills from demonstrated practical evidence.',
+    tip: 'Include course projects, open-source work, or self-directed learning.',
+  },
+  {
+    title: 'Workstyle & Target Timeline',
+    subtitle: 'Define your operating rhythm, weekly hours, and target completion pace.',
+    guidanceTitle: 'Weekly Execution Plan',
+    guidance: 'We structure your personalized learning timetable to match the hours you can realistically commit each week.',
+    tip: 'Setting 5–10 hours per week creates a sustainable learning roadmap.',
+  },
+  {
+    title: 'Resume & Portfolio Verification',
+    subtitle: 'Upload your resume to automatically extract verified skills and enrich your profile.',
+    guidanceTitle: 'Automated Extraction',
+    guidance: 'Our parser identifies verified project evidence while letting you review every extracted skill.',
+    tip: 'Optional step: You can skip this and upload your resume anytime from your profile.',
+  },
+];
+
 
 const PATH_OPTIONS: { value: CareerMode; icon: React.ReactNode; title: string; desc: string }[] = [
   {
@@ -2050,33 +2097,67 @@ const Onboarding: React.FC = () => {
   };
 
   const progressPct = ((step + 1) / STEPS.length) * 100;
+  const currentMeta = ONBOARDING_STEP_META[step] || ONBOARDING_STEP_META[0];
 
   return (
-    <div className="min-h-screen bg-[#F8F9FE] flex items-center justify-center p-6 font-sans relative overflow-hidden">
-      {/* Decorative Blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-100/60 rounded-full blur-[80px]"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-indigo-50/60 rounded-full blur-[100px]"></div>
+    <div className="min-h-screen bg-ambient-glow font-sans flex flex-col">
+      {/* Top Application Bar */}
+      <header className="bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+            <div className="w-8 h-8 rounded-xl bg-violet-700 text-white flex items-center justify-center shadow-xs group-hover:bg-violet-800 transition-colors">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-extrabold text-slate-900 text-sm tracking-tight flex items-center gap-1.5">
+                <span>Personal Career Counselor</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-violet-700 bg-violet-50 px-1.5 py-0.2 rounded border border-violet-100 hidden sm:inline">
+                  AI SaaS
+                </span>
+              </span>
+              <span className="text-[11px] text-slate-400 font-medium -mt-0.5 hidden md:inline">
+                Onboarding & Profile Calibration
+              </span>
+            </div>
+          </Link>
 
-      <div className="w-full max-w-[800px] relative z-10">
-
-        {/* Account bar */}
-        {user && (
-          <div className="flex items-center justify-end gap-3 mb-6 text-sm">
-            <span className="text-slate-500 font-medium">
-              Signed in as <span className="text-slate-800 font-semibold">{user.email}</span>
-            </span>
-            <button
-              onClick={handleSignOut}
-              className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-semibold transition-colors"
-            >
-              <LogOut className="w-4 h-4" /> Sign out
-            </button>
+          {/* Center progress indicator */}
+          <div className="hidden md:flex items-center gap-3">
+            <div className="flex items-center gap-1.5 px-3 py-1 bg-violet-50 rounded-full border border-violet-100 text-xs font-bold text-violet-900">
+              <span>Step {step + 1} of {STEPS.length}</span>
+              <span className="text-violet-400">•</span>
+              <span className="text-violet-700">{STEPS[step]}</span>
+            </div>
+            <div className="flex items-center gap-1 text-[11px] text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Auto-saved to draft</span>
+            </div>
           </div>
-        )}
+
+          {/* User Controls */}
+          {user && (
+            <div className="flex items-center gap-3 text-xs">
+              <span className="text-slate-500 font-medium hidden sm:inline">
+                Signed in as <strong className="text-slate-800 font-bold">{user.email?.split('@')[0]}</strong>
+              </span>
+              <button
+                onClick={handleSignOut}
+                className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-900 font-semibold transition-colors px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign out</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
 
         {/* Already completed onboarding on a previous visit */}
         {alreadyDone && !redoing && !finished ? (
-          <div className="bg-white rounded-[2rem] p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 text-center">
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl p-10 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_6px_20px_rgba(0,0,0,0.02)] border border-slate-200/80 text-center my-8">
             <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mb-4 mx-auto">
               <CheckCircle2 className="w-8 h-8" />
             </div>
@@ -2104,7 +2185,7 @@ const Onboarding: React.FC = () => {
           </div>
         ) : finished ? (
           /* --- Completion screen --- */
-          <div className="bg-white rounded-[2rem] p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 text-center animate-in fade-in zoom-in duration-300">
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl p-10 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_6px_20px_rgba(0,0,0,0.02)] border border-slate-200/80 text-center animate-in fade-in zoom-in duration-300 my-8">
             <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4 mx-auto">
               <CheckCircle2 className="w-8 h-8" />
             </div>
@@ -2161,26 +2242,37 @@ const Onboarding: React.FC = () => {
             </div>
           </div>
         ) : (
-          <>
-            {/* Progress */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                <span>Step {step + 1} of {STEPS.length}</span>
-                <span className="text-purple-600">
-                  {step === 4 && (data.career_mode === 'career_discovery' || data.path === 'not_sure')
-                    ? 'Preferences'
-                    : STEPS[step]}
-                </span>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Left Column: Main Form Area */}
+            <div className="lg:col-span-8 space-y-6">
+              {/* Step Header */}
+              <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-violet-50 text-violet-700 border border-violet-100 uppercase tracking-wide">
+                    Step {step + 1} of {STEPS.length}
+                  </span>
+                  <span className="text-xs text-slate-400">•</span>
+                  <span className="text-xs font-semibold text-slate-500">
+                    {STEPS[step]}
+                  </span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  {currentMeta.title}
+                </h1>
+                <p className="text-sm text-slate-500 mt-1 leading-relaxed">
+                  {currentMeta.subtitle}
+                </p>
+                {/* Mobile progress bar */}
+                <div className="mt-4 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden lg:hidden">
+                  <div
+                    className="h-full bg-violet-700 rounded-full transition-all duration-300"
+                    style={{ width: `${progressPct}%` }}
+                  />
+                </div>
               </div>
-              <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-purple-600 rounded-full transition-all duration-300"
-                  style={{ width: `${progressPct}%` }}
-                />
-              </div>
-            </div>
 
-            <div className="bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
+              {/* Form Card */}
+              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs">
 
               {/* --- Step 0: Path --- */}
               {step === 0 && (
@@ -6141,14 +6233,122 @@ const Onboarding: React.FC = () => {
 
             {step === 0 && (
               <p className="text-center mt-6">
-                <Link to="/" className="text-slate-400 hover:text-slate-600 text-sm font-medium transition-colors">
-                  Back to home
+                <Link to="/" className="text-slate-400 hover:text-slate-600 text-xs font-semibold transition-colors">
+                  ← Back to home
                 </Link>
               </p>
             )}
-          </>
+            </div>
+
+            {/* Right Column: Contextual Guidance & Live Profile Sidebar */}
+            <div className="lg:col-span-4 hidden lg:block space-y-5 sticky top-24">
+              {/* Card 1: Interactive Stepper */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
+                  Onboarding Progress
+                </h3>
+                <ol className="space-y-3">
+                  {STEPS.map((sName, sIdx) => {
+                    const isDone = sIdx < step;
+                    const isCurrent = sIdx === step;
+                    return (
+                      <li key={sName} className="flex items-center gap-3">
+                        <span
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                            isDone
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : isCurrent
+                              ? 'bg-violet-700 text-white ring-4 ring-violet-100'
+                              : 'bg-slate-100 text-slate-400'
+                          }`}
+                        >
+                          {isDone ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : sIdx + 1}
+                        </span>
+                        <span
+                          className={`text-xs font-semibold ${
+                            isCurrent
+                              ? 'text-violet-950 font-bold'
+                              : isDone
+                              ? 'text-slate-700'
+                              : 'text-slate-400'
+                          }`}
+                        >
+                          {sName}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </div>
+
+              {/* Card 2: Contextual Guidance */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-3">
+                <div className="flex items-center gap-2 text-violet-700">
+                  <Lightbulb className="w-4 h-4" />
+                  <span className="font-bold text-xs uppercase tracking-wider">Context & Guidance</span>
+                </div>
+                <h4 className="font-bold text-slate-900 text-sm">
+                  {currentMeta.guidanceTitle}
+                </h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  {currentMeta.guidance}
+                </p>
+                <div className="p-3 bg-violet-50/60 rounded-xl border border-violet-100/80 text-[11px] text-violet-900 leading-snug">
+                  <span className="font-bold">Pro-tip: </span>
+                  <span>{currentMeta.tip}</span>
+                </div>
+              </div>
+
+              {/* Card 3: Live Configured Profile Snapshot */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    Configured Snapshot
+                  </span>
+                  <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">
+                    Live
+                  </span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between py-1 border-b border-slate-100">
+                    <span className="text-slate-400">Career Mode</span>
+                    <span className="font-semibold text-slate-800 text-right max-w-[150px] truncate">
+                      {data.career_mode ? PATH_OPTIONS.find(p => p.value === data.career_mode)?.title : (data.path ? PATH_LABEL[data.path] : 'Pending')}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-slate-100">
+                    <span className="text-slate-400">Education</span>
+                    <span className="font-semibold text-slate-800 text-right max-w-[150px] truncate">
+                      {data.course || data.education_details?.degree?.replace(/_/g, ' ') || 'Pending'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-slate-100">
+                    <span className="text-slate-400">Interests</span>
+                    <span className="font-semibold text-slate-800">
+                      {data.interests.length > 0 ? `${data.interests.length} selected` : 'None yet'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-slate-400">Skills</span>
+                    <span className="font-semibold text-slate-800">
+                      {data.skills_and_experience?.skills.length || 0} declared
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 4: Security & Compliance */}
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/60 flex items-start gap-2 text-xs text-slate-500">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <span className="text-[11px] leading-relaxed">
+                  Encrypted & private. Never shared with third parties or advertisers.
+                </span>
+              </div>
+            </div>
+          </div>
         )}
       </div>
+      <AppFooter />
     </div>
   );
 };

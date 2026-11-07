@@ -1,3 +1,4 @@
+import AppFooter from '../components/AppFooter';
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
@@ -172,10 +173,10 @@ const CareerDetail: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FE] font-sans pb-16">
+    <div className="min-h-screen bg-ambient-glow font-sans flex flex-col">
       <AppHeader />
 
-      <main className="max-w-4xl mx-auto px-6 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
         {/* Navigation back */}
         <div className="mb-6 flex items-center justify-between">
           <button
@@ -186,15 +187,15 @@ const CareerDetail: React.FC = () => {
           </button>
           <Link
             to="/assessment"
-            className="text-xs font-bold text-purple-600 hover:underline inline-flex items-center gap-1"
+            className="text-xs font-bold text-violet-700 hover:underline inline-flex items-center gap-1"
           >
             <Compass className="w-3.5 h-3.5" /> Career Discovery
           </Link>
         </div>
 
         {loading && (
-          <div className="bg-white rounded-3xl p-16 text-center border border-slate-100 shadow-sm">
-            <div className="w-10 h-10 border-3 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4" />
+          <div className="bg-white rounded-3xl p-16 text-center border border-slate-200/80 shadow-sm">
+            <div className="w-10 h-10 border-3 border-violet-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4" />
             <p className="text-slate-500 font-medium text-sm">Loading career details…</p>
           </div>
         )}
@@ -206,7 +207,7 @@ const CareerDetail: React.FC = () => {
             <p className="text-slate-500 text-sm mb-6">{error}</p>
             <Link
               to="/dashboard"
-              className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-2.5 px-5 rounded-xl hover:bg-[#5B21B6] transition-all text-sm"
+              className="inline-flex items-center gap-2 bg-violet-700 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-violet-800 transition-all text-sm"
             >
               Return to Dashboard
             </Link>
@@ -216,10 +217,10 @@ const CareerDetail: React.FC = () => {
         {!loading && career && (
           <div className="space-y-6">
             {/* Header Hero Card */}
-            <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
+            <div className="bg-white rounded-2xl p-8 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_6px_20px_rgba(0,0,0,0.02)] relative overflow-hidden">
               <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
                 <div className="flex items-center gap-2">
-                  <span className="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  <span className="bg-violet-100 text-violet-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                     {career.field}
                   </span>
                   <span className="bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1 rounded-full">
@@ -242,9 +243,9 @@ const CareerDetail: React.FC = () => {
               </p>
 
               {matchedInfo?.why_it_fits && (
-                <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4 mb-6 text-sm text-purple-900">
+                <div className="bg-violet-50 border border-violet-100 rounded-2xl p-4 mb-6 text-sm text-purple-900">
                   <p className="font-bold flex items-center gap-1.5 mb-1 text-purple-950">
-                    <Sparkles className="w-4 h-4 text-purple-600 shrink-0" /> Why this fits you:
+                    <Sparkles className="w-4 h-4 text-violet-700 shrink-0" /> Why this fits you:
                   </p>
                   <p className="text-purple-800">{matchedInfo.why_it_fits}</p>
                 </div>
@@ -260,7 +261,7 @@ const CareerDetail: React.FC = () => {
                 ) : (
                   <button
                     onClick={() => setShowModal(true)}
-                    className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-extrabold py-3 px-6 rounded-xl hover:bg-[#5B21B6] transition-all shadow-md shadow-purple-600/25 text-sm"
+                    className="inline-flex items-center gap-2 bg-violet-700 text-white font-extrabold py-3 px-6 rounded-xl hover:bg-violet-800 transition-all shadow-md shadow-purple-600/25 text-sm"
                   >
                     <Target className="w-4 h-4" />
                     Make this my Career Goal
@@ -268,7 +269,7 @@ const CareerDetail: React.FC = () => {
                 )}
                 <Link
                   to="/roadmap"
-                  className="text-slate-600 hover:text-purple-600 font-bold text-sm px-3 py-3 transition-colors"
+                  className="text-slate-600 hover:text-violet-700 font-bold text-sm px-3 py-3 transition-colors"
                 >
                   View Roadmaps →
                 </Link>
@@ -276,7 +277,7 @@ const CareerDetail: React.FC = () => {
             </div>
 
             {/* Salary Expectations Card */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)]">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-green-100 text-green-700 flex items-center justify-center font-bold">
                   ₹
@@ -288,7 +289,7 @@ const CareerDetail: React.FC = () => {
               </div>
 
               <div className="grid sm:grid-cols-3 gap-4">
-                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4">
+                <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                   <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">
                     Entry Level (0–2 yrs)
                   </span>
@@ -296,15 +297,15 @@ const CareerDetail: React.FC = () => {
                     {career.salary_india?.entry}
                   </span>
                 </div>
-                <div className="bg-purple-50/70 border border-purple-100 rounded-2xl p-4">
-                  <span className="text-xs font-semibold text-purple-600 uppercase tracking-wider block mb-1">
+                <div className="bg-violet-50/70 border border-violet-100 rounded-2xl p-4">
+                  <span className="text-xs font-semibold text-violet-700 uppercase tracking-wider block mb-1">
                     Mid Level (3–6 yrs)
                   </span>
                   <span className="text-xl font-black text-purple-950">
                     {career.salary_india?.mid}
                   </span>
                 </div>
-                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4">
+                <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
                   <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">
                     Senior Level (7+ yrs)
                   </span>
@@ -316,16 +317,16 @@ const CareerDetail: React.FC = () => {
             </div>
 
             {/* A Day in the Life */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)]">
               <div className="flex items-center gap-2 mb-4">
-                <Clock className="w-5 h-5 text-purple-600" />
+                <Clock className="w-5 h-5 text-violet-700" />
                 <h3 className="font-extrabold text-slate-900 text-lg">A Day in the Life</h3>
               </div>
-              <div className="relative pl-6 border-l-2 border-purple-100 space-y-4 ml-2">
+              <div className="relative pl-6 border-l-2 border-violet-100 space-y-4 ml-2">
                 {career.day_in_the_life.map((item, idx) => (
                   <div key={idx} className="relative">
                     <span className="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-purple-600 border-2 border-white shadow-sm" />
-                    <span className="text-xs font-bold text-purple-700 uppercase tracking-wider block mb-0.5">
+                    <span className="text-xs font-bold text-violet-800 uppercase tracking-wider block mb-0.5">
                       {item.time}
                     </span>
                     <p className="text-sm text-slate-700 leading-relaxed font-medium">
@@ -339,16 +340,16 @@ const CareerDetail: React.FC = () => {
             {/* Core Skills & Growth Outlook */}
             <div className="grid sm:grid-cols-2 gap-6">
               {/* Skills */}
-              <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+              <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)]">
                 <div className="flex items-center gap-2 mb-4">
-                  <Briefcase className="w-5 h-5 text-purple-600" />
+                  <Briefcase className="w-5 h-5 text-violet-700" />
                   <h3 className="font-extrabold text-slate-900 text-base">Key Skills Required</h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {career.skills.map((skill) => (
                     <span
                       key={skill}
-                      className="bg-purple-50 text-purple-800 text-xs font-bold px-3 py-1.5 rounded-xl border border-purple-100"
+                      className="bg-violet-50 text-purple-800 text-xs font-bold px-3 py-1.5 rounded-xl border border-violet-100"
                     >
                       {skill}
                     </span>
@@ -357,7 +358,7 @@ const CareerDetail: React.FC = () => {
               </div>
 
               {/* Growth Outlook */}
-              <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+              <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)]">
                 <div className="flex items-center gap-2 mb-4">
                   <TrendingUp className="w-5 h-5 text-green-600" />
                   <h3 className="font-extrabold text-slate-900 text-base">Industry Outlook</h3>
@@ -374,7 +375,7 @@ const CareerDetail: React.FC = () => {
             {/* Pros and Cons */}
             <div className="grid sm:grid-cols-2 gap-6">
               {/* Pros */}
-              <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+              <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)]">
                 <h4 className="font-extrabold text-green-800 text-sm flex items-center gap-2 mb-3">
                   <CheckCircle2 className="w-4 h-4 text-green-600" /> What Makes it Great
                 </h4>
@@ -389,7 +390,7 @@ const CareerDetail: React.FC = () => {
               </div>
 
               {/* Cons / Watch-outs */}
-              <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+              <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)]">
                 <h4 className="font-extrabold text-amber-800 text-sm flex items-center gap-2 mb-3">
                   <AlertTriangle className="w-4 h-4 text-amber-600" /> Honest Downsides to Know
                 </h4>
@@ -406,11 +407,11 @@ const CareerDetail: React.FC = () => {
 
             {/* Skill Gap & Job Readiness Analysis */}
             {skillGap && (
-              <div className="bg-white rounded-3xl p-6 border border-purple-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] relative overflow-hidden">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-5 border-b border-slate-100">
+              <div className="bg-white rounded-3xl p-6 border border-violet-100 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)] relative overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-5 border-b border-slate-200/80">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center font-black">
-                      <Target className="w-5 h-5 text-purple-600" />
+                    <div className="w-10 h-10 rounded-2xl bg-violet-100 text-violet-800 flex items-center justify-center font-black">
+                      <Target className="w-5 h-5 text-violet-700" />
                     </div>
                     <div>
                       <h3 className="font-extrabold text-slate-900 text-lg">AI Skill-Gap & Readiness Analysis</h3>
@@ -419,9 +420,9 @@ const CareerDetail: React.FC = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 bg-purple-50/80 px-4 py-2 rounded-2xl border border-purple-100 self-start sm:self-auto">
+                  <div className="flex items-center gap-3 bg-violet-50/80 px-4 py-2 rounded-2xl border border-violet-100 self-start sm:self-auto">
                     <span className="text-xs font-bold text-slate-600">Job Readiness:</span>
-                    <span className="text-xl font-black text-purple-700">{skillGap.readiness_score}%</span>
+                    <span className="text-xl font-black text-violet-800">{skillGap.readiness_score}%</span>
                   </div>
                 </div>
 
@@ -475,13 +476,13 @@ const CareerDetail: React.FC = () => {
 
                 {/* Recommendations */}
                 {skillGap.learning_recommendations.length > 0 && (
-                  <div className="mt-5 pt-4 border-t border-slate-100">
+                  <div className="mt-5 pt-4 border-t border-slate-200/80">
                     <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">
                       Recommended Next Actions:
                     </span>
                     <div className="grid sm:grid-cols-2 gap-2">
                       {skillGap.learning_recommendations.map((rec, i) => (
-                        <div key={i} className="text-xs bg-slate-50 border border-slate-100 rounded-xl p-2.5 text-slate-600">
+                        <div key={i} className="text-xs bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-slate-600">
                           <span className="font-bold text-slate-900">{rec.skill}:</span> {rec.action}
                         </div>
                       ))}
@@ -492,16 +493,16 @@ const CareerDetail: React.FC = () => {
             )}
 
             {/* Suggested Learning Path */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)]">
               <div className="flex items-center gap-2 mb-4">
-                <BookOpen className="w-5 h-5 text-purple-600" />
+                <BookOpen className="w-5 h-5 text-violet-700" />
                 <h3 className="font-extrabold text-slate-900 text-lg">Recommended Path to Get Started</h3>
               </div>
               <div className="space-y-2.5">
                 {career.learning_path.map((step, idx) => (
                   <div
                     key={idx}
-                    className="p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-semibold text-slate-700"
+                    className="p-3 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-semibold text-slate-700"
                   >
                     {step}
                   </div>
@@ -511,10 +512,10 @@ const CareerDetail: React.FC = () => {
 
             {/* Similar Careers Recommendation Section */}
             {career.similar_careers && career.similar_careers.length > 0 && (
-              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)]">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
                   <div>
-                    <div className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-600 uppercase tracking-wider mb-1">
+                    <div className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-700 uppercase tracking-wider mb-1">
                       <Sparkles className="w-3.5 h-3.5" />
                       Related Opportunities
                     </div>
@@ -527,7 +528,7 @@ const CareerDetail: React.FC = () => {
                   </div>
                   <Link
                     to="/careers"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-600 hover:text-purple-800 shrink-0 bg-purple-50 hover:bg-purple-100 px-3.5 py-2 rounded-xl transition-colors"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-700 hover:text-purple-800 shrink-0 bg-violet-50 hover:bg-violet-100 px-3.5 py-2 rounded-xl transition-colors"
                   >
                     <Layers className="w-4 h-4" /> Compare in Explorer
                   </Link>
@@ -542,7 +543,7 @@ const CareerDetail: React.FC = () => {
                     >
                       <div>
                         <div className="flex items-center justify-between gap-2 mb-1.5">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-700 truncate max-w-[140px]">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-violet-100 text-violet-800 truncate max-w-[140px]">
                             {sim.field}
                           </span>
                           {sim.code && (
@@ -551,7 +552,7 @@ const CareerDetail: React.FC = () => {
                             </span>
                           )}
                         </div>
-                        <h4 className="text-sm font-bold text-slate-900 group-hover:text-purple-600 transition-colors">
+                        <h4 className="text-sm font-bold text-slate-900 group-hover:text-violet-700 transition-colors">
                           {sim.title}
                         </h4>
                         <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
@@ -559,11 +560,11 @@ const CareerDetail: React.FC = () => {
                         </p>
                       </div>
 
-                      <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                      <div className="mt-4 pt-3 border-t border-slate-200/80 flex items-center justify-between text-xs">
                         <span className="text-slate-500 text-[11px] font-medium">
                           Mid: <strong className="text-slate-700">{sim.salary_india?.mid || '₹10 - ₹18 LPA'}</strong>
                         </span>
-                        <span className="text-purple-600 font-bold group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1 text-[11px]">
+                        <span className="text-violet-700 font-bold group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1 text-[11px]">
                           View <ArrowRight className="w-3 h-3" />
                         </span>
                       </div>
@@ -578,7 +579,7 @@ const CareerDetail: React.FC = () => {
         {/* Goal Confirmation Modal */}
         {showModal && career && (
           <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white rounded-[2rem] max-w-lg w-full p-8 shadow-2xl border border-slate-100 relative animate-in fade-in zoom-in-95 duration-200">
+            <div className="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl border border-slate-200/80 relative animate-in fade-in zoom-in-95 duration-200">
               <button
                 onClick={() => setShowModal(false)}
                 className="absolute top-5 right-5 text-slate-400 hover:text-slate-600"
@@ -586,7 +587,7 @@ const CareerDetail: React.FC = () => {
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center mb-4">
                 <Target className="w-6 h-6" />
               </div>
 
@@ -628,7 +629,7 @@ const CareerDetail: React.FC = () => {
                     type="button"
                     disabled={confirming}
                     onClick={handleConfirmGoal}
-                    className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-extrabold px-6 py-2.5 rounded-xl hover:bg-[#5B21B6] transition-all shadow-md shadow-purple-600/20 disabled:opacity-50 text-sm"
+                    className="inline-flex items-center gap-2 bg-violet-700 text-white font-extrabold px-6 py-2.5 rounded-xl hover:bg-violet-800 transition-all shadow-md shadow-purple-600/20 disabled:opacity-50 text-sm"
                   >
                     {confirming ? 'Saving…' : 'Yes, Set as My Goal'}
                   </button>
@@ -638,6 +639,7 @@ const CareerDetail: React.FC = () => {
           </div>
         )}
       </main>
+      <AppFooter />
     </div>
   );
 };

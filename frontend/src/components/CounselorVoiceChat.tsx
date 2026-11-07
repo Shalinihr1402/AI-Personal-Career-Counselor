@@ -565,7 +565,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
   if (profileLoading) {
     return (
       <div className="max-w-3xl mx-auto bg-white rounded-3xl border border-slate-200 p-12 text-center shadow-sm">
-        <div className="w-8 h-8 border-2 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-3" />
+        <div className="w-8 h-8 border-2 border-violet-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-3" />
         <p className="text-slate-500 text-sm font-semibold">Loading your profile & counselor context...</p>
       </div>
     );
@@ -619,7 +619,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
             <span>🎓 Academic Stage</span>
             <span className="text-slate-400 font-normal hidden sm:inline">(select your exact level for 100% relevant counseling):</span>
           </div>
-          <span className="text-[11px] font-semibold text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-full">
+          <span className="text-[11px] font-semibold text-violet-800 bg-violet-100 px-2.5 py-0.5 rounded-full">
             {currentStageInfo.desc}
           </span>
         </div>
@@ -653,7 +653,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
                 className={`flex gap-3 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {m.role === 'assistant' && (
-                  <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 font-bold text-xs">
+                  <div className="w-8 h-8 rounded-xl bg-violet-100 text-violet-800 flex items-center justify-center shrink-0 font-bold text-xs">
                     🌱
                   </div>
                 )}
@@ -671,7 +671,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
 
             {loading && (
               <div className="flex gap-3 justify-start">
-                <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 font-bold text-xs animate-pulse">
+                <div className="w-8 h-8 rounded-xl bg-violet-100 text-violet-800 flex items-center justify-center shrink-0 font-bold text-xs animate-pulse">
                   🌱
                 </div>
                 <div className="bg-slate-100 rounded-2xl px-4 py-3 text-sm text-slate-500 rounded-bl-sm border border-slate-200/60 flex items-center gap-2">
@@ -686,13 +686,13 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
           </div>
 
           {/* Quick Suggestion Chips */}
-          <div className="px-5 py-2.5 bg-slate-50 border-t border-slate-100 overflow-x-auto flex gap-2 shrink-0">
+          <div className="px-5 py-2.5 bg-slate-50 border-t border-slate-200/80 overflow-x-auto flex gap-2 shrink-0">
             {suggestionChips.map((chip, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSendMessage(chip)}
                 disabled={loading}
-                className="whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:border-purple-300 hover:bg-purple-50 transition-all shrink-0 disabled:opacity-50"
+                className="whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:border-purple-300 hover:bg-violet-50 transition-all shrink-0 disabled:opacity-50"
               >
                 {chip}
               </button>
@@ -723,7 +723,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
                   className={`p-3 rounded-2xl border transition-all shrink-0 ${
                     isListening
                       ? 'bg-red-600 border-red-600 text-white shadow-md animate-pulse ring-4 ring-red-200'
-                      : 'bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100'
+                      : 'bg-violet-50 border-violet-200 text-violet-800 hover:bg-violet-100'
                   }`}
                   title={isListening ? 'Stop recording' : 'Click to speak via Microphone'}
                 >
@@ -769,14 +769,14 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
               {conclusion.summary}
             </p>
 
-            <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 text-xs font-extrabold tracking-wider">
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-violet-50 border border-violet-200 text-violet-800 text-xs font-extrabold tracking-wider">
               Holland RIASEC Profile: {conclusion.riasec_code}
             </div>
           </div>
 
           {/* Stage-Specific Strategy Card */}
           {conclusion.stage_advice && (
-            <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-3xl p-6 border border-purple-200/80 shadow-xs">
+            <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-3xl p-6 border border-violet-200/80 shadow-xs">
               <div className="flex items-center gap-2 mb-3">
                 <span className="p-1.5 rounded-xl bg-purple-600 text-white text-xs font-bold">🎯</span>
                 <h3 className="text-base font-black text-slate-900">
@@ -790,8 +790,8 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
 
               <div className="space-y-3 text-sm">
                 {conclusion.stage_advice.recommended_path && (
-                  <div className="bg-white p-4 rounded-2xl border border-purple-100 shadow-2xs">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-purple-700 block mb-1">
+                  <div className="bg-white p-4 rounded-2xl border border-violet-100 shadow-2xs">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-violet-800 block mb-1">
                       {activeStage === 'sslc_10th' ? 'Recommended Stream / Diploma:' : 'Recommended Degree / Track:'}
                     </span>
                     <p className="font-bold text-slate-800">{conclusion.stage_advice.recommended_path}</p>
@@ -799,7 +799,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
                 )}
 
                 {conclusion.stage_advice.next_immediate_step && (
-                  <div className="bg-white p-4 rounded-2xl border border-purple-100 shadow-2xs">
+                  <div className="bg-white p-4 rounded-2xl border border-violet-100 shadow-2xs">
                     <span className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-700 block mb-1">
                       Immediate Next Academic Step:
                     </span>
@@ -808,7 +808,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
                 )}
 
                 {conclusion.stage_advice.creative_balance && (
-                  <div className="bg-white p-4 rounded-2xl border border-purple-100 shadow-2xs">
+                  <div className="bg-white p-4 rounded-2xl border border-violet-100 shadow-2xs">
                     <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 block mb-1">
                       Nurturing Your Creative Talents:
                     </span>
@@ -822,7 +822,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
           {/* Top Recommended Career Cards */}
           <div className="space-y-4">
             <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-              <Target className="w-5 h-5 text-purple-600" />
+              <Target className="w-5 h-5 text-violet-700" />
               Top Long-Term Career Matches
             </h3>
 
@@ -834,7 +834,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-purple-100 text-purple-700">
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-violet-100 text-violet-800">
                         {c.field}
                       </span>
                       <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
@@ -851,7 +851,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
                     </p>
 
                     {c.salary_india && (
-                      <div className="mt-3.5 p-2 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between text-xs">
+                      <div className="mt-3.5 p-2 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between text-xs">
                         <span className="text-slate-500 flex items-center gap-1 text-[11px] font-medium">
                           <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
                           Mid-Level (India):
@@ -863,7 +863,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
                     )}
                   </div>
 
-                  <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                  <div className="mt-5 pt-3 border-t border-slate-200/80 flex items-center justify-between gap-2">
                     <Link
                       to={`/careers/${c.slug}`}
                       className="w-full py-2 px-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5"
@@ -902,7 +902,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
 
             <Link
               to="/careers"
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-600 hover:text-purple-800 bg-purple-50 px-4 py-2.5 rounded-xl transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-700 hover:text-purple-800 bg-violet-50 px-4 py-2.5 rounded-xl transition-colors"
             >
               <Compass className="w-4 h-4" /> Browse Full 1,000+ Career Catalog
             </Link>
