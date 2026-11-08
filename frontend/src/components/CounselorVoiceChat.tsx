@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import {
   Mic,
   MicOff,
@@ -9,57 +8,44 @@ import {
   Sparkles,
   ArrowRight,
   RotateCcw,
-  TrendingUp,
-  Target,
   Compass,
   CheckCircle2,
+  ShieldCheck,
+  Layers,
+  AlertTriangle,
 } from 'lucide-react';
-import { API_BASE } from '../lib/api';
+import { Button } from './ui/Button';
+import { Badge } from './ui/Badge';
+import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
-import type { RiasecScores } from '../lib/assessment';
-import type { EducationStage, CareerPath } from '../lib/onboarding';
+import {
+  sendDiagnosticChatTurn,
+  generateDiagnosticRecommendations,
+  type DiagnosticProfileData,
+  type DiagnosticRecommendationResult,
+  type ScoreResult,
+  type AdaptiveScoreResult,
+} from '../lib/assessment';
 
 interface Message {
   id: string;
   role: 'assistant' | 'user';
   text: string;
-}
-
-interface CareerMatchItem {
-  title: string;
-  slug: string;
-  field: string;
-  code?: string;
-  fit: number;
-  reason: string;
-  salary_india?: {
-    entry?: string;
-    mid?: string;
-    senior?: string;
-  };
-  education?: string;
-  skills?: string[];
-}
-
-interface StageAdvice {
-  recommended_path?: string;
-  next_immediate_step?: string;
-  creative_balance?: string;
-}
-
-interface ConclusionData {
-  riasec_scores: RiasecScores;
-  riasec_code: string;
-  summary: string;
-  stage_advice?: StageAdvice;
-  matches: CareerMatchItem[];
+  timestamp?: string;
 }
 
 interface Props {
+  assessmentScore?: ScoreResult | null;
+  adaptiveScore?: AdaptiveScoreResult | null;
+  initialDiagnosticProfile?: DiagnosticProfileData | null;
+  onDiagnosticComplete?: (
+    results: DiagnosticRecommendationResult,
+    diagnosticProfile: DiagnosticProfileData
+  ) => void;
   onRestartAssessment?: () => void;
 }
 
-// Speech recognition type declarations
+// Web Speech API interface definitions
 interface SpeechRecognitionEvent {
   resultIndex: number;
   results: {
@@ -85,245 +71,105 @@ interface SpeechRecognitionInstance {
   onend: () => void;
 }
 
-const STAGE_OPTIONS: { id: EducationStage; label: string; short: string; icon: string; desc: string }[] = [
-  { id: 'sslc_10th', label: '10th / SSLC', short: '10th / SSLC', icon: '🌱', desc: 'Choosing 11th/12th Stream or 3-yr Diploma' },
-  { id: 'puc_12th', label: '12th / PUC / Inter', short: '12th / PUC', icon: '📘', desc: 'Choosing Undergraduate College Degree' },
-  { id: 'diploma', label: 'Polytechnic Diploma', short: 'Diploma', icon: '🔧', desc: 'Lateral Entry to B.Tech vs Core Jobs' },
-  { id: 'degree_ug', label: 'College Degree (UG)', short: 'Degree (UG)', icon: '🎓', desc: 'Campus Placements, Internships & Skills' },
-  { id: 'postgrad', label: 'Postgraduate / Job', short: 'Postgrad', icon: '🚀', desc: 'Domain Pivot & Specialization' },
-];
+export default function CounselorVoiceChat({
+  assessmentScore,
+  adaptiveScore,
+  initialDiagnosticProfile,
+  onDiagnosticComplete,
+  onRestartAssessment,
+}: Props) {
+  const { user } = useAuth();
+  const { profile, assessment } = useProfile();
 
-const getInitialMessageForStage = (stage: EducationStage) => {
-  switch (stage) {
-    case 'sslc_10th':
-      return "Hello! I'm your AI Career Counselor. Finishing 10th / SSLC is a major turning point, and deciding your 11th/12th stream or diploma can feel confusing. Let's make it simple: Which school subjects or hobbies (like singing, gaming, drawing, or science) do you naturally enjoy the most?";
-    case 'puc_12th':
-      return "Welcome! Finishing PUC / 12th is where you pick your undergraduate college degree. Tell me: Which fields excite you (like Engineering, Medicine, Commerce, Design, Law), and which entrance exams are you considering?";
-    case 'diploma':
-      return "Hello! As a Polytechnic / Diploma student, you are gaining hands-on technical skills. Are you planning for lateral entry into 2nd year B.Tech (via DCET) or are you aiming for direct core industry jobs?";
-    case 'degree_ug':
-      return "Hello! I'm your AI Career Counselor. Let's explore career directions that genuinely fit who you are. Tell me about an activity, coursework, or hobby you've enjoyed recently.";
-    case 'postgrad':
-      return "Welcome! Let's align your specialization or career pivot: What target roles or industry sectors are you aiming for?";
-  }
-};
+  const hollandCode = assessmentScore?.code || assessment?.code || 'EAI';
+  const stage = adaptiveScore?.stage || profile?.educationStage || 'college_ug_pg';
+  const firstName = user?.email ? user.email.split('@')[0] : 'there';
 
-const getInitialGreeting = (
-  stage: EducationStage,
-  path?: CareerPath | null,
-  targetRole?: string | null,
-) => {
-  if (path === 'not_sure') {
-    return "Hello! I'm your AI Career Counselor. Let's explore what career directions fit you best. Tell me about an activity, project, or hobby you've enjoyed recently—whether in classes, a personal interest, or helping someone.";
-  }
-  if ((path === 'know_goal' || path === 'need_plan') && targetRole) {
-    return `Hello! I see you're aiming for ${targetRole}. Let's look closely at your path: Tell me what draws you to this role and what steps you've already explored.`;
-  }
-  if (path === 'know_goal' || path === 'need_plan') {
-    return "Hello! I understand you have a career direction in mind. Which specific role or field are you aiming for?";
-  }
-  return getInitialMessageForStage(stage);
-};
+  const profileSkills: string[] = Array.isArray(profile?.skills_and_experience?.skills)
+    ? profile.skills_and_experience.skills.map((s) => (typeof s === 'string' ? s : s.name))
+    : profile?.resume?.skills || [];
 
-const getInitialChipsForStage = (stage: EducationStage) => {
-  switch (stage) {
-    case 'sslc_10th':
-      return [
-        '🎵 I love singing & music — what streams fit?',
-        '💻 I like computers & want to learn programming',
-        '🧪 I enjoy Science & Math (PCMB/PCMC)',
-        '📊 I want Commerce & Business (Accountancy)',
-        '🎨 I want creative arts, design, or humanities',
-        '🔧 Tell me about 3-year Polytechnic Diplomas',
-      ];
-    case 'puc_12th':
-      return [
-        'Engineering (B.Tech) - CS, AI, Electronics',
-        'Medical & Allied Health (MBBS, Pharmacy)',
-        'Commerce & Finance (B.Com, BBA, CA)',
-        'Design & Creative Arts (B.Des, NIFT)',
-        'Law & Civil Services (BA LLB, UPSC)',
-      ];
-    case 'diploma':
-      return [
-        'Lateral Entry into B.Tech 2nd year (DCET)',
-        'Direct Core Industry Technical Job',
-        'Switch from Core branch to Software/IT',
-      ];
-    case 'degree_ug':
-      return [
-        'Creative & Design roles',
-        'Software & Tech roles',
-        'Data & Analytics',
-        'Business & People roles',
-      ];
-    case 'postgrad':
-      return [
-        'Senior Technical Specialist roles',
-        'Management, Strategy & Leadership',
-        'Domain Pivot into High-Growth Tech',
-      ];
-  }
-};
+  const defaultDiagnostic: DiagnosticProfileData = {
+    education_background: [profile?.course, profile?.college, stage].filter(Boolean).join(' — '),
+    education_status: profile?.course ? 'collected' : 'not_collected',
+    projects: [],
+    projects_status: 'not_collected',
+    technical_skills: profileSkills,
+    skills_status: profileSkills.length > 0 ? 'partially_collected' : 'not_collected',
+    technical_interests: profile?.interests || [],
+    interests_status: (profile?.interests?.length ?? 0) > 0 ? 'partially_collected' : 'not_collected',
+    challenges_and_growth: [],
+    challenges_status: 'not_collected',
+    work_preferences: {},
+    preferences_status: 'not_collected',
+    career_goals: profile?.targetRole ? [profile.targetRole] : [],
+    goals_status: profile?.targetRole ? 'partially_collected' : 'not_collected',
+    summary_of_student: '',
+    completeness_score: 25,
+    is_ready_for_recommendations: false,
+  };
 
-const getInitialChips = (stage: EducationStage, path?: CareerPath | null) => {
-  if (path === 'not_sure') {
-    return [
-      '🎨 I like creative & design activities',
-      '🧩 I enjoy solving analytical problems',
-      '🤝 I like working with people & communicating',
-      '🔍 I am not sure yet, let us explore',
-    ];
-  }
-  return getInitialChipsForStage(stage);
-};
+  const [diagnosticProfile, setDiagnosticProfile] = useState<DiagnosticProfileData>(
+    () => initialDiagnosticProfile || defaultDiagnostic
+  );
 
-export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
-  const { profile, assessment, loading: profileLoading, saveProfile, saveAssessment } = useProfile();
+  // Generate personalized initial greeting acknowledging assessment results
+  const getInitialMessage = () => {
+    const isSchool = stage.includes('10th') || stage.includes('sslc');
+    const isHigherSecondary = stage.includes('12th') || stage.includes('puc');
 
-  // Active educational stage (defaults to profile -> localStorage -> sslc_10th)
-  const [activeStage, setActiveStage] = useState<EducationStage>(() => {
-    if (profile?.educationStage) return profile.educationStage;
-    const stored = localStorage.getItem('counselor_selected_stage');
-    if (stored && ['sslc_10th', 'puc_12th', 'diploma', 'degree_ug', 'postgrad'].includes(stored)) {
-      return stored as EducationStage;
+    if (isSchool) {
+      return (
+        `Hello ${firstName}! I've reviewed your Career Discovery Assessment. ` +
+        `Your Holland RIASEC profile shows a dominant pattern in ${hollandCode} environments. ` +
+        `Finishing Class 10 is an exciting milestone. Which school subjects (like Science, Math, or Social Science) ` +
+        `or personal hobbies do you naturally find most engaging?`
+      );
     }
-    return 'sslc_10th';
-  });
+
+    if (isHigherSecondary) {
+      return (
+        `Hello ${firstName}! I've reviewed your Career Discovery Assessment. ` +
+        `Your Holland RIASEC profile shows strong resonance in ${hollandCode} activities. ` +
+        `As you plan ahead from Class 11/12, which academic streams, college degrees, or entrance exam directions excite you most?`
+      );
+    }
+
+    return (
+      `Hello ${firstName}! I've reviewed your Career Discovery Assessment. ` +
+      `Your Holland RIASEC profile indicates a dominant pattern in ${hollandCode} environments. ` +
+      `To help me tailor your career recommendations to the real world, tell me: ` +
+      `What practical project, application, or significant assignment have you worked on that you found engaging?`
+    );
+  };
 
   const [messages, setMessages] = useState<Message[]>(() => [
     {
       id: '1',
       role: 'assistant',
-      text: getInitialGreeting(
-        profile?.educationStage || 'sslc_10th',
-        profile?.path ?? null,
-        profile?.targetRole,
-      ),
+      text: getInitialMessage(),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
 
-  const [suggestionChips, setSuggestionChips] = useState<string[]>(() =>
-    getInitialChips(profile?.educationStage || 'sslc_10th', profile?.path ?? null),
-  );
-
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(false);
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(true);
-  const [conclusion, setConclusion] = useState<ConclusionData | null>(null);
-
-  // Stage engine & evidence state
-  const [currentStage, setCurrentStage] = useState<string>(() =>
-    profile?.path ? 'experiences' : 'purpose',
-  );
-  const [confirmedEvidence, setConfirmedEvidence] = useState<Record<string, unknown>>(() => {
-    if (profile?.path === 'not_sure') return { guidance_goal: 'discover career options' };
-    if (profile?.path === 'know_goal') {
-      return {
-        guidance_goal: 'explore plan for chosen career',
-        ...(profile?.targetRole ? { target_career: profile.targetRole } : {}),
-      };
-    }
-    if (profile?.path === 'need_plan') {
-      return {
-        guidance_goal: 'build training or execution pathway',
-        ...(profile?.targetRole ? { target_career: profile.targetRole } : {}),
-      };
-    }
-    return {};
-  });
-  const [unresolvedQuestions, setUnresolvedQuestions] = useState<string[]>([]);
-  const [userConfirmedSummary, setUserConfirmedSummary] = useState<boolean>(false);
+  const [suggestionChips, setSuggestionChips] = useState<string[]>([
+    'I built a web application',
+    'I worked on a data / ML project',
+    'I built a mobile or systems app',
+    'I have academic coursework assignments',
+  ]);
+  const [error, setError] = useState<string | null>(null);
 
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const initializedRef = useRef(false);
 
-  // Ensure loaded profile initializes initial greeting and evidence without duplicates
-  useEffect(() => {
-    if (profileLoading) return;
-    if (!initializedRef.current) {
-      initializedRef.current = true;
-      const stage = profile?.educationStage || activeStage;
-      const path = profile?.path ?? null;
-      setActiveStage(stage);
-
-      setMessages((prev) => {
-        const hasUserMsg = prev.some((m) => m.role === 'user');
-        if (!hasUserMsg) {
-          return [
-            {
-              id: '1',
-              role: 'assistant',
-              text: getInitialGreeting(stage, path, profile?.targetRole),
-            },
-          ];
-        }
-        return prev;
-      });
-
-      setSuggestionChips(getInitialChips(stage, path));
-
-      if (path === 'not_sure') {
-        setCurrentStage('experiences');
-        setConfirmedEvidence((prev) => ({ guidance_goal: 'discover career options', ...prev }));
-      } else if (path === 'know_goal' || path === 'need_plan') {
-        setCurrentStage('experiences');
-        setConfirmedEvidence((prev) => ({
-          guidance_goal:
-            path === 'know_goal'
-              ? 'explore plan for chosen career'
-              : 'build training or execution pathway',
-          ...(profile?.targetRole ? { target_career: profile.targetRole } : {}),
-          ...prev,
-        }));
-      }
-    }
-  }, [profileLoading, profile]);
-
-  // Switch educational stage anytime
-  const handleStageChange = (newStage: EducationStage) => {
-    setActiveStage(newStage);
-    localStorage.setItem('counselor_selected_stage', newStage);
-    if (profile) {
-      saveProfile({ educationStage: newStage }).catch(() => {});
-    }
-    setConclusion(null);
-    const path = profile?.path ?? null;
-    const initialStage = path ? 'experiences' : 'purpose';
-    setCurrentStage(initialStage);
-    setConfirmedEvidence(
-      path === 'not_sure'
-        ? { guidance_goal: 'discover career options' }
-        : path === 'know_goal'
-        ? {
-            guidance_goal: 'explore plan for chosen career',
-            ...(profile?.targetRole ? { target_career: profile.targetRole } : {}),
-          }
-        : path === 'need_plan'
-        ? {
-            guidance_goal: 'build training or execution pathway',
-            ...(profile?.targetRole ? { target_career: profile.targetRole } : {}),
-          }
-        : {},
-    );
-    setUnresolvedQuestions([]);
-    setUserConfirmedSummary(false);
-    const newMsg = getInitialGreeting(newStage, path, profile?.targetRole);
-    setMessages([
-      {
-        id: Date.now().toString(),
-        role: 'assistant',
-        text: newMsg,
-      },
-    ]);
-    setSuggestionChips(getInitialChips(newStage, path));
-    speakText(newMsg);
-  };
-
-  // Check Web Speech API support
+  // Check speech recognition support
   useEffect(() => {
     const win = window as unknown as {
       SpeechRecognition?: new () => SpeechRecognitionInstance;
@@ -336,7 +182,7 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
       const rec = new SpeechRec();
       rec.continuous = false;
       rec.interimResults = true;
-      rec.lang = 'en-IN'; // Optimized for Indian English
+      rec.lang = 'en-IN';
 
       rec.onresult = (event: SpeechRecognitionEvent) => {
         let transcript = '';
@@ -361,26 +207,26 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
     }
   }, []);
 
-  // Auto-scroll chat to bottom
+  // Auto-scroll chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
-  // Text to Speech playback for Counselor
+  // Speech synthesis
   const speakText = (text: string) => {
     if (!isVoiceEnabled || !('speechSynthesis' in window)) return;
     try {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
+      const clean = text.replace(/```[\s\S]*?```/g, '').replace(/\{[\s\S]*?\}/g, '').trim();
+      const utterance = new SpeechSynthesisUtterance(clean);
       utterance.rate = 1.0;
       utterance.pitch = 1.0;
 
-      // Pick Indian or natural English voice if present
       const voices = window.speechSynthesis.getVoices();
-      const preferredVoice = voices.find(
-        (v) => v.lang.includes('en-IN') || v.name.includes('India') || v.lang.includes('en-GB'),
+      const preferred = voices.find(
+        (v) => v.lang.includes('en-IN') || v.name.includes('India') || v.lang.includes('en-GB')
       );
-      if (preferredVoice) utterance.voice = preferredVoice;
+      if (preferred) utterance.voice = preferred;
 
       window.speechSynthesis.speak(utterance);
     } catch (e) {
@@ -388,7 +234,6 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
     }
   };
 
-  // Toggle microphone
   const toggleListening = () => {
     if (!recognitionRef.current) {
       alert('Speech recognition is not supported in this browser. Please type your message.');
@@ -409,10 +254,11 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
     }
   };
 
-  // Send message to backend counselor
-  const handleSendMessage = async (textToSend?: string) => {
+  // Send message turn to diagnostic counselor
+  const handleSendMessage = async (textToSend?: string, isEarlyCompletion = false) => {
     const text = (textToSend || inputText).trim();
-    if (!text || loading) return;
+    if (!text && !isEarlyCompletion) return;
+    if (loading || generating) return;
 
     if (isListening && recognitionRef.current) {
       recognitionRef.current.stop();
@@ -422,289 +268,424 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
     const userMsg: Message = {
       id: Date.now().toString(),
       role: 'user',
-      text,
+      text: text || (isEarlyCompletion ? 'I am ready to review my profile and see career recommendations.' : ''),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
 
-    const updated = [...messages, userMsg];
-    setMessages(updated);
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setInputText('');
     setLoading(true);
+    setError(null);
 
     try {
-      const userTextLower = text.toLowerCase();
-      const isConfirming =
-        userConfirmedSummary ||
-        userTextLower.includes('yes') ||
-        userTextLower.includes('accurate') ||
-        userTextLower.includes('correct') ||
-        userTextLower.includes('looks good') ||
-        userTextLower.includes('show me options');
-
-      if (isConfirming && !userConfirmedSummary) {
-        setUserConfirmedSummary(true);
-      }
-
       const payload = {
-        messages: updated.map((m) => ({ role: m.role, content: m.text })),
+        messages: updatedMessages.map((m) => ({ role: m.role, content: m.text })),
         student_profile: {
-          educationStage: activeStage,
-          path: profile?.path,
-          targetRole: profile?.targetRole,
+          name: firstName,
+          educationStage: stage,
           course: profile?.course,
           college: profile?.college,
-          interests: profile?.interests,
-          strengthsNote: profile?.strengthsNote,
+          interests: profile?.interests || [],
           resume: profile?.resume,
-          riasec_scores: assessment?.scores,
-          riasec_code: assessment?.code,
-          assessment_completed: Boolean(assessment),
+          skills: profile?.resume?.skills || [],
+          targetRole: profile?.targetRole,
         },
-        current_stage: currentStage,
-        confirmed_evidence: confirmedEvidence,
-        unresolved_questions: unresolvedQuestions,
-        latest_turn_id: `turn_${updated.filter((m) => m.role === 'user').length}`,
-        user_confirmed_summary: isConfirming,
-        requested_early_guidance:
-          userTextLower.includes('explore') ||
-          userTextLower.includes('recommend') ||
-          userTextLower.includes('options') ||
-          userTextLower.includes('careers'),
-        assessment_completed: Boolean(assessment),
-        adaptive_evidence: assessment?.adaptiveEvidence || null,
-        riasec_scores: assessment?.scores || null,
-        riasec_code: assessment?.code || null,
+        assessment_evidence: {
+          holland_code: hollandCode,
+          scores: assessmentScore?.scores || assessment?.scores,
+          top_fields: assessmentScore?.top_fields || assessment?.adaptiveEvidence?.top_fields || [],
+          evidence_tiers: adaptiveScore?.evidence_breakdown || assessment?.adaptiveEvidence?.evidence_breakdown || {},
+          statutory_eligibility: adaptiveScore?.statutory_eligibility || assessment?.adaptiveEvidence?.statutory_eligibility || {},
+        },
+        diagnostic_profile: diagnosticProfile,
+        requested_completion: isEarlyCompletion,
+        user_confirmed: false,
       };
 
-      const res = await fetch(`${API_BASE}/api/counselor/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) throw new Error('Counselor API error');
-      const data = await res.json();
+      const res = await sendDiagnosticChatTurn(payload);
 
       const assistantMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        text: data.reply || "Thank you for sharing. Let's look closer at your strengths.",
+        text: res.reply,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
+      speakText(res.reply);
 
-      // Only speak clean reply text, never JSON or raw markdown blocks
-      const cleanSpeech = (data.reply || '')
-        .replace(/```[\s\S]*?```/g, '')
-        .replace(/\{[\s\S]*?\}/g, '')
-        .trim();
-      speakText(cleanSpeech || assistantMsg.text);
-
-      // Track stage and evidence updates from backend
-      if (data.stage) {
-        setCurrentStage(data.stage);
-      }
-      if (data.confirmed_evidence && typeof data.confirmed_evidence === 'object') {
-        setConfirmedEvidence(data.confirmed_evidence);
-      }
-      if (data.unresolved_questions && Array.isArray(data.unresolved_questions)) {
-        setUnresolvedQuestions(data.unresolved_questions);
+      if (res.diagnostic_profile) {
+        setDiagnosticProfile(res.diagnostic_profile);
       }
 
-      // Update suggestion chips from backend if provided
-      if (data.suggested_chips && Array.isArray(data.suggested_chips) && data.suggested_chips.length > 0) {
-        setSuggestionChips(data.suggested_chips);
-      }
-
-      // If the counselor has completed diagnosis
-      if (data.is_concluded && data.matches && data.matches.length > 0) {
-        const conc: ConclusionData = {
-          riasec_scores: data.riasec_scores || { R: 50, I: 50, A: 50, S: 50, E: 50, C: 50 },
-          riasec_code: data.riasec_code || 'AIC',
-          summary: data.summary || 'Strong alignment with creative problem solving and analytical thinking.',
-          stage_advice: data.stage_advice || undefined,
-          matches: data.matches,
-        };
-        setConclusion(conc);
-
-        // Auto-save assessment to Supabase
-        try {
-          await saveAssessment({
-            answers: {},
-            workStyle: {},
-            scores: conc.riasec_scores,
-            code: conc.riasec_code,
-            matches: conc.matches.map((m) => ({
-              title: m.title,
-              slug: m.slug,
-              field: m.field,
-              fit: m.fit,
-              reason: m.reason,
-              why_it_fits: m.reason,
-              day_to_day: 'Executing core role deliverables.',
-              key_skills: m.skills || [],
-            })),
-            source: 'ai',
-          });
-        } catch (saveErr) {
-          console.warn('Could not auto-save assessment:', saveErr);
-        }
+      if (res.suggested_chips && res.suggested_chips.length > 0) {
+        setSuggestionChips(res.suggested_chips);
       }
     } catch (err) {
-      console.error('Counselor chat error:', err);
-      const errorMsg: Message = {
+      console.error('Diagnostic counselor turn error:', err);
+      setError('Connection to AI Counselor timed out. Please try sending your message again.');
+      const fallbackMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        text: "I had a brief glitch connecting to my reasoning engine. Could you please share that one more time?",
+        text: "I had a momentary glitch connecting to my reasoning engine. Could you share what technologies or responsibilities were involved in that project?",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
-      setMessages((prev) => [...prev, errorMsg]);
+      setMessages((prev) => [...prev, fallbackMsg]);
     } finally {
       setLoading(false);
     }
   };
 
-  if (profileLoading) {
-    return (
-      <div className="max-w-3xl mx-auto bg-white rounded-3xl border border-slate-200 p-12 text-center shadow-sm">
-        <div className="w-8 h-8 border-2 border-violet-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-slate-500 text-sm font-semibold">Loading your profile & counselor context...</p>
-      </div>
-    );
-  }
+  // Generate final career recommendations once diagnostic is complete
+  const handleGenerateRecommendations = async () => {
+    if (generating) return;
+    setGenerating(true);
+    setError(null);
 
-  const currentStageInfo = STAGE_OPTIONS.find((s) => s.id === activeStage) || STAGE_OPTIONS[0];
+    try {
+      const payload = {
+        riasec_scores: assessmentScore?.scores || assessment?.scores || { R: 12, I: 19, A: 19, S: 12, E: 19, C: 12 },
+        code: hollandCode,
+        interests: profile?.interests || [],
+        education: [profile?.course, profile?.year].filter(Boolean).join(' — ') || stage,
+        work_style: assessment?.workStyle || {},
+        resume_skills: profile?.resume?.skills || [],
+        strengths_note: profile?.strengthsNote || undefined,
+        know_me: (profile?.knowMe as unknown as Record<string, unknown>) || {},
+        diagnostic_profile: diagnosticProfile,
+      };
+
+      const result = await generateDiagnosticRecommendations(payload);
+      if (onDiagnosticComplete) {
+        onDiagnosticComplete(result, diagnosticProfile);
+      }
+    } catch (err) {
+      console.error('Failed to generate career recommendations:', err);
+      setError('Could not generate career matches. Please ensure the backend server is running and try again.');
+      setGenerating(false);
+    }
+  };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      {/* Counselor Chat Header */}
-      <div className="bg-gradient-to-r from-purple-800 via-indigo-800 to-purple-900 rounded-3xl p-6 text-white shadow-xl mb-4 relative overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl border border-white/20 shadow-inner">
-              🌱
-            </div>
-            <div>
-              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-200">
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                Interactive AI Counselor Session
-              </div>
-              <h2 className="text-xl sm:text-2xl font-black">Voice & Diagnostic Chat</h2>
-            </div>
+    <div className="w-full">
+      {/* Top Workspace Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs mb-5">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-violet-50 text-violet-700 border border-violet-100 flex items-center justify-center font-bold text-sm shrink-0 shadow-2xs">
+            <Compass className="w-5 h-5 text-violet-700" />
           </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+                AI Diagnostic Career Counselor
+              </h2>
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Diagnostic Active
+              </span>
+            </div>
+            <p className="text-xs text-slate-500">
+              Interactive consultation synthesizing your assessment, practical projects, and technical skills.
+            </p>
+          </div>
+        </div>
 
-          {/* Education Stage Tag & Audio Toggle */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-purple-100 flex items-center gap-1.5">
-              <span>{currentStageInfo.icon}</span>
-              <span>{currentStageInfo.short} Track</span>
+        <div className="flex items-center gap-2.5 shrink-0">
+          {onRestartAssessment && (
+            <button
+              type="button"
+              onClick={onRestartAssessment}
+              className="p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors text-slate-500 hover:text-slate-800"
+              title="Retake Career Assessment"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={() => {
+              if (isVoiceEnabled) window.speechSynthesis?.cancel();
+              setIsVoiceEnabled(!isVoiceEnabled);
+            }}
+            className="p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors text-slate-700"
+            title={isVoiceEnabled ? 'Mute counselor audio voice' : 'Enable counselor audio voice'}
+          >
+            {isVoiceEnabled ? <Volume2 className="w-4 h-4 text-violet-700" /> : <VolumeX className="w-4 h-4 text-slate-400" />}
+          </button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleSendMessage('I am ready to review my profile and see career recommendations.', true)}
+            disabled={loading || generating}
+            rightIcon={<ArrowRight className="w-3.5 h-3.5 text-violet-700" />}
+            className="bg-white hover:bg-violet-50 hover:border-violet-300"
+          >
+            Finish & Review
+          </Button>
+        </div>
+      </div>
+
+      {/* Main 2-Column Desktop Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Side Panel: Profile & Diagnostic State Tracker */}
+        <div className="lg:col-span-4 space-y-4">
+          {/* Assessment Foundation Card */}
+          <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-2">
+              Assessment Foundation
             </span>
-
-            <button
-              onClick={() => {
-                if (isVoiceEnabled) window.speechSynthesis?.cancel();
-                setIsVoiceEnabled(!isVoiceEnabled);
-              }}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-white"
-              title={isVoiceEnabled ? 'Mute Counselor Voice' : 'Unmute Counselor Voice'}
-            >
-              {isVoiceEnabled ? <Volume2 className="w-4 h-4 text-emerald-300" /> : <VolumeX className="w-4 h-4 text-slate-300" />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Interactive Academic Level Selector */}
-      <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 mb-4 shadow-2xs">
-        <div className="flex items-center justify-between px-1 mb-2">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
-            <span>🎓 Academic Stage</span>
-            <span className="text-slate-400 font-normal hidden sm:inline">(select your exact level for 100% relevant counseling):</span>
-          </div>
-          <span className="text-[11px] font-semibold text-violet-800 bg-violet-100 px-2.5 py-0.5 rounded-full">
-            {currentStageInfo.desc}
-          </span>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
-          {STAGE_OPTIONS.map((opt) => (
-            <button
-              key={opt.id}
-              onClick={() => handleStageChange(opt.id)}
-              disabled={loading}
-              className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 ${
-                activeStage === opt.id
-                  ? 'bg-purple-600 text-white shadow-sm ring-2 ring-purple-300'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
-              }`}
-            >
-              <span>{opt.icon}</span>
-              <span className="truncate">{opt.short}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Main Conversation Window */}
-      {!conclusion ? (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col h-[580px] overflow-hidden">
-          {/* Messages Feed */}
-          <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
-            {messages.map((m) => (
-              <div
-                key={m.id}
-                className={`flex gap-3 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                {m.role === 'assistant' && (
-                  <div className="w-8 h-8 rounded-xl bg-violet-100 text-violet-800 flex items-center justify-center shrink-0 font-bold text-xs">
-                    🌱
-                  </div>
-                )}
-                <div
-                  className={`max-w-[82%] sm:max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                    m.role === 'user'
-                      ? 'bg-purple-600 text-white font-medium rounded-br-sm'
-                      : 'bg-slate-100 text-slate-800 rounded-bl-sm border border-slate-200/60'
-                  }`}
-                >
-                  {m.text}
-                </div>
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <span className="text-sm font-extrabold text-slate-900 block capitalize">{firstName}</span>
+                <span className="text-xs text-slate-500">{stage}</span>
               </div>
-            ))}
+              <div className="flex items-center gap-1 bg-violet-50 px-2.5 py-1 rounded-xl border border-violet-100">
+                <span className="text-[10px] font-bold text-violet-600 mr-1">RIASEC</span>
+                <span className="font-mono font-extrabold text-xs text-violet-900 tracking-wider">
+                  {hollandCode}
+                </span>
+              </div>
+            </div>
 
-            {loading && (
-              <div className="flex gap-3 justify-start">
-                <div className="w-8 h-8 rounded-xl bg-violet-100 text-violet-800 flex items-center justify-center shrink-0 font-bold text-xs animate-pulse">
-                  🌱
-                </div>
-                <div className="bg-slate-100 rounded-2xl px-4 py-3 text-sm text-slate-500 rounded-bl-sm border border-slate-200/60 flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-purple-600 animate-bounce"></div>
-                  <div className="w-2 h-2 rounded-full bg-purple-600 animate-bounce delay-100"></div>
-                  <div className="w-2 h-2 rounded-full bg-purple-600 animate-bounce delay-200"></div>
-                  <span className="text-xs font-semibold ml-1 text-slate-400">Counselor is thinking...</span>
+            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-600 flex items-start gap-2 leading-relaxed">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <span>Assessment verified. Now collecting practical evidence & project responsibilities.</span>
+            </div>
+          </div>
+
+          {/* Diagnostic Completeness Tracker */}
+          <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs space-y-4">
+            <div>
+              <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1.5">
+                <span className="flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-violet-600" />
+                  Diagnostic Profile
+                </span>
+                <span className="font-mono text-violet-700">{diagnosticProfile.completeness_score}%</span>
+              </div>
+              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-violet-600 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${Math.min(100, Math.max(15, diagnosticProfile.completeness_score))}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Category Status List */}
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                <span className="text-slate-700 font-medium flex items-center gap-1.5">
+                  🎓 Academic Background
+                </span>
+                <Badge variant={diagnosticProfile.education_status !== 'not_collected' ? 'success' : 'neutral'} size="xs">
+                  {diagnosticProfile.education_status !== 'not_collected' ? 'Collected' : 'Pending'}
+                </Badge>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                <span className="text-slate-700 font-medium flex items-center gap-1.5">
+                  💻 Projects & Practical Work
+                </span>
+                <Badge variant={diagnosticProfile.projects_status === 'collected' ? 'success' : diagnosticProfile.projects_status === 'partially_collected' ? 'brand' : 'neutral'} size="xs">
+                  {diagnosticProfile.projects_status === 'collected' ? 'Collected' : diagnosticProfile.projects_status === 'partially_collected' ? 'In Progress' : 'Pending'}
+                </Badge>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                <span className="text-slate-700 font-medium flex items-center gap-1.5">
+                  🛠️ Technical Skills & Tools
+                </span>
+                <Badge variant={diagnosticProfile.skills_status === 'collected' ? 'success' : diagnosticProfile.skills_status === 'partially_collected' ? 'brand' : 'neutral'} size="xs">
+                  {diagnosticProfile.skills_status === 'collected' ? 'Collected' : diagnosticProfile.skills_status === 'partially_collected' ? 'In Progress' : 'Pending'}
+                </Badge>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                <span className="text-slate-700 font-medium flex items-center gap-1.5">
+                  💡 Technical Interests & Focus
+                </span>
+                <Badge variant={diagnosticProfile.interests_status !== 'not_collected' ? 'success' : 'neutral'} size="xs">
+                  {diagnosticProfile.interests_status !== 'not_collected' ? 'Collected' : 'Pending'}
+                </Badge>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                <span className="text-slate-700 font-medium flex items-center gap-1.5">
+                  🎯 Career Preferences & Goals
+                </span>
+                <Badge variant={diagnosticProfile.goals_status !== 'not_collected' ? 'success' : 'neutral'} size="xs">
+                  {diagnosticProfile.goals_status !== 'not_collected' ? 'Collected' : 'Pending'}
+                </Badge>
+              </div>
+            </div>
+
+            {/* Collected Skills Pill Cloud */}
+            {diagnosticProfile.technical_skills && diagnosticProfile.technical_skills.length > 0 && (
+              <div className="pt-2 border-t border-slate-100">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+                  Identified Skills & Tools
+                </span>
+                <div className="flex flex-wrap gap-1">
+                  {diagnosticProfile.technical_skills.slice(0, 8).map((s) => (
+                    <span
+                      key={s}
+                      className="text-[11px] font-medium text-slate-700 bg-white border border-slate-200 px-2 py-0.5 rounded-md"
+                    >
+                      {s}
+                    </span>
+                  ))}
                 </div>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Center: Main Conversational Workspace */}
+        <div className="lg:col-span-8 flex flex-col bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden h-[660px]">
+          {/* Messages Feed */}
+          <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
+            {messages.map((m) => {
+              const isAssistant = m.role === 'assistant';
+              return (
+                <div
+                  key={m.id}
+                  className={`flex gap-3 ${isAssistant ? 'justify-start' : 'justify-end'}`}
+                >
+                  {isAssistant && (
+                    <div className="w-8 h-8 rounded-xl bg-violet-50 text-violet-700 border border-violet-100 flex items-center justify-center shrink-0 font-bold text-xs shadow-2xs">
+                      <Sparkles className="w-4 h-4 text-violet-700" />
+                    </div>
+                  )}
+
+                  <div className={`max-w-[85%] sm:max-w-[78%] flex flex-col ${isAssistant ? 'items-start' : 'items-end'}`}>
+                    <div
+                      className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                        isAssistant
+                          ? 'bg-slate-50/90 text-slate-800 rounded-bl-sm border border-slate-200/70 shadow-2xs'
+                          : 'bg-violet-700 text-white font-medium rounded-br-sm shadow-xs'
+                      }`}
+                    >
+                      <p className="whitespace-pre-line">{m.text}</p>
+                    </div>
+                    {m.timestamp && (
+                      <span className="text-[10px] text-slate-400 mt-1 px-1">{m.timestamp}</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+
+            {loading && (
+              <div className="flex gap-3 justify-start">
+                <div className="w-8 h-8 rounded-xl bg-violet-50 text-violet-700 border border-violet-100 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-4 h-4 text-violet-700" />
+                </div>
+                <div className="bg-slate-50 rounded-2xl px-4 py-3 text-sm text-slate-500 rounded-bl-sm border border-slate-200/70 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-violet-600 animate-bounce" />
+                  <div className="w-2 h-2 rounded-full bg-violet-600 animate-bounce delay-100" />
+                  <div className="w-2 h-2 rounded-full bg-violet-600 animate-bounce delay-200" />
+                  <span className="text-xs font-semibold ml-1 text-slate-400">Counselor is analyzing your response...</span>
+                </div>
+              </div>
+            )}
+
+            {/* Diagnostic Confirmation Card (Ready for Recommendations) */}
+            {diagnosticProfile.is_ready_for_recommendations && !generating && (
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-violet-50 via-purple-50/40 to-white border-2 border-violet-500/80 shadow-md space-y-3.5 my-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-violet-700 text-white flex items-center justify-center shadow-2xs">
+                    <CheckCircle2 className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-extrabold text-slate-900">
+                      Diagnostic Consultation Complete
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      Sufficient practical evidence collected to synthesize your final career recommendations.
+                    </p>
+                  </div>
+                </div>
+
+                {diagnosticProfile.summary_of_student && (
+                  <div className="p-3.5 bg-white rounded-xl border border-violet-100 text-xs text-slate-700 leading-relaxed">
+                    <span className="font-bold text-violet-950 block mb-1">Counselor Summary:</span>
+                    <p className="whitespace-pre-line">{diagnosticProfile.summary_of_student}</p>
+                  </div>
+                )}
+
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-1">
+                  <Button
+                    variant="primary"
+                    size="md"
+                    isLoading={generating}
+                    rightIcon={<Sparkles className="w-4 h-4" />}
+                    onClick={handleGenerateRecommendations}
+                    className="flex-1 justify-center shadow-sm"
+                  >
+                    Generate My Career Recommendations
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="md"
+                    onClick={() => handleSendMessage('I want to add another detail about my experience.', false)}
+                    className="bg-white hover:bg-slate-50 text-xs"
+                  >
+                    Add More Details
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Recommendation Generation Loading Banner */}
+            {generating && (
+              <div className="p-6 rounded-2xl bg-violet-50/80 border border-violet-200 text-center space-y-3 my-2">
+                <div className="w-8 h-8 border-2 border-violet-300 border-t-violet-700 rounded-full animate-spin mx-auto" />
+                <h4 className="text-sm font-bold text-slate-900">
+                  Synthesizing Final Recommendations
+                </h4>
+                <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                  Ranking across 1,016 occupational pathways, matching your Holland RIASEC scores, practical projects, and skills.
+                </p>
+              </div>
+            )}
+
+            {error && (
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                <span>{error}</span>
+              </div>
+            )}
+
             <div ref={chatEndRef} />
           </div>
 
           {/* Quick Suggestion Chips */}
-          <div className="px-5 py-2.5 bg-slate-50 border-t border-slate-200/80 overflow-x-auto flex gap-2 shrink-0">
-            {suggestionChips.map((chip, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleSendMessage(chip)}
-                disabled={loading}
-                className="whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:border-purple-300 hover:bg-violet-50 transition-all shrink-0 disabled:opacity-50"
-              >
-                {chip}
-              </button>
-            ))}
-          </div>
+          {suggestionChips.length > 0 && !generating && (
+            <div className="px-5 py-2.5 bg-slate-50 border-t border-slate-200/70 overflow-x-auto flex gap-2 shrink-0">
+              {suggestionChips.map((chip, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleSendMessage(chip)}
+                  disabled={loading || generating}
+                  className="whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:border-violet-300 hover:bg-violet-50 transition-all shrink-0 cursor-pointer disabled:opacity-50"
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+          )}
 
-          {/* Voice & Input Controls */}
-          <div className="p-4 bg-white border-t border-slate-200">
+          {/* Message Composer */}
+          <div className="p-4 bg-white border-t border-slate-200/80">
             {isListening && (
               <div className="mb-2 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-bold flex items-center gap-2 animate-pulse">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-600"></div>
-                Listening to your voice... Speak naturally in English.
+                <span className="w-2 h-2 rounded-full bg-red-600" />
+                Listening to your voice... Speak clearly in English.
               </div>
             )}
 
@@ -715,200 +696,46 @@ export default function CounselorVoiceChat({ onRestartAssessment }: Props) {
               }}
               className="flex items-center gap-2"
             >
-              {/* Microphone Button */}
               {voiceSupported && (
                 <button
                   type="button"
                   onClick={toggleListening}
-                  className={`p-3 rounded-2xl border transition-all shrink-0 ${
+                  className={`p-3 rounded-xl border transition-all shrink-0 cursor-pointer ${
                     isListening
                       ? 'bg-red-600 border-red-600 text-white shadow-md animate-pulse ring-4 ring-red-200'
-                      : 'bg-violet-50 border-violet-200 text-violet-800 hover:bg-violet-100'
+                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                   }`}
-                  title={isListening ? 'Stop recording' : 'Click to speak via Microphone'}
+                  title={isListening ? 'Stop recording voice' : 'Click to speak via Microphone'}
                 >
-                  {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                  {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
                 </button>
               )}
 
-              {/* Text Input */}
               <input
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={
                   isListening
-                    ? 'Listening... say what you enjoy or what you dislike...'
-                    : 'Type or click the mic to speak...'
+                    ? 'Listening... say what you worked on or tools you used...'
+                    : 'Type your response (e.g. project role, tools used, or challenges)...'
                 }
-                disabled={loading}
-                className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-all placeholder:text-slate-400"
+                disabled={loading || generating}
+                className="flex-1 px-4 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:bg-white transition-all placeholder:text-slate-400"
               />
 
-              {/* Send Button */}
               <button
                 type="submit"
-                disabled={loading || !inputText.trim()}
-                className="p-3 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl font-bold transition-all disabled:opacity-40 shrink-0 shadow-sm"
+                disabled={loading || generating || !inputText.trim()}
+                className="p-2.5 bg-violet-700 hover:bg-violet-800 text-white rounded-xl font-bold transition-all disabled:opacity-40 shrink-0 shadow-xs cursor-pointer"
+                title="Send message"
               >
-                <Send className="w-5 h-5" />
+                <Send className="w-4 h-4" />
               </button>
             </form>
           </div>
         </div>
-      ) : (
-        /* Conclusion / Diagnosis Results Screen */
-        <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
-          {/* Summary Box */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold mb-3">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Diagnosis Complete
-            </div>
-            <h2 className="text-2xl font-black text-slate-900">Your Personality & Career Matches</h2>
-            <p className="text-sm text-slate-600 max-w-xl mx-auto mt-2 leading-relaxed">
-              {conclusion.summary}
-            </p>
-
-            <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-violet-50 border border-violet-200 text-violet-800 text-xs font-extrabold tracking-wider">
-              Holland RIASEC Profile: {conclusion.riasec_code}
-            </div>
-          </div>
-
-          {/* Stage-Specific Strategy Card */}
-          {conclusion.stage_advice && (
-            <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-3xl p-6 border border-violet-200/80 shadow-xs">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="p-1.5 rounded-xl bg-purple-600 text-white text-xs font-bold">🎯</span>
-                <h3 className="text-base font-black text-slate-900">
-                  {activeStage === 'sslc_10th'
-                    ? 'Recommended 11th/12th Academic Path & Strategy'
-                    : activeStage === 'puc_12th'
-                    ? 'Recommended College Degree & Entrance Target'
-                    : 'Personalized Academic & Career Strategy'}
-                </h3>
-              </div>
-
-              <div className="space-y-3 text-sm">
-                {conclusion.stage_advice.recommended_path && (
-                  <div className="bg-white p-4 rounded-2xl border border-violet-100 shadow-2xs">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-violet-800 block mb-1">
-                      {activeStage === 'sslc_10th' ? 'Recommended Stream / Diploma:' : 'Recommended Degree / Track:'}
-                    </span>
-                    <p className="font-bold text-slate-800">{conclusion.stage_advice.recommended_path}</p>
-                  </div>
-                )}
-
-                {conclusion.stage_advice.next_immediate_step && (
-                  <div className="bg-white p-4 rounded-2xl border border-violet-100 shadow-2xs">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-700 block mb-1">
-                      Immediate Next Academic Step:
-                    </span>
-                    <p className="text-slate-700 leading-relaxed">{conclusion.stage_advice.next_immediate_step}</p>
-                  </div>
-                )}
-
-                {conclusion.stage_advice.creative_balance && (
-                  <div className="bg-white p-4 rounded-2xl border border-violet-100 shadow-2xs">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 block mb-1">
-                      Nurturing Your Creative Talents:
-                    </span>
-                    <p className="text-slate-700 leading-relaxed">{conclusion.stage_advice.creative_balance}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Top Recommended Career Cards */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-              <Target className="w-5 h-5 text-violet-700" />
-              Top Long-Term Career Matches
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {conclusion.matches.map((c, idx) => (
-                <div
-                  key={c.slug}
-                  className="bg-white rounded-2xl border border-slate-200/90 p-5 hover:border-purple-300 hover:shadow-md transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-violet-100 text-violet-800">
-                        {c.field}
-                      </span>
-                      <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                        {c.fit}% Match
-                      </span>
-                    </div>
-
-                    <h4 className="text-base font-black text-slate-900 mb-1">
-                      {idx + 1}. {c.title}
-                    </h4>
-
-                    <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                      {c.reason}
-                    </p>
-
-                    {c.salary_india && (
-                      <div className="mt-3.5 p-2 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between text-xs">
-                        <span className="text-slate-500 flex items-center gap-1 text-[11px] font-medium">
-                          <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
-                          Mid-Level (India):
-                        </span>
-                        <span className="font-bold text-slate-800 text-[11px]">
-                          {c.salary_india.mid || '₹10 - ₹18 LPA'}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="mt-5 pt-3 border-t border-slate-200/80 flex items-center justify-between gap-2">
-                    <Link
-                      to={`/careers/${c.slug}`}
-                      className="w-full py-2 px-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5"
-                    >
-                      Explore Career & Roadmap <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Action Row */}
-          <div className="flex items-center justify-between pt-4">
-            <button
-              onClick={() => {
-                if (onRestartAssessment) {
-                  onRestartAssessment();
-                } else {
-                  setConclusion(null);
-                  const resetMsg = getInitialMessageForStage(activeStage);
-                  setMessages([
-                    {
-                      id: Date.now().toString(),
-                      role: 'assistant',
-                      text: resetMsg,
-                    },
-                  ]);
-                  setSuggestionChips(getInitialChipsForStage(activeStage));
-                }
-              }}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-4 py-2.5 rounded-xl transition-colors"
-            >
-              <RotateCcw className="w-4 h-4" /> Start New Session
-            </button>
-
-            <Link
-              to="/careers"
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-700 hover:text-purple-800 bg-violet-50 px-4 py-2.5 rounded-xl transition-colors"
-            >
-              <Compass className="w-4 h-4" /> Browse Full 1,000+ Career Catalog
-            </Link>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

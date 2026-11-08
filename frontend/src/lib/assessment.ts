@@ -60,6 +60,9 @@ export interface CareerMatch {
   };
   education?: string;
   software_tools?: string[];
+  matched_skills?: string[];
+  missing_skills?: string[];
+  readiness?: 'High' | 'Medium' | 'Developing' | string;
 }
 
 export interface MatchResult {
@@ -259,4 +262,85 @@ export async function scoreAdaptiveAssessment(
     answers,
     profile: profilePayload,
   });
+}
+
+
+// --------------------------------------------------------------------------- //
+//  Diagnostic Counselor Protocol Types & Endpoints
+// --------------------------------------------------------------------------- //
+
+export interface ProjectRecord {
+  name: string;
+  description: string;
+  role: string;
+  technologies: string[];
+  challenges?: string;
+  outcomes?: string;
+}
+
+export interface DiagnosticProfileData {
+  education_background: string;
+  education_status: string;
+  projects: ProjectRecord[];
+  projects_status: string;
+  technical_skills: string[];
+  skills_status: string;
+  technical_interests: string[];
+  interests_status: string;
+  challenges_and_growth: string[];
+  challenges_status: string;
+  work_preferences: Record<string, string>;
+  preferences_status: string;
+  career_goals: string[];
+  goals_status: string;
+  summary_of_student: string;
+  completeness_score: number;
+  is_ready_for_recommendations: boolean;
+  unresolved_questions?: string[];
+}
+
+export interface DiagnosticChatResponse {
+  reply: string;
+  diagnostic_profile: DiagnosticProfileData;
+  is_ready_for_recommendations: boolean;
+  completeness_score: number;
+  field_statuses?: Record<string, string>;
+  summary?: string;
+  suggested_chips: string[];
+  user_confirmed?: boolean;
+}
+
+export function sendDiagnosticChatTurn(payload: {
+  messages: Array<{ role: string; content: string }>;
+  student_profile: Record<string, any>;
+  assessment_evidence: Record<string, any>;
+  diagnostic_profile?: DiagnosticProfileData | null;
+  requested_completion?: boolean;
+  user_confirmed?: boolean;
+}): Promise<DiagnosticChatResponse> {
+  return postJSON<DiagnosticChatResponse>('/api/counselor/diagnostic-chat', payload);
+}
+
+export interface DiagnosticRecommendationResult {
+  source: 'ai' | 'hybrid_vector' | 'rule';
+  matches: CareerMatch[];
+  diagnostic_summary: string;
+  riasec_scores: RiasecScores;
+  riasec_code: string;
+  demonstrated_skills_count?: number;
+  timestamp?: string;
+}
+
+export function generateDiagnosticRecommendations(payload: {
+  riasec_scores: RiasecScores;
+  code: string;
+  interests: string[];
+  education?: string;
+  work_style: Record<string, string>;
+  resume_skills: string[];
+  strengths_note?: string;
+  know_me: Record<string, unknown>;
+  diagnostic_profile: DiagnosticProfileData;
+}): Promise<DiagnosticRecommendationResult> {
+  return postJSON<DiagnosticRecommendationResult>('/api/counselor/generate-recommendations', payload);
 }

@@ -5,7 +5,7 @@ import {
   Sparkles, ArrowRight, ArrowLeft,
   AlertTriangle, RotateCcw, Compass, Mic, FileText,
   Lock, CheckCircle2, Check,
-  Info,
+  Info, Users, Cpu, CheckSquare, Hammer, Search, Users2, User,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
@@ -20,19 +20,20 @@ import CareerMatchCard from '../components/assessment/CareerMatchCard';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { confirmCareerGoal } from '../lib/profile';
-import { EMPTY_KNOW_ME, MAX_VALUES, SITUATION_QUESTIONS, knowMeForApi, type KnowMe } from '../lib/knowMe';
+import { EMPTY_KNOW_ME, MAX_VALUES, SITUATION_QUESTIONS, type KnowMe } from '../lib/knowMe';
 import {
-  fetchQuestions, scoreAssessment, fetchCareerMatches,
+  fetchQuestions, scoreAssessment,
   fetchAdaptiveQuestions, scoreAdaptiveAssessment, buildProfilePayload,
   WORK_STYLE_QUESTIONS,
   type ScenarioQuestion, type ScoreResult, type MatchResult, type CareerMatch,
   type AdaptiveQuestion, type AdaptiveScoreResult,
+  type DiagnosticProfileData, type DiagnosticRecommendationResult,
 } from '../lib/assessment';
 
 type Phase =
   | 'loading' | 'intro' | 'quiz' | 'workstyle'
   | 'values' | 'strengths' | 'identity' | 'situation'
-  | 'scoring' | 'results' | 'error';
+  | 'scoring' | 'counselor_diagnostic' | 'results' | 'error';
 
 const STORAGE_ANSWERS_KEY = 'career_discovery_answers';
 const STORAGE_INDEX_KEY = 'career_discovery_index';
@@ -101,32 +102,127 @@ const SECTION_INTRO: Partial<Record<Phase, { title: string; subtitle: string }>>
   situation: { title: 'Your situation', subtitle: 'So we recommend careers that work in real life, not just on paper.' },
 };
 
+const WORKSTYLE_META: Record<
+  string,
+  {
+    subtitle: string;
+    options: Record<
+      string,
+      {
+        icon: React.ComponentType<{ className?: string }>;
+        desc: string;
+      }
+    >;
+  }
+> = {
+  people_vs_data: {
+    subtitle: 'Human-centered engagement vs structured analytical focus.',
+    options: {
+      'Working with people': {
+        icon: Users,
+        desc: 'Thriving on active collaboration, empathy, mentoring, and direct interpersonal relationships.',
+      },
+      'Working with data or things': {
+        icon: Cpu,
+        desc: 'Thriving on quantitative logic, code, structured physical systems, and technical problem solving.',
+      },
+    },
+  },
+  structure_vs_ambiguity: {
+    subtitle: 'Predictable operational processes vs exploratory latitude.',
+    options: {
+      'Clear structure and steps': {
+        icon: CheckSquare,
+        desc: 'Predictable roadmaps, well-defined standards, clear instructions, and organized quality.',
+      },
+      'Open-ended problems': {
+        icon: Sparkles,
+        desc: 'First-principles thinking, uncharted territory, creative flexibility, and solving ambiguity.',
+      },
+    },
+  },
+  build_vs_analyze: {
+    subtitle: 'Tangible output delivery vs diagnostic investigation.',
+    options: {
+      'Build and make things': {
+        icon: Hammer,
+        desc: 'Hands-on creation, engineering systems, executing deliverables, and building real-world solutions.',
+      },
+      'Analyse and understand things': {
+        icon: Search,
+        desc: 'Root-cause diagnosis, quantitative modeling, evaluating trade-offs, and discovering underlying patterns.',
+      },
+    },
+  },
+  team_vs_solo: {
+    subtitle: 'Social density and pairing preference in daily execution.',
+    options: {
+      'Closely with a team': {
+        icon: Users2,
+        desc: 'Frequent brainstorming, shared responsibility, cross-functional pairing, and team momentum.',
+      },
+      'Independently, on your own': {
+        icon: User,
+        desc: 'Deep uninterrupted focus blocks, high autonomy, self-directed research, and solo mastery.',
+      },
+    },
+  },
+};
+
 function SectionStepper({ current }: { current: Phase }) {
   const idx = SECTIONS.findIndex((s) => s.id === current);
   return (
-    <ol className="flex items-center gap-1.5 sm:gap-2 mb-6 sm:mb-8" aria-label="Discovery progress">
-      {SECTIONS.map((s, i) => {
-        const isCurrent = i === idx;
-        const isPast = i < idx;
-        return (
-          <li key={s.id} className="flex-1 min-w-0">
-            <div
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                isCurrent ? 'bg-violet-700' : isPast ? 'bg-violet-300' : 'bg-slate-200'
-              }`}
-            />
-            <span
-              className={`mt-1.5 block text-[10px] sm:text-[11px] font-bold tracking-tight truncate ${
-                isCurrent ? 'text-violet-950 font-extrabold' : isPast ? 'text-slate-600 font-semibold' : 'text-slate-400 font-medium'
-              }`}
-              aria-current={isCurrent ? 'step' : undefined}
-            >
-              {s.label}
-            </span>
-          </li>
-        );
-      })}
-    </ol>
+    <div className="mb-8" aria-label="Discovery progress">
+      <ol className="flex items-center justify-between relative">
+        {/* Background connecting track */}
+        <div className="absolute top-4 left-6 right-6 h-0.5 bg-slate-200 -z-0" />
+        {/* Active progress fill line */}
+        <div
+          className="absolute top-4 left-6 h-0.5 bg-violet-600 transition-all duration-500 ease-out -z-0"
+          style={{
+            width: idx <= 0 ? '0%' : `${(idx / (SECTIONS.length - 1)) * 100}%`,
+          }}
+        />
+
+        {SECTIONS.map((s, i) => {
+          const isCurrent = i === idx;
+          const isPast = i < idx;
+          return (
+            <li key={s.id} className="flex flex-col items-center relative z-10">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${
+                  isCurrent
+                    ? 'bg-white border-2 border-violet-600 text-violet-700 ring-4 ring-violet-100 shadow-xs'
+                    : isPast
+                    ? 'bg-violet-700 text-white shadow-2xs'
+                    : 'bg-white border-2 border-slate-200 text-slate-400'
+                }`}
+                aria-current={isCurrent ? 'step' : undefined}
+              >
+                {isPast ? <Check className="w-4 h-4 stroke-[2.5]" /> : i + 1}
+              </div>
+              <span
+                className={`mt-2 text-xs transition-colors text-center hidden sm:block ${
+                  isCurrent
+                    ? 'text-violet-950 font-bold'
+                    : isPast
+                    ? 'text-slate-700 font-semibold'
+                    : 'text-slate-400 font-medium'
+                }`}
+              >
+                {s.label}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+      {/* Mobile active label */}
+      <div className="sm:hidden text-center mt-2">
+        <span className="text-xs font-bold text-violet-900">
+          Step {idx + 1} of {SECTIONS.length}: {SECTIONS[idx]?.label}
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -135,8 +231,6 @@ const Assessment: React.FC = () => {
   const { user } = useAuth();
   const { profile, assessment: saved, saveProfile, saveAssessment, refreshActiveGoal } = useProfile();
 
-  // Mode defaults to 'quiz' if not completed to enforce mandatory assessment
-  const [mode, setMode] = useState<'voice' | 'quiz'>('quiz');
   const [phase, setPhase] = useState<Phase>('loading');
   const [questions, setQuestions] = useState<ScenarioQuestion[]>([]);
   const [adaptiveQuestions, setAdaptiveQuestions] = useState<AdaptiveQuestion[]>([]);
@@ -151,12 +245,16 @@ const Assessment: React.FC = () => {
   const [match, setMatch] = useState<MatchResult | null>(null);
   const [resultsAt, setResultsAt] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [diagnosticProfile, setDiagnosticProfile] = useState<DiagnosticProfileData | null>(null);
   const [saveWarning, setSaveWarning] = useState<string | null>(null);
   const [settingGoal, setSettingGoal] = useState<string | null>(null);
   const [goalError, setGoalError] = useState<string | null>(null);
   const [showLockNotice, setShowLockNotice] = useState(false);
 
-  const isAssessmentComplete = Boolean(saved || (score && match));
+  const isAssessmentComplete = Boolean(
+    (saved?.matches && saved.matches.length > 0) || (score && match && (match.matches || []).length > 0)
+  );
+  const isQuizScored = Boolean(saved?.scores || score);
 
   const updateKnowMe = (patch: Partial<KnowMe>) => setKnowMe((k) => ({ ...k, ...patch }));
 
@@ -223,9 +321,8 @@ const Assessment: React.FC = () => {
     let cancelled = false;
 
     if (saved) {
-      // Returning student: show their saved results
+      // Returning student: check if they completed diagnostic recommendations
       setScore({ code: saved.code, scores: saved.scores });
-      setMatch({ source: saved.source, matches: saved.matches });
       setResultsAt(saved.createdAt);
       if (saved.adaptiveEvidence) {
         setAdaptiveScore(saved.adaptiveEvidence);
@@ -233,8 +330,13 @@ const Assessment: React.FC = () => {
           setCalibratedStage(saved.adaptiveEvidence.stage);
         }
       }
-      setPhase('results');
-      setMode('quiz');
+      if (saved.matches && saved.matches.length > 0) {
+        setMatch({ source: saved.source, matches: saved.matches });
+        setPhase('results');
+      } else {
+        // Assessment completed, proceed to AI Counselor diagnostic
+        setPhase('counselor_diagnostic');
+      }
       return;
     }
 
@@ -323,7 +425,6 @@ const Assessment: React.FC = () => {
     setError(null);
     setSaveWarning(null);
     let s: ScoreResult;
-    let m: MatchResult;
     let adaptiveRes: AdaptiveScoreResult | null = null;
 
     try {
@@ -336,31 +437,10 @@ const Assessment: React.FC = () => {
         top_fields: adaptiveRes.top_fields,
         field_scores: adaptiveRes.field_scores,
       };
-
-      m = await fetchCareerMatches({
-        riasec_scores: s.scores,
-        code: s.code,
-        interests: profile?.interests ?? [],
-        education: [profile?.course, profile?.year].filter(Boolean).join(' — ') || undefined,
-        work_style: workStyle,
-        resume_skills: profile?.resume?.skills ?? [],
-        strengths_note: profile?.strengthsNote || undefined,
-        know_me: knowMeForApi(knowMe),
-      });
     } catch {
       try {
         // Fallback to legacy scoring if adaptive endpoint fails
         s = await scoreAssessment(answers);
-        m = await fetchCareerMatches({
-          riasec_scores: s.scores,
-          code: s.code,
-          interests: profile?.interests ?? [],
-          education: [profile?.course, profile?.year].filter(Boolean).join(' — ') || undefined,
-          work_style: workStyle,
-          resume_skills: profile?.resume?.skills ?? [],
-          strengths_note: profile?.strengthsNote || undefined,
-          know_me: knowMeForApi(knowMe),
-        });
       } catch (fallbackErr: unknown) {
         setError(fallbackErr instanceof Error ? fallbackErr.message : 'Something went wrong. Is the backend running?');
         goToPhase('error');
@@ -370,12 +450,10 @@ const Assessment: React.FC = () => {
     }
 
     setScore(s);
-    setMatch(m);
     setResultsAt(new Date().toISOString());
-    goToPhase('results');
     setSubmitting(false);
 
-    // Clear local storage cache upon successful completion
+    // Clear local storage cache upon successful completion of questionnaire
     try {
       localStorage.removeItem(STORAGE_ANSWERS_KEY);
       localStorage.removeItem(STORAGE_INDEX_KEY);
@@ -392,15 +470,49 @@ const Assessment: React.FC = () => {
         knowMe,
         scores: s.scores,
         code: s.code,
-        matches: m.matches,
-        source: m.source,
+        matches: [], // Career recommendations generated ONLY at the end of diagnostic conversation!
+        source: 'ai',
         adaptiveEvidence: adaptiveRes,
       });
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.warn('Could not save assessment:', e);
+      console.warn('Could not save preliminary assessment:', e);
+    }
+
+    // Automatically transition to the AI Diagnostic Counselor consultation!
+    goToPhase('counselor_diagnostic');
+  };
+
+  const handleDiagnosticComplete = async (
+    result: DiagnosticRecommendationResult,
+    diagProfile: DiagnosticProfileData
+  ) => {
+    setDiagnosticProfile(diagProfile);
+    const m: MatchResult = {
+      source: (result.source as 'ai' | 'hybrid_vector' | 'rule') || 'ai',
+      matches: result.matches,
+    };
+    setMatch(m);
+    setResultsAt(new Date().toISOString());
+
+    try {
+      await saveAssessment({
+        answers,
+        workStyle,
+        knowMe,
+        scores: score?.scores || { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 },
+        code: score?.code || 'EAI',
+        matches: result.matches,
+        source: (result.source as 'ai' | 'hybrid_vector' | 'rule') || 'ai',
+        adaptiveEvidence: adaptiveScore,
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('Could not save diagnostic matches:', e);
       setSaveWarning("Your results couldn't be saved to your permanent profile, but they are available for this session.");
     }
+
+    goToPhase('results');
   };
 
   const setGoal = async (career: CareerMatch) => {
@@ -483,73 +595,81 @@ const Assessment: React.FC = () => {
   const categoryInfo = currentAdaptive ? CATEGORY_BADGES[currentAdaptive.category] : null;
 
   return (
-    <div className="min-h-screen bg-ambient-glow font-sans flex flex-col">
+    <div className="min-h-screen bg-[#FAFAFC] font-sans flex flex-col">
       <AppHeader />
-      <main className={`${phase === 'results' ? 'max-w-7xl' : 'max-w-5xl'} mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1`}>
+      <main className={`${phase === 'results' ? 'max-w-[1240px]' : 'max-w-4xl'} mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1`}>
+        {/* Top Header Row with Title and Mode Switcher */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <div className="flex items-center gap-2 text-purple-600 mb-1">
+            <div className="flex items-center gap-2 text-violet-600 mb-1">
               <Compass className="w-5 h-5" />
               <span className="text-xs font-bold uppercase tracking-wider">Career discovery assessment</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               Find careers that fit you
             </h1>
           </div>
 
           {phase !== 'loading' && phase !== 'error' && (
-            <div className="flex bg-slate-200/80 p-1 rounded-2xl border border-slate-200 text-xs font-bold shrink-0">
+            <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200/80 text-xs font-bold shrink-0">
               <button
                 type="button"
                 onClick={() => {
-                  if (!isAssessmentComplete) {
+                  if (!isQuizScored) {
                     setShowLockNotice(true);
                     return;
                   }
                   setShowLockNotice(false);
-                  setMode('voice');
+                  goToPhase('counselor_diagnostic');
                 }}
                 className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
-                  !isAssessmentComplete
+                  !isQuizScored
                     ? 'opacity-60 text-slate-500 hover:text-slate-700 cursor-pointer'
-                    : mode === 'voice'
-                    ? 'bg-purple-600 text-white shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
+                    : phase === 'counselor_diagnostic'
+                    ? 'bg-violet-700 text-white shadow-xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900 font-semibold'
                 }`}
-                title={!isAssessmentComplete ? 'Mandatory: Complete the discovery assessment first' : undefined}
+                title={!isQuizScored ? 'Mandatory: Complete the discovery assessment first' : undefined}
               >
-                {!isAssessmentComplete ? <Lock className="w-3.5 h-3.5 text-amber-600" /> : <Mic className="w-3.5 h-3.5" />}
-                <span>Voice Counselor</span>
-                {!isAssessmentComplete && <span className="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-semibold">Locked</span>}
+                {!isQuizScored ? <Lock className="w-3.5 h-3.5 text-amber-600" /> : <Mic className="w-3.5 h-3.5" />}
+                <span>AI Counselor</span>
+                {!isQuizScored && <span className="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-semibold">Locked</span>}
               </button>
               <button
                 type="button"
                 onClick={() => {
                   setShowLockNotice(false);
-                  setMode('quiz');
+                  if (isAssessmentComplete) {
+                    goToPhase('results');
+                  } else if (isQuizScored) {
+                    goToPhase('counselor_diagnostic');
+                  } else {
+                    goToPhase(answers && Object.keys(answers).length > 0 ? 'quiz' : 'intro');
+                  }
                 }}
                 className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
-                  mode === 'quiz'
-                    ? 'bg-purple-600 text-white shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
+                  phase !== 'counselor_diagnostic'
+                    ? 'bg-violet-700 text-white shadow-xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900 font-semibold'
                 }`}
               >
-                <FileText className="w-3.5 h-3.5" /> Discovery Quiz
+                {isAssessmentComplete ? <Sparkles className="w-3.5 h-3.5" /> : <FileText className="w-3.5 h-3.5" />}
+                <span>{isAssessmentComplete ? 'Discovery Report' : 'Discovery Quiz'}</span>
               </button>
             </div>
           )}
         </div>
 
         {/* Lock warning banner if user attempts to switch before completing assessment */}
-        {showLockNotice && !isAssessmentComplete && (
-          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-3">
+        {showLockNotice && !isQuizScored && (
+          <div className="mb-6 p-4 bg-amber-50/80 border border-amber-200 rounded-2xl flex items-start gap-3">
             <Lock className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-            <div className="text-xs sm:text-sm text-amber-900">
-              <span className="font-bold">Assessment Required:</span> Please complete the 12-question Career Discovery Assessment below first. This ensures our AI Counselor understands your authentic occupational interests across all fields before advising you.
+            <div className="text-xs sm:text-sm text-amber-900 leading-relaxed">
+              <span className="font-bold">Assessment Required:</span> Please complete the Career Discovery Assessment below first. This ensures our AI Counselor understands your authentic Holland RIASEC occupational interests before diagnosing your practical competencies.
             </div>
             <button
               onClick={() => setShowLockNotice(false)}
-              className="ml-auto text-amber-700 hover:text-amber-900 text-xs font-bold"
+              className="ml-auto text-amber-700 hover:text-amber-900 text-xs font-bold cursor-pointer"
             >
               Dismiss
             </button>
@@ -557,14 +677,14 @@ const Assessment: React.FC = () => {
         )}
 
         {phase === 'loading' && (
-          <div className="bg-white rounded-[1.5rem] p-10 border border-slate-100 text-center">
-            <div className="w-8 h-8 border-2 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-3" />
+          <div className="bg-white rounded-2xl p-10 border border-slate-200/80 text-center shadow-xs">
+            <div className="w-8 h-8 border-2 border-violet-200 border-t-violet-700 rounded-full animate-spin mx-auto mb-3" />
             <p className="text-sm text-slate-500 font-medium">Loading discovery assessment...</p>
           </div>
         )}
 
         {phase === 'error' && (
-          <div className="bg-white rounded-[1.5rem] p-8 border border-slate-100 text-center">
+          <div className="bg-white rounded-2xl p-8 border border-slate-200/80 text-center shadow-xs">
             <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-3">
               <AlertTriangle className="w-6 h-6" />
             </div>
@@ -572,26 +692,31 @@ const Assessment: React.FC = () => {
             <p className="text-slate-400 text-sm mb-5">
               The assessment needs the backend running on <code>localhost:8000</code>.
             </p>
-            <button
+            <Button
+              variant="primary"
+              size="md"
               onClick={() => window.location.reload()}
-              className="bg-[#6D28D9] text-white font-bold py-2.5 px-5 rounded-xl hover:bg-[#5B21B6] transition-colors"
             >
               Try again
-            </button>
+            </Button>
           </div>
         )}
 
-        {/* Interactive Voice Counselor Mode (Unlocked after assessment completion) */}
-        {phase !== 'loading' && phase !== 'error' && mode === 'voice' && isAssessmentComplete && (
-          <CounselorVoiceChat
-            onRestartAssessment={() => {
-              setPhase('intro');
-              setMode('quiz');
-            }}
-          />
+        {/* Interactive AI Diagnostic Counselor Consultation */}
+        {phase === 'counselor_diagnostic' && (
+          <div className="w-full">
+            <CounselorVoiceChat
+              assessmentScore={score}
+              adaptiveScore={adaptiveScore}
+              initialDiagnosticProfile={diagnosticProfile}
+              onDiagnosticComplete={handleDiagnosticComplete}
+              onRestartAssessment={restart}
+            />
+          </div>
         )}
 
-        {phase === 'intro' && mode === 'quiz' && (
+        {/* Intro Step */}
+        {phase === 'intro' && (
           <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_6px_20px_rgba(0,0,0,0.02)]">
             <div className="flex items-start gap-3.5 mb-5">
               <div className="w-10 h-10 rounded-xl bg-violet-50 text-violet-700 border border-violet-100/80 flex items-center justify-center font-bold text-sm font-mono shrink-0">
@@ -641,8 +766,8 @@ const Assessment: React.FC = () => {
           </div>
         )}
 
-        {/* One Question at a Time Scenario-Based Discovery */}
-        {mode === 'quiz' && phase === 'quiz' && (
+        {/* Phase 1: Scenario Questions */}
+        {phase === 'quiz' && (
           currentQuestion ? (
           <div>
             <SectionStepper current="quiz" />
@@ -691,7 +816,7 @@ const Assessment: React.FC = () => {
                 {currentQuestion.scenario}
               </h2>
 
-              {/* 4 Large Plausible Options */}
+              {/* 4 Plausible Options */}
               <div className="space-y-3">
                 {currentQuestion.options.map((opt) => {
                   const isSelected = answers[currentQuestion.id] === opt.id;
@@ -740,14 +865,16 @@ const Assessment: React.FC = () => {
                     setPhase('intro');
                   }
                 }}
-                className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-semibold text-sm px-3 py-2 rounded-xl transition-colors"
+                className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-semibold text-sm px-3 py-2 rounded-xl transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" /> Back
               </button>
 
-              <button
-                type="button"
+              <Button
+                variant="primary"
+                size="md"
                 disabled={!isCurrentAnswered}
+                rightIcon={<ArrowRight className="w-4 h-4" />}
                 onClick={() => {
                   if (currentQuestionIndex + 1 < questions.length) {
                     handleGoToQuestion(currentQuestionIndex + 1);
@@ -755,108 +882,156 @@ const Assessment: React.FC = () => {
                     goToPhase('workstyle');
                   }
                 }}
-                className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-2.5 px-6 rounded-xl hover:bg-[#5B21B6] transition-all shadow-md shadow-purple-600/20 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {currentQuestionIndex + 1 < questions.length ? (
-                  <>
-                    Next question <ArrowRight className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    Continue to work style <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </button>
+                {currentQuestionIndex + 1 < questions.length ? 'Next question' : 'Continue to work style'}
+              </Button>
             </div>
           </div>
           ) : (
-            <div className="bg-white rounded-[1.5rem] p-8 border border-slate-100 text-center shadow-sm">
-              <div className="w-12 h-12 bg-purple-100 text-purple-700 rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold">
+            <div className="bg-white rounded-2xl p-8 border border-slate-200/80 text-center shadow-xs">
+              <div className="w-12 h-12 bg-violet-100 text-violet-700 rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold">
                 <CheckCircle2 className="w-6 h-6 text-emerald-600" />
               </div>
               <h3 className="font-bold text-slate-900 text-lg mb-2">Scenario Questions Complete!</h3>
               <p className="text-slate-500 text-sm mb-6 max-w-md mx-auto">
                 You have finished all {totalQuestions} scenario questions. Continue to the next step to specify your work style preferences.
               </p>
-              <button
-                type="button"
+              <Button
+                variant="primary"
+                size="md"
+                rightIcon={<ArrowRight className="w-4 h-4" />}
                 onClick={() => goToPhase('workstyle')}
-                className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-3 px-6 rounded-xl hover:bg-[#5B21B6] transition-all shadow-md shadow-purple-600/20"
               >
-                Continue to Work Style <ArrowRight className="w-4 h-4" />
-              </button>
+                Continue to Work Style
+              </Button>
             </div>
           )
         )}
 
-        {/* Workstyle preferences */}
-        {mode === 'quiz' && phase === 'workstyle' && (
+        {/* Phase 2: Workstyle Preferences */}
+        {phase === 'workstyle' && (
           <div>
             <SectionStepper current="workstyle" />
-            <div className="mb-5">
-              <h2 className="text-xl font-bold text-slate-900 tracking-tight">Work Style & Operating Rhythm</h2>
-              <p className="text-slate-500 text-xs sm:text-sm mt-0.5">Four quick preferences to fine-tune your occupational environment fit.</p>
+            <div className="mb-6">
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Work Style & Operating Rhythm</h2>
+              <p className="text-slate-500 text-sm mt-1">Four quick preferences to fine-tune your occupational environment fit.</p>
             </div>
-            <div className="space-y-3.5">
-              {WORK_STYLE_QUESTIONS.map((q) => (
-                <div key={q.id} className="bg-white rounded-xl p-5 border border-slate-200/90 shadow-xs">
-                  <p className="text-sm font-bold text-slate-900 mb-3">{q.prompt}</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {[q.a, q.b].map((opt) => (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => setWorkStyle((w) => ({ ...w, [q.id]: opt }))}
-                        className={`py-3 px-4 rounded-xl text-xs sm:text-sm font-semibold border transition-all cursor-pointer text-left flex items-center justify-between ${
-                          workStyle[q.id] === opt
-                            ? 'bg-violet-700 border-violet-800 text-white shadow-xs'
-                            : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
-                        }`}
-                      >
-                        <span>{opt}</span>
-                        {workStyle[q.id] === opt && <Check className="w-4 h-4 stroke-[2.5]" />}
-                      </button>
-                    ))}
+
+            <div className="space-y-4">
+              {WORK_STYLE_QUESTIONS.map((q, qIndex) => {
+                const meta = WORKSTYLE_META[q.id];
+                return (
+                  <div key={q.id} className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="w-6 h-6 rounded-md bg-violet-50 text-violet-700 font-mono text-xs font-bold flex items-center justify-center border border-violet-100">
+                        0{qIndex + 1}
+                      </span>
+                      <p className="text-sm sm:text-base font-bold text-slate-900">{q.prompt}</p>
+                    </div>
+                    {meta?.subtitle && (
+                      <p className="text-xs text-slate-400 mb-3.5 ml-8">{meta.subtitle}</p>
+                    )}
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {[q.a, q.b].map((optText) => {
+                        const isSelected = workStyle[q.id] === optText;
+                        const optMeta = meta?.options[optText];
+                        const Icon = optMeta?.icon || Compass;
+
+                        return (
+                          <button
+                            key={optText}
+                            type="button"
+                            onClick={() => setWorkStyle((w) => ({ ...w, [q.id]: optText }))}
+                            className={`p-4 rounded-xl text-left border transition-all cursor-pointer flex items-start gap-3.5 group relative ${
+                              isSelected
+                                ? 'border-violet-600 bg-violet-50/50 shadow-xs ring-1 ring-violet-500/20'
+                                : 'border-slate-200/90 bg-white hover:border-slate-300 hover:bg-slate-50/60'
+                            }`}
+                          >
+                            <div
+                              className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                                isSelected
+                                  ? 'bg-violet-700 text-white shadow-2xs'
+                                  : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200/70 group-hover:text-slate-800'
+                              }`}
+                            >
+                              <Icon className="w-5 h-5" />
+                            </div>
+
+                            <div className="flex-1 min-w-0 pr-6">
+                              <span
+                                className={`text-sm font-bold block mb-0.5 ${
+                                  isSelected ? 'text-violet-950' : 'text-slate-800'
+                                }`}
+                              >
+                                {optText}
+                              </span>
+                              {optMeta?.desc && (
+                                <p className="text-xs text-slate-500 leading-relaxed">
+                                  {optMeta.desc}
+                                </p>
+                              )}
+                            </div>
+
+                            {/* Selection Radio / Check Indicator */}
+                            <div
+                              className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 absolute top-4 right-4 transition-all ${
+                                isSelected
+                                  ? 'border-violet-600 bg-violet-600 text-white shadow-2xs'
+                                  : 'border-slate-300 bg-white group-hover:border-slate-400'
+                              }`}
+                            >
+                              {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
-            <div className="flex items-center justify-between mt-6">
+
+            <div className="flex items-center justify-between mt-8">
               <button
                 type="button"
                 onClick={() => {
                   goToPhase('quiz');
                   handleGoToQuestion(questions.length - 1);
                 }}
-                className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-semibold text-sm"
+                className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-semibold text-sm cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" /> Back to questions
               </button>
-              <button
-                type="button"
+              <Button
+                variant="primary"
+                size="md"
+                rightIcon={<ArrowRight className="w-4 h-4" />}
                 onClick={() => goToPhase('values')}
-                className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-2.5 px-6 rounded-xl hover:bg-[#5B21B6] transition-all"
               >
-                Continue <ArrowRight className="w-4 h-4" />
-              </button>
+                Continue
+              </Button>
             </div>
           </div>
         )}
 
-        {/* Holistic discovery sections */}
-        {mode === 'quiz' && (phase === 'values' || phase === 'strengths' || phase === 'identity' || phase === 'situation') && (
+        {/* Phase 3–6: Holistic Discovery Sections */}
+        {(phase === 'values' || phase === 'strengths' || phase === 'identity' || phase === 'situation') && (
           <div>
             <SectionStepper current={phase} />
-            <h2 className="text-xl font-extrabold text-slate-900">{SECTION_INTRO[phase]?.title}</h2>
-            <p className="text-slate-500 text-sm mb-5">{SECTION_INTRO[phase]?.subtitle}</p>
+            <div className="mb-6">
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">{SECTION_INTRO[phase]?.title}</h2>
+              <p className="text-slate-500 text-sm mt-1">{SECTION_INTRO[phase]?.subtitle}</p>
+            </div>
 
             <KnowMeSection section={phase} value={knowMe} onChange={updateKnowMe} />
 
-            <div className="flex items-center justify-between mt-6">
+            <div className="flex items-center justify-between mt-8">
               <button
                 type="button"
                 onClick={() => goToPhase(PREV_OF[phase] ?? 'workstyle')}
-                className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-semibold text-sm"
+                className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-semibold text-sm cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" /> Back
               </button>
@@ -873,23 +1048,25 @@ const Assessment: React.FC = () => {
                   </span>
                 )}
                 {phase === 'situation' ? (
-                  <button
-                    type="button"
+                  <Button
+                    variant="primary"
+                    size="md"
                     disabled={!sectionReady}
+                    rightIcon={<Sparkles className="w-4 h-4" />}
                     onClick={submit}
-                    className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-2.5 px-6 rounded-xl hover:bg-[#5B21B6] transition-all shadow-md shadow-purple-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    See my career matches <Sparkles className="w-4 h-4" />
-                  </button>
+                    Start AI Diagnostic Session
+                  </Button>
                 ) : (
-                  <button
-                    type="button"
+                  <Button
+                    variant="primary"
+                    size="md"
                     disabled={!sectionReady}
+                    rightIcon={<ArrowRight className="w-4 h-4" />}
                     onClick={() => goToPhase(NEXT_OF[phase] ?? 'situation')}
-                    className="inline-flex items-center gap-2 bg-[#6D28D9] text-white font-bold py-2.5 px-6 rounded-xl hover:bg-[#5B21B6] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Continue <ArrowRight className="w-4 h-4" />
-                  </button>
+                    Continue
+                  </Button>
                 )}
               </div>
             </div>
@@ -905,16 +1082,16 @@ const Assessment: React.FC = () => {
               <span>Analyzing Your Assessment</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mb-2">
-              Generating Your Career Intelligence Report
+              Scoring Assessment & Initializing AI Counselor
             </h2>
             <p className="text-sm text-slate-500 max-w-lg mx-auto leading-relaxed">
-              Evaluating Holland RIASEC dimensions, separating declared vs demonstrated competencies, and checking statutory eligibility across 1,016 pathways.
+              Evaluating Holland RIASEC dimensions, separating declared vs demonstrated competencies, and preparing your personalized diagnostic consultation.
             </p>
           </div>
         )}
 
         {/* Results Screen */}
-        {mode === 'quiz' && phase === 'results' && (
+        {phase === 'results' && (
           (score && match) ? (
             <div className="space-y-6">
               {/* Profile Overview Card */}
@@ -928,8 +1105,41 @@ const Assessment: React.FC = () => {
                 onExploreCareers={() => {
                   recommendedCareersRef.current?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                onStartVoiceCounselor={() => setMode('voice')}
+                onStartVoiceCounselor={() => goToPhase('counselor_diagnostic')}
               />
+
+              {/* Diagnostic Synthesis Verified Banner */}
+              <div className="bg-gradient-to-r from-violet-50/90 via-purple-50/40 to-white rounded-2xl border border-violet-200/80 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+                <div className="flex items-start sm:items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-violet-700 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                    <CheckCircle2 className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-violet-800">
+                        Diagnostic Synthesis Complete
+                      </span>
+                      <Badge variant="success" size="xs" className="font-semibold">
+                        AI Counselor Verified
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                      {diagnosticProfile?.projects && diagnosticProfile.projects.length > 0
+                        ? `Grounded in ${diagnosticProfile.projects.length} practical projects and ${diagnosticProfile.technical_skills?.length || 0} demonstrated competencies without premature guessing.`
+                        : 'Personalized recommendations synthesized from your Holland RIASEC profile, practical experiences, and statutory pathways.'}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  leftIcon={<Mic className="w-3.5 h-3.5 text-violet-700" />}
+                  onClick={() => goToPhase('counselor_diagnostic')}
+                  className="bg-white hover:bg-violet-50 shrink-0 text-xs font-bold"
+                >
+                  Consult Counselor
+                </Button>
+              </div>
 
               {goalError && (
                 <div className="text-sm text-rose-800 bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-start justify-between gap-3">
@@ -984,13 +1194,13 @@ const Assessment: React.FC = () => {
               )}
 
               {/* E. Recommended Career Matches */}
-              <div ref={recommendedCareersRef} className="space-y-4 pt-2">
+              <div ref={recommendedCareersRef} className="space-y-5 pt-2">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/60 pb-3">
                   <div>
-                    <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
+                    <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
                       Recommended Career Matches
                     </h2>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
                       Personalized alignment across 1,016 occupational pathways, psychological fit, and statutory requirements
                     </p>
                   </div>
@@ -999,18 +1209,34 @@ const Assessment: React.FC = () => {
                   </Badge>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                  {(match.matches || []).map((c, i) => (
-                    <CareerMatchCard
-                      key={c.title}
-                      career={c}
-                      rank={i + 1}
-                      isSettingGoal={settingGoal === c.title}
-                      isActiveGoal={profile?.targetRole === c.title}
-                      onSetGoal={setGoal}
-                    />
-                  ))}
-                </div>
+                {/* Spotlight Top Match #1 */}
+                {match.matches && match.matches.length > 0 && (
+                  <CareerMatchCard
+                    career={match.matches[0]}
+                    rank={1}
+                    isSettingGoal={settingGoal === match.matches[0].title}
+                    isActiveGoal={profile?.targetRole === match.matches[0].title}
+                    isTopMatch={true}
+                    onSetGoal={setGoal}
+                  />
+                )}
+
+                {/* Subsequent Matches in a Balanced 2x2 Grid */}
+                {match.matches && match.matches.length > 1 && (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    {match.matches.slice(1).map((c, i) => (
+                      <CareerMatchCard
+                        key={c.title}
+                        career={c}
+                        rank={i + 2}
+                        isSettingGoal={settingGoal === c.title}
+                        isActiveGoal={profile?.targetRole === c.title}
+                        isTopMatch={false}
+                        onSetGoal={setGoal}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Bottom utility controls */}
@@ -1019,9 +1245,9 @@ const Assessment: React.FC = () => {
                   variant="primary"
                   size="md"
                   leftIcon={<Mic className="w-4 h-4" />}
-                  onClick={() => setMode('voice')}
+                  onClick={() => goToPhase('counselor_diagnostic')}
                 >
-                  Start Voice Counselor Session
+                  Talk to AI Counselor
                 </Button>
                 <Button
                   variant="outline"
