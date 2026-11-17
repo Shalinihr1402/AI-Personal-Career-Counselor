@@ -36,6 +36,7 @@ from career_knowledge_base import (
     ProficiencyLevel,
 )
 from riasec import DIMS, DIM_LABEL
+from skill_normalizer import normalize_skills
 
 
 # ============================================================================
@@ -721,7 +722,7 @@ class AdaptiveAssessmentEngine:
             answered.add("values")
         if profile.get("work_style") or km.get("workSetting"):
             answered.add("work_style")
-        if se.get("skills"):
+        if normalize_skills(profile.get("skills")) or normalize_skills(se) or normalize_skills(profile.get("resume_skills")):
             answered.add("declared_skills")
         if cp.get("target_role") or profile.get("targetRole"):
             answered.add("target_role")
@@ -1036,24 +1037,26 @@ class AdaptiveAssessmentEngine:
 
         # Evidence Breakdown: Strictly separated tiers
         # 1. Self-reported skills (from profile onboarding or resume)
-        raw_skills = profile.get("skills") or []
-        if not raw_skills:
-            raw_skills = profile.get("resume_skills") or []
-        if not raw_skills and isinstance(profile.get("resume"), dict):
-            raw_skills = profile.get("resume", {}).get("skills", [])
+        incoming_skills = []
+        if profile.get("skills"):
+            incoming_skills.append(profile.get("skills"))
+        if profile.get("resume_skills"):
+            incoming_skills.append(profile.get("resume_skills"))
+        if isinstance(profile.get("resume"), dict) and profile.get("resume", {}).get("skills"):
+            incoming_skills.append(profile["resume"]["skills"])
+        if profile.get("skills_and_experience"):
+            incoming_skills.append(profile.get("skills_and_experience"))
 
-        seen_skills = set()
-        self_reported_list = []
-        for s in raw_skills:
-            if isinstance(s, str) and s.strip():
-                clean_s = s.strip()
-                if clean_s.lower() not in seen_skills:
-                    seen_skills.add(clean_s.lower())
-                    self_reported_list.append({
-                        "skill": clean_s,
-                        "evidence_level": CompetencyEvidenceLevel.SELF_REPORTED.value,
-                        "source": "onboarding_profile",
-                    })
+        raw_skills = normalize_skills(incoming_skills)
+
+        self_reported_list = [
+            {
+                "skill": s,
+                "evidence_level": CompetencyEvidenceLevel.SELF_REPORTED.value,
+                "source": "onboarding_profile",
+            }
+            for s in raw_skills
+        ]
 
         # 2. Conceptual knowledge (from MCQ assessment)
         conceptual_list = [

@@ -3,6 +3,7 @@ import { supabase } from './supabase';
 import type { KnowMe } from './knowMe';
 import type { CareerMatch, RiasecScores, AdaptiveScoreResult } from './assessment';
 import { type CareerMode, type CareerPath, type EducationStage, type OnboardingRecord, CAREER_MODE_TO_PATH, PATH_TO_CAREER_MODE } from './onboarding';
+import { normalizeSkills } from './skillNormalizer';
 
 /**
  * Persistence for the counselor phase: the student's profile and their
@@ -161,9 +162,9 @@ export function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> 
   if ('skills_and_experience' in p && p.skills_and_experience) {
     const se = p.skills_and_experience;
     const baseResume = p.resume || row.resume || {};
-    const existingSkills = (baseResume.skills as string[]) || [];
-    const newSkillNames = se.skills.map((s) => s.name);
-    const mergedSkills = Array.from(new Set([...existingSkills, ...newSkillNames]));
+    const existingSkills = normalizeSkills(baseResume.skills);
+    const newSkillNames = normalizeSkills(se);
+    const mergedSkills = normalizeSkills([...existingSkills, ...newSkillNames]);
     row.resume = {
       ...baseResume,
       ...(mergedSkills.length > 0 ? { skills: mergedSkills } : {}),

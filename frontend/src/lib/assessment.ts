@@ -1,4 +1,5 @@
 import { API_BASE } from './api';
+import { normalizeSkills } from './skillNormalizer';
 
 export type Dim = 'R' | 'I' | 'A' | 'S' | 'E' | 'C';
 
@@ -224,6 +225,10 @@ export function buildProfilePayload(
 ): Record<string, unknown> {
   if (!profile) return {};
   const ed = profile.education_details || {};
+  const seSkills = normalizeSkills(profile.skills_and_experience);
+  const resumeSkills = normalizeSkills(profile.resume?.skills);
+  const mergedDeclaredSkills = normalizeSkills([...resumeSkills, ...seSkills]);
+
   return {
     education_level: ed.level || profile.educationStage || ed.education_level || undefined,
     education_status: ed.status || ed.education_status || undefined,
@@ -237,8 +242,8 @@ export function buildProfilePayload(
     career_mode: profile.career_mode || undefined,
     career_growth_subtype: profile.career_growth_subtype || undefined,
     interests: profile.interests || profile.interest_details?.selected_interests || [],
-    skills: profile.resume?.skills || profile.skills_and_experience?.skills || [],
-    resume_skills: profile.resume?.skills || [],
+    skills: mergedDeclaredSkills,
+    resume_skills: mergedDeclaredSkills,
     know_me: knowMe || profile.knowMe || {},
     strengths_note: profile.strengthsNote || undefined,
   };

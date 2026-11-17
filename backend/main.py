@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+from skill_normalizer import normalize_skills
 from typing import Any
 import os
 import tempfile
@@ -231,11 +232,16 @@ class CareerMatchRequest(BaseModel):
     interests: list[str] = Field(default_factory=list)
     education: str | None = None
     work_style: dict[str, str] = Field(default_factory=dict)
-    resume_skills: list[str] = Field(default_factory=list)
+    resume_skills: list[Any] = Field(default_factory=list)
     strengths_note: str | None = Field(default=None, max_length=500)
     # "Know me": values, strong/enjoyed subjects, what they're known for, and
     # real-life constraints (earning timeline, budget, relocation, family, setting).
     know_me: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("resume_skills", mode="before")
+    @classmethod
+    def normalize_incoming_resume_skills(cls, v: Any) -> list[str]:
+        return normalize_skills(v)
 
 
 def _ai_career_match(profile: dict):
@@ -248,7 +254,7 @@ def _ai_career_match(profile: dict):
             candidates = hybrid_career_match(
                 riasec_scores=profile.get("riasec_scores", {}),
                 interests=profile.get("interests", []),
-                resume_skills=profile.get("resume_skills", []),
+                resume_skills=normalize_skills(profile.get("resume_skills", [])),
                 know_me=profile.get("know_me", {}),
                 free_text=profile.get("strengths_note", ""),
                 limit=15,
@@ -543,10 +549,15 @@ class GenerateRecommendationsRequest(BaseModel):
     interests: list[str] = Field(default_factory=list)
     education: str | None = None
     work_style: dict[str, str] = Field(default_factory=dict)
-    resume_skills: list[str] = Field(default_factory=list)
+    resume_skills: list[Any] = Field(default_factory=list)
     strengths_note: str | None = None
     know_me: dict[str, Any] = Field(default_factory=dict)
     diagnostic_profile: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("resume_skills", mode="before")
+    @classmethod
+    def normalize_incoming_resume_skills(cls, v: Any) -> list[str]:
+        return normalize_skills(v)
 
 
 COUNSELOR_SYSTEM_PROMPT = """You are an AI career-exploration counselor for students and early-career candidates.
@@ -1125,7 +1136,7 @@ def counselor_generate_recommendations(req: GenerateRecommendationsRequest):
     """
     diag = req.diagnostic_profile or {}
 
-    diag_skills = diag.get("technical_skills", [])
+    diag_skills = normalize_skills(diag.get("technical_skills", []))
     diag_interests = diag.get("technical_interests", [])
     projects = diag.get("projects", [])
 
@@ -1134,13 +1145,14 @@ def counselor_generate_recommendations(req: GenerateRecommendationsRequest):
         if isinstance(p, dict):
             name = p.get("name") or "Project"
             role = p.get("role") or ""
-            techs = ", ".join(p.get("technologies", []))
+            techs = ", ".join(normalize_skills(p.get("technologies", [])))
             challenges = p.get("challenges") or ""
             outcomes = p.get("outcomes") or ""
             project_text_parts.append(f"{name} ({role}) using {techs}. Challenges: {challenges}. Outcomes: {outcomes}")
     projects_summary = " | ".join(project_text_parts)
 
-    combined_skills = list(dict.fromkeys(req.resume_skills + diag_skills))
+    norm_resume_skills = normalize_skills(req.resume_skills)
+    combined_skills = normalize_skills(norm_resume_skills + diag_skills)
     combined_interests = list(dict.fromkeys(req.interests + diag_interests))
 
     enriched_free_text_parts = [
@@ -1214,7 +1226,7 @@ def counselor_generate_recommendations(req: GenerateRecommendationsRequest):
         req_skills = (c_info.get("skills", []) if c_info else []) + (m.get("key_skills", []) or [])
         req_skills = list(dict.fromkeys(req_skills))
 
-        student_skills_lower = {s.lower() for s in combined_skills}
+        student_skills_lower = {s.lower() for s in combined_skills if isinstance(s, str)}
         matched_s = [s for s in req_skills if any(s.lower() in cand or cand in s.lower() for cand in student_skills_lower)]
         missing_s = [s for s in req_skills if s not in matched_s]
 
@@ -1294,7 +1306,11 @@ def counselor_chat(req: CounselorChatRequest):
     path = profile.get("path")
     target_role = profile.get("targetRole") or profile.get("target_role")
     resume = profile.get("resume") or {}
-    resume_skills = profile.get("skills") or (resume.get("skills") if isinstance(resume, dict) else []) or []
+    resume_skills = normalize_skills(
+        (profile.get("skills") or []) +
+        (resume.get("skills", []) if isinstance(resume, dict) else []) +
+        (profile.get("skills_and_experience") or [])
+    )
 
     # Map onboarding guidance purpose to human-readable goal
     guidance_goal = None

@@ -18,6 +18,7 @@ import { Button } from './ui/Button';
 import { Badge } from './ui/Badge';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
+import { normalizeSkills } from '../lib/skillNormalizer';
 import {
   sendDiagnosticChatTurn,
   generateDiagnosticRecommendations,
@@ -85,9 +86,9 @@ export default function CounselorVoiceChat({
   const stage = adaptiveScore?.stage || profile?.educationStage || 'college_ug_pg';
   const firstName = user?.email ? user.email.split('@')[0] : 'there';
 
-  const profileSkills: string[] = Array.isArray(profile?.skills_and_experience?.skills)
-    ? profile.skills_and_experience.skills.map((s) => (typeof s === 'string' ? s : s.name))
-    : profile?.resume?.skills || [];
+  const seSkills = normalizeSkills(profile?.skills_and_experience);
+  const resumeSkills = normalizeSkills(profile?.resume?.skills);
+  const profileSkills: string[] = normalizeSkills([...resumeSkills, ...seSkills]);
 
   const defaultDiagnostic: DiagnosticProfileData = {
     education_background: [profile?.course, profile?.college, stage].filter(Boolean).join(' — '),
@@ -288,7 +289,7 @@ export default function CounselorVoiceChat({
           college: profile?.college,
           interests: profile?.interests || [],
           resume: profile?.resume,
-          skills: profile?.resume?.skills || [],
+          skills: profileSkills,
           targetRole: profile?.targetRole,
         },
         assessment_evidence: {
@@ -350,7 +351,7 @@ export default function CounselorVoiceChat({
         interests: profile?.interests || [],
         education: [profile?.course, profile?.year].filter(Boolean).join(' — ') || stage,
         work_style: assessment?.workStyle || {},
-        resume_skills: profile?.resume?.skills || [],
+        resume_skills: profileSkills,
         strengths_note: profile?.strengthsNote || undefined,
         know_me: (profile?.knowMe as unknown as Record<string, unknown>) || {},
         diagnostic_profile: diagnosticProfile,

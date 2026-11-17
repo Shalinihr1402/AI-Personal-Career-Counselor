@@ -14,6 +14,7 @@ import os
 import json
 from pathlib import Path
 import numpy as np
+from skill_normalizer import normalize_skills
 
 # File paths
 BASE_DIR = Path(__file__).resolve().parent
@@ -150,8 +151,9 @@ def build_semantic_query(
         query_components.append(f"Student goal: {free_text}")
     if interests:
         query_components.append(f"Interests and passions: {', '.join(interests)}")
-    if resume_skills:
-        query_components.append(f"Technical & domain skills: {', '.join(resume_skills)}")
+    clean_resume_skills = normalize_skills(resume_skills)
+    if clean_resume_skills:
+        query_components.append(f"Technical & domain skills: {', '.join(clean_resume_skills)}")
     if flow:
         query_components.append(f"Natural flow state and deep work: {flow}")
     if envy:
@@ -183,7 +185,7 @@ def hybrid_career_match(
         return []
 
     interests = interests or []
-    resume_skills = resume_skills or []
+    resume_skills = normalize_skills(resume_skills)
     know_me = know_me or {}
 
     # 1. Build rich semantic query from student profile
@@ -212,7 +214,8 @@ def hybrid_career_match(
     top_dims = [d[0] for d in sorted_riasec[:3]]
 
     scored_careers = []
-    resume_skills_lower = {s.lower() for s in resume_skills}
+    clean_resume_skills = normalize_skills(resume_skills)
+    resume_skills_lower = {s.lower() for s in clean_resume_skills}
 
     for idx, career in enumerate(_CAREERS):
         c_code = career.get("riasec_code", "")
@@ -227,7 +230,7 @@ def hybrid_career_match(
         norm_riasec = min(1.0, riasec_pts / 9.0)
 
         # 3. Direct skill overlap score
-        career_skills = career.get("skills", []) + career.get("software_tools", [])
+        career_skills = normalize_skills(career.get("skills", []) + career.get("software_tools", []))
         career_skills_lower = [s.lower() for s in career_skills]
         overlap_count = sum(1 for s in career_skills_lower if any(rs in s or s in rs for rs in resume_skills_lower))
         norm_skills = min(1.0, overlap_count / 3.0) if resume_skills_lower else 0.5

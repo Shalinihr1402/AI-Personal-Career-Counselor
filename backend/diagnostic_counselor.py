@@ -15,6 +15,7 @@ import json
 import re
 from typing import Any, Dict, List, Optional, Tuple
 from pydantic import BaseModel, Field
+from skill_normalizer import normalize_skills
 
 
 class ProjectRecord(BaseModel):
@@ -184,10 +185,8 @@ def fallback_extract_profile(
     # 1. Tech skills extraction
     found_tech = [t for t in KNOWN_TECH_KEYWORDS if re.search(r'\b' + re.escape(t) + r'\b', text_lower)]
     if found_tech:
-        existing = set(updated.technical_skills)
-        for t in found_tech:
-            existing.add(t.capitalize() if len(t) > 3 else t.upper())
-        updated.technical_skills = sorted(list(existing))
+        new_tech = [t.capitalize() if len(t) > 3 else t.upper() for t in found_tech]
+        updated.technical_skills = normalize_skills(updated.technical_skills + new_tech)
         updated.skills_status = "collected" if len(updated.technical_skills) >= 2 else "partially_collected"
 
     # 2. Project detection
@@ -412,7 +411,10 @@ def process_diagnostic_turn(
     """
     # Initialize base profile from incoming state or defaults
     if current_diagnostic:
-        profile = DiagnosticProfile(**current_diagnostic)
+        diag_copy = dict(current_diagnostic)
+        if "technical_skills" in diag_copy:
+            diag_copy["technical_skills"] = normalize_skills(diag_copy["technical_skills"])
+        profile = DiagnosticProfile(**diag_copy)
     else:
         profile = DiagnosticProfile()
 
@@ -426,12 +428,18 @@ def process_diagnostic_turn(
             profile.education_background = " — ".join(ed_parts)
             profile.education_status = "collected"
 
-    # Pre-populate declared resume skills
+    # Pre-populate declared resume & onboarding skills
     resume = student_profile.get("resume") or {}
-    resume_skills = student_profile.get("skills") or (resume.get("skills") if isinstance(resume, dict) else []) or []
-    if resume_skills and not profile.technical_skills:
-        profile.technical_skills = [s.strip() for s in resume_skills if isinstance(s, str)][:8]
+    incoming_skills = normalize_skills(
+        (student_profile.get("skills") or []) +
+        (resume.get("skills", []) if isinstance(resume, dict) else []) +
+        (student_profile.get("skills_and_experience") or [])
+    )
+    if incoming_skills and not profile.technical_skills:
+        profile.technical_skills = incoming_skills[:8]
         profile.skills_status = "partially_collected"
+    elif incoming_skills:
+        profile.technical_skills = normalize_skills(profile.technical_skills + incoming_skills)
 
     user_msgs = [m for m in messages if m.get("role") == "user"]
     latest_text = user_msgs[-1]["content"].strip() if user_msgs else ""
@@ -520,8 +528,8 @@ Do not recommend career titles. Ask the next logical diagnostic question, OR if 
             if ext.get("projects_status"):
                 profile.projects_status = ext["projects_status"]
 
-            if ext.get("technical_skills") and isinstance(ext["technical_skills"], list):
-                profile.technical_skills = list(set(profile.technical_skills + ext["technical_skills"]))
+            if ext.get("technical_skills"):
+                profile.technical_skills = normalize_skills(profile.technical_skills + ext["technical_skills"])
             if ext.get("skills_status"):
                 profile.skills_status = ext["skills_status"]
 
