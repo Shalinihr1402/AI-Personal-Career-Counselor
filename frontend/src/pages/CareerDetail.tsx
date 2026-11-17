@@ -228,9 +228,9 @@ const CareerDetail: React.FC = () => {
                   </span>
                 </div>
                 {matchedInfo && (
-                  <span className="bg-green-100 text-green-800 border border-green-200 text-xs font-extrabold px-3 py-1 rounded-full inline-flex items-center gap-1.5 shadow-sm">
-                    <Sparkles className="w-3.5 h-3.5 text-green-600" />
-                    {matchedInfo.fit}% Match for You
+                  <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-extrabold px-3 py-1 rounded-full inline-flex items-center gap-1.5 shadow-sm">
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                    {matchedInfo.match_level || (typeof matchedInfo.fit === 'number' && !isNaN(matchedInfo.fit) ? (matchedInfo.fit >= 72 ? 'Strong Match' : matchedInfo.fit >= 58 ? 'Good Match' : 'Exploratory Match') : 'Recommended Match')}
                   </span>
                 )}
               </div>

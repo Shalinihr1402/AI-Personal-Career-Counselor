@@ -174,7 +174,9 @@ const Dashboard: React.FC = () => {
                               {m.title}
                             </Link>
                           </span>
-                          <span className="shrink-0 text-xs font-bold text-green-700">{m.fit}% fit</span>
+                          <span className="shrink-0 text-xs font-bold text-emerald-700">
+                            {m.match_level || (typeof m.fit === 'number' && !isNaN(m.fit) ? (m.fit >= 72 ? 'Strong Match' : m.fit >= 58 ? 'Good Match' : 'Exploratory Match') : 'Recommended Match')}
+                          </span>
                         </li>
                       ))}
                     </ul>

@@ -11,6 +11,7 @@ Intelligent Diagnostic Conversation Engine:
 """
 
 from __future__ import annotations
+import os
 import json
 import re
 from typing import Any, Dict, List, Optional, Tuple
@@ -395,6 +396,61 @@ Return ONLY valid JSON matching this exact structure:
 }
 """
 
+DEFAULT_GROQ_MODEL = "openai/gpt-oss-120b"
+
+
+def classify_groq_error(err: Exception, model: str = "") -> Tuple[str, str]:
+    """
+    Classifies a Groq or LLM exception into a standard error category and returns
+    (error_type, safe_log_message) without exposing secrets or sensitive student data.
+    Categories: 'model_not_found', 'authentication_error', 'rate_limit', 'network_error', 'bad_request', 'unexpected_error'
+    """
+    err_str = str(err)
+    status_code = getattr(err, "status_code", None)
+    type_name = type(err).__name__
+
+    # 1. Model Not Found (HTTP 404)
+    if "NotFoundError" in type_name or status_code == 404 or "model_not_found" in err_str:
+        return (
+            "model_not_found",
+            f"Groq Model Not Found (HTTP 404): Model '{model}' does not exist or is inaccessible. Check GROQ_MODEL in .env."
+        )
+
+    # 2. Authentication Error (HTTP 401)
+    if "AuthenticationError" in type_name or status_code == 401 or "invalid_api_key" in err_str:
+        return (
+            "authentication_error",
+            "Groq Authentication Failed (HTTP 401): Invalid or expired API key. Check GROQ_API_KEY in .env."
+        )
+
+    # 3. Rate Limit (HTTP 429)
+    if "RateLimitError" in type_name or status_code == 429 or "rate_limit_exceeded" in err_str:
+        return (
+            "rate_limit",
+            "Groq Rate Limit Exceeded (HTTP 429): Quota reached or requests per minute exceeded. Using fallback."
+        )
+
+    # 4. Network / Connection / Timeout
+    if "APIConnectionError" in type_name or "APITimeoutError" in type_name or "Connection error" in err_str or "timed out" in err_str:
+        return (
+            "network_error",
+            "Groq Connection Error: Network or timeout issue reaching Groq API. Using fallback."
+        )
+
+    # 5. Bad Request / Validation (HTTP 400)
+    if "BadRequestError" in type_name or status_code == 400 or "json_validate_failed" in err_str:
+        return (
+            "bad_request",
+            "Groq Request Validation Failed (HTTP 400): Model output did not match expected JSON schema. Using fallback."
+        )
+
+    # 6. Unexpected fallback
+    return (
+        "unexpected_error",
+        f"Groq Error ({type_name}): Unexpected failure. Using fallback."
+    )
+
+
 def process_diagnostic_turn(
     messages: List[Dict[str, str]],
     student_profile: Dict[str, Any],
@@ -403,12 +459,14 @@ def process_diagnostic_turn(
     requested_completion: bool = False,
     user_confirmed: bool = False,
     ai_client: Any = None,
-    groq_model: str = "llama-3.3-70b-versatile"
+    groq_model: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Core entrypoint for processing an AI diagnostic counselor conversation turn.
     Updates the DiagnosticProfile, evaluates completeness, and generates the next adaptive question.
     """
+    if not groq_model:
+        groq_model = os.environ.get("GROQ_MODEL") or DEFAULT_GROQ_MODEL
     # Initialize base profile from incoming state or defaults
     if current_diagnostic:
         diag_copy = dict(current_diagnostic)
@@ -475,7 +533,7 @@ STUDENT'S PROFILE CONTEXT:
 - Name/User: {student_profile.get('name', 'Student')}
 - Course/Stream: {student_profile.get('course')}
 - College/School: {student_profile.get('college')}
-- Pre-declared Skills: {resume_skills}
+- Pre-declared Skills: {incoming_skills}
 - Target Role: {student_profile.get('targetRole')}
 
 CONVERSATION HISTORY:
@@ -567,7 +625,8 @@ Do not recommend career titles. Ask the next logical diagnostic question, OR if 
                 "user_confirmed": False
             }
         except Exception as e:
-            print(f"[diagnostic_counselor] AI extraction error, falling back to rule-based: {e}")
+            cat, safe_msg = classify_groq_error(e, model=groq_model or "")
+            print(f"[diagnostic_counselor] {safe_msg}")
 
     # Fallback to deterministic rule-based extraction
     updated_profile = fallback_extract_profile(profile, latest_text, stage)

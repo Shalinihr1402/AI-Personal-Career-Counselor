@@ -42,7 +42,33 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
       .trim()
       .replace(/\s+/g, '-');
 
-  const fitPercent = Math.round(career.fit);
+  const matchLevel = career.match_level || (
+    typeof career.fit === 'number' && !isNaN(career.fit)
+      ? career.fit >= 72
+        ? 'Strong Match'
+        : career.fit >= 58
+        ? 'Good Match'
+        : 'Exploratory Match'
+      : (typeof career.score === 'number' && !isNaN(career.score)
+        ? career.score >= 0.72
+          ? 'Strong Match'
+          : career.score >= 0.58
+          ? 'Good Match'
+          : 'Exploratory Match'
+        : 'Good Match')
+  );
+
+  const getMatchLevelVariant = (level: string) => {
+    switch (level.toLowerCase()) {
+      case 'strong match':
+        return 'success';
+      case 'good match':
+        return 'brand';
+      case 'exploratory match':
+      default:
+        return 'secondary';
+    }
+  };
 
   // SPOTLIGHT FEATURED LAYOUT FOR TOP #1 RECOMMENDATION
   if (isTopMatch) {
@@ -56,8 +82,8 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500 font-medium">Highest Cognitive & Psychological Resonance</span>
-            <Badge variant="success" size="sm" className="font-mono font-bold">
-              {fitPercent}% Fit
+            <Badge variant={getMatchLevelVariant(matchLevel)} size="sm" className="font-semibold">
+              {matchLevel}
             </Badge>
           </div>
         </div>
@@ -253,8 +279,8 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
             </h3>
           </div>
 
-          <Badge variant="success" size="sm" className="shrink-0 font-mono font-bold">
-            {fitPercent}% Fit
+          <Badge variant={getMatchLevelVariant(matchLevel)} size="sm" className="shrink-0 font-semibold">
+            {matchLevel}
           </Badge>
         </div>
 

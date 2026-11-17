@@ -12,6 +12,8 @@ from diagnostic_counselor import (
     DiagnosticProfile,
     process_diagnostic_turn,
     evaluate_completeness,
+    classify_groq_error,
+    DEFAULT_GROQ_MODEL,
 )
 
 try:
@@ -27,7 +29,7 @@ except ImportError:
     fitz = None
 
 _GROQ_KEY = os.environ.get("GROQ_API_KEY")
-GROQ_MODEL = os.environ.get("GROQ_MODEL") or "openai/gpt-oss-120b"
+GROQ_MODEL = os.environ.get("GROQ_MODEL") or DEFAULT_GROQ_MODEL
 
 try:
     from groq import Groq
@@ -66,6 +68,7 @@ from careers import (
     get_career_by_title,
     slugify,
 )
+from matcher import compute_match_level
 
 app = FastAPI(
     title="AI Personal Career Counselor API",
@@ -146,7 +149,8 @@ if _HAS_MULTIPART:
             extracted = _generate_json(prompt, temperature=0.0)
             return format_resume_response(extracted, file_type, len(contents), filename)
         except Exception as ai_err:
-            print(f"AI resume parsing error: {ai_err}. Using rule-based extraction fallback.")
+            cat, safe_msg = classify_groq_error(ai_err, model=GROQ_MODEL)
+            print(f"[parse-resume] {safe_msg} Using rule-based extraction fallback.")
             fallback = build_fallback_parsed_data(raw_text, filename)
             return format_resume_response(fallback, file_type, len(contents), filename)
 else:
@@ -250,6 +254,7 @@ def _ai_career_match(profile: dict):
     try:
         from matcher import hybrid_career_match, is_semantic_engine_ready
         candidate_careers = []
+        candidate_lookup = {}
         if is_semantic_engine_ready():
             candidates = hybrid_career_match(
                 riasec_scores=profile.get("riasec_scores", {}),
@@ -259,35 +264,58 @@ def _ai_career_match(profile: dict):
                 free_text=profile.get("strengths_note", ""),
                 limit=15,
             )
-            candidate_careers = [
-                {
+            for idx, c in enumerate(candidates, start=1):
+                raw_score = c.get("score")
+                score_val = round(float(raw_score), 4) if raw_score is not None else None
+                candidate_careers.append({
                     "baseline_rank": idx,
                     "title": c["title"],
                     "field": c.get("field", ""),
                     "riasec_code": c.get("riasec_code", ""),
-                    "score": round(float(c.get("score", 0)), 3) if c.get("score") is not None else None,
+                    "score": score_val,
                     "key_skills": c.get("key_skills", []),
                     "software_tools": c.get("software_tools", []),
                     "day_to_day": c.get("day_to_day", ""),
+                })
+                # Build lookup by slug and title to preserve authentic numerical score
+                s_slug = slugify(c["title"])
+                rec = {
+                    "score": score_val,
+                    "baseline_rank": idx,
+                    "field": c.get("field", ""),
+                    "salary_india": c.get("salary_india"),
+                    "education": c.get("education"),
+                    "software_tools": c.get("software_tools", []),
                 }
-                for idx, c in enumerate(candidates, start=1)
-            ]
+                candidate_lookup[s_slug] = rec
+                candidate_lookup[c["title"].lower().strip()] = rec
 
         if not candidate_careers:
             from careers import CAREERS
-            candidate_careers = [
-                {
+            for idx, c in enumerate(CAREERS[:15], start=1):
+                raw_score = c.get("score")
+                score_val = round(float(raw_score), 4) if raw_score is not None else None
+                candidate_careers.append({
                     "baseline_rank": idx,
                     "title": c["title"],
                     "field": c.get("field", ""),
                     "riasec_code": c.get("code", ""),
-                    "score": None,
+                    "score": score_val,
                     "key_skills": c.get("skills", []),
                     "software_tools": [],
                     "day_to_day": c.get("summary", ""),
+                })
+                s_slug = slugify(c["title"])
+                rec = {
+                    "score": score_val,
+                    "baseline_rank": idx,
+                    "field": c.get("field", ""),
+                    "salary_india": None,
+                    "education": c.get("education"),
+                    "software_tools": [],
                 }
-                for idx, c in enumerate(CAREERS[:15], start=1)
-            ]
+                candidate_lookup[s_slug] = rec
+                candidate_lookup[c["title"].lower().strip()] = rec
 
         allowed_titles = {c["title"].lower(): c["title"] for c in candidate_careers}
 
@@ -398,12 +426,19 @@ def _ai_career_match(profile: dict):
                         d["salary_india"] = c_info.get("salary_india")
                         d["education"] = c_info.get("education")
                         d["software_tools"] = c_info.get("software_tools", [])
+                    # Map back to original candidate record using stable slug or title
+                    orig_cand = candidate_lookup.get(d["slug"]) or candidate_lookup.get(orig_title.lower()) or {}
+                    raw_score = orig_cand.get("score")
+                    d["score"] = round(float(raw_score), 4) if raw_score is not None else None
+                    d["baseline_rank"] = orig_cand.get("baseline_rank", d.get("baseline_rank"))
+                    d["match_level"] = compute_match_level(d["score"])
                     d.pop("fit", None)
                     cleaned.append(d)
 
         return cleaned[:5] if len(cleaned) >= 3 else None
     except Exception as e:
-        print(f"AI career match failed, falling back: {e}")
+        cat, safe_msg = classify_groq_error(e, model=GROQ_MODEL)
+        print(f"[ai_career_match] {safe_msg}")
         return None
 
 
@@ -432,6 +467,8 @@ def career_match(req: CareerMatchRequest):
                     if c_info:
                         m["education"] = c_info.get("education")
                         m["software_tools"] = c_info.get("software_tools", [])
+                    m["match_level"] = compute_match_level(m.get("score"))
+                    m.pop("fit", None)
                 return {"source": "hybrid_vector", "matches": matches}
     except Exception as e:
         print(f"Hybrid matcher fallback error: {e}")
@@ -443,6 +480,8 @@ def career_match(req: CareerMatchRequest):
         if c_info:
             f["salary_india"] = c_info.get("salary_india")
             f["field"] = c_info.get("field", "General")
+        f["match_level"] = compute_match_level(f.get("score"))
+        f.pop("fit", None)
     return {
         "source": "rule",
         "matches": fallback_res,
@@ -1233,8 +1272,12 @@ def counselor_generate_recommendations(req: GenerateRecommendationsRequest):
         m["matched_skills"] = matched_s
         m["missing_skills"] = missing_s
         m["readiness"] = "High" if len(matched_s) >= 3 else ("Medium" if len(matched_s) >= 1 else "Developing")
-        if not m.get("fit"):
-            m["fit"] = max(70, 94 - idx * 4)
+        
+        # Determine qualitative match level from authentic matcher score
+        score = m.get("score")
+        m["score"] = round(float(score), 4) if score is not None else None
+        m["match_level"] = compute_match_level(m["score"])
+        m.pop("fit", None)
 
     return {
         "source": source,
@@ -1538,7 +1581,8 @@ Return ONLY valid JSON matching Section 7 format.
                                         "slug": m_item["slug"],
                                         "field": m_item.get("field", "General"),
                                         "code": m_item.get("riasec_code", "IRC"),
-                                        "fit": m_item.get("match_percent", 88),
+                                        "score": round(float(m_item.get("score", 0)), 4) if m_item.get("score") is not None else None,
+                                        "match_level": compute_match_level(m_item.get("score")),
                                         "reason": f"Psychological fit with your {parsed.get('riasec_code', 'RIASEC')} profile.",
                                         "why_it_fits": f"Psychological fit with your {parsed.get('riasec_code', 'RIASEC')} profile.",
                                         "salary_india": c_info.get("salary_india") if c_info else None,
@@ -1562,7 +1606,8 @@ Return ONLY valid JSON matching Section 7 format.
                                 "slug": fb["slug"],
                                 "field": fb.get("field", "General"),
                                 "code": fb.get("code", "IRC"),
-                                "fit": fb.get("fit", 82),
+                                "score": round(float(fb.get("score", 0)), 4) if fb.get("score") is not None else None,
+                                "match_level": compute_match_level(fb.get("score")),
                                 "reason": fb.get("reason", "Strong alignment with your profile."),
                                 "why_it_fits": fb.get("reason", "Strong alignment with your profile."),
                                 "salary_india": c_info.get("salary_india") if c_info else None,
@@ -1652,7 +1697,8 @@ Return ONLY valid JSON matching Section 7 format.
                     "matches": []
                 }
         except Exception as e:
-            print(f"Counselor chat AI error: {e}")
+            cat, safe_msg = classify_groq_error(e, model=GROQ_MODEL)
+            print(f"[counselor_chat] {safe_msg}")
 
     # Fallback if offline
     if user_wants_options or current_stage == "preliminary_exploration":

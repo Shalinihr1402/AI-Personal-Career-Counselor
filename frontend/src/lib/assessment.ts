@@ -48,7 +48,9 @@ export interface ScoreResult {
 export interface CareerMatch {
   title: string;
   slug?: string;
-  fit: number;
+  fit?: number | null;
+  score?: number | null;
+  match_level?: 'Strong Match' | 'Good Match' | 'Exploratory Match' | string;
   why_it_fits: string;
   day_to_day: string;
   key_skills: string[];
@@ -64,6 +66,8 @@ export interface CareerMatch {
   matched_skills?: string[];
   missing_skills?: string[];
   readiness?: 'High' | 'Medium' | 'Developing' | string;
+  reranking_reason?: string;
+  baseline_rank?: number;
 }
 
 export interface MatchResult {

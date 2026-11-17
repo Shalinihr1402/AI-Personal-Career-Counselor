@@ -181,7 +181,8 @@ class TestSkillDataFlow(unittest.TestCase):
         self.assertGreater(len(matches), 0)
         top = matches[0]
         self.assertIn("title", top)
-        self.assertIn("fit", top)
+        self.assertIn("match_level", top)
+        self.assertIn("score", top)
 
     # -------------------------------------------------------------------------
     # TEST 10: Adaptive Assessment Integration (Self-reported skills tier)

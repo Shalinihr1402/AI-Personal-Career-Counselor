@@ -198,13 +198,13 @@ def fallback_match(scores: dict, interests=None, deal_breakers=None, limit: int 
     ranked.sort(key=lambda pair: -pair[0])
     out = []
     for i, (raw, career) in enumerate(ranked[:limit]):
-        # base fit from the score, minus a small step per rank so a list of
-        # identically-coded careers still reads as ordered
-        fit = max(40, min(100, round(40 + raw / _MAX_RAW_MATCH * 60) - i * 3))
+        score_val = round(float(raw / _MAX_RAW_MATCH), 4)
+        match_level = "Strong Match" if score_val >= 0.72 else ("Good Match" if score_val >= 0.58 else "Exploratory Match")
         out.append({
             "title": career["title"],
             "slug": career["slug"],
-            "fit": fit,
+            "score": score_val,
+            "match_level": match_level,
             "why_it_fits": f"Fits your strengths in {_expand_code(''.join(top))}.",
             "day_to_day": career["summary"],
             "key_skills": career["skills"],

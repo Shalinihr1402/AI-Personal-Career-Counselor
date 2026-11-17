@@ -29,6 +29,39 @@ _CAREERS = None
 _INDEX = None
 
 
+# Centralized heuristic match level thresholds
+# NOTE: These are engineering heuristic thresholds, not scientifically validated psychometric cutoffs.
+MATCH_LEVEL_THRESHOLDS = {
+    "strong": 0.72,
+    "good": 0.58,
+}
+
+
+def compute_match_level(score: float | int | None) -> str:
+    """
+    Computes qualitative career match level based on the authentic hybrid match score.
+    Heuristic cutoffs:
+      - Score >= 0.72: Strong Match
+      - Score >= 0.58 and < 0.72: Good Match
+      - Score < 0.58 (or missing): Exploratory Match
+
+    NOTE: These are internal heuristic thresholds, not scientifically validated psychometric cutoffs.
+    """
+    if score is None:
+        return "Exploratory Match"
+    try:
+        val = float(score)
+    except (ValueError, TypeError):
+        return "Exploratory Match"
+
+    if val >= MATCH_LEVEL_THRESHOLDS["strong"]:
+        return "Strong Match"
+    elif val >= MATCH_LEVEL_THRESHOLDS["good"]:
+        return "Good Match"
+    else:
+        return "Exploratory Match"
+
+
 def _load_engine():
     global _MODEL, _EMBEDDINGS, _CAREERS, _INDEX
     if _EMBEDDINGS is not None and _CAREERS is not None:
@@ -302,7 +335,7 @@ def hybrid_career_match(
 
         # Weighted final score: 50% Semantic + 30% RIASEC + 20% Skill Overlap - Penalty
         combined = (0.50 * norm_semantic[idx]) + (0.30 * norm_riasec) + (0.20 * norm_skills) - penalty
-        fit_percent = int(np.clip(combined * 100, 35, 98))
+        score_val = round(float(combined), 4)
 
         # Personal explanation
         why_reasons = []
@@ -322,14 +355,14 @@ def hybrid_career_match(
             "slug": career["slug"],
             "soc_code": career.get("soc_code"),
             "field": career.get("field"),
-            "fit": fit_percent,
+            "score": score_val,
+            "match_level": compute_match_level(score_val),
             "riasec_code": c_code,
             "why_it_fits": why_it_fits,
             "day_to_day": career.get("day_to_day", career.get("description", "")[:120]),
             "key_skills": career.get("skills", [])[:5],
             "software_tools": career.get("software_tools", [])[:4],
             "salary_india": career.get("salary_inr"),
-            "score": combined,
         })
 
     # Sort descending by score
