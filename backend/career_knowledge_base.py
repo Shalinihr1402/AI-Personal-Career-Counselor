@@ -28,6 +28,7 @@ from education_classifier import (
     ClassifiedEducation,
     classify_education,
     DOMAIN_DISPLAY_NAMES,
+    are_domains_compatible_for_tech,
 )
 
 # Base Paths
@@ -2761,6 +2762,63 @@ class CareerKnowledgeBase:
         scored.sort(key=lambda x: -x[0])
         return [item[1] for item in scored[:limit]]
 
+    @staticmethod
+    def _matches_degree_pathway(classified: ClassifiedEducation, pathway_degrees: Optional[List[str]]) -> bool:
+        if not pathway_degrees:
+            return False
+        qual = (classified.qualification or "").lower().strip()
+        course = (classified.course_or_stream or "").lower().strip()
+        spec = (classified.specialization or "").lower().strip()
+
+        # Build list of student degree search terms
+        student_terms = {t for t in [qual, course, spec] if t}
+        if qual == "mca":
+            student_terms.update(["mca", "master of computer applications", "m.c.a"])
+        elif qual == "bca":
+            student_terms.update(["bca", "bachelor of computer applications", "b.c.a"])
+        elif qual in ["btech_be", "btech", "be"]:
+            student_terms.update(["b.tech", "b.e", "btech", "bachelor of technology", "bachelor of engineering"])
+        elif qual == "bcom":
+            student_terms.update(["b.com", "bcom", "bachelor of commerce"])
+        elif qual in ["bsc", "bsc_cs"]:
+            student_terms.update(["b.sc", "bsc", "bachelor of science"])
+        elif qual in ["msc", "msc_cs"]:
+            student_terms.update(["m.sc", "msc", "master of science"])
+        elif qual in ["mtech_me", "mtech"]:
+            student_terms.update(["m.tech", "m.e", "mtech", "master of technology"])
+        elif qual == "llb":
+            student_terms.update(["llb", "bachelor of laws", "l.l.b"])
+
+        for deg in pathway_degrees:
+            deg_lower = deg.lower()
+            for term in student_terms:
+                if len(term) >= 3 and term in deg_lower:
+                    return True
+        return False
+
+    @staticmethod
+    def _is_software_or_it_career(career: "CareerKnowledgeRecord") -> bool:
+        slug = (career.slug or "").lower()
+        title = (career.canonical_title or "").lower()
+        # Explicit non-software engineering disciplines that must NOT get broad software compatibility
+        non_sw_tokens = [
+            "mechanical", "electrical", "civil", "mechatronics", "robotics",
+            "renewable-energy", "solar", "vlsi", "asic", "power-grid",
+            "automobile", "aerospace", "chemical", "metallurg", "mining", "welder", "fitter"
+        ]
+        if any(tok in slug or tok in title for tok in non_sw_tokens):
+            return False
+        # Tech/software signals
+        sw_tokens = [
+            "software", "developer", "programmer", "data", "web", "cloud", "backend",
+            "frontend", "full-stack", "devops", "qa", "tester", "cybersecurity",
+            "ai", "machine-learning", "systems-analyst", "database", "java", "python",
+            "application", "network", "information-technology", "information-security"
+        ]
+        if any(tok in slug or tok in title for tok in sw_tokens):
+            return True
+        return career.domain == AcademicDomain.COMPUTER_APPLICATIONS.value
+
     def check_eligibility(
         self,
         career_identifier: str,
@@ -2918,7 +2976,7 @@ class CareerKnowledgeBase:
         # 6. Undergraduate & Postgraduate Degree Candidates (Mandatory Licensing Enforcement)
         if licensing.is_mandatory:
             lic_dict = licensing.to_dict()
-            qual = classified.qualification.lower()
+            qual = (classified.qualification or "").lower()
 
             # Medical (MBBS)
             if "medical-practitioner" in career.slug or "mbbs" in career.slug:
@@ -2938,8 +2996,42 @@ class CareerKnowledgeBase:
                     )
 
             # Law (Advocate)
-            if "advocate" in career.slug or "lawyer" in career.slug:
-                if qual not in ["llb", "llm"]:
+            elif "advocate" in career.slug or "lawyer" in career.slug:
+                if qual in ["llb", "llm"]:
+                    return EligibilityResult(
+                        is_eligible=True,
+                        eligibility_type="direct_eligible",
+                        reason=f"Your law degree ({classified.qualification_name}) qualifies you to enroll with the State Bar Council and appear for the {licensing.licensing_exam}.",
+                        mandatory_licensing_required=True,
+                        licensing_details=lic_dict,
+                        prerequisites_met=True,
+                    )
+                # Check if candidate is a graduate / postgrad in another discipline
+                is_graduate = classified.level in [
+                    EducationLevel.UNDERGRADUATE.value,
+                    EducationLevel.POSTGRADUATE.value,
+                    EducationLevel.DOCTORAL_PHD.value,
+                    EducationLevel.PROFESSIONAL_CERTIFICATION.value,
+                ]
+                if is_graduate:
+                    return EligibilityResult(
+                        is_eligible=True,
+                        eligibility_type="alternative_pathway",
+                        reason=(
+                            f"As a graduate ({classified.qualification_name}), you are statutorily eligible to seek admission "
+                            f"into a 3-Year LLB program approved by the {licensing.regulatory_body}. "
+                            f"Practicing as an Advocate in courts requires completing the LLB, enrolling with a State Bar Council, and passing the {licensing.licensing_exam} under the {licensing.statutory_act}."
+                        ),
+                        mandatory_licensing_required=True,
+                        licensing_details=lic_dict,
+                        prerequisites_met=False,
+                        missing_prerequisites=["3-Year LLB Degree", "State Bar Council Enrollment", "All India Bar Examination (AIBE)"],
+                        recommended_bridge_steps=[
+                            "Enroll in a Bar Council of India (BCI) recognized 3-Year LLB program for graduates.",
+                            "Upon graduation, enroll with your State Bar Council and clear the All India Bar Examination (AIBE).",
+                        ],
+                    )
+                else:
                     return EligibilityResult(
                         is_eligible=False,
                         eligibility_type="restricted_ineligible",
@@ -2951,11 +3043,11 @@ class CareerKnowledgeBase:
                         licensing_details=lic_dict,
                         prerequisites_met=False,
                         missing_prerequisites=["LLB Degree (3-Year or 5-Year)", "Bar Council Enrollment", "AIBE Examination"],
-                        recommended_bridge_steps=["Enroll in a 3-Year LLB (if already a graduate) or 5-Year Integrated Law program."],
+                        recommended_bridge_steps=["Complete 10+2 to enter 5-Year Integrated Law, or complete graduation to enter 3-Year LLB."],
                     )
 
             # Dentistry (Dental Surgeon / BDS)
-            if "dentist" in career.slug or "dental" in career.slug:
+            elif "dentist" in career.slug or "dental" in career.slug:
                 if qual not in ["bds", "mds"]:
                     return EligibilityResult(
                         is_eligible=False,
@@ -2972,7 +3064,7 @@ class CareerKnowledgeBase:
                     )
 
             # Nursing (Registered Nurse & Midwife)
-            if "nurse" in career.slug or "nursing" in career.slug:
+            elif "nurse" in career.slug or "nursing" in career.slug:
                 if qual not in ["bsc_nursing", "msc_nursing", "gnm"]:
                     return EligibilityResult(
                         is_eligible=False,
@@ -2989,7 +3081,7 @@ class CareerKnowledgeBase:
                     )
 
             # Pharmacy (Pharmacist)
-            if "pharmacist" in career.slug:
+            elif "pharmacist" in career.slug:
                 if qual not in ["bpharm", "dpharm", "mpharm"]:
                     return EligibilityResult(
                         is_eligible=False,
@@ -3005,8 +3097,44 @@ class CareerKnowledgeBase:
                     )
 
             # Chartered Accountant (CA)
-            if "chartered-accountant" in career.slug:
-                if qual != "chartered_accountant":
+            elif "chartered-accountant" in career.slug:
+                if qual == "chartered_accountant":
+                    return EligibilityResult(
+                        is_eligible=True,
+                        eligibility_type="direct_eligible",
+                        reason="You hold recognized Chartered Accountant credentials under the Chartered Accountants Act, 1949.",
+                        mandatory_licensing_required=True,
+                        licensing_details=lic_dict,
+                        prerequisites_met=True,
+                    )
+                # Check if candidate is a graduate / postgrad eligible for ICAI Direct Entry Scheme
+                is_graduate = classified.level in [
+                    EducationLevel.UNDERGRADUATE.value,
+                    EducationLevel.POSTGRADUATE.value,
+                    EducationLevel.DOCTORAL_PHD.value,
+                ]
+                if is_graduate:
+                    is_commerce = classified.domain == AcademicDomain.COMMERCE_FINANCE.value
+                    threshold_str = "55% marks for Commerce graduates" if is_commerce else "60% marks for non-Commerce graduates"
+                    return EligibilityResult(
+                        is_eligible=True,
+                        eligibility_type="alternative_pathway",
+                        reason=(
+                            f"Graduates ({classified.qualification_name}) meeting ICAI aggregate criteria ({threshold_str}) "
+                            f"are eligible for the ICAI Direct Entry Scheme, allowing direct registration into CA Intermediate without writing CA Foundation. "
+                            f"Statutory audit sign-off authority legally requires completing mandatory articleship, clearing CA Final, and obtaining {licensing.regulatory_body} membership under the {licensing.statutory_act}."
+                        ),
+                        mandatory_licensing_required=True,
+                        licensing_details=lic_dict,
+                        prerequisites_met=False,
+                        missing_prerequisites=["CA Intermediate Examination", "Mandatory Practical Training (Articleship)", "CA Final Examination", "ICAI Membership"],
+                        recommended_bridge_steps=[
+                            "Register for CA Intermediate under the ICAI Direct Entry Scheme for graduates.",
+                            "Complete 8 months of study and mandatory ICITSS training before appearing for CA Intermediate.",
+                            "Complete mandatory articleship under a practicing CA and clear CA Final.",
+                        ],
+                    )
+                else:
                     return EligibilityResult(
                         is_eligible=False,
                         eligibility_type="restricted_ineligible",
@@ -3018,25 +3146,110 @@ class CareerKnowledgeBase:
                         licensing_details=lic_dict,
                         prerequisites_met=False,
                         missing_prerequisites=["ICAI Membership", "CA Final Cleared", "Mandatory Articleship"],
-                        recommended_bridge_steps=["Register for CA Intermediate via Direct Entry Scheme or clear CA Foundation."],
+                        recommended_bridge_steps=["Register for CA Foundation after Class 12, or enter CA Intermediate after graduation via Direct Entry."],
                     )
 
-        # 7. Skill-first career pathways (Software, Design, Digital, Analytics)
-        if not licensing.is_mandatory:
+            # Industrial Electrician / Electrical Trades
+            elif "electrician" in career.slug or "wireman" in career.slug:
+                is_iti_electrical = (
+                    classified.level == EducationLevel.ITI_VOCATIONAL.value
+                    and any(k in (classified.specialization or "").lower() or k in (classified.qualification_name or "").lower() for k in ["electrician", "wireman", "electrical"])
+                )
+                is_electrical_engg = (
+                    classified.level in [EducationLevel.POLYTECHNIC_DIPLOMA.value, EducationLevel.UNDERGRADUATE.value, EducationLevel.POSTGRADUATE.value]
+                    and any(k in (classified.specialization or "").lower() or k in (classified.course_or_stream or "").lower() for k in ["electrical", "eee", "power system"])
+                )
+
+                if is_iti_electrical or is_electrical_engg:
+                    return EligibilityResult(
+                        is_eligible=True,
+                        eligibility_type="direct_eligible",
+                        reason=(
+                            f"Your electrical qualification satisfies the statutory trade training requirements for {career.canonical_title} "
+                            f"under the {licensing.statutory_act}."
+                        ),
+                        mandatory_licensing_required=True,
+                        licensing_details=lic_dict,
+                        prerequisites_met=True,
+                    )
+                else:
+                    return EligibilityResult(
+                        is_eligible=False,
+                        eligibility_type="restricted_ineligible",
+                        reason=(
+                            f"Practicing as an {career.canonical_title} statutorily requires an NCVET-recognized ITI Electrician/Wireman certificate "
+                            f"or an AICTE-approved Diploma/Degree in Electrical Engineering and licensing from the {licensing.regulatory_body} under the {licensing.statutory_act}."
+                        ),
+                        mandatory_licensing_required=True,
+                        licensing_details=lic_dict,
+                        prerequisites_met=False,
+                        missing_prerequisites=["NCVET ITI Electrician/Wireman Trade Certificate or Electrical Engineering Diploma", "State Wireman / Supervisor Electrical License"],
+                        recommended_bridge_steps=["Enroll in a 2-Year Craftsman Training Scheme (CTS) ITI Electrician or Wireman course."],
+                    )
+
+            # Fail-safe for any other legally mandatory licensing career
+            else:
+                return EligibilityResult(
+                    is_eligible=False,
+                    eligibility_type="restricted_ineligible",
+                    reason=(
+                        f"Practicing as {career.canonical_title} statutorily requires specific recognized professional qualifications "
+                        f"and registration with the {licensing.regulatory_body} under the {licensing.statutory_act}."
+                    ),
+                    mandatory_licensing_required=True,
+                    licensing_details=lic_dict,
+                    prerequisites_met=False,
+                    missing_prerequisites=[f"Mandatory statutory qualification recognized by {licensing.regulatory_body}"],
+                )
+
+        # 7. Explicit Qualification Pathway Matching
+        explicit_degrees = (pathways.preferred_undergraduate or []) + (pathways.relevant_postgraduate or [])
+        if self._matches_degree_pathway(classified, explicit_degrees):
             return EligibilityResult(
                 is_eligible=True,
-                eligibility_type="direct_eligible" if classified.domain == career.domain else "alternative_pathway",
+                eligibility_type="direct_eligible",
+                reason=f"Your qualification {classified.qualification_name} is explicitly recognized as a preferred educational pathway for {career.canonical_title}.",
+            )
+
+        # 8. Tech / Software Cross-Domain Compatibility
+        if self._is_software_or_it_career(career) and are_domains_compatible_for_tech(classified.domain, career.domain):
+            return EligibilityResult(
+                is_eligible=True,
+                eligibility_type="direct_eligible",
                 reason=(
-                    f"You have the educational foundation for {career.canonical_title}. "
-                    "Entry in this field is driven by demonstrated technical competence, practical projects, and skills."
+                    f"Your technical qualification ({classified.qualification_name}) provides the computing foundation "
+                    f"directly recognized for software and IT occupations like {career.canonical_title}."
                 ),
             )
 
-        # Default eligible for recognized matching qualifications
+        # 9. Non-software engineering / specialized discipline restriction
+        if (
+            career.domain == AcademicDomain.ENGINEERING_TECH.value
+            and not self._is_software_or_it_career(career)
+            and classified.domain == AcademicDomain.COMPUTER_APPLICATIONS.value
+        ):
+            return EligibilityResult(
+                is_eligible=True,
+                eligibility_type="alternative_pathway",
+                reason=(
+                    f"{career.canonical_title} requires specialized engineering discipline training (e.g. Mechanical/Civil/CAD). "
+                    f"While your degree in {classified.qualification_name} provides strong analytical foundations, transitioning requires domain upskilling."
+                ),
+                recommended_bridge_steps=["Pursue specialized technical certifications or diploma coursework in the target engineering discipline."],
+            )
+
+        # 10. General skill-first fallback
+        is_direct = (classified.domain == career.domain)
         return EligibilityResult(
             is_eligible=True,
-            eligibility_type="direct_eligible",
-            reason=f"Your qualification {classified.qualification_name} satisfies the educational requirements for {career.canonical_title}.",
+            eligibility_type="direct_eligible" if is_direct else "alternative_pathway",
+            reason=(
+                f"You have the educational foundation for {career.canonical_title}. "
+                "Entry in this field is driven by demonstrated technical competence, practical projects, and skills."
+                if is_direct else
+                f"Your degree ({classified.qualification_name}) provides transferable skills. "
+                f"Transitioning into {career.canonical_title} is achievable through targeted skill building, certifications, and practical portfolio projects."
+            ),
         )
 
     def export_dataset_json(self, filepath: Optional[str] = None) -> int:

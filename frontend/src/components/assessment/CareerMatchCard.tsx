@@ -12,7 +12,7 @@ import {
   Briefcase,
   CheckCircle2,
 } from 'lucide-react';
-import { Badge } from '../ui/Badge';
+import { Badge, type BadgeVariant } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import type { CareerMatch } from '../../lib/assessment';
 
@@ -58,7 +58,7 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
         : 'Good Match')
   );
 
-  const getMatchLevelVariant = (level: string) => {
+  const getMatchLevelVariant = (level: string): BadgeVariant => {
     switch (level.toLowerCase()) {
       case 'strong match':
         return 'success';
@@ -66,7 +66,7 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
         return 'brand';
       case 'exploratory match':
       default:
-        return 'secondary';
+        return 'neutral';
     }
   };
 

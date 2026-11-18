@@ -2,11 +2,11 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl: string =
   import.meta.env.VITE_SUPABASE_URL ||
-  'https://gkgwinmbmxdohlygvjge.supabase.co';
+  'https://acrpnfuwlqivditcocpv.supabase.co';
 
 const supabaseAnonKey: string =
   import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  'sb_publishable_zJabNtDEHzEHXPLYT2wEvg_W9E8Jqit';
+  'sb_publishable_sc0YiRPztPe1n-vuPuK8NA_YGUeG2tY';
 
 /**
  * True when both env vars are present. When false, the app still renders but

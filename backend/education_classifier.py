@@ -489,18 +489,21 @@ def classify_education(input_data: Any) -> ClassifiedEducation:
     if isinstance(input_data, dict):
         raw_level = input_data.get("education_level") or input_data.get("educationStage")
         raw_status = input_data.get("education_status")
-        raw_degree = input_data.get("degree_other") if input_data.get("degree") == "other" else input_data.get("degree")
+        raw_degree = (
+            input_data.get("degree_other") if input_data.get("degree") == "other"
+            else input_data.get("degree") or input_data.get("education") or input_data.get("qualification")
+        )
         raw_spec = input_data.get("specialization_other") if input_data.get("specialization") in ["Other", "other"] else input_data.get("specialization")
         raw_stream = input_data.get("school_stream")
         raw_board = input_data.get("school_board_other") if input_data.get("school_board") == "other" else input_data.get("school_board")
-        raw_course = input_data.get("course")
+        raw_course = input_data.get("course") or input_data.get("education") or input_data.get("qualification")
 
         if isinstance(input_data.get("favorite_subjects"), list):
             raw_subjects.extend(input_data.get("favorite_subjects"))
         if isinstance(input_data.get("subject_combination"), str) and input_data.get("subject_combination").strip():
             raw_subjects.append(input_data.get("subject_combination").strip())
 
-        for v in [raw_level, raw_degree, raw_spec, raw_stream, raw_course, input_data.get("institution")]:
+        for v in [raw_level, raw_degree, raw_spec, raw_stream, raw_course, input_data.get("education"), input_data.get("institution")]:
             if isinstance(v, str) and v.strip():
                 free_text_parts.append(v.strip())
         combined_text = " ".join(free_text_parts).lower()
@@ -851,3 +854,14 @@ def resolve_clarification(
     classified.requires_clarification = False
     classified.clarification_prompt = None
     return classified
+
+
+def are_domains_compatible_for_tech(student_domain: str, career_domain: str) -> bool:
+    """
+    Checks whether student's domain and career domain share computing/software compatibility.
+    Specifically, Computer Applications (BCA, MCA) and Engineering & Technology (B.Tech CSE/IT)
+    are mutually compatible for software development and IT careers.
+    """
+    tech_set = {AcademicDomain.COMPUTER_APPLICATIONS.value, AcademicDomain.ENGINEERING_TECH.value}
+    return student_domain in tech_set and career_domain in tech_set
+
