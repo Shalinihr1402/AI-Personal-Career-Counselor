@@ -250,6 +250,7 @@ const Assessment: React.FC = () => {
   const [settingGoal, setSettingGoal] = useState<string | null>(null);
   const [goalError, setGoalError] = useState<string | null>(null);
   const [showLockNotice, setShowLockNotice] = useState(false);
+  const [isRetaking, setIsRetaking] = useState(false);
 
   const isAssessmentComplete = Boolean(
     (saved?.matches && saved.matches.length > 0) || (score && match && (match.matches || []).length > 0)
@@ -320,7 +321,7 @@ const Assessment: React.FC = () => {
   useEffect(() => {
     let cancelled = false;
 
-    if (saved) {
+    if (saved && !isRetaking) {
       // Returning student: check if they completed diagnostic recommendations
       setScore({ code: saved.code, scores: saved.scores });
       setResultsAt(saved.createdAt);
@@ -337,6 +338,26 @@ const Assessment: React.FC = () => {
         // Assessment completed, proceed to AI Counselor diagnostic
         setPhase('counselor_diagnostic');
       }
+
+      // Always re-verify statutory eligibility live so updated regulatory rules are immediately active
+      const payload = buildProfilePayload(profile, saved.knowMe || knowMe);
+      scoreAdaptiveAssessment({}, payload)
+        .then((freshScore) => {
+          if (!cancelled && freshScore?.statutory_eligibility) {
+            setAdaptiveScore((prev) => {
+              if (!prev) return freshScore;
+              return {
+                ...prev,
+                statutory_eligibility: freshScore.statutory_eligibility,
+                practical_disclaimer: freshScore.practical_disclaimer || prev.practical_disclaimer,
+              };
+            });
+          }
+        })
+        .catch(() => {
+          // If offline, preserve saved evidence
+        });
+
       return;
     }
 
@@ -388,14 +409,14 @@ const Assessment: React.FC = () => {
 
   const initializedSavedRef = useRef(false);
   useEffect(() => {
-    if (saved && !initializedSavedRef.current) {
+    if (saved && !initializedSavedRef.current && !isRetaking) {
       initializedSavedRef.current = true;
       setScore({ code: saved.code, scores: saved.scores });
       setMatch({ source: saved.source, matches: saved.matches });
       setResultsAt(saved.createdAt);
       setPhase('results');
     }
-  }, [saved]);
+  }, [saved, isRetaking]);
 
   const handleSelectOption = (questionId: string, optionId: string) => {
     const updated = { ...answers, [questionId]: optionId };
@@ -512,6 +533,7 @@ const Assessment: React.FC = () => {
       setSaveWarning("Your results couldn't be saved to your permanent profile, but they are available for this session.");
     }
 
+    setIsRetaking(false);
     goToPhase('results');
   };
 
@@ -547,6 +569,7 @@ const Assessment: React.FC = () => {
   };
 
   const restart = () => {
+    setIsRetaking(true);
     setAnswers({});
     setWorkStyle({});
     setScore(null);
