@@ -20,7 +20,7 @@ import json
 import re
 from pathlib import Path
 import numpy as np
-from skill_normalizer import normalize_skills
+from skill_normalizer import normalize_skills, is_skill_match
 
 # File paths
 BASE_DIR = Path(__file__).resolve().parent
@@ -426,19 +426,18 @@ def compute_skill_project_evidence(
     matched_weight = 0.0
 
     for s in all_student_techs:
-        s_lower = s.lower().strip()
-        if any(s_lower in cs or cs in s_lower for cs in career_skills_lower):
+        if any(is_skill_match(s, cs) for cs in career_skills):
             matched_skills.append(s)
             base_w = get_skill_weight(s)
             # Give 1.4x multiplier for tools demonstrated in practical projects
-            is_in_project = any(s.lower() == pt.lower() for pt in proj_techs)
+            is_in_project = any(is_skill_match(s, pt) for pt in proj_techs)
             matched_weight += base_w * (1.4 if is_in_project else 1.0)
 
     matched_projects = []
     for p in projects:
         if isinstance(p, dict):
-            p_techs = [pt.lower() for pt in (p.get("technologies") or p.get("tech") or [])]
-            if any(pt in cs or cs in pt for pt in p_techs for cs in career_skills_lower):
+            p_techs = p.get("technologies") or p.get("tech") or []
+            if any(is_skill_match(pt, cs) for pt in p_techs for cs in career_skills):
                 matched_projects.append(p.get("name") or p.get("title") or "Practical Project")
 
     # Normalized score: matched weight relative to total expected weight
@@ -667,6 +666,8 @@ def hybrid_career_match(
             "software_tools": career.get("software_tools", [])[:4],
             "salary_india": career.get("salary_inr"),
             "education": career.get("education"),
+            "matched_skills": matched_skills,
+            "matched_projects": matched_projs,
             # Intermediate component scores for multi-signal candidate pooling
             "_s_sem": s_sem,
             "_s_goal": s_goal,

@@ -1,9 +1,10 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
-from skill_normalizer import normalize_skills
+from skill_normalizer import normalize_skills, is_skill_match
 from typing import Any
 import os
+import re
 import tempfile
 import json
 from datetime import datetime, timezone
@@ -535,8 +536,7 @@ def calculate_skill_gap(req: SkillGapRequest):
     missing = []
 
     for req_skill in all_required:
-        r_lower = req_skill.lower()
-        if any(r_lower in s or s in r_lower for s in student_lower):
+        if any(is_skill_match(req_skill, s) for s in student_skills_clean):
             matched.append(req_skill)
         else:
             missing.append(req_skill)
@@ -1285,13 +1285,51 @@ def counselor_generate_recommendations(req: GenerateRecommendationsRequest):
         req_skills = (c_info.get("skills", []) if c_info else []) + (m.get("key_skills", []) or [])
         req_skills = list(dict.fromkeys(req_skills))
 
-        student_skills_lower = {s.lower() for s in combined_skills if isinstance(s, str)}
-        matched_s = [s for s in req_skills if any(s.lower() in cand or cand in s.lower() for cand in student_skills_lower)]
+        matched_s = [s for s in req_skills if any(is_skill_match(s, cand) for cand in combined_skills)]
+        for orig_s in (m.get("matched_skills") or []):
+            if orig_s not in matched_s:
+                matched_s.append(orig_s)
         missing_s = [s for s in req_skills if s not in matched_s]
 
         m["matched_skills"] = matched_s
         m["missing_skills"] = missing_s
-        m["readiness"] = "High" if len(matched_s) >= 3 else ("Medium" if len(matched_s) >= 1 else "Developing")
+
+        # Determine realistic job readiness separated from interest/compatibility.
+        # Note on Job Zone 5 vs Statutory Requirements:
+        # Job Zone 5 represents extensive occupational preparation (SVP 8.0+) and employer preference
+        # for autonomous research, NOT a legally mandatory statutory license (which applies strictly
+        # to Acts of Parliament like NMC, BCI, PCI, ICAI). An MCA graduate is legally eligible
+        # (direct_eligible) for research scientist roles in industry, but entry-level fresher job readiness
+        # is calibrated as Medium (or Developing) rather than High, recognizing that freshers typically
+        # require structured research mentorship before leading independent algorithm design.
+        job_zone = (c_info.get("job_zone") if c_info else None) or (5 if "research" in c_slug else 4)
+        edu_req = (c_info.get("education") or "").lower() if c_info else ""
+        student_edu = (req.education or "").lower()
+        has_phd = any(d in student_edu for d in ["ph.d", "phd", "doctorate", "doctoral"])
+
+        is_advanced_research = job_zone >= 5 or "ph.d" in edu_req or "research scientist" in c_slug
+        is_data_scientist = "data-scientist" in c_slug or "statistician" in c_slug
+
+        exp_text = ""
+        if isinstance(req.know_me, dict):
+            exp_text += str(req.know_me.get("experience") or "") + " "
+        if diag.get("summary_of_student"):
+            exp_text += str(diag.get("summary_of_student")) + " "
+        exp_text += student_edu
+        is_fresher = any(w in exp_text.lower() for w in ["fresher", "final year", "student", "0 years", "entry"]) or not exp_text
+
+        if is_advanced_research and not has_phd:
+            # Job Zone 5 advanced research roles calibrated at Medium (or Developing) for freshers lacking doctoral/publication track record
+            m["readiness"] = "Developing" if len(matched_s) < 3 else "Medium"
+        elif is_data_scientist and is_fresher:
+            # Autonomous Data Scientist positions typically require enterprise production data pipelines/MLOps
+            m["readiness"] = "Medium" if len(matched_s) >= 2 else "Developing"
+        elif len(matched_s) >= 3 and job_zone <= 4 and bool(projects):
+            m["readiness"] = "High"
+        elif len(matched_s) >= 2:
+            m["readiness"] = "Medium"
+        else:
+            m["readiness"] = "Developing"
         
         # Determine qualitative match level from authentic matcher score
         score = m.get("score")

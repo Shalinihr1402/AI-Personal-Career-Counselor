@@ -12,7 +12,44 @@ Guarantees:
 - Safely handles malformed, empty, and unexpected input values.
 """
 
-from typing import Any, List, Set
+import re
+from typing import Any, List, Set, Dict
+
+
+SHORT_LANGUAGE_ALIASES: Dict[str, Set[str]] = {
+    "c": {"c", "clanguage", "cprogramming", "cprogramminglanguage", "ansic"},
+    "r": {"r", "rlanguage", "rprogramming", "rprogramminglanguage", "rstudio", "rstudioprogramming"},
+    "go": {"go", "golang", "goprogramming", "golanguage"},
+}
+
+
+def clean_skill_token(s: Any) -> str:
+    """Normalize skill string to alphanumeric + # and + for matching."""
+    return re.sub(r'[^a-z0-9#+]', '', str(s).lower().strip())
+
+
+def is_skill_match(skill_a: Any, skill_b: Any) -> bool:
+    """
+    Robust skill token matching that:
+    1. Recognizes exact token matches (e.g. 'c' == 'c', 'r' == 'r', 'python' == 'python').
+    2. Recognizes legitimate programming language aliases (e.g. 'C' matches 'C Programming', 'R' matches 'R Language').
+    3. Prevents substring false positives for short tokens (< 4 chars):
+       'opencv' will NEVER match 'C', 'scikit-learn' will NEVER match 'R'.
+    4. Supports substring/containment only when BOTH tokens have length >= 4.
+    """
+    norm_a = clean_skill_token(skill_a)
+    norm_b = clean_skill_token(skill_b)
+    if not norm_a or not norm_b:
+        return False
+    if norm_a == norm_b:
+        return True
+    for lang, aliases in SHORT_LANGUAGE_ALIASES.items():
+        if norm_a in aliases and norm_b in aliases:
+            return True
+    if len(norm_a) < 4 or len(norm_b) < 4:
+        return False
+    return norm_a in norm_b or norm_b in norm_a
+
 
 
 def normalize_single_skill(item: Any) -> str:

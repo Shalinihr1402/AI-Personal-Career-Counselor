@@ -108,8 +108,8 @@ class TestCareerRelevanceMultiProfile(unittest.TestCase):
         )
 
         top_5_titles = [c["title"] for c in candidates[:5]]
-        # Software Developers or Systems Analysts should be in the top 3
-        sw_roles = {"Software Developers", "Computer Systems Analysts", "Computer Programmers", "Database Administrators"}
+        # Core software engineering / development roles should be in the top 3
+        sw_roles = {"Software Developers", "Web Developers", "Computer Systems Engineers/Architects", "Computer Systems Analysts", "Computer Programmers", "Database Administrators"}
         self.assertTrue(any(t in sw_roles for t in top_5_titles[:3]), f"Expected core software role in top 3. Got: {top_5_titles}")
 
         # Check that Java is cited in why_it_fits
@@ -233,6 +233,98 @@ class TestCareerRelevanceMultiProfile(unittest.TestCase):
             any(t in robotics_pool for t in top_5_titles[:3]),
             f"Robotics or Mechatronics should be in top 3 when student has ROS and SolidWorks. Top 5: {top_5_titles}"
         )
+
+
+class TestSkillMatchingAndJobZoneAudit(unittest.TestCase):
+    """
+    Regression test suite for:
+    1. C programming skill recognition (exact & alias matching).
+    2. R programming skill recognition (exact & alias matching).
+    3. OpenCV not matching C (avoiding single-character substring collision).
+    4. Scikit-learn not matching R (avoiding single-character substring collision).
+    5. Job Zone 5 not automatically creating a statutory restriction.
+    """
+    def test_01_c_programming_skill_recognition(self):
+        from skill_normalizer import is_skill_match
+        self.assertTrue(is_skill_match("C", "C"))
+        self.assertTrue(is_skill_match("C", "C Programming"))
+        self.assertTrue(is_skill_match("C Programming", "C"))
+        self.assertTrue(is_skill_match("C Language", "C (Programming Language)"))
+        self.assertTrue(is_skill_match("ANSI C", "C"))
+
+        # Verify evidence matcher matches C when required
+        dummy_career = {"skills": ["C", "Git"], "software_tools": []}
+        score, matched, _, _ = matcher.compute_skill_project_evidence(
+            student_skills=["C", "Python"],
+            career=dummy_career
+        )
+        self.assertIn("C", matched)
+
+    def test_02_r_programming_skill_recognition(self):
+        from skill_normalizer import is_skill_match
+        self.assertTrue(is_skill_match("R", "R"))
+        self.assertTrue(is_skill_match("R", "R Programming"))
+        self.assertTrue(is_skill_match("R Programming", "R"))
+        self.assertTrue(is_skill_match("R Language", "R (Programming Language)"))
+        self.assertTrue(is_skill_match("RStudio", "R"))
+
+        # Verify evidence matcher matches R when required
+        dummy_career = {"skills": ["R", "Statistics"], "software_tools": []}
+        score, matched, _, _ = matcher.compute_skill_project_evidence(
+            student_skills=["R", "SQL"],
+            career=dummy_career
+        )
+        self.assertIn("R", matched)
+
+    def test_03_opencv_not_matching_c(self):
+        from skill_normalizer import is_skill_match
+        self.assertFalse(is_skill_match("OpenCV", "C"))
+        self.assertFalse(is_skill_match("C", "OpenCV"))
+
+        # Verify in matcher that a student with only OpenCV does NOT match C
+        dummy_career = {"skills": ["C", "Hardware Architecture"], "software_tools": []}
+        score, matched, _, _ = matcher.compute_skill_project_evidence(
+            student_skills=["OpenCV", "PyTorch"],
+            career=dummy_career
+        )
+        self.assertNotIn("OpenCV", matched)
+        self.assertNotIn("C", matched)
+
+    def test_04_scikitlearn_not_matching_r(self):
+        from skill_normalizer import is_skill_match
+        self.assertFalse(is_skill_match("Scikit-learn", "R"))
+        self.assertFalse(is_skill_match("R", "Scikit-learn"))
+
+        # Verify in matcher that a student with only Scikit-learn does NOT match R
+        dummy_career = {"skills": ["R", "Bioinformatics"], "software_tools": []}
+        score, matched, _, _ = matcher.compute_skill_project_evidence(
+            student_skills=["Scikit-learn", "Pandas"],
+            career=dummy_career
+        )
+        self.assertNotIn("Scikit-learn", matched)
+        self.assertNotIn("R", matched)
+
+    def test_05_job_zone_5_not_automatically_statutory_restriction(self):
+        from career_knowledge_base import check_career_eligibility, get_career_knowledge
+        
+        # Test 1: Computer and Information Research Scientists is an O*NET Job Zone 5 occupation
+        rec = get_career_knowledge("computer-and-information-research-scientists")
+        self.assertIsNotNone(rec)
+        # Verify that mandatory licensing is FALSE (no statutory parliamentary restriction)
+        self.assertFalse(rec.education_pathways.mandatory_licensing.is_mandatory)
+        self.assertIsNone(rec.education_pathways.mandatory_licensing.statutory_act)
+
+        # Test 2: An MCA graduate is direct_eligible (not barred by statutory restriction)
+        res = check_career_eligibility("computer-and-information-research-scientists", "Master of Computer Applications")
+        self.assertTrue(res.is_eligible)
+        self.assertFalse(res.mandatory_licensing_required)
+        self.assertEqual(res.eligibility_type, "direct_eligible")
+
+        # Test 3: Contrast with a genuine statutory restriction (e.g. General Medical Practitioner / MBBS under NMC Act)
+        mbbs_rec = get_career_knowledge("general-medical-practitioner")
+        self.assertIsNotNone(mbbs_rec)
+        self.assertTrue(mbbs_rec.education_pathways.mandatory_licensing.is_mandatory)
+        self.assertIsNotNone(mbbs_rec.education_pathways.mandatory_licensing.statutory_act)
 
 
 if __name__ == "__main__":

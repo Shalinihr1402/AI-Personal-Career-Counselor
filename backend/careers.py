@@ -457,6 +457,7 @@ def get_career_by_slug(slug: str) -> dict | None:
             "slug": occ["slug"],
             "code": occ.get("riasec_code", "IRC"),
             "field": occ.get("field", "General"),
+            "job_zone": occ.get("job_zone", 4),
             "summary": occ.get("description", ""),
             "description": occ.get("description", ""),
             "education": occ.get("education", "Bachelor's Degree"),
