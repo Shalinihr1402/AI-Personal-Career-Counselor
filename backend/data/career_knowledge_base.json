@@ -34892,9 +34892,9 @@
       "Junior Computer Hardware Engineers",
       "Lead Computer Hardware Engineers"
     ],
-    "category": "Engineering & Architecture",
+    "category": "Engineering & Technology",
     "industry": "Engineering & Architecture",
-    "domain": "computer_applications",
+    "domain": "engineering_tech",
     "description": "Research, design, develop, or test computer or computer-related equipment for commercial, industrial, military, or scientific use. May supervise the manufacturing and installation of computer or computer-related equipment and components.",
     "work_profile": {
       "main_responsibilities": [
@@ -35020,23 +35020,19 @@
       ],
       "required_undergraduate": [],
       "preferred_undergraduate": [
-        "B.Tech / B.E",
-        "BCA",
-        "B.Sc (Computer Science / IT)",
-        "B.Voc"
+        "B.Tech / B.E (Electrical / Electronics / Computer Engineering)"
       ],
       "alternative_undergraduate": [
         "Graduation in any discipline with relevant domain skill portfolio"
       ],
       "relevant_postgraduate": [
-        "M.Tech",
-        "MCA"
+        "M.Tech (VLSI / Embedded Systems / Computer Hardware Engineering)"
       ],
       "alternative_entry_pathways": [
-        "Vocational diplomas, industry bootcamps, and certified skill credentials"
+        "B.Sc / M.Sc in Electronics with certified VLSI / embedded hardware design portfolio."
       ],
       "academic_prerequisites": [
-        "Relevant educational background in Computer Applications"
+        "Strong foundational knowledge in digital circuits, microprocessors, VLSI design, and electronic hardware architecture."
       ],
       "mandatory_licensing": {
         "is_mandatory": false,
@@ -39727,9 +39723,9 @@
       "Junior Robotics Engineers",
       "Lead Robotics Engineers"
     ],
-    "category": "Engineering & Architecture",
+    "category": "Engineering & Technology",
     "industry": "Engineering & Architecture",
-    "domain": "computer_applications",
+    "domain": "engineering_tech",
     "description": "Research, design, develop, or test robotic applications.",
     "work_profile": {
       "main_responsibilities": [
@@ -39855,23 +39851,19 @@
       ],
       "required_undergraduate": [],
       "preferred_undergraduate": [
-        "B.Tech / B.E",
-        "BCA",
-        "B.Sc (Computer Science / IT)",
-        "B.Voc"
+        "B.Tech / B.E (Robotics / Mechatronics / Mechanical / Electrical Engineering)"
       ],
       "alternative_undergraduate": [
         "Graduation in any discipline with relevant domain skill portfolio"
       ],
       "relevant_postgraduate": [
-        "M.Tech",
-        "MCA"
+        "M.Tech (Robotics / Mechatronics / Automation / Control Systems)"
       ],
       "alternative_entry_pathways": [
-        "Vocational diplomas, industry bootcamps, and certified skill credentials"
+        "B.Tech in Computer Science with verified ROS robotics hardware integration portfolio."
       ],
       "academic_prerequisites": [
-        "Relevant educational background in Computer Applications"
+        "Foundational proficiency in kinematics, dynamics, control systems, actuators, and embedded microcontrollers."
       ],
       "mandatory_licensing": {
         "is_mandatory": false,
@@ -42138,9 +42130,9 @@
       "Junior Robotics Technicians",
       "Lead Robotics Technicians"
     ],
-    "category": "Engineering & Architecture",
+    "category": "Engineering & Technology",
     "industry": "Engineering & Architecture",
-    "domain": "computer_applications",
+    "domain": "engineering_tech",
     "description": "Build, install, test, or maintain robotic equipment or related automated production systems.",
     "work_profile": {
       "main_responsibilities": [
@@ -42262,27 +42254,24 @@
         "Science (PCM/PCMC)"
       ],
       "relevant_diploma_iti": [
-        "Polytechnic Diploma in relevant Engineering / Technology"
+        "Polytechnic Diploma in Mechatronics / Mechanical / Electrical Engineering",
+        "ITI Mechatronics / Industrial Automation"
       ],
       "required_undergraduate": [],
       "preferred_undergraduate": [
-        "B.Tech / B.E",
-        "BCA",
-        "B.Sc (Computer Science / IT)",
-        "B.Voc"
+        "B.Voc in Industrial Automation / Robotics"
       ],
       "alternative_undergraduate": [
         "Graduation in any discipline with relevant domain skill portfolio"
       ],
       "relevant_postgraduate": [
-        "M.Tech",
-        "MCA"
+        "Advanced Diploma in Industrial Robotics"
       ],
       "alternative_entry_pathways": [
         "Vocational diplomas, industry bootcamps, and certified skill credentials"
       ],
       "academic_prerequisites": [
-        "Relevant educational background in Computer Applications"
+        "Practical training in robotic maintenance, pneumatics, and electro-mechanical systems."
       ],
       "mandatory_licensing": {
         "is_mandatory": false,

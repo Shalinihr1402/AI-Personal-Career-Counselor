@@ -311,10 +311,10 @@ class TestCareerKnowledgeBase(unittest.TestCase):
         self.assertTrue(res_med.mandatory_licensing_required)
         self.assertEqual(res_med.licensing_details["regulatory_body"], "National Medical Commission (NMC) & State Medical Council")
 
-        # Non-Law candidate attempting to practice as litigation lawyer
+        # Non-Law graduate receives alternative pathway (3-Year LLB) under BCI rules
         res_law = check_career_eligibility("advocate-litigation-lawyer", btech_profile)
-        self.assertFalse(res_law.is_eligible)
-        self.assertEqual(res_law.eligibility_type, "restricted_ineligible")
+        self.assertTrue(res_law.is_eligible)
+        self.assertEqual(res_law.eligibility_type, "alternative_pathway")
         self.assertTrue(res_law.mandatory_licensing_required)
         self.assertEqual(res_law.licensing_details["regulatory_body"], "Bar Council of India (BCI) & State Bar Council")
 
@@ -323,9 +323,10 @@ class TestCareerKnowledgeBase(unittest.TestCase):
         self.assertFalse(res_pharma.is_eligible)
         self.assertTrue(res_pharma.mandatory_licensing_required)
 
-        # Non-CA candidate attempting to be a statutory auditor CA
+        # Graduate candidate eligible for CA via ICAI Direct Entry Scheme
         res_ca = check_career_eligibility("chartered-accountant", btech_profile)
-        self.assertFalse(res_ca.is_eligible)
+        self.assertTrue(res_ca.is_eligible)
+        self.assertEqual(res_ca.eligibility_type, "alternative_pathway")
         self.assertTrue(res_ca.mandatory_licensing_required)
 
         # Non-Dental candidate attempting to practice as dental surgeon

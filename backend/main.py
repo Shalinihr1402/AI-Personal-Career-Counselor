@@ -38,7 +38,7 @@ except ImportError:
 
 _ai_client = None
 if Groq is not None and _GROQ_KEY:
-    _ai_client = Groq(api_key=_GROQ_KEY)
+    _ai_client = Groq(api_key=_GROQ_KEY, timeout=10.0, max_retries=1)
 else:
     print("INFO: GROQ_API_KEY not set — AI features will use rule-based fallbacks.")
 
@@ -241,6 +241,8 @@ class CareerMatchRequest(BaseModel):
     # "Know me": values, strong/enjoyed subjects, what they're known for, and
     # real-life constraints (earning timeline, budget, relocation, family, setting).
     know_me: dict[str, Any] = Field(default_factory=dict)
+    career_goals: list[str] | str | None = None
+    projects: list[Any] | None = None
 
     @field_validator("resume_skills", mode="before")
     @classmethod
@@ -262,7 +264,10 @@ def _ai_career_match(profile: dict):
                 resume_skills=normalize_skills(profile.get("resume_skills", [])),
                 know_me=profile.get("know_me", {}),
                 free_text=profile.get("strengths_note", ""),
-                limit=15,
+                limit=35,
+                career_goals=profile.get("career_goals"),
+                projects=profile.get("projects"),
+                education_level=profile.get("education"),
             )
             for idx, c in enumerate(candidates, start=1):
                 raw_score = c.get("score")
@@ -276,6 +281,8 @@ def _ai_career_match(profile: dict):
                     "key_skills": c.get("key_skills", []),
                     "software_tools": c.get("software_tools", []),
                     "day_to_day": c.get("day_to_day", ""),
+                    "why_it_fits": c.get("why_it_fits", ""),
+                    "matched_skills": c.get("matched_skills", []),
                 })
                 # Build lookup by slug and title to preserve authentic numerical score
                 s_slug = slugify(c["title"])
@@ -286,6 +293,8 @@ def _ai_career_match(profile: dict):
                     "salary_india": c.get("salary_india"),
                     "education": c.get("education"),
                     "software_tools": c.get("software_tools", []),
+                    "why_it_fits": c.get("why_it_fits", ""),
+                    "matched_skills": c.get("matched_skills", []),
                 }
                 candidate_lookup[s_slug] = rec
                 candidate_lookup[c["title"].lower().strip()] = rec
@@ -432,6 +441,10 @@ def _ai_career_match(profile: dict):
                     d["score"] = round(float(raw_score), 4) if raw_score is not None else None
                     d["baseline_rank"] = orig_cand.get("baseline_rank", d.get("baseline_rank"))
                     d["match_level"] = compute_match_level(d["score"])
+                    d["matched_skills"] = orig_cand.get("matched_skills", [])
+                    # If why_it_fits is generic or missing, use authentic evidence explanation
+                    if not d.get("why_it_fits") or "Matches your natural" in d.get("why_it_fits", ""):
+                        d["why_it_fits"] = orig_cand.get("why_it_fits") or d.get("why_it_fits")
                     d.pop("fit", None)
                     cleaned.append(d)
 
@@ -459,6 +472,9 @@ def career_match(req: CareerMatchRequest):
                 resume_skills=req.resume_skills,
                 know_me=req.know_me if isinstance(req.know_me, dict) else {},
                 free_text=req.strengths_note,
+                career_goals=req.career_goals,
+                projects=req.projects,
+                education_level=req.education,
                 limit=5
             )
             if matches:
@@ -1213,6 +1229,8 @@ def counselor_generate_recommendations(req: GenerateRecommendationsRequest):
         "resume_skills": combined_skills,
         "strengths_note": enriched_free_text,
         "know_me": req.know_me,
+        "career_goals": diag.get("career_goals") or (req.know_me.get("career_goals") if isinstance(req.know_me, dict) else None),
+        "projects": projects,
     }
 
     # 1. AI Reranking via Groq
@@ -1230,6 +1248,8 @@ def counselor_generate_recommendations(req: GenerateRecommendationsRequest):
                     resume_skills=combined_skills,
                     know_me=req.know_me if isinstance(req.know_me, dict) else {},
                     free_text=enriched_free_text,
+                    career_goals=match_payload.get("career_goals"),
+                    projects=projects,
                     limit=5
                 )
                 if vector_matches:

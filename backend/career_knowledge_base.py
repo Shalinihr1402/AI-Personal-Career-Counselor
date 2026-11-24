@@ -2365,10 +2365,11 @@ def _slugify(title: str) -> str:
 
 def _map_field_to_domain(field_str: str) -> AcademicDomain:
     f_lower = (field_str or "").lower()
-    if any(w in f_lower for w in ["computer", "it", "information technology", "software", "data"]):
-        return AcademicDomain.COMPUTER_APPLICATIONS
-    if any(w in f_lower for w in ["engineer", "architecture", "construction", "manufacturing", "installation"]):
+    words = set(re.findall(r"\b[a-z]+\b", f_lower))
+    if any(w in words for w in ["engineer", "engineering", "architecture", "construction", "manufacturing", "installation"]):
         return AcademicDomain.ENGINEERING_TECH
+    if any(w in words for w in ["computer", "software", "data"]) or "it" in words or "information technology" in f_lower:
+        return AcademicDomain.COMPUTER_APPLICATIONS
     if any(w in f_lower for w in ["health", "medical", "hospital", "pharma"]):
         return AcademicDomain.MEDICAL_HEALTHCARE
     if any(w in f_lower for w in ["science", "research", "life physical"]):
@@ -2427,11 +2428,16 @@ def _project_onet_career_to_record(onet_item: dict) -> CareerKnowledgeRecord:
     diploma_list = []
     stream_list = ["Science", "Commerce", "Arts"]
 
-    if domain in [AcademicDomain.ENGINEERING_TECH, AcademicDomain.COMPUTER_APPLICATIONS]:
+    if domain == AcademicDomain.COMPUTER_APPLICATIONS:
+        stream_list = ["Science (PCM/PCMC)", "Commerce (with Mathematics / Computer Science)"]
+        diploma_list = ["Polytechnic Diploma in Computer Science / Information Technology"]
+        ug_list = ["B.Tech / B.E in CS / IT", "BCA", "B.Sc (Computer Science / IT)", "B.Voc (Software Development)"]
+        pg_list = ["Master of Computer Applications (MCA)", "M.Tech in CS / IT", "M.Sc Computer Science"]
+    elif domain == AcademicDomain.ENGINEERING_TECH:
         stream_list = ["Science (PCM/PCMC)"]
         diploma_list = ["Polytechnic Diploma in relevant Engineering / Technology"]
-        ug_list = ["B.Tech / B.E", "BCA", "B.Sc (Computer Science / IT)", "B.Voc"]
-        pg_list = ["M.Tech", "MCA"]
+        ug_list = ["B.Tech / B.E in relevant Engineering branch", "Polytechnic Diploma (Lateral Entry)"]
+        pg_list = ["M.Tech / M.E in relevant Engineering discipline"]
     elif domain == AcademicDomain.MEDICAL_HEALTHCARE:
         stream_list = ["Science (PCB)"]
         ug_list = ["B.Sc in Allied Health Sciences", "B.Pharm", "MBBS", "BDS"]
@@ -2802,7 +2808,7 @@ class CareerKnowledgeBase:
         title = (career.canonical_title or "").lower()
         # Explicit non-software engineering disciplines that must NOT get broad software compatibility
         non_sw_tokens = [
-            "mechanical", "electrical", "civil", "mechatronics", "robotics",
+            "mechanical", "electrical", "civil", "mechatronics", "robotics", "hardware",
             "renewable-energy", "solar", "vlsi", "asic", "power-grid",
             "automobile", "aerospace", "chemical", "metallurg", "mining", "welder", "fitter"
         ]

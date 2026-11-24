@@ -58,6 +58,20 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
         : 'Good Match')
   );
 
+  const getSalaryDisplay = () => {
+    const s = career.salary_india as any;
+    if (!s) return null;
+    const fresherVal = s.fresher || s.entry;
+    if (fresherVal) {
+      return { label: 'Est. Fresher', value: fresherVal };
+    }
+    if (s.mid) {
+      return { label: 'Est. Mid-Level', value: s.mid };
+    }
+    return null;
+  };
+  const salaryDisplay = getSalaryDisplay();
+
   const getMatchLevelVariant = (level: string): BadgeVariant => {
     switch (level.toLowerCase()) {
       case 'strong match':
@@ -106,16 +120,22 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
                       {career.field}
                     </Badge>
                   )}
-                  {career.salary_india?.mid && (
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200/70">
+                  {salaryDisplay && (
+                    <span 
+                      className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200/70"
+                      title="Indicative Indian compensation estimate based on market industry benchmarks (not guaranteed compensation)"
+                    >
                       <Banknote className="w-3.5 h-3.5 text-emerald-600" />
-                      Mid: {career.salary_india.mid}
+                      {salaryDisplay.label}: {salaryDisplay.value}
                     </span>
                   )}
                   {career.education && (
-                    <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200/80">
+                    <span 
+                      className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200/80"
+                      title="Typical occupational entry benchmark qualification (O*NET 31.0 standard)"
+                    >
                       <GraduationCap className="w-3.5 h-3.5 text-slate-500" />
-                      {career.education}
+                      Req: {career.education}
                     </span>
                   )}
                   {career.readiness && (
@@ -291,16 +311,22 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
               {career.field}
             </Badge>
           )}
-          {career.salary_india?.mid && (
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
+          {salaryDisplay && (
+            <span 
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100"
+              title="Indicative Indian compensation estimate based on market industry benchmarks (not guaranteed compensation)"
+            >
               <Banknote className="w-3 h-3 text-emerald-600" />
-              Mid: {career.salary_india.mid}
+              {salaryDisplay.label}: {salaryDisplay.value}
             </span>
           )}
           {career.education && (
-            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 bg-slate-100/80 px-2 py-0.5 rounded-md border border-slate-200/70 truncate max-w-[220px]">
+            <span 
+              className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 bg-slate-100/80 px-2 py-0.5 rounded-md border border-slate-200/70 truncate max-w-[220px]"
+              title="Typical occupational entry benchmark qualification (O*NET 31.0 standard)"
+            >
               <GraduationCap className="w-3 h-3 text-slate-400 shrink-0" />
-              <span className="truncate">{career.education}</span>
+              <span className="truncate">Req: {career.education}</span>
             </span>
           )}
           {career.readiness && (

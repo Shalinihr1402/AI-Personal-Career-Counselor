@@ -384,8 +384,8 @@ class TestAdaptiveAssessmentStep2(unittest.TestCase):
             "specialization": "Accounting & Finance",
         }
         bcom_res = self.engine.score_adaptive_assessment(answers={}, profile=bcom_profile)
-        restrictions = bcom_res["statutory_eligibility"]["statutory_restrictions"]
-        ca_restriction = next((r for r in restrictions if r["slug"] == "chartered-accountant"), None)
+        pathways = bcom_res["statutory_eligibility"]["alternative_pathways"] + bcom_res["statutory_eligibility"]["statutory_restrictions"]
+        ca_restriction = next((r for r in pathways if r["slug"] == "chartered-accountant"), None)
         self.assertIsNotNone(ca_restriction)
         self.assertEqual(ca_restriction["regulatory_body"], "Institute of Chartered Accountants of India (ICAI)")
         self.assertTrue(any("Direct Entry" in step for step in ca_restriction["recommended_bridge_steps"]))
