@@ -349,6 +349,8 @@ export function generateDiagnosticRecommendations(payload: {
   resume_skills: string[];
   strengths_note?: string;
   know_me: Record<string, unknown>;
+  career_goals?: string[];
+  projects?: any[];
   diagnostic_profile: DiagnosticProfileData;
 }): Promise<DiagnosticRecommendationResult> {
   return postJSON<DiagnosticRecommendationResult>('/api/counselor/generate-recommendations', payload);

@@ -345,6 +345,14 @@ export default function CounselorVoiceChat({
     setError(null);
 
     try {
+      const activeProjects = (diagnosticProfile?.projects && diagnosticProfile.projects.length > 0)
+        ? diagnosticProfile.projects
+        : ((profile?.resume as any)?.projects || []);
+
+      const activeCareerGoals = (diagnosticProfile?.career_goals && diagnosticProfile.career_goals.length > 0)
+        ? diagnosticProfile.career_goals
+        : (profile?.targetRole ? [profile.targetRole] : []);
+
       const payload = {
         riasec_scores: assessmentScore?.scores || assessment?.scores || { R: 12, I: 19, A: 19, S: 12, E: 19, C: 12 },
         code: hollandCode,
@@ -354,6 +362,8 @@ export default function CounselorVoiceChat({
         resume_skills: profileSkills,
         strengths_note: profile?.strengthsNote || undefined,
         know_me: (profile?.knowMe as unknown as Record<string, unknown>) || {},
+        career_goals: activeCareerGoals,
+        projects: activeProjects,
         diagnostic_profile: diagnosticProfile,
       };
 

@@ -6,6 +6,7 @@ import {
   AlertTriangle, RotateCcw, Compass, Mic, FileText,
   Lock, CheckCircle2, Check,
   Info, Users, Cpu, CheckSquare, Hammer, Search, Users2, User,
+  RefreshCw,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
@@ -20,10 +21,12 @@ import CareerMatchCard from '../components/assessment/CareerMatchCard';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { confirmCareerGoal } from '../lib/profile';
+import { normalizeSkills } from '../lib/skillNormalizer';
 import { EMPTY_KNOW_ME, MAX_VALUES, SITUATION_QUESTIONS, type KnowMe } from '../lib/knowMe';
 import {
   fetchQuestions, scoreAssessment,
   fetchAdaptiveQuestions, scoreAdaptiveAssessment, buildProfilePayload,
+  generateDiagnosticRecommendations,
   WORK_STYLE_QUESTIONS,
   type ScenarioQuestion, type ScoreResult, type MatchResult, type CareerMatch,
   type AdaptiveQuestion, type AdaptiveScoreResult,
@@ -251,6 +254,7 @@ const Assessment: React.FC = () => {
   const [goalError, setGoalError] = useState<string | null>(null);
   const [showLockNotice, setShowLockNotice] = useState(false);
   const [isRetaking, setIsRetaking] = useState(false);
+  const [isRefreshingRecs, setIsRefreshingRecs] = useState(false);
 
   const isAssessmentComplete = Boolean(
     (saved?.matches && saved.matches.length > 0) || (score && match && (match.matches || []).length > 0)
@@ -407,17 +411,6 @@ const Assessment: React.FC = () => {
     };
   }, [saved, profile]);
 
-  const initializedSavedRef = useRef(false);
-  useEffect(() => {
-    if (saved && !initializedSavedRef.current && !isRetaking) {
-      initializedSavedRef.current = true;
-      setScore({ code: saved.code, scores: saved.scores });
-      setMatch({ source: saved.source, matches: saved.matches });
-      setResultsAt(saved.createdAt);
-      setPhase('results');
-    }
-  }, [saved, isRetaking]);
-
   const handleSelectOption = (questionId: string, optionId: string) => {
     const updated = { ...answers, [questionId]: optionId };
     setAnswers(updated);
@@ -535,6 +528,88 @@ const Assessment: React.FC = () => {
 
     setIsRetaking(false);
     goToPhase('results');
+  };
+
+  const handleRefreshRecommendations = async () => {
+    if (isRefreshingRecs) return;
+    const activeScore = score || (saved ? { scores: saved.scores, code: saved.code } : null);
+    if (!activeScore) return;
+
+    setIsRefreshingRecs(true);
+    setError(null);
+    try {
+      const seSkills = normalizeSkills(profile?.skills_and_experience);
+      const resumeSkills = normalizeSkills(profile?.resume?.skills);
+      const profileSkills = normalizeSkills([...resumeSkills, ...seSkills]);
+
+      const projects = (diagnosticProfile?.projects && diagnosticProfile.projects.length > 0)
+        ? diagnosticProfile.projects
+        : ((profile?.resume as any)?.projects || []);
+
+      const activeCareerGoals = (diagnosticProfile?.career_goals && diagnosticProfile.career_goals.length > 0)
+        ? diagnosticProfile.career_goals
+        : (profile?.targetRole ? [profile.targetRole] : []);
+
+      const payload = {
+        riasec_scores: activeScore.scores,
+        code: activeScore.code,
+        interests: profile?.interests || [],
+        education: [profile?.course, profile?.year].filter(Boolean).join(' — ') || calibratedStage,
+        work_style: saved?.workStyle || workStyle || {},
+        resume_skills: profileSkills,
+        strengths_note: profile?.strengthsNote || undefined,
+        know_me: (profile?.knowMe as unknown as Record<string, unknown>) || knowMe || {},
+        career_goals: activeCareerGoals,
+        projects: projects,
+        diagnostic_profile: diagnosticProfile || {
+          education_background: [profile?.course, profile?.college, calibratedStage].filter(Boolean).join(' — '),
+          education_status: profile?.course ? 'collected' : 'not_collected',
+          projects: projects,
+          projects_status: projects.length > 0 ? 'collected' : 'not_collected',
+          technical_skills: profileSkills,
+          skills_status: profileSkills.length > 0 ? 'collected' : 'not_collected',
+          technical_interests: profile?.interests || [],
+          interests_status: (profile?.interests?.length ?? 0) > 0 ? 'collected' : 'not_collected',
+          challenges_and_growth: [],
+          challenges_status: 'not_collected',
+          work_preferences: saved?.workStyle || workStyle || {},
+          preferences_status: 'not_collected',
+          career_goals: activeCareerGoals,
+          goals_status: activeCareerGoals.length > 0 ? 'collected' : 'not_collected',
+          summary_of_student: '',
+          completeness_score: 80,
+          is_ready_for_recommendations: true,
+        },
+      };
+
+      const result = await generateDiagnosticRecommendations(payload);
+      const m: MatchResult = {
+        source: (result.source as 'ai' | 'hybrid_vector' | 'rule') || 'ai',
+        matches: result.matches,
+      };
+      setMatch(m);
+      setResultsAt(new Date().toISOString());
+
+      try {
+        await saveAssessment({
+          answers: (saved as any)?.answers || answers || {},
+          workStyle: saved?.workStyle || workStyle || {},
+          knowMe: saved?.knowMe || knowMe,
+          scores: activeScore.scores,
+          code: activeScore.code,
+          matches: result.matches,
+          source: (result.source as 'ai' | 'hybrid_vector' | 'rule') || 'ai',
+          adaptiveEvidence: adaptiveScore || saved?.adaptiveEvidence,
+        });
+      } catch (saveErr) {
+        console.warn('Could not persist refreshed assessment:', saveErr);
+      }
+    } catch (err) {
+      console.error('Failed to refresh recommendations:', err);
+      setError('Could not refresh recommendations. Please ensure the backend server is running and try again.');
+    } finally {
+      setIsRefreshingRecs(false);
+    }
   };
 
   const setGoal = async (career: CareerMatch) => {
@@ -1227,9 +1302,22 @@ const Assessment: React.FC = () => {
                       Personalized alignment across 1,016 occupational pathways, psychological fit, and statutory requirements
                     </p>
                   </div>
-                  <Badge variant="brand" size="sm">
-                    {(match.matches || []).length} Verified Recommendations
-                  </Badge>
+                  <div className="flex items-center gap-2.5">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      isLoading={isRefreshingRecs}
+                      leftIcon={<RefreshCw className="w-3.5 h-3.5 text-violet-700" />}
+                      onClick={handleRefreshRecommendations}
+                      className="bg-white hover:bg-violet-50 text-xs font-bold shrink-0"
+                      title="Update recommendations with your latest profile skills and career goals"
+                    >
+                      Refresh Recommendations
+                    </Button>
+                    <Badge variant="brand" size="sm">
+                      {(match.matches || []).length} Verified Recommendations
+                    </Badge>
+                  </div>
                 </div>
 
                 {/* Spotlight Top Match #1 */}
@@ -1271,6 +1359,15 @@ const Assessment: React.FC = () => {
                   onClick={() => goToPhase('counselor_diagnostic')}
                 >
                   Talk to AI Counselor
+                </Button>
+                <Button
+                  variant="outline"
+                  size="md"
+                  isLoading={isRefreshingRecs}
+                  leftIcon={<RefreshCw className="w-4 h-4 text-violet-700" />}
+                  onClick={handleRefreshRecommendations}
+                >
+                  Refresh Recommendations
                 </Button>
                 <Button
                   variant="outline"

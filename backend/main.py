@@ -608,6 +608,8 @@ class GenerateRecommendationsRequest(BaseModel):
     strengths_note: str | None = None
     know_me: dict[str, Any] = Field(default_factory=dict)
     diagnostic_profile: dict[str, Any] = Field(default_factory=dict)
+    career_goals: list[str] | str | None = None
+    projects: list[Any] | None = None
 
     @field_validator("resume_skills", mode="before")
     @classmethod
@@ -1193,7 +1195,9 @@ def counselor_generate_recommendations(req: GenerateRecommendationsRequest):
 
     diag_skills = normalize_skills(diag.get("technical_skills", []))
     diag_interests = diag.get("technical_interests", [])
-    projects = diag.get("projects", [])
+    
+    raw_projects = req.projects if req.projects is not None else diag.get("projects", [])
+    projects = raw_projects if isinstance(raw_projects, list) else []
 
     project_text_parts = []
     for p in projects:
@@ -1210,12 +1214,16 @@ def counselor_generate_recommendations(req: GenerateRecommendationsRequest):
     combined_skills = normalize_skills(norm_resume_skills + diag_skills)
     combined_interests = list(dict.fromkeys(req.interests + diag_interests))
 
+    req_goals = [req.career_goals] if isinstance(req.career_goals, str) else (req.career_goals or [])
+    diag_goals = [diag.get("career_goals")] if isinstance(diag.get("career_goals"), str) else (diag.get("career_goals") or [])
+    combined_goals = list(dict.fromkeys(req_goals + diag_goals))
+
     enriched_free_text_parts = [
         f"Education: {req.education or 'General'}",
         f"Practical Projects: {projects_summary}" if projects_summary else "",
         f"Demonstrated Skills: {', '.join(combined_skills)}" if combined_skills else "",
         f"Growth Areas: {', '.join(diag.get('challenges_and_growth', []))}" if diag.get('challenges_and_growth') else "",
-        f"Career Goals: {', '.join(diag.get('career_goals', []))}" if diag.get('career_goals') else "",
+        f"Career Goals: {', '.join(combined_goals)}" if combined_goals else "",
         req.strengths_note or ""
     ]
     enriched_free_text = ". ".join(p for p in enriched_free_text_parts if p)
@@ -1229,7 +1237,7 @@ def counselor_generate_recommendations(req: GenerateRecommendationsRequest):
         "resume_skills": combined_skills,
         "strengths_note": enriched_free_text,
         "know_me": req.know_me,
-        "career_goals": diag.get("career_goals") or (req.know_me.get("career_goals") if isinstance(req.know_me, dict) else None),
+        "career_goals": combined_goals or (req.know_me.get("career_goals") if isinstance(req.know_me, dict) else None),
         "projects": projects,
     }
 
