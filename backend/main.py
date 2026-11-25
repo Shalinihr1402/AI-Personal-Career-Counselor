@@ -215,6 +215,26 @@ def assessment_adaptive_questions(req: AdaptiveQuestionsRequest):
     }
 
 
+class NextAdaptiveQuestionRequest(BaseModel):
+    profile: dict[str, Any] = Field(default_factory=dict)
+    answers: dict[str, Any] = Field(default_factory=dict)
+    asked_question_ids: list[str] = Field(default_factory=list)
+
+
+@app.post("/api/assessment/next-question")
+def assessment_next_question(req: NextAdaptiveQuestionRequest):
+    """
+    Step-by-step adaptive question selection endpoint.
+    Dynamically assesses submitted answers, evaluates trait certainty,
+    selects stage and domain calibrated questions, and detects early stopping.
+    """
+    return adaptive_engine.get_next_adaptive_question(
+        profile=req.profile,
+        answers=req.answers,
+        asked_ids=req.asked_question_ids
+    )
+
+
 @app.post("/api/assessment/adaptive-score")
 def assessment_adaptive_score(req: AdaptiveScoreRequest):
     """

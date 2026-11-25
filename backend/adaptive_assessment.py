@@ -461,16 +461,16 @@ DIPLOMA_QUESTIONS: List[AdaptiveQuestion] = [
 # F. College Undergraduate & Postgraduate Competency Demonstration Items
 # ----------------------------------------------------------------------------
 COLLEGE_COMPETENCY_QUESTIONS: List[AdaptiveQuestion] = [
-    # 1. Software Engineering: Java / Backend / Microservices
+    # 1. Software Engineering: Backend & Database Logic
     AdaptiveQuestion(
         id="q_comp_java_concurrency",
         stage=AssessmentStage.COLLEGE_UG_PG,
         category=QuestionCategory.COMPETENCY_DEMONSTRATION,
-        prompt="A high-traffic backend REST microservice suffers latency spikes under concurrent loads. Which engineering solution do you implement?",
+        prompt="When developing a web application or backend service that slows down when many users access it at the same time, what is your initial technical approach?",
         options=[
             AdaptiveOption(
                 id="a",
-                text="Profile JVM garbage collection, optimize database queries with composite indexes, and use connection pooling (HikariCP).",
+                text="Analyze database queries, add indexes, and cache frequently accessed data to eliminate bottlenecks.",
                 dimension_weights={"I": 2, "C": 2},
                 competency_id="java_programming",
                 competency_level="intermediate",
@@ -480,7 +480,7 @@ COLLEGE_COMPETENCY_QUESTIONS: List[AdaptiveQuestion] = [
             ),
             AdaptiveOption(
                 id="b",
-                text="Refactor synchronous HTTP calls to asynchronous event messaging using Apache Kafka or RabbitMQ queues.",
+                text="Design asynchronous background processing or queues so user requests return immediately while heavy tasks run in the background.",
                 dimension_weights={"I": 3, "R": 1},
                 competency_id="oop_design",
                 competency_level="intermediate",
@@ -490,30 +490,36 @@ COLLEGE_COMPETENCY_QUESTIONS: List[AdaptiveQuestion] = [
             ),
             AdaptiveOption(
                 id="c",
-                text="Increase server RAM blindly and restart the container every morning without addressing root database locks.",
+                text="Add more server resources temporarily and restart the application without finding the root cause.",
                 dimension_weights={"R": 1},
                 competency_id="java_programming",
                 competency_level="beginner",
                 evidence_level=CompetencyEvidenceLevel.AWARENESS_CONCEPTUAL,
                 occupational_fields=["Technology & Computer Science"],
             ),
+            AdaptiveOption(
+                id="d",
+                text="I have mostly built introductory standalone programs and have not worked with performance optimization yet.",
+                dimension_weights={"C": 1},
+                occupational_fields=["Technology & Computer Science"],
+            ),
         ],
         target_dimensions=["I", "C", "R"],
         prerequisite_domain="computer_applications",
         target_competency_ids=["java_programming", "oop_design", "database_design"],
-        explanation_tip="Differentiates junior coders from production-ready backend engineers.",
+        explanation_tip="Assesses foundational problem-solving for backend and software engineering.",
     ),
 
-    # 2. Healthcare: Registered Nurse / Hospital Patient Care
+    # 2. Healthcare: Patient Care & First Aid Safety
     AdaptiveQuestion(
         id="q_comp_nurse_medication",
         stage=AssessmentStage.COLLEGE_UG_PG,
         category=QuestionCategory.COMPETENCY_DEMONSTRATION,
-        prompt="Before administering an intravenous (IV) high-risk medication in an inpatient ward, what is the mandatory clinical safety standard?",
+        prompt="In a healthcare setting or first aid situation, an anxious patient requires medication or treatment. What is your priority?",
         options=[
             AdaptiveOption(
                 id="a",
-                text="Execute the '10 Rights of Medication Administration', independently double-check dosage calculations, and verify patient hospital band ID.",
+                text="Carefully double-check the medication, dosage instructions, and patient identity while speaking calmly to reassure them.",
                 dimension_weights={"S": 2, "C": 2},
                 competency_id="medication_administration",
                 competency_level="intermediate",
@@ -523,30 +529,42 @@ COLLEGE_COMPETENCY_QUESTIONS: List[AdaptiveQuestion] = [
             ),
             AdaptiveOption(
                 id="b",
-                text="Administer quickly if the patient appears alert, documenting the dose later during shift handover.",
+                text="Administer the dose quickly to save time, planning to verify and log the details later during handover.",
                 dimension_weights={"S": 1},
                 competency_id="medication_administration",
                 competency_level="beginner",
                 evidence_level=CompetencyEvidenceLevel.AWARENESS_CONCEPTUAL,
                 occupational_fields=["Healthcare & Medicine"],
             ),
+            AdaptiveOption(
+                id="c",
+                text="Focus primarily on emotional comfort and reassurance, letting a colleague handle the medication checklist.",
+                dimension_weights={"S": 3, "A": 1},
+                occupational_fields=["Healthcare & Medicine"],
+            ),
+            AdaptiveOption(
+                id="d",
+                text="I have not received clinical training yet, but I am comfortable learning standard health protocols.",
+                dimension_weights={"C": 1},
+                occupational_fields=["Healthcare & Medicine"],
+            ),
         ],
         target_dimensions=["S", "C"],
         prerequisite_domain="medical_healthcare",
         target_competency_ids=["medication_administration", "patient_assessment_monitoring"],
-        explanation_tip="Tests adherence to Indian Nursing Council medication safety standards.",
+        explanation_tip="Tests adherence to clinical safety standards and patient empathy.",
     ),
 
-    # 3. Legal Studies: Advocate / Litigation Lawyer
+    # 3. Legal Studies & Policy: Evidence & Advocacy
     AdaptiveQuestion(
         id="q_comp_lawyer_evidence",
         stage=AssessmentStage.COLLEGE_UG_PG,
         category=QuestionCategory.COMPETENCY_DEMONSTRATION,
-        prompt="In preparing an appeal against a summary judgment, which legal action forms the bedrock of your petition under the Advocates Act & CPC?",
+        prompt="When analyzing a legal dispute, policy issue, or debate topic, what is your primary approach to building a convincing argument?",
         options=[
             AdaptiveOption(
                 id="a",
-                text="Conduct systematic case law research on SCC/Manupatra, identify errors of law on the record, and draft precise grounds of appeal.",
+                text="Research relevant statutes, established case precedents, and official documentation to draft a structured, watertight brief.",
                 dimension_weights={"E": 2, "I": 2},
                 competency_id="legal_drafting",
                 competency_level="intermediate",
@@ -556,30 +574,43 @@ COLLEGE_COMPETENCY_QUESTIONS: List[AdaptiveQuestion] = [
             ),
             AdaptiveOption(
                 id="b",
-                text="Rely primarily on emotional courtroom rhetoric without citing relevant statutory precedents or High Court judgments.",
+                text="Rely primarily on persuasive emotional rhetoric and impassioned speech without verifying statutory citations.",
                 dimension_weights={"E": 2},
                 competency_id="legal_drafting",
                 competency_level="beginner",
                 evidence_level=CompetencyEvidenceLevel.AWARENESS_CONCEPTUAL,
                 occupational_fields=["Law & Public Policy"],
             ),
+            AdaptiveOption(
+                id="c",
+                text="Facilitate direct mediation between the parties to negotiate an amicable compromise outside formal litigation.",
+                dimension_weights={"S": 3, "E": 1},
+                occupational_fields=["Law & Public Policy"],
+            ),
+            AdaptiveOption(
+                id="d",
+                text="I have not studied legal principles yet, but I am interested in policy analysis and justice.",
+                dimension_weights={"I": 2},
+                occupational_fields=["Law & Public Policy"],
+            ),
         ],
         target_dimensions=["E", "I"],
         prerequisite_domain="legal_studies",
         target_competency_ids=["legal_drafting", "statutory_interpretation"],
+        explanation_tip="Assesses analytical argument formulation in legal and policy contexts.",
     ),
 
-    # 4. Commerce & Finance: Chartered Accountant (ICAI Auditing)
+    # 4. Commerce & Finance: Accounting Reconciliation & Audit Scrutiny
     AdaptiveQuestion(
         id="q_comp_ca_audit_sampling",
         stage=AssessmentStage.COLLEGE_UG_PG,
         category=QuestionCategory.COMPETENCY_DEMONSTRATION,
-        prompt="While conducting a statutory company audit under the CA Act 1949 and Companies Act 2013, you discover material inventory discrepancies. What is your duty?",
+        prompt="While reviewing financial statements or reconciling accounts for a business, you notice that recorded cash balances do not match bank statements and inventory counts show unexplained shortages. What is your priority?",
         options=[
             AdaptiveOption(
                 id="a",
-                text="Extend substantive testing, demand management reconciliation, document the audit trail in working papers, and consider a qualified opinion if unresolved.",
-                dimension_weights={"C": 3, "E": 1},
+                text="Trace transactions systematically through ledgers, verify invoices and bank reconciliation statements, and document variances in working papers.",
+                dimension_weights={"C": 3, "I": 1},
                 competency_id="financial_auditing",
                 competency_level="intermediate",
                 evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
@@ -588,17 +619,375 @@ COLLEGE_COMPETENCY_QUESTIONS: List[AdaptiveQuestion] = [
             ),
             AdaptiveOption(
                 id="b",
-                text="Accept verbal assurances from the company accountant to close the audit engagement quickly.",
+                text="Accept verbal explanations from the operations team to close the reconciliation quickly.",
                 dimension_weights={"C": 1},
                 competency_id="financial_auditing",
                 competency_level="beginner",
                 evidence_level=CompetencyEvidenceLevel.AWARENESS_CONCEPTUAL,
                 occupational_fields=["Business, Management & Finance"],
             ),
+            AdaptiveOption(
+                id="c",
+                text="Analyze cash flow patterns, cost structures, and profit margins to determine where financial leakage is impacting the business.",
+                dimension_weights={"C": 2, "E": 2},
+                competency_id="financial_auditing",
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
+                occupational_fields=["Business, Management & Finance"],
+            ),
+            AdaptiveOption(
+                id="d",
+                text="Design a simpler bookkeeping and daily tracking template so non-finance team members avoid repeat discrepancies.",
+                dimension_weights={"C": 2, "S": 2},
+                occupational_fields=["Business, Management & Finance"],
+            ),
         ],
         target_dimensions=["C", "E"],
         prerequisite_domain="commerce_finance",
         target_competency_ids=["financial_auditing", "statutory_compliance"],
+        explanation_tip="Evaluates systematic accounting analysis, ledger integrity, and audit scrutiny.",
+    ),
+
+    # 5. Data Science & Python: Dataset Exploration & Statistics
+    AdaptiveQuestion(
+        id="q_comp_python_data",
+        stage=AssessmentStage.COLLEGE_UG_PG,
+        category=QuestionCategory.COMPETENCY_DEMONSTRATION,
+        prompt="You are given a raw dataset containing thousands of records with missing values and inconsistent formatting. What is your preferred way to explore it?",
+        options=[
+            AdaptiveOption(
+                id="a",
+                text="Write a Python script using Pandas or SQL to clean missing entries, calculate summary statistics, and visualize distributions.",
+                dimension_weights={"I": 3, "C": 1},
+                competency_id="data_structures",
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
+                occupational_fields=["Technology & Computer Science", "Data & AI"],
+                practical_verification_note="Applied data manipulation and summary statistical modeling.",
+            ),
+            AdaptiveOption(
+                id="b",
+                text="Formulate testable hypotheses about the data and design statistical tests or predictive models to identify underlying patterns.",
+                dimension_weights={"I": 3, "R": 1},
+                occupational_fields=["Data & AI"],
+            ),
+            AdaptiveOption(
+                id="c",
+                text="Create an interactive visual dashboard (charts, graphs) so non-technical stakeholders can understand key findings easily.",
+                dimension_weights={"A": 2, "E": 2},
+                occupational_fields=["Arts, Design & Media", "Business, Management & Finance"],
+            ),
+            AdaptiveOption(
+                id="d",
+                text="I have not worked with large datasets in code yet, but I am comfortable organizing records in spreadsheets.",
+                dimension_weights={"C": 2},
+                occupational_fields=["Operations & Administration"],
+            ),
+        ],
+        target_dimensions=["I", "C", "A"],
+        prerequisite_domain="computer_applications",
+        target_competency_ids=["data_structures", "problem_solving"],
+        explanation_tip="Evaluates data cleaning, programming intuition, and analytical exploration.",
+    ),
+
+    # 6. Machine Learning & Computer Vision: Model Training & Diagnostics
+    AdaptiveQuestion(
+        id="q_comp_aiml_pipeline",
+        stage=AssessmentStage.COLLEGE_UG_PG,
+        category=QuestionCategory.COMPETENCY_DEMONSTRATION,
+        prompt="When working on a predictive machine learning or computer vision model, the model achieves high training accuracy but performs poorly on new test data. What is your next step?",
+        options=[
+            AdaptiveOption(
+                id="a",
+                text="Diagnose overfitting by adding data augmentations, applying regularization, and testing simpler model architectures with cross-validation.",
+                dimension_weights={"I": 3, "R": 1},
+                competency_id="problem_solving",
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
+                occupational_fields=["Data & AI", "Technology & Computer Science"],
+                practical_verification_note="Applied machine learning error diagnosis and generalization tuning.",
+            ),
+            AdaptiveOption(
+                id="b",
+                text="Inspect raw training data for label errors, distribution shifts, or feature leakage that could bias the model.",
+                dimension_weights={"I": 2, "C": 2},
+                occupational_fields=["Data & AI"],
+            ),
+            AdaptiveOption(
+                id="c",
+                text="Consult academic research papers or open-source implementations to compare benchmark approaches for this specific problem.",
+                dimension_weights={"I": 3, "A": 1},
+                occupational_fields=["Physical & Life Sciences", "Data & AI"],
+            ),
+            AdaptiveOption(
+                id="d",
+                text="I am currently learning foundational machine learning concepts and have not tuned models on test splits yet.",
+                dimension_weights={"I": 2},
+                occupational_fields=["Data & AI"],
+            ),
+        ],
+        target_dimensions=["I", "R", "C"],
+        prerequisite_domain="computer_applications",
+        target_competency_ids=["problem_solving"],
+        explanation_tip="Evaluates practical machine learning diagnostics and iterative experimentation.",
+    ),
+
+    # 7. Commerce & Finance: Budgeting & Financial Planning
+    AdaptiveQuestion(
+        id="q_comp_tax_budgeting",
+        stage=AssessmentStage.COLLEGE_UG_PG,
+        category=QuestionCategory.COMPETENCY_DEMONSTRATION,
+        prompt="A growing startup or local business asks for guidance on planning its annual budget and organizing its tax filings. Which role would you be most comfortable taking on?",
+        options=[
+            AdaptiveOption(
+                id="a",
+                text="Calculating GST liabilities, verifying deductible business expenses, and preparing clear, compliant tax filing schedules.",
+                dimension_weights={"C": 3, "I": 1},
+                competency_id="financial_auditing",
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
+                occupational_fields=["Business, Management & Finance"],
+                practical_verification_note="Demonstrates applied taxation compliance and statutory expense verification.",
+            ),
+            AdaptiveOption(
+                id="b",
+                text="Building a 12-month financial projection model with revenue scenarios, break-even points, and expense caps.",
+                dimension_weights={"C": 2, "E": 2},
+                competency_id="financial_modeling",
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
+                occupational_fields=["Business, Management & Finance"],
+            ),
+            AdaptiveOption(
+                id="c",
+                text="Evaluating commercial growth strategies and identifying new business opportunities to increase top-line sales.",
+                dimension_weights={"E": 3, "A": 1},
+                occupational_fields=["Sales & Business Development"],
+            ),
+            AdaptiveOption(
+                id="d",
+                text="Helping the team set up simple, organized digital accounting software and daily invoicing habits.",
+                dimension_weights={"C": 2, "S": 2},
+                occupational_fields=["Operations & Administration"],
+            ),
+        ],
+        target_dimensions=["C", "E", "I"],
+        prerequisite_domain="commerce_finance",
+        target_competency_ids=["financial_auditing", "financial_modeling"],
+        explanation_tip="Assesses corporate finance, tax planning, and commercial budgeting instincts.",
+    ),
+
+    # 8. Humanities & English: Communication & Editorial Clarity
+    AdaptiveQuestion(
+        id="q_comp_humanities_communication",
+        stage=AssessmentStage.COLLEGE_UG_PG,
+        category=QuestionCategory.COMPETENCY_DEMONSTRATION,
+        prompt="When writing, editing, or presenting a comprehensive article or project report for an educated public audience, where do you invest most effort?",
+        options=[
+            AdaptiveOption(
+                id="a",
+                text="Refining narrative structure, tone, and expressive vocabulary to make the piece engaging, nuanced, and memorable.",
+                dimension_weights={"A": 3, "S": 1},
+                competency_id="technical_communication",
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
+                occupational_fields=["Arts, Design & Media"],
+                practical_verification_note="Demonstrates applied editorial writing and narrative composition.",
+            ),
+            AdaptiveOption(
+                id="b",
+                text="Fact-checking claims, ensuring rigorous editorial consistency, and verifying that every argument is supported by credible citations.",
+                dimension_weights={"C": 3, "I": 1},
+                occupational_fields=["Education & Training", "Law & Public Policy"],
+            ),
+            AdaptiveOption(
+                id="c",
+                text="Simplifying difficult concepts into relatable examples so readers from any academic background can understand and connect.",
+                dimension_weights={"S": 3, "E": 1},
+                occupational_fields=["Education & Training", "Community & Social Services"],
+            ),
+            AdaptiveOption(
+                id="d",
+                text="Crafting a persuasive headline, strong call-to-action, and sharing strategy to maximize reach and discussion.",
+                dimension_weights={"E": 3, "A": 1},
+                occupational_fields=["Sales & Business Development", "Arts, Design & Media"],
+            ),
+        ],
+        target_dimensions=["A", "C", "S", "E"],
+        prerequisite_domain="arts_humanities",
+        target_competency_ids=["technical_communication"],
+        explanation_tip="Assesses rhetorical clarity, narrative craft, and analytical editing.",
+    ),
+
+    # 9. Education & Pedagogy: Teaching & Mentoring Empathy
+    AdaptiveQuestion(
+        id="q_comp_pedagogical_empathy",
+        stage=AssessmentStage.COLLEGE_UG_PG,
+        category=QuestionCategory.COMPETENCY_DEMONSTRATION,
+        prompt="You are leading a study session or workshop, and a student is feeling discouraged because they cannot understand a core concept. How do you respond?",
+        options=[
+            AdaptiveOption(
+                id="a",
+                text="Listen to where they feel stuck, validate their effort, and explain the idea using a completely different real-world analogy.",
+                dimension_weights={"S": 3, "A": 1},
+                competency_id="technical_communication",
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
+                occupational_fields=["Education & Training", "Community & Social Services"],
+                practical_verification_note="Demonstrates empathetic pedagogical scaffolding and adaptive instruction.",
+            ),
+            AdaptiveOption(
+                id="b",
+                text="Break down the concept into step-by-step modular practice exercises that build confidence through small wins.",
+                dimension_weights={"I": 2, "C": 2},
+                occupational_fields=["Education & Training"],
+            ),
+            AdaptiveOption(
+                id="c",
+                text="Deliver an inspiring talk about growth mindset and connect them with peer mentors who recently mastered the topic.",
+                dimension_weights={"E": 2, "S": 2},
+                occupational_fields=["Education & Training"],
+            ),
+            AdaptiveOption(
+                id="d",
+                text="Provide a hands-on physical demonstration or interactive exercise where they can learn by doing.",
+                dimension_weights={"R": 2, "S": 2},
+                occupational_fields=["Education & Training"],
+            ),
+        ],
+        target_dimensions=["S", "I", "E", "R"],
+        prerequisite_domain="arts_humanities",
+        target_competency_ids=["technical_communication"],
+        explanation_tip="Assesses pedagogical empathy, instructional scaffolding, and mentoring ability.",
+    ),
+
+    # 10. Mathematics & Quantitative Analysis: Real-World Modeling
+    AdaptiveQuestion(
+        id="q_comp_math_modeling",
+        stage=AssessmentStage.COLLEGE_UG_PG,
+        category=QuestionCategory.COMPETENCY_DEMONSTRATION,
+        prompt="When working on a complex quantitative problem (such as optimizing transport routes, forecasting trends, or physical simulations), what part of the work excites you most?",
+        options=[
+            AdaptiveOption(
+                id="a",
+                text="Formulating the real-world problem into precise mathematical equations, objective functions, and constraints.",
+                dimension_weights={"I": 3, "R": 1},
+                competency_id="problem_solving",
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
+                occupational_fields=["Physical & Life Sciences", "Engineering & Architecture"],
+                practical_verification_note="Demonstrates applied mathematical formulation and quantitative problem-solving.",
+            ),
+            AdaptiveOption(
+                id="b",
+                text="Analyzing the theoretical mathematical properties, convergence conditions, and proof validity behind the solution.",
+                dimension_weights={"I": 3, "A": 1},
+                occupational_fields=["Physical & Life Sciences"],
+            ),
+            AdaptiveOption(
+                id="c",
+                text="Writing clean algorithms or computational code to solve the equations numerically and benchmark performance.",
+                dimension_weights={"I": 2, "C": 2},
+                occupational_fields=["Technology & Computer Science", "Data & AI"],
+            ),
+            AdaptiveOption(
+                id="d",
+                text="Interpreting the numerical results to guide practical business or engineering decisions.",
+                dimension_weights={"C": 2, "E": 2},
+                occupational_fields=["Business, Management & Finance"],
+            ),
+        ],
+        target_dimensions=["I", "R", "C"],
+        prerequisite_domain="pure_applied_sciences",
+        target_competency_ids=["problem_solving"],
+        explanation_tip="Assesses mathematical modeling, proof reasoning, and quantitative problem formulation.",
+    ),
+
+    # 11. Scientific Research & Statistics: Hypothesis & Methodology
+    AdaptiveQuestion(
+        id="q_comp_stat_hypothesis",
+        stage=AssessmentStage.COLLEGE_UG_PG,
+        category=QuestionCategory.COMPETENCY_DEMONSTRATION,
+        prompt="In a research experiment or survey, the preliminary data shows an unexpected correlation that seems to contradict conventional wisdom. What is your first reaction?",
+        options=[
+            AdaptiveOption(
+                id="a",
+                text="Apply rigorous statistical significance tests, calculate confidence intervals, and check for sample size biases.",
+                dimension_weights={"I": 3, "C": 1},
+                competency_id="problem_solving",
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
+                occupational_fields=["Physical & Life Sciences", "Data & AI"],
+                practical_verification_note="Applied statistical hypothesis testing and research validity verification.",
+            ),
+            AdaptiveOption(
+                id="b",
+                text="Scrutinize data collection methodology, measurement instruments, and confounding variables to ensure reproducibility.",
+                dimension_weights={"I": 3, "R": 1},
+                occupational_fields=["Physical & Life Sciences"],
+            ),
+            AdaptiveOption(
+                id="c",
+                text="Brainstorm alternative creative hypotheses or theoretical models that could explain the phenomenon.",
+                dimension_weights={"I": 2, "A": 2},
+                occupational_fields=["Physical & Life Sciences"],
+            ),
+            AdaptiveOption(
+                id="d",
+                text="Present the unusual finding to the research group or stakeholders to spark multidisciplinary discussion.",
+                dimension_weights={"E": 2, "S": 2},
+                occupational_fields=["Education & Training"],
+            ),
+        ],
+        target_dimensions=["I", "C", "R", "A"],
+        prerequisite_domain="pure_applied_sciences",
+        target_competency_ids=["problem_solving"],
+        explanation_tip="Evaluates scientific methodology, statistical skepticism, and investigative curiosity.",
+    ),
+
+    # 12. Design & Creative Arts: User Experience & Interaction
+    AdaptiveQuestion(
+        id="q_comp_ui_ux_design",
+        stage=AssessmentStage.COLLEGE_UG_PG,
+        category=QuestionCategory.COMPETENCY_DEMONSTRATION,
+        prompt="When redesigning an application that users find confusing and hard to navigate, what is your initial design action?",
+        options=[
+            AdaptiveOption(
+                id="a",
+                text="Map out user journey flows, conduct usability interviews, and create wireframes prioritizing intuitive navigation.",
+                dimension_weights={"A": 2, "S": 2},
+                competency_id="ui_ux_design",
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
+                occupational_fields=["Arts, Design & Media"],
+                practical_verification_note="Demonstrates user-centered interaction design and wireframing.",
+            ),
+            AdaptiveOption(
+                id="b",
+                text="Establish a consistent visual design system with clear typography, color hierarchy, and accessible component states.",
+                dimension_weights={"A": 3, "C": 1},
+                competency_id="ui_ux_design",
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
+                occupational_fields=["Arts, Design & Media"],
+            ),
+            AdaptiveOption(
+                id="c",
+                text="Analyze user drop-off funnel analytics to identify the exact screens where users abandon the app.",
+                dimension_weights={"I": 2, "C": 2},
+                occupational_fields=["Data & AI", "Business, Management & Finance"],
+            ),
+            AdaptiveOption(
+                id="d",
+                text="I have not used formal design tools yet, but I have a strong eye for visual layout.",
+                dimension_weights={"A": 2},
+                occupational_fields=["Arts, Design & Media"],
+            ),
+        ],
+        target_dimensions=["A", "S", "C", "I"],
+        prerequisite_domain="design_creative_arts",
+        target_competency_ids=["ui_ux_design"],
+        explanation_tip="Assesses user empathy, design thinking, and interface architecture.",
     ),
 ]
 
@@ -643,6 +1032,86 @@ CAREER_TRANSITION_QUESTIONS: List[AdaptiveQuestion] = [
 # ============================================================================
 # 3. STAGE RESOLVER & QUESTION SELECTION ENGINE
 # ============================================================================
+
+def get_profile_dimension_affinities(profile: Optional[Dict[str, Any]]) -> Dict[str, int]:
+    """
+    Computes Holland RIASEC dimension affinities grounded in the student's declared
+    interests, target career goals, and work style preferences.
+    Used for intelligent profile-aware tie-breaking rather than arbitrary alphabetical ordering.
+    """
+    affinities = {d: 0 for d in DIMS}
+    if not profile or not isinstance(profile, dict):
+        return affinities
+
+    # 1. Interests & Fields
+    interests = profile.get("interests") or []
+    if isinstance(interests, str):
+        interests = [interests]
+    km = profile.get("knowMe") or profile.get("know_me") or {}
+    if km.get("subjectsEnjoy") and isinstance(km["subjectsEnjoy"], list):
+        interests = list(interests) + list(km["subjectsEnjoy"])
+
+    for interest in interests:
+        il = str(interest).lower()
+        if any(w in il for w in ["ai", "machine learning", "data", "science", "research", "math", "investigat", "analytics", "deep learning", "algorithms"]):
+            affinities["I"] += 3
+        if any(w in il for w in ["software", "hardware", "engineering", "robotics", "mechanic", "electronics", "civil", "build", "coding", "programming", "tools"]):
+            affinities["R"] += 3
+            affinities["I"] += 1
+        if any(w in il for w in ["design", "art", "music", "writing", "creative", "media", "literature", "english", "graphic", "animation", "film"]):
+            affinities["A"] += 3
+        if any(w in il for w in ["teaching", "education", "counseling", "healthcare", "nursing", "medicine", "social", "community", "pedagogy", "speech"]):
+            affinities["S"] += 3
+        if any(w in il for w in ["business", "management", "entrepreneur", "marketing", "sales", "leadership", "commerce", "startup", "strategy"]):
+            affinities["E"] += 3
+        if any(w in il for w in ["accounting", "finance", "audit", "tax", "banking", "operations", "records", "compliance", "tally"]):
+            affinities["C"] += 3
+
+    # 2. Career Goals & Target Roles
+    goals = profile.get("career_goals") or profile.get("goals") or []
+    if isinstance(goals, str):
+        goals = [goals]
+    tr = profile.get("targetRole") or profile.get("career_preferences", {}).get("target_role") or ""
+    all_goals = list(goals) + ([tr] if tr else [])
+    for g in all_goals:
+        gl = str(g).lower()
+        if any(w in gl for w in ["data scientist", "researcher", "ai/ml", "scientist", "analyst", "astronomer", "mathematician"]):
+            affinities["I"] += 4
+        if any(w in gl for w in ["developer", "software engineer", "hardware engineer", "robotics", "mechanical", "civil"]):
+            affinities["R"] += 3
+            affinities["I"] += 2
+            affinities["C"] += 1
+        if any(w in gl for w in ["accountant", "auditor", "chartered accountant", "tax", "actuary", "financial analyst"]):
+            affinities["C"] += 4
+        if any(w in gl for w in ["teacher", "professor", "counselor", "therapist", "nurse", "doctor"]):
+            affinities["S"] += 4
+        if any(w in gl for w in ["writer", "author", "editor", "designer", "architect", "artist", "journalist"]):
+            affinities["A"] += 4
+        if any(w in gl for w in ["manager", "director", "founder", "executive", "product manager", "marketer", "sales"]):
+            affinities["E"] += 4
+
+    # 3. Work Style Preferences
+    ws = profile.get("work_style") or {}
+    if ws.get("people_vs_data") == "Working with people":
+        affinities["S"] += 2
+        affinities["E"] += 1
+    elif ws.get("people_vs_data") == "Working with data or things":
+        affinities["I"] += 2
+        affinities["C"] += 1
+
+    if ws.get("build_vs_analyze") == "Build and make things":
+        affinities["R"] += 2
+    elif ws.get("build_vs_analyze") == "Analyse and understand things":
+        affinities["I"] += 2
+
+    if ws.get("structure_vs_ambiguity") == "Clear structure and steps":
+        affinities["C"] += 2
+    elif ws.get("structure_vs_ambiguity") == "Open-ended problems":
+        affinities["I"] += 1
+        affinities["A"] += 1
+
+    return affinities
+
 
 class AdaptiveAssessmentEngine:
     """
@@ -778,6 +1247,11 @@ class AdaptiveAssessmentEngine:
             or ("math" in profile_stream and not is_commerce and not is_pcb)
         ) and not is_pcb
 
+        student_skills = [s.lower() for s in (profile.get("skills") or []) + (profile.get("resume_skills") or [])]
+        student_interests = [str(i).lower() for i in (profile.get("interests") or [])]
+        student_goals = [str(g).lower() for g in (profile.get("career_goals") or []) + ([profile.get("targetRole")] if profile.get("targetRole") else [])]
+        all_signals_text = " ".join(student_skills + student_interests + student_goals + [combined_text])
+
         selected: List[AdaptiveQuestion] = []
         selected_ids: Set[str] = set()
 
@@ -806,6 +1280,18 @@ class AdaptiveAssessmentEngine:
                     if classified.domain == AcademicDomain.ENGINEERING_TECH:
                         if any(term in combined_text for term in ["computer", "cs", "it", "software", "code", "programming"]):
                             matches_domain = True
+                    if any(term in all_signals_text for term in ["python", "data", "software", "ai", "machine learning", "developer"]):
+                        matches_domain = True
+                elif not matches_domain and q.prerequisite_domain == "commerce_finance":
+                    if any(term in all_signals_text for term in ["accounting", "finance", "tax", "tally", "gst"]):
+                        matches_domain = True
+                elif not matches_domain and q.prerequisite_domain == "arts_humanities":
+                    if any(term in all_signals_text for term in ["english", "literature", "writing", "teaching", "editorial"]):
+                        matches_domain = True
+                elif not matches_domain and q.prerequisite_domain == "pure_applied_sciences":
+                    if any(term in all_signals_text for term in ["math", "statistics", "calculus", "research"]):
+                        matches_domain = True
+
                 if not matches_domain and stage != AssessmentStage.CAREER_TRANSITION:
                     return False
             return True
@@ -889,6 +1375,264 @@ class AdaptiveAssessmentEngine:
             selected_ids.add(sq_id)
 
         return selected[:max_questions]
+
+    def get_next_adaptive_question(
+        self,
+        profile: Dict[str, Any],
+        answers: Dict[str, Any],
+        asked_ids: Optional[List[str]] = None
+    ) -> Dict[str, Any]:
+        """
+        Step-by-step adaptive question selector with evidence-based dynamic stopping.
+        1. Evaluates running scores and dimension certainty after each submitted answer.
+        2. Stops early (at 8-10 questions) if RIASEC dimensions show a decisive, established lead.
+        3. Caps maximum questions at 12 to prevent student fatigue.
+        4. Selects discriminator questions when dimensions are tied or within close margins.
+        5. Calibrated to student's academic stage, domain, skills, and declared interests.
+        """
+        profile = profile or {}
+        answers = answers or {}
+        asked_set = set(asked_ids or [])
+        asked_set.update(str(k) for k in answers.keys())
+
+        answered_count = len(answers)
+        stage = self.resolve_stage(profile)
+        classified = classify_education(profile)
+
+        # Compute running assessment scores and dimension rankings
+        running_score_data = self.score_adaptive_assessment(answers, profile)
+        running_scores = running_score_data["scores"]
+        code = running_score_data["code"]
+
+        dim_affinities = get_profile_dimension_affinities(profile)
+        sorted_dims = sorted(DIMS, key=lambda d: (-running_scores[d], -dim_affinities.get(d, 0), DIMS.index(d)))
+        dim_1, dim_2, dim_3 = sorted_dims[0], sorted_dims[1], sorted_dims[2]
+        s1, s2, s3 = running_scores[dim_1], running_scores[dim_2], running_scores[dim_3]
+
+        # --------------------------------------------------------------------
+        # 1. DYNAMIC EVIDENCE-BASED STOPPING CONDITIONS
+        # --------------------------------------------------------------------
+        # Upper bound: Stop at 12 questions
+        if answered_count >= 12:
+            return {
+                "question": None,
+                "is_complete": True,
+                "completion_reason": (
+                    f"Assessment complete. Comprehensive multi-dimensional evidence collected across 12 questions. "
+                    f"Primary profile established as {code} ({DIM_LABEL.get(code[0])}-{DIM_LABEL.get(code[1])}-{DIM_LABEL.get(code[2])})."
+                ),
+                "question_number": answered_count + 1,
+                "min_questions": 8,
+                "max_questions": 12,
+                "current_scores": running_scores,
+                "leading_dimensions": sorted_dims[:3],
+                "calibrated_stage": stage.value,
+            }
+
+        # Early stopping condition (at 8 to 11 questions):
+        # Stop if top 2 dimensions have a decisive lead over 3rd dimension
+        if answered_count >= 8:
+            lead_over_third = s2 - s3
+            top_lead = s1 - s3
+            if lead_over_third >= 3 and top_lead >= 6:
+                return {
+                    "question": None,
+                    "is_complete": True,
+                    "completion_reason": (
+                        f"Trait certainty reached in {answered_count} questions. Decisive separation established "
+                        f"for {DIM_LABEL.get(dim_1)} ({dim_1}) and {DIM_LABEL.get(dim_2)} ({dim_2}) over other dimensions."
+                    ),
+                    "question_number": answered_count + 1,
+                    "min_questions": 8,
+                    "max_questions": 12,
+                    "current_scores": running_scores,
+                    "leading_dimensions": sorted_dims[:3],
+                    "calibrated_stage": stage.value,
+                }
+
+        # --------------------------------------------------------------------
+        # 2. CANDIDATE QUESTION FILTERING & SELECTION
+        # --------------------------------------------------------------------
+        registry = self._get_question_registry()
+        answered_keys = self.get_already_answered_keys(profile)
+
+        spec_lower = (classified.specialization or "").lower()
+        stream_lower = (classified.course_or_stream or "").lower()
+        combined_text = f"{spec_lower} {stream_lower} {str(profile.get('degree') or '')}".lower()
+        profile_stream = (profile.get("school_stream") or "").lower()
+
+        student_skills = [s.lower() for s in (profile.get("skills") or []) + (profile.get("resume_skills") or [])]
+        student_interests = [str(i).lower() for i in (profile.get("interests") or [])]
+        student_goals = [str(g).lower() for g in (profile.get("career_goals") or []) + ([profile.get("targetRole")] if profile.get("targetRole") else [])]
+        all_signals_text = " ".join(student_skills + student_interests + student_goals + [combined_text])
+
+        has_data_ai_affinity = any(t in all_signals_text for t in ["data", "python", "machine learning", "ai", "pandas", "sql", "analytics"])
+        has_tech_affinity = any(t in all_signals_text for t in ["computer", "software", "code", "programming", "developer", "web", "java", "tech"])
+        has_finance_affinity = any(t in all_signals_text for t in ["accounting", "finance", "tax", "audit", "commerce", "tally", "gst"])
+        has_arts_affinity = any(t in all_signals_text for t in ["english", "literature", "writing", "teaching", "editorial", "communication", "public speaking"])
+        has_math_affinity = any(t in all_signals_text for t in ["math", "calculus", "statistics", "research", "equations", "modeling"])
+        has_health_affinity = any(t in all_signals_text for t in ["health", "nurse", "medical", "patient", "clinical", "hospital"])
+
+        is_pcb = (
+            classified.domain == AcademicDomain.MEDICAL_HEALTHCARE
+            or "pcb" in profile_stream or "biology" in profile_stream
+            or ("pcb" in combined_text or "biology" in combined_text)
+        ) and "non-medical" not in combined_text and "non-medical" not in profile_stream
+
+        is_commerce = (
+            classified.domain == AcademicDomain.COMMERCE_FINANCE
+            or "commerce" in profile_stream or "commerce" in combined_text
+            or "account" in profile_stream or "account" in combined_text
+        )
+
+        is_pcm = (
+            classified.domain == AcademicDomain.ENGINEERING_TECH
+            or "pcm" in profile_stream or "pcm" in combined_text
+            or ("math" in combined_text and not is_commerce and not is_pcb)
+        ) and not is_pcb
+
+        def _is_eligible(q: AdaptiveQuestion) -> bool:
+            if q.id in asked_set:
+                return False
+            # Deduplication against onboarding
+            if any(k in answered_keys for k in q.skip_if_profile_keys):
+                return False
+            # Stage compatibility: School 10th questions must NOT be asked to 12th/College/Diploma;
+            # Diploma questions must NOT be asked to School/12th/College;
+            # College questions must NOT be asked to School/12th/Diploma;
+            # GENERAL questions are universally applicable across all stages.
+            if q.stage != AssessmentStage.GENERAL:
+                if stage in [AssessmentStage.COLLEGE_UG_PG, AssessmentStage.CAREER_TRANSITION]:
+                    if q.stage not in [AssessmentStage.COLLEGE_UG_PG, AssessmentStage.CAREER_TRANSITION]:
+                        return False
+                elif stage == AssessmentStage.HIGHER_SECONDARY_12TH:
+                    if q.stage != AssessmentStage.HIGHER_SECONDARY_12TH:
+                        return False
+                elif stage == AssessmentStage.SCHOOL_10TH:
+                    if q.stage != AssessmentStage.SCHOOL_10TH:
+                        return False
+                elif stage == AssessmentStage.DIPLOMA_POLYTECHNIC:
+                    if q.stage != AssessmentStage.DIPLOMA_POLYTECHNIC:
+                        return False
+            # Stream prerequisites
+            if q.prerequisite_stream:
+                if q.prerequisite_stream == "science_pcb" and not is_pcb:
+                    return False
+                if q.prerequisite_stream == "science_pcm" and not is_pcm:
+                    return False
+                if q.prerequisite_stream == "commerce" and not is_commerce:
+                    return False
+            # Domain prerequisites
+            if q.prerequisite_domain:
+                dom = q.prerequisite_domain
+                matches = False
+                if classified.domain == dom:
+                    matches = True
+                elif dom == "computer_applications" and (has_data_ai_affinity or has_tech_affinity):
+                    matches = True
+                elif dom == "commerce_finance" and has_finance_affinity:
+                    matches = True
+                elif dom == "arts_humanities" and has_arts_affinity:
+                    matches = True
+                elif dom == "pure_applied_sciences" and has_math_affinity:
+                    matches = True
+                elif dom == "medical_healthcare" and has_health_affinity:
+                    matches = True
+                elif stage == AssessmentStage.CAREER_TRANSITION:
+                    matches = True
+
+                if not matches:
+                    return False
+            return True
+
+        eligible_questions = [q for q in registry.values() if _is_eligible(q)]
+        if not eligible_questions:
+            return {
+                "question": None,
+                "is_complete": True,
+                "completion_reason": f"Assessment complete with {answered_count} questions.",
+                "question_number": answered_count + 1,
+                "min_questions": 8,
+                "max_questions": 12,
+                "current_scores": running_scores,
+                "leading_dimensions": sorted_dims[:3],
+                "calibrated_stage": stage.value,
+            }
+
+        # --------------------------------------------------------------------
+        # 3. SELECT NEXT QUESTION
+        # --------------------------------------------------------------------
+        selected_q: Optional[AdaptiveQuestion] = None
+
+        # Check for tied/ambiguous dimensions between questions 8 and 11
+        if answered_count >= 8:
+            tied_dims: Set[str] = set()
+            if s1 - s2 <= 2:
+                tied_dims.update([dim_1, dim_2])
+            if s2 - s3 <= 2:
+                tied_dims.update([dim_2, dim_3])
+
+            if tied_dims:
+                for q in eligible_questions:
+                    if len(set(q.target_dimensions).intersection(tied_dims)) >= 2:
+                        selected_q = q
+                        break
+
+        # For questions 1 & 2: prioritize domain competency demonstration questions
+        if not selected_q and answered_count < 3 and stage in [AssessmentStage.COLLEGE_UG_PG, AssessmentStage.CAREER_TRANSITION]:
+            # 1. First prioritize AI/ML or Data specific questions if student has explicit AI/ML or Data goals/interests
+            if has_data_ai_affinity:
+                for q in eligible_questions:
+                    if q.id == "q_comp_aiml_pipeline" and any(term in all_signals_text for term in ["ai", "machine learning", "vision", "pytorch", "opencv"]):
+                        selected_q = q
+                        break
+                    elif q.id == "q_comp_python_data" and any(term in all_signals_text for term in ["data science", "data analyst", "pandas", "dataset"]):
+                        selected_q = q
+                        break
+
+            # 2. Look for exact academic domain match (e.g. pure_applied_sciences for B.Sc Math, arts_humanities for BA, commerce_finance for B.Com)
+            if not selected_q:
+                for q in eligible_questions:
+                    if q.category == QuestionCategory.COMPETENCY_DEMONSTRATION and q.prerequisite_domain == classified.domain:
+                        selected_q = q
+                        break
+
+            # 3. Look for any eligible domain question
+            if not selected_q:
+                for q in eligible_questions:
+                    if q.category == QuestionCategory.COMPETENCY_DEMONSTRATION and q.prerequisite_domain:
+                        selected_q = q
+                        break
+
+        # Fallback to stage questions
+        if not selected_q:
+            stage_qs = [q for q in eligible_questions if q.stage == stage]
+            if stage_qs:
+                selected_q = stage_qs[0]
+
+        # General balanced exploratory scenarios: choose least-tested dimension
+        if not selected_q:
+            dim_counts = {d: 0 for d in DIMS}
+            for qid in answers.keys():
+                pq = registry.get(qid)
+                if pq:
+                    for td in pq.target_dimensions:
+                        dim_counts[td] += 1
+
+            eligible_questions.sort(key=lambda q: sum(dim_counts.get(d, 0) for d in q.target_dimensions) / max(len(q.target_dimensions), 1))
+            selected_q = eligible_questions[0]
+
+        return {
+            "question": selected_q.to_dict() if selected_q else None,
+            "is_complete": False,
+            "completion_reason": None,
+            "question_number": answered_count + 1,
+            "min_questions": 8,
+            "max_questions": 12,
+            "current_scores": running_scores,
+            "leading_dimensions": sorted_dims[:3],
+            "calibrated_stage": stage.value,
+        }
 
     def _get_question_registry(self) -> Dict[str, AdaptiveQuestion]:
         """Returns a cached lookup map of all known adaptive questions."""
@@ -1019,9 +1763,11 @@ class AdaptiveAssessmentEngine:
                     }
 
         # Normalize RIASEC scores (0 - 100)
+        dim_affinities = get_profile_dimension_affinities(profile)
         if valid_answers_count == 0:
             scores = {d: 50 for d in DIMS}
-            code = "RIA"
+            order = sorted(DIMS, key=lambda d: (-dim_affinities.get(d, 0), DIMS.index(d)))
+            code = "".join(order[:3])
             top_fields = []
             sorted_fields = []
         else:
@@ -1029,7 +1775,7 @@ class AdaptiveAssessmentEngine:
             scale_factor = 24.0 * (valid_answers_count / 12.0) if valid_answers_count >= 6 else 24.0
             scores = {d: min(100, max(0, round((raw_dimensions[d] / max(scale_factor, 1.0)) * 100))) for d in DIMS}
 
-            order = sorted(DIMS, key=lambda d: (-scores[d], DIMS.index(d)))
+            order = sorted(DIMS, key=lambda d: (-scores[d], -dim_affinities.get(d, 0), DIMS.index(d)))
             code = "".join(order[:3])
 
             sorted_fields = sorted(field_points.items(), key=lambda x: x[1], reverse=True)

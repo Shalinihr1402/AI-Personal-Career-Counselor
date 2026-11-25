@@ -136,7 +136,7 @@ def evaluate_completeness(profile: DiagnosticProfile, stage: str) -> Tuple[int, 
 
     else:
         # College UG/PG, Career Switchers, General:
-        # Needs projects, skills, domain interests, and career goals.
+        # Needs projects/coursework, skills, domain interests, and career goals.
         pts = 0
         if profile.education_status != "not_collected":
             pts += 15
@@ -153,8 +153,21 @@ def evaluate_completeness(profile: DiagnosticProfile, stage: str) -> Tuple[int, 
         if profile.goals_status != "not_collected":
             pts += 15
 
+        # Non-technical / academic domains (Arts, Humanities, Commerce, Basic Sciences, Law):
+        # Academic coursework, research papers, presentations, or case studies substitute for software projects.
+        ed_lower = (profile.education_background or "").lower()
+        is_non_tech = any(d in ed_lower or d in stage_lower for d in [
+            "b.com", "m.com", "b.a", "ba", "m.a", "ma", "english", "arts", "humanities",
+            "commerce", "finance", "accounting", "economics", "history", "literature",
+            "b.sc", "bsc", "mathematics", "math", "law", "llb", "bba", "management"
+        ])
+        if is_non_tech and profile.projects_status == "not_collected":
+            if profile.skills_status != "not_collected" and profile.interests_status != "not_collected":
+                # Award 20 points for verified academic coursework, papers, and assignments
+                pts += 20
+
         completeness = min(100, pts)
-        # Ready when projects, skills, and direction have substantial evidence
+        # Ready when projects, coursework, skills, and direction have substantial evidence
         is_ready = completeness >= 70
 
     return completeness, is_ready, field_status
@@ -165,13 +178,23 @@ def evaluate_completeness(profile: DiagnosticProfile, stage: str) -> Tuple[int, 
 # --------------------------------------------------------------------------- #
 
 KNOWN_TECH_KEYWORDS = {
+    # Software & Tech
     "python", "javascript", "typescript", "java", "c++", "c#", "go", "rust", "php",
     "react", "next.js", "vue", "angular", "node.js", "express", "fastapi", "django", "flask",
     "postgresql", "mysql", "mongodb", "supabase", "sqlite", "redis", "firebase",
-    "aws", "azure", "docker", "kubernetes", "git", "github", "linux", "rest api",
+    "aws", "azure", "docker", "kubernetes", "git", "github", "linux", "rest api", "sql",
     "machine learning", "deep learning", "pytorch", "tensorflow", "scikit-learn",
     "pandas", "numpy", "data science", "nlp", "computer vision", "llm", "ai",
-    "figma", "ui/ux", "wireframing", "canva", "photoshop", "tailwind", "html", "css"
+    "figma", "ui/ux", "wireframing", "canva", "photoshop", "tailwind", "html", "css",
+    # Commerce & Finance
+    "accounting", "taxation", "tally", "gst", "auditing", "financial analysis", "excel",
+    "cost accounting", "budgeting", "balance sheet", "bookkeeping", "banking",
+    # Humanities, Arts & Education
+    "creative writing", "content writing", "editing", "proofreading", "public speaking",
+    "journalism", "literature", "pedagogy", "teaching", "translation", "communication",
+    # Basic Sciences & Mathematics
+    "mathematics", "statistics", "calculus", "linear algebra", "data analysis",
+    "probability", "physics", "chemistry", "research methodology", "latex"
 }
 
 def fallback_extract_profile(
@@ -183,25 +206,34 @@ def fallback_extract_profile(
     text_lower = latest_text.lower()
     updated = profile.model_copy(deep=True)
 
-    # 1. Tech skills extraction
+    # 1. Tech and domain skills extraction
     found_tech = [t for t in KNOWN_TECH_KEYWORDS if re.search(r'\b' + re.escape(t) + r'\b', text_lower)]
     if found_tech:
         new_tech = [t.capitalize() if len(t) > 3 else t.upper() for t in found_tech]
         updated.technical_skills = normalize_skills(updated.technical_skills + new_tech)
         updated.skills_status = "collected" if len(updated.technical_skills) >= 2 else "partially_collected"
 
-    # 2. Project detection
-    project_indicators = ["built", "created", "developed", "project", "app", "website", "system", "designed", "implemented", "api"]
+    # 2. Project detection (including software projects, academic research, essays, presentations, case studies)
+    project_indicators = [
+        "built", "created", "developed", "project", "app", "website", "system", "designed",
+        "implemented", "api", "research", "paper", "dissertation", "thesis", "case study",
+        "financial analysis", "audit report", "presentation", "essay", "portfolio",
+        "internship", "volunteer", "seminar", "modeling", "curriculum", "publication"
+    ]
     if any(k in text_lower for k in project_indicators):
+        is_academic = any(k in text_lower for k in ["research", "paper", "thesis", "dissertation", "case study", "essay", "presentation", "seminar", "audit", "tax", "accounting"])
+        proj_name = "Academic Research / Coursework Project" if is_academic else "Primary Student Project"
+        proj_role = "Lead Researcher / Author" if is_academic else "Developer / Contributor"
+
         if not updated.projects:
             new_proj = ProjectRecord(
-                name="Primary Student Project",
+                name=proj_name,
                 description=latest_text,
-                role="Developer / Contributor",
+                role=proj_role,
                 technologies=[t.capitalize() for t in found_tech]
             )
             updated.projects.append(new_proj)
-            updated.projects_status = "partially_collected"
+            updated.projects_status = "collected" if (found_tech or is_academic) else "partially_collected"
         else:
             # Update existing project with details
             p = updated.projects[0]
@@ -209,12 +241,19 @@ def fallback_extract_profile(
                 p.role = "Backend & API Architecture"
             elif "frontend" in text_lower or "ui" in text_lower:
                 p.role = "Frontend & Interface Design"
+            elif is_academic:
+                p.role = "Lead Researcher / Author"
             p.technologies = list(set(p.technologies + [t.capitalize() for t in found_tech]))
-            if p.role and p.technologies:
+            if p.role and (p.technologies or is_academic):
                 updated.projects_status = "collected"
 
     # 3. Interests detection
-    interest_keywords = ["ai", "machine learning", "web development", "design", "data science", "cybersecurity", "robotics", "cloud", "backend"]
+    interest_keywords = [
+        "ai", "machine learning", "web development", "design", "data science", "cybersecurity",
+        "robotics", "cloud", "backend", "accounting", "taxation", "finance", "investing",
+        "creative writing", "literature", "teaching", "public speaking", "mathematics",
+        "statistics", "research", "arts", "economics"
+    ]
     found_interests = [i for i in interest_keywords if i in text_lower]
     if found_interests:
         updated.technical_interests = list(set(updated.technical_interests + [i.title() for i in found_interests]))

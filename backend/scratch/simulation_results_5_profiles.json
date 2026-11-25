@@ -1,0 +1,728 @@
+{
+  "Profile A (B.Com Accounting & Tax)": {
+    "profile_name": "Profile A (B.Com Accounting & Tax)",
+    "calibrated_stage": "college_ug_pg",
+    "initial_question": "q_comp_ca_audit_sampling",
+    "initial_question_prompt": "While reviewing financial statements or reconciling accounts for a business, you...",
+    "questions_asked_count": 8,
+    "stopping_reason": "Trait certainty reached in 8 questions. Decisive separation established for Realistic (R) and Conventional (C) over other dimensions.",
+    "holland_code": "RCI",
+    "riasec_scores": {
+      "R": 69,
+      "I": 31,
+      "A": 19,
+      "S": 0,
+      "E": 6,
+      "C": 56
+    },
+    "top_fields": [
+      "Business, Management & Finance",
+      "Engineering & Architecture",
+      "Installation & Maintenance"
+    ],
+    "completeness_score": 90,
+    "is_ready_for_recommendations": true,
+    "step_log": [
+      {
+        "turn": 1,
+        "question_id": "q_comp_ca_audit_sampling",
+        "category": "competency_demonstration",
+        "prompt": "While reviewing financial statements or reconciling accounts for a business, you...",
+        "target_dims": [
+          "C",
+          "E"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 2,
+        "question_id": "q_comp_tax_budgeting",
+        "category": "competency_demonstration",
+        "prompt": "A growing startup or local business asks for guidance on planning its annual bud...",
+        "target_dims": [
+          "C",
+          "E",
+          "I"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 3,
+        "question_id": "q10_03_tech_vs_nature",
+        "category": "interest_exploration",
+        "prompt": "On a free Saturday afternoon with no homework, which activity sounds most appeal...",
+        "target_dims": [
+          "I",
+          "R",
+          "A",
+          "S"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 4,
+        "question_id": "legacy_q1",
+        "category": "interest_exploration",
+        "prompt": "Your college or local community is hosting a large weekend festival or exhibitio...",
+        "target_dims": [
+          "A",
+          "R",
+          "C",
+          "S"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 5,
+        "question_id": "legacy_q2",
+        "category": "interest_exploration",
+        "prompt": "A tool, machine, or operational process breaks down right before an important de...",
+        "target_dims": [
+          "R",
+          "I",
+          "S",
+          "E"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 6,
+        "question_id": "q10_02_school_exhibition",
+        "category": "practical_scenario",
+        "prompt": "Your school is participating in an Inter-School Science & Arts Exhibition. Which...",
+        "target_dims": [
+          "R",
+          "E",
+          "A",
+          "C"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 7,
+        "question_id": "legacy_q8",
+        "category": "interest_exploration",
+        "prompt": "When picking up an unfamiliar skill or subject, what approach helps you master i...",
+        "target_dims": [
+          "R",
+          "I",
+          "S",
+          "A"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 8,
+        "question_id": "q12_comm_business_instinct",
+        "category": "practical_scenario",
+        "prompt": "A local startup or family shop is losing money despite good customer footfall. W...",
+        "target_dims": [
+          "C",
+          "E",
+          "S"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 9,
+        "status": "STOPPED",
+        "reason": "Trait certainty reached in 8 questions. Decisive separation established for Realistic (R) and Conventional (C) over other dimensions.",
+        "total_answered": 8,
+        "running_scores": {
+          "R": 69,
+          "I": 31,
+          "A": 19,
+          "S": 0,
+          "E": 6,
+          "C": 56
+        },
+        "leading_dims": [
+          "R",
+          "C",
+          "I"
+        ]
+      }
+    ]
+  },
+  "Profile B (B.Com Python & Data Science)": {
+    "profile_name": "Profile B (B.Com Python & Data Science)",
+    "calibrated_stage": "college_ug_pg",
+    "initial_question": "q_comp_python_data",
+    "initial_question_prompt": "You are given a raw dataset containing thousands of records with missing values ...",
+    "questions_asked_count": 8,
+    "stopping_reason": "Trait certainty reached in 8 questions. Decisive separation established for Investigative (I) and Conventional (C) over other dimensions.",
+    "holland_code": "ICE",
+    "riasec_scores": {
+      "R": 12,
+      "I": 100,
+      "A": 0,
+      "S": 0,
+      "E": 19,
+      "C": 62
+    },
+    "top_fields": [
+      "Technology & Computer Science",
+      "Data & AI",
+      "Business, Management & Finance"
+    ],
+    "completeness_score": 90,
+    "is_ready_for_recommendations": true,
+    "step_log": [
+      {
+        "turn": 1,
+        "question_id": "q_comp_python_data",
+        "category": "competency_demonstration",
+        "prompt": "You are given a raw dataset containing thousands of records with missing values ...",
+        "target_dims": [
+          "I",
+          "C",
+          "A"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 2,
+        "question_id": "q_comp_aiml_pipeline",
+        "category": "competency_demonstration",
+        "prompt": "When working on a predictive machine learning or computer vision model, the mode...",
+        "target_dims": [
+          "I",
+          "R",
+          "C"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 3,
+        "question_id": "q_comp_ca_audit_sampling",
+        "category": "competency_demonstration",
+        "prompt": "While reviewing financial statements or reconciling accounts for a business, you...",
+        "target_dims": [
+          "C",
+          "E"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 4,
+        "question_id": "q_comp_java_concurrency",
+        "category": "competency_demonstration",
+        "prompt": "When developing a web application or backend service that slows down when many u...",
+        "target_dims": [
+          "I",
+          "C",
+          "R"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 5,
+        "question_id": "q_comp_tax_budgeting",
+        "category": "competency_demonstration",
+        "prompt": "A growing startup or local business asks for guidance on planning its annual bud...",
+        "target_dims": [
+          "C",
+          "E",
+          "I"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 6,
+        "question_id": "q_comp_math_modeling",
+        "category": "competency_demonstration",
+        "prompt": "When working on a complex quantitative problem (such as optimizing transport rou...",
+        "target_dims": [
+          "I",
+          "R",
+          "C"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 7,
+        "question_id": "q_comp_stat_hypothesis",
+        "category": "competency_demonstration",
+        "prompt": "In a research experiment or survey, the preliminary data shows an unexpected cor...",
+        "target_dims": [
+          "I",
+          "C",
+          "R",
+          "A"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 8,
+        "question_id": "legacy_q9",
+        "category": "interest_exploration",
+        "prompt": "During a busy event or operational launch, an unexpected rush of attendees arriv...",
+        "target_dims": [
+          "E",
+          "S",
+          "C",
+          "A"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 9,
+        "status": "STOPPED",
+        "reason": "Trait certainty reached in 8 questions. Decisive separation established for Investigative (I) and Conventional (C) over other dimensions.",
+        "total_answered": 8,
+        "running_scores": {
+          "R": 12,
+          "I": 100,
+          "A": 0,
+          "S": 0,
+          "E": 19,
+          "C": 62
+        },
+        "leading_dims": [
+          "I",
+          "C",
+          "E"
+        ]
+      }
+    ]
+  },
+  "Profile C (MCA AI/ML)": {
+    "profile_name": "Profile C (MCA AI/ML)",
+    "calibrated_stage": "college_ug_pg",
+    "initial_question": "q_comp_aiml_pipeline",
+    "initial_question_prompt": "When working on a predictive machine learning or computer vision model, the mode...",
+    "questions_asked_count": 8,
+    "stopping_reason": "Trait certainty reached in 8 questions. Decisive separation established for Investigative (I) and Realistic (R) over other dimensions.",
+    "holland_code": "IRA",
+    "riasec_scores": {
+      "R": 56,
+      "I": 69,
+      "A": 19,
+      "S": 0,
+      "E": 19,
+      "C": 19
+    },
+    "top_fields": [
+      "Technology & Computer Science",
+      "Data & AI",
+      "Engineering & Architecture"
+    ],
+    "completeness_score": 70,
+    "is_ready_for_recommendations": true,
+    "step_log": [
+      {
+        "turn": 1,
+        "question_id": "q_comp_aiml_pipeline",
+        "category": "competency_demonstration",
+        "prompt": "When working on a predictive machine learning or computer vision model, the mode...",
+        "target_dims": [
+          "I",
+          "R",
+          "C"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 2,
+        "question_id": "q_comp_java_concurrency",
+        "category": "competency_demonstration",
+        "prompt": "When developing a web application or backend service that slows down when many u...",
+        "target_dims": [
+          "I",
+          "C",
+          "R"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 3,
+        "question_id": "q_comp_python_data",
+        "category": "competency_demonstration",
+        "prompt": "You are given a raw dataset containing thousands of records with missing values ...",
+        "target_dims": [
+          "I",
+          "C",
+          "A"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 4,
+        "question_id": "legacy_q9",
+        "category": "interest_exploration",
+        "prompt": "During a busy event or operational launch, an unexpected rush of attendees arriv...",
+        "target_dims": [
+          "E",
+          "S",
+          "C",
+          "A"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 5,
+        "question_id": "legacy_q2",
+        "category": "interest_exploration",
+        "prompt": "A tool, machine, or operational process breaks down right before an important de...",
+        "target_dims": [
+          "R",
+          "I",
+          "S",
+          "E"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 6,
+        "question_id": "legacy_q11",
+        "category": "interest_exploration",
+        "prompt": "When collaborating with a group on a multi-week project, which contribution feel...",
+        "target_dims": [
+          "A",
+          "C",
+          "S",
+          "E"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 7,
+        "question_id": "q10_03_tech_vs_nature",
+        "category": "interest_exploration",
+        "prompt": "On a free Saturday afternoon with no homework, which activity sounds most appeal...",
+        "target_dims": [
+          "I",
+          "R",
+          "A",
+          "S"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 8,
+        "question_id": "q10_02_school_exhibition",
+        "category": "practical_scenario",
+        "prompt": "Your school is participating in an Inter-School Science & Arts Exhibition. Which...",
+        "target_dims": [
+          "R",
+          "E",
+          "A",
+          "C"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 9,
+        "status": "STOPPED",
+        "reason": "Trait certainty reached in 8 questions. Decisive separation established for Investigative (I) and Realistic (R) over other dimensions.",
+        "total_answered": 8,
+        "running_scores": {
+          "R": 56,
+          "I": 69,
+          "A": 19,
+          "S": 0,
+          "E": 19,
+          "C": 19
+        },
+        "leading_dims": [
+          "I",
+          "R",
+          "A"
+        ]
+      }
+    ]
+  },
+  "Profile D (BA English Teaching & Writing)": {
+    "profile_name": "Profile D (BA English Teaching & Writing)",
+    "calibrated_stage": "college_ug_pg",
+    "initial_question": "q_comp_humanities_communication",
+    "initial_question_prompt": "When writing, editing, or presenting a comprehensive article or project report f...",
+    "questions_asked_count": 8,
+    "stopping_reason": "Trait certainty reached in 8 questions. Decisive separation established for Realistic (R) and Artistic (A) over other dimensions.",
+    "holland_code": "RAI",
+    "riasec_scores": {
+      "R": 62,
+      "I": 31,
+      "A": 44,
+      "S": 25,
+      "E": 19,
+      "C": 0
+    },
+    "top_fields": [
+      "Engineering & Architecture",
+      "Arts, Design & Media",
+      "Education & Training"
+    ],
+    "completeness_score": 90,
+    "is_ready_for_recommendations": true,
+    "step_log": [
+      {
+        "turn": 1,
+        "question_id": "q_comp_humanities_communication",
+        "category": "competency_demonstration",
+        "prompt": "When writing, editing, or presenting a comprehensive article or project report f...",
+        "target_dims": [
+          "A",
+          "C",
+          "S",
+          "E"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 2,
+        "question_id": "q_comp_pedagogical_empathy",
+        "category": "competency_demonstration",
+        "prompt": "You are leading a study session or workshop, and a student is feeling discourage...",
+        "target_dims": [
+          "S",
+          "I",
+          "E",
+          "R"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 3,
+        "question_id": "q_dip_career_direction",
+        "category": "practical_scenario",
+        "prompt": "As you complete your Diploma, which progression pathway matches your immediate p...",
+        "target_dims": [
+          "R",
+          "I",
+          "C"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 4,
+        "question_id": "q10_02_school_exhibition",
+        "category": "practical_scenario",
+        "prompt": "Your school is participating in an Inter-School Science & Arts Exhibition. Which...",
+        "target_dims": [
+          "R",
+          "E",
+          "A",
+          "C"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 5,
+        "question_id": "q10_03_tech_vs_nature",
+        "category": "interest_exploration",
+        "prompt": "On a free Saturday afternoon with no homework, which activity sounds most appeal...",
+        "target_dims": [
+          "I",
+          "R",
+          "A",
+          "S"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 6,
+        "question_id": "legacy_q6",
+        "category": "interest_exploration",
+        "prompt": "Your neighborhood is forming teams to improve community life. Which project grou...",
+        "target_dims": [
+          "E",
+          "A",
+          "C",
+          "I"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 7,
+        "question_id": "legacy_q1",
+        "category": "interest_exploration",
+        "prompt": "Your college or local community is hosting a large weekend festival or exhibitio...",
+        "target_dims": [
+          "A",
+          "R",
+          "C",
+          "S"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 8,
+        "question_id": "legacy_q2",
+        "category": "interest_exploration",
+        "prompt": "A tool, machine, or operational process breaks down right before an important de...",
+        "target_dims": [
+          "R",
+          "I",
+          "S",
+          "E"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 9,
+        "status": "STOPPED",
+        "reason": "Trait certainty reached in 8 questions. Decisive separation established for Realistic (R) and Artistic (A) over other dimensions.",
+        "total_answered": 8,
+        "running_scores": {
+          "R": 62,
+          "I": 31,
+          "A": 44,
+          "S": 25,
+          "E": 19,
+          "C": 0
+        },
+        "leading_dims": [
+          "R",
+          "A",
+          "I"
+        ]
+      }
+    ]
+  },
+  "Profile E (B.Sc Mathematics Research & Analytics)": {
+    "profile_name": "Profile E (B.Sc Mathematics Research & Analytics)",
+    "calibrated_stage": "college_ug_pg",
+    "initial_question": "q_comp_math_modeling",
+    "initial_question_prompt": "When working on a complex quantitative problem (such as optimizing transport rou...",
+    "questions_asked_count": 8,
+    "stopping_reason": "Trait certainty reached in 8 questions. Decisive separation established for Investigative (I) and Realistic (R) over other dimensions.",
+    "holland_code": "IRC",
+    "riasec_scores": {
+      "R": 31,
+      "I": 88,
+      "A": 19,
+      "S": 0,
+      "E": 19,
+      "C": 25
+    },
+    "top_fields": [
+      "Data & AI",
+      "Technology & Computer Science",
+      "Physical & Life Sciences"
+    ],
+    "completeness_score": 90,
+    "is_ready_for_recommendations": true,
+    "step_log": [
+      {
+        "turn": 1,
+        "question_id": "q_comp_math_modeling",
+        "category": "competency_demonstration",
+        "prompt": "When working on a complex quantitative problem (such as optimizing transport rou...",
+        "target_dims": [
+          "I",
+          "R",
+          "C"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 2,
+        "question_id": "q_comp_stat_hypothesis",
+        "category": "competency_demonstration",
+        "prompt": "In a research experiment or survey, the preliminary data shows an unexpected cor...",
+        "target_dims": [
+          "I",
+          "C",
+          "R",
+          "A"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 3,
+        "question_id": "q_comp_java_concurrency",
+        "category": "competency_demonstration",
+        "prompt": "When developing a web application or backend service that slows down when many u...",
+        "target_dims": [
+          "I",
+          "C",
+          "R"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 4,
+        "question_id": "q_comp_python_data",
+        "category": "competency_demonstration",
+        "prompt": "You are given a raw dataset containing thousands of records with missing values ...",
+        "target_dims": [
+          "I",
+          "C",
+          "A"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 5,
+        "question_id": "q_comp_aiml_pipeline",
+        "category": "competency_demonstration",
+        "prompt": "When working on a predictive machine learning or computer vision model, the mode...",
+        "target_dims": [
+          "I",
+          "R",
+          "C"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 6,
+        "question_id": "legacy_q9",
+        "category": "interest_exploration",
+        "prompt": "During a busy event or operational launch, an unexpected rush of attendees arriv...",
+        "target_dims": [
+          "E",
+          "S",
+          "C",
+          "A"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 7,
+        "question_id": "legacy_q2",
+        "category": "interest_exploration",
+        "prompt": "A tool, machine, or operational process breaks down right before an important de...",
+        "target_dims": [
+          "R",
+          "I",
+          "S",
+          "E"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 8,
+        "question_id": "legacy_q11",
+        "category": "interest_exploration",
+        "prompt": "When collaborating with a group on a multi-week project, which contribution feel...",
+        "target_dims": [
+          "A",
+          "C",
+          "S",
+          "E"
+        ],
+        "chosen_option": "a"
+      },
+      {
+        "turn": 9,
+        "status": "STOPPED",
+        "reason": "Trait certainty reached in 8 questions. Decisive separation established for Investigative (I) and Realistic (R) over other dimensions.",
+        "total_answered": 8,
+        "running_scores": {
+          "R": 31,
+          "I": 88,
+          "A": 19,
+          "S": 0,
+          "E": 19,
+          "C": 25
+        },
+        "leading_dims": [
+          "I",
+          "R",
+          "C"
+        ]
+      }
+    ]
+  }
+}

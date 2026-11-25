@@ -263,6 +263,30 @@ export async function fetchAdaptiveQuestions(
   });
 }
 
+export interface NextAdaptiveQuestionResponse {
+  question: AdaptiveQuestion | null;
+  is_complete: boolean;
+  completion_reason: string | null;
+  question_number: number;
+  min_questions: number;
+  max_questions: number;
+  current_scores: RiasecScores;
+  leading_dimensions: string[];
+  calibrated_stage: string;
+}
+
+export async function fetchNextAdaptiveQuestion(
+  profilePayload: Record<string, unknown>,
+  answers: Record<string, string>,
+  askedQuestionIds: string[]
+): Promise<NextAdaptiveQuestionResponse> {
+  return postJSON<NextAdaptiveQuestionResponse>('/api/assessment/next-question', {
+    profile: profilePayload,
+    answers,
+    asked_question_ids: askedQuestionIds,
+  });
+}
+
 export async function scoreAdaptiveAssessment(
   answers: Record<string, string>,
   profilePayload: Record<string, unknown>

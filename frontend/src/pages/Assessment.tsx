@@ -25,7 +25,7 @@ import { normalizeSkills } from '../lib/skillNormalizer';
 import { EMPTY_KNOW_ME, MAX_VALUES, SITUATION_QUESTIONS, type KnowMe } from '../lib/knowMe';
 import {
   fetchQuestions, scoreAssessment,
-  fetchAdaptiveQuestions, scoreAdaptiveAssessment, buildProfilePayload,
+  fetchAdaptiveQuestions, fetchNextAdaptiveQuestion, scoreAdaptiveAssessment, buildProfilePayload,
   generateDiagnosticRecommendations,
   WORK_STYLE_QUESTIONS,
   type ScenarioQuestion, type ScoreResult, type MatchResult, type CareerMatch,
@@ -255,6 +255,8 @@ const Assessment: React.FC = () => {
   const [showLockNotice, setShowLockNotice] = useState(false);
   const [isRetaking, setIsRetaking] = useState(false);
   const [isRefreshingRecs, setIsRefreshingRecs] = useState(false);
+  const [loadingNext, setLoadingNext] = useState<boolean>(false);
+  const [completionReason, setCompletionReason] = useState<string | null>(null);
 
   const isAssessmentComplete = Boolean(
     (saved?.matches && saved.matches.length > 0) || (score && match && (match.matches || []).length > 0)
@@ -368,41 +370,65 @@ const Assessment: React.FC = () => {
     if (questionsLoadedRef.current) return;
 
     const payload = buildProfilePayload(profile, knowMe);
-    fetchAdaptiveQuestions(payload)
-      .then((data) => {
+
+    // Dynamic step-by-step adaptive question initialization
+    fetchNextAdaptiveQuestion(payload, {}, [])
+      .then((res) => {
         if (cancelled) return;
         questionsLoadedRef.current = true;
-        setCalibratedStage(data.stage || 'general');
-        const adaptiveList = data.questions || [];
-        setAdaptiveQuestions(adaptiveList);
-        setQuestions(
-          adaptiveList.map((q) => ({
-            id: q.id,
-            scenario: q.prompt,
-            options: q.options.map((opt) => ({
-              id: opt.id,
-              text: opt.text,
-              fields: opt.occupational_fields,
-            })),
-          }))
-        );
-
-        // Attempt refresh recovery from localStorage
-        restoreProgress(adaptiveList.length);
+        setCalibratedStage(res.calibrated_stage || 'general');
+        if (res.question) {
+          const adaptiveList = [res.question];
+          setAdaptiveQuestions(adaptiveList);
+          setQuestions([
+            {
+              id: res.question.id,
+              scenario: res.question.prompt,
+              options: res.question.options.map((opt) => ({
+                id: opt.id,
+                text: opt.text,
+                fields: opt.occupational_fields,
+              })),
+            },
+          ]);
+        }
+        restoreProgress(12);
       })
       .catch(async () => {
-        // Fallback to legacy endpoint if adaptive endpoint is unreachable
+        // Fallback to pre-fetching adaptive questions if step-by-step endpoint fails
         try {
-          const fallbackData = await fetchQuestions();
+          const data = await fetchAdaptiveQuestions(payload);
           if (cancelled) return;
           questionsLoadedRef.current = true;
-          const fbQuestions = fallbackData.questions || [];
-          setQuestions(fbQuestions);
-          restoreProgress(fbQuestions.length);
-        } catch (e: unknown) {
-          if (cancelled) return;
-          setError(e instanceof Error ? e.message : 'Could not load the assessment.');
-          goToPhase('error');
+          setCalibratedStage(data.stage || 'general');
+          const adaptiveList = data.questions || [];
+          setAdaptiveQuestions(adaptiveList);
+          setQuestions(
+            adaptiveList.map((q) => ({
+              id: q.id,
+              scenario: q.prompt,
+              options: q.options.map((opt) => ({
+                id: opt.id,
+                text: opt.text,
+                fields: opt.occupational_fields,
+              })),
+            }))
+          );
+          restoreProgress(adaptiveList.length);
+        } catch {
+          // Fallback to legacy endpoint if adaptive endpoint is unreachable
+          try {
+            const fallbackData = await fetchQuestions();
+            if (cancelled) return;
+            questionsLoadedRef.current = true;
+            const fbQuestions = fallbackData.questions || [];
+            setQuestions(fbQuestions);
+            restoreProgress(fbQuestions.length);
+          } catch (e: unknown) {
+            if (cancelled) return;
+            setError(e instanceof Error ? e.message : 'Could not load the assessment.');
+            goToPhase('error');
+          }
         }
       });
 
@@ -429,6 +455,66 @@ const Assessment: React.FC = () => {
       localStorage.setItem(STORAGE_INDEX_KEY, clamped.toString());
     } catch {
       // Ignore storage errors
+    }
+  };
+
+  const handleNextQuestion = async () => {
+    if (!isCurrentAnswered || loadingNext) return;
+
+    // If navigating back and forth through already loaded questions
+    if (currentQuestionIndex + 1 < questions.length) {
+      handleGoToQuestion(currentQuestionIndex + 1);
+      return;
+    }
+
+    // Step-by-step adaptive next question request
+    setLoadingNext(true);
+    try {
+      const payload = buildProfilePayload(profile, knowMe);
+      const askedIds = questions.map((q) => q.id);
+      const nextRes = await fetchNextAdaptiveQuestion(payload, answers, askedIds);
+
+      if (nextRes.is_complete || !nextRes.question) {
+        if (nextRes.completion_reason) {
+          setCompletionReason(nextRes.completion_reason);
+        }
+        goToPhase('workstyle');
+      } else {
+        const nextQ = nextRes.question;
+        const converted: ScenarioQuestion = {
+          id: nextQ.id,
+          scenario: nextQ.prompt,
+          options: nextQ.options.map((opt) => ({
+            id: opt.id,
+            text: opt.text,
+            fields: opt.occupational_fields,
+          })),
+        };
+
+        setAdaptiveQuestions((prev) => [...prev, nextQ]);
+        setQuestions((prev) => {
+          const updated = [...prev, converted];
+          const nextIdx = updated.length - 1;
+          setCurrentQuestionIndex(nextIdx);
+          try {
+            localStorage.setItem(STORAGE_INDEX_KEY, nextIdx.toString());
+          } catch {
+            // Ignore
+          }
+          return updated;
+        });
+      }
+    } catch {
+      // Graceful fallback: advance to work style if >= 8 questions answered
+      if (Object.keys(answers).length >= 8) {
+        goToPhase('workstyle');
+      } else if (currentQuestionIndex + 1 < questions.length) {
+        handleGoToQuestion(currentQuestionIndex + 1);
+      } else {
+        goToPhase('workstyle');
+      }
+    } finally {
+      setLoadingNext(false);
     }
   };
 
@@ -873,13 +959,18 @@ const Assessment: React.FC = () => {
             {/* Progress indicator */}
             <div className="mb-6 bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
               <div className="flex items-center justify-between text-xs font-bold tracking-tight text-slate-500 mb-2">
-                <span className="text-violet-900 font-extrabold">Question {currentQuestionIndex + 1} of {totalQuestions}</span>
-                <span className="text-slate-400 font-medium">{answeredCount} of {totalQuestions} answered</span>
+                <span className="text-violet-900 font-extrabold flex items-center gap-1.5">
+                  <span>Question {currentQuestionIndex + 1}</span>
+                  <span className="text-slate-400 font-normal hidden sm:inline">• Adaptive Career Discovery</span>
+                </span>
+                <span className="text-slate-500 font-medium">
+                  {answeredCount} answered {answeredCount >= 8 ? '(Trait pattern established)' : '(Target 8–12 questions)'}
+                </span>
               </div>
               <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-violet-700 rounded-full transition-all duration-300 ease-out"
-                  style={{ width: `${Math.round(((currentQuestionIndex + 1) / totalQuestions) * 100)}%` }}
+                  style={{ width: `${Math.min(100, Math.max(8, Math.round(((answeredCount + 1) / 12) * 100)))}%` }}
                 />
               </div>
             </div>
@@ -971,17 +1062,18 @@ const Assessment: React.FC = () => {
               <Button
                 variant="primary"
                 size="md"
-                disabled={!isCurrentAnswered}
+                disabled={!isCurrentAnswered || loadingNext}
+                isLoading={loadingNext}
                 rightIcon={<ArrowRight className="w-4 h-4" />}
-                onClick={() => {
-                  if (currentQuestionIndex + 1 < questions.length) {
-                    handleGoToQuestion(currentQuestionIndex + 1);
-                  } else {
-                    goToPhase('workstyle');
-                  }
-                }}
+                onClick={handleNextQuestion}
               >
-                {currentQuestionIndex + 1 < questions.length ? 'Next question' : 'Continue to work style'}
+                {loadingNext
+                  ? 'Adapting next question...'
+                  : currentQuestionIndex + 1 < questions.length
+                  ? 'Next question'
+                  : answeredCount >= 8
+                  ? 'Complete & Continue'
+                  : 'Next question'}
               </Button>
             </div>
           </div>
@@ -992,7 +1084,7 @@ const Assessment: React.FC = () => {
               </div>
               <h3 className="font-bold text-slate-900 text-lg mb-2">Scenario Questions Complete!</h3>
               <p className="text-slate-500 text-sm mb-6 max-w-md mx-auto">
-                You have finished all {totalQuestions} scenario questions. Continue to the next step to specify your work style preferences.
+                You have finished all adaptive questions. Continue to the next step to specify your work style preferences.
               </p>
               <Button
                 variant="primary"
@@ -1014,6 +1106,16 @@ const Assessment: React.FC = () => {
               <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Work Style & Operating Rhythm</h2>
               <p className="text-slate-500 text-sm mt-1">Four quick preferences to fine-tune your occupational environment fit.</p>
             </div>
+
+            {completionReason && (
+              <div className="mb-5 p-3.5 bg-emerald-50/90 border border-emerald-200 rounded-xl flex items-start gap-2.5 text-xs text-emerald-900 leading-relaxed shadow-xs">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold text-emerald-950">Assessment Calibration: </span>
+                  <span>{completionReason}</span>
+                </div>
+              </div>
+            )}
 
             <div className="space-y-4">
               {WORK_STYLE_QUESTIONS.map((q, qIndex) => {

@@ -822,5 +822,157 @@ class TestPhase4Step4PersistenceAndCounselor(unittest.TestCase):
         self.assertEqual(len(ctx["statutory_pathways"]["statutory_restrictions"]), 0)
 
 
+# ============================================================================
+# Phase 4.4 Redesign: Step-by-Step Adaptive Flow, Non-Tech Completeness & Tiebreaker
+# ============================================================================
+
+class TestPhase4AdaptiveAssessmentRedesign(unittest.TestCase):
+    """
+    Validates:
+    1. Step-by-step adaptive question selection (get_next_adaptive_question).
+    2. Dynamic early stopping at 8-10 questions upon trait certainty.
+    3. Maximum 12 questions cap.
+    4. Profile-grounded RIASEC tie-breaking (eliminating alphabetical RIA bias).
+    5. Non-technical student completeness >= 70% without coding projects.
+    6. FastAPI /api/assessment/next-question endpoint.
+    """
+
+    def setUp(self):
+        self.engine = AdaptiveAssessmentEngine()
+
+    def test_01_step_by_step_domain_question_selection(self):
+        """Test that distinct profiles receive domain-calibrated initial questions."""
+        # Profile A: B.Com Accounting & Tax
+        p_a = {"education_level": "undergraduate", "degree": "B.Com", "specialization": "Accounting", "interests": ["Taxation", "Auditing"]}
+        res_a = self.engine.get_next_adaptive_question(profile=p_a, answers={})
+        self.assertFalse(res_a["is_complete"])
+        self.assertIsNotNone(res_a["question"])
+        self.assertEqual(res_a["question_number"], 1)
+        # Should be a commerce/finance question
+        self.assertIn(res_a["question"]["id"], ["q_comp_ca_audit_sampling", "q_comp_tax_budgeting"])
+
+        # Profile D: BA English Teaching & Literature
+        p_d = {"education_level": "undergraduate", "degree": "B.A", "specialization": "English Literature", "interests": ["Teaching", "Creative Writing"]}
+        res_d = self.engine.get_next_adaptive_question(profile=p_d, answers={})
+        self.assertFalse(res_d["is_complete"])
+        self.assertIsNotNone(res_d["question"])
+        # Should be a humanities/pedagogy question
+        self.assertIn(res_d["question"]["id"], ["q_comp_humanities_communication", "q_comp_pedagogical_empathy"])
+
+        # Profile C: MCA AI/ML
+        p_c = {"education_level": "postgraduate", "degree": "MCA", "specialization": "Computer Applications", "skills": ["Python", "PyTorch"], "career_goals": ["AI/ML Software Engineer"]}
+        res_c = self.engine.get_next_adaptive_question(profile=p_c, answers={})
+        self.assertFalse(res_c["is_complete"])
+        self.assertIsNotNone(res_c["question"])
+        self.assertIn(res_c["question"]["id"], ["q_comp_aiml_pipeline", "q_comp_python_data", "q_comp_java_concurrency"])
+
+    def test_02_dynamic_early_stopping_at_8_questions(self):
+        """Test that when a student provides 8 decisive answers establishing clear leading dimensions, the quiz stops early."""
+        profile = {"education_level": "undergraduate", "degree": "B.Tech", "specialization": "Computer Science"}
+
+        # 8 consistent investigative answers
+        answers = {
+            "q_comp_python_data": "a", # I: 3, C: 1
+            "q_comp_aiml_pipeline": "a", # I: 3, R: 1
+            "legacy_q1": "b", # R: 3
+            "legacy_q2": "b", # I: 3
+            "legacy_q3": "b", # I: 3
+            "legacy_q4": "b", # I: 3
+            "legacy_q5": "b", # I: 3
+            "legacy_q6": "b", # I: 3
+        }
+        res = self.engine.get_next_adaptive_question(profile=profile, answers=answers)
+        self.assertTrue(res["is_complete"])
+        self.assertIsNone(res["question"])
+        self.assertIn("Trait certainty reached", res["completion_reason"])
+
+    def test_03_max_12_questions_cap(self):
+        """Test that the quiz always terminates at 12 questions to avoid student fatigue."""
+        profile = {"education_level": "undergraduate", "degree": "B.Com"}
+        answers = {f"q_dummy_{i}": "a" for i in range(12)}
+        res = self.engine.get_next_adaptive_question(profile=profile, answers=answers)
+        self.assertTrue(res["is_complete"])
+        self.assertIsNone(res["question"])
+        self.assertIn("12 questions", res["completion_reason"])
+
+    def test_04_profile_aware_tiebreaker_eliminates_ria_bias(self):
+        """Test that dimension ties are broken using student interests and goals rather than alphabetical order."""
+        # Create a tie where C and I both have equal points (6 points each from answers)
+        profile_accountant = {
+            "interests": ["Accounting", "Taxation", "Auditing"],
+            "career_goals": ["Chartered Accountant"],
+            "targetRole": "Tax Consultant"
+        }
+        # In alphabetical order (R, I, A, S, E, C), 'I' would beat 'C' -> 'ICR'.
+        # With profile affinities, 'C' has strong affinity (+7) and beats 'I' -> 'CIR'.
+        answers = {
+            "legacy_q1": "c", # C: 3
+            "legacy_q4": "d", # C: 3
+            "legacy_q2": "b", # I: 3
+            "legacy_q3": "b", # I: 3
+        }
+        scored = self.engine.score_adaptive_assessment(answers=answers, profile=profile_accountant)
+        # 'C' should precede 'I' in Holland code
+        self.assertTrue(scored["code"].index("C") < scored["code"].index("I"))
+        self.assertEqual(scored["code"][:2], "CI")
+
+    def test_05_non_technical_completeness_without_coding(self):
+        """Test that non-technical students (B.Com, BA English, B.Sc Math) reach completeness >= 70% without coding projects."""
+        from diagnostic_counselor import DiagnosticProfile, ProjectRecord, evaluate_completeness, fallback_extract_profile
+
+        # B.Com student profile
+        p_bcom = DiagnosticProfile(
+            education_background="B.Com in Accounting & Taxation",
+            education_status="collected",
+            technical_skills=["Accounting", "Taxation", "Tally", "GST", "Auditing"],
+            skills_status="collected",
+            technical_interests=["Financial Modeling", "Corporate Taxation"],
+            interests_status="collected",
+            career_goals=["Chartered Accountant"],
+            goals_status="collected",
+            projects=[], # No coding projects
+            projects_status="not_collected"
+        )
+        completeness, is_ready, _ = evaluate_completeness(p_bcom, "college_ug_pg")
+        self.assertGreaterEqual(completeness, 70)
+        self.assertTrue(is_ready)
+
+        # BA English student with academic research essay
+        p_ba = DiagnosticProfile(
+            education_background="B.A in English Literature",
+            education_status="collected",
+            technical_skills=["Creative Writing", "Public Speaking", "Editing"],
+            skills_status="collected",
+            technical_interests=["Literature", "Pedagogy", "Teaching"],
+            interests_status="collected",
+            career_goals=["Content Strategist", "English Teacher"],
+            goals_status="collected",
+            projects=[],
+            projects_status="not_collected"
+        )
+        updated = fallback_extract_profile(p_ba, "I authored a research paper on modern literature and presented it at the university seminar.", "college_ug_pg")
+        self.assertEqual(updated.projects_status, "collected")
+        self.assertEqual(len(updated.projects), 1)
+        self.assertIn("Lead Researcher", updated.projects[0].role)
+
+    def test_06_fastapi_next_question_endpoint(self):
+        """Test that the new /api/assessment/next-question endpoint returns expected payload."""
+        from main import assessment_next_question, NextAdaptiveQuestionRequest
+
+        req = NextAdaptiveQuestionRequest(
+            profile={"degree": "MCA", "skills": ["Python", "PyTorch"]},
+            answers={},
+            asked_question_ids=[]
+        )
+        res = assessment_next_question(req)
+        self.assertIn("question", res)
+        self.assertIn("is_complete", res)
+        self.assertIn("question_number", res)
+        self.assertIn("current_scores", res)
+        self.assertIn("calibrated_stage", res)
+        self.assertFalse(res["is_complete"])
+        self.assertEqual(res["question_number"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()
