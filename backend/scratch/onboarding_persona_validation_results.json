@@ -1,0 +1,68 @@
+[
+  {
+    "persona": "1. B.Com \u2014 Accounting, Auditing & Taxation",
+    "top_matches": [
+      "Personal Financial Advisors",
+      "Financial Managers",
+      "Accountants and Auditors",
+      "Credit Counselors",
+      "Financial and Investment Analysts"
+    ],
+    "status": "PASSED"
+  },
+  {
+    "persona": "2. B.Com \u2014 Data Science & Python",
+    "top_matches": [
+      "Operations Research Analysts",
+      "Business Intelligence Analysts",
+      "Data Scientists",
+      "Financial Risk Specialists",
+      "Financial and Investment Analysts"
+    ],
+    "status": "PASSED"
+  },
+  {
+    "persona": "3. MCA \u2014 AI/ML & Software Development",
+    "top_matches": [
+      "Data Scientists",
+      "Web Developers",
+      "Blockchain Engineers",
+      "Computer Systems Engineers/Architects",
+      "Computer Systems Analysts"
+    ],
+    "status": "PASSED"
+  },
+  {
+    "persona": "4. BA English \u2014 Teaching, Writing & Communication",
+    "top_matches": [
+      "Technical Writers",
+      "Art Directors",
+      "Commercial and Industrial Designers",
+      "Middle School Teachers, Except Special and Career/Technical Education",
+      "Web and Digital Interface Designers"
+    ],
+    "status": "PASSED"
+  },
+  {
+    "persona": "5. B.Sc Mathematics \u2014 Research & Analytics",
+    "top_matches": [
+      "Social Science Research Assistants",
+      "Operations Research Analysts",
+      "Mathematicians",
+      "Financial Risk Specialists",
+      "Electronics Engineers, Except Computer"
+    ],
+    "status": "PASSED"
+  },
+  {
+    "persona": "6. Edge Case: Fresher Without Resume / Standalone Projects",
+    "top_matches": [
+      "Bookkeeping, Accounting, and Auditing Clerks",
+      "Credit Counselors",
+      "Accountants and Auditors",
+      "Credit Analysts",
+      "Credit Authorizers, Checkers, and Clerks"
+    ],
+    "status": "PASSED"
+  }
+]

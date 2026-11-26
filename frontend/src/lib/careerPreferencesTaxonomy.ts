@@ -85,12 +85,34 @@ export type DropoutPathwayId =
   | 'freelancing_gigs'
   | 'entrepreneurship';
 
+export type EarningUrgency =
+  | 'immediate_1_to_3_months'
+  | 'moderate_6_to_12_months'
+  | 'extended_1_to_2_years'
+  | 'flexible_not_urgent';
+
+export type RelocationFlexibility =
+  | 'home_city_only'
+  | 'open_to_relocation'
+  | 'remote_only'
+  | 'flexible';
+
+export interface PracticalConstraints {
+  earning_urgency?: EarningUrgency;
+  relocation_flexibility?: RelocationFlexibility;
+  financial_support_for_training?: 'self_funded' | 'need_stipend_or_job' | 'family_supported' | 'strict_budget';
+  weekly_learning_bandwidth_hours?: number | string;
+  primary_hurdle_or_concern?: string;
+}
+
 export interface CareerDiscoveryPreferences {
   career_motivations: CareerMotivationId[];
   career_priorities: CareerPriorityId[];
   preferred_work_environment: WorkEnvironmentId | null;
   daily_learning_commitment: LearningCommitmentId | null;
   career_timeline: CareerTimelineId | null;
+  practical_constraints?: PracticalConstraints;
+  priority_reasons?: Record<string, string>;
 }
 
 /**
@@ -101,6 +123,7 @@ export interface CareerPreferences {
   // Discovery & General Preferences
   motivation?: string[];
   career_priorities?: string[];
+  priority_reasons?: Record<string, string>;
   preferred_work_environment?: string[];
   preferred_work_style?: string[];
   preferred_domains?: string[];
@@ -108,6 +131,7 @@ export interface CareerPreferences {
     hours_per_week: number | null;
     daily_commitment?: string;
   };
+  practical_constraints?: PracticalConstraints;
 
   // Career Planning / Target Direction
   target_role?: string;

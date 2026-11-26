@@ -71,6 +71,13 @@ export type EducationStatus =
 
 export type StudyStageType = 'year' | 'semester' | 'medical_phase' | 'standard' | 'graduation_year';
 
+export interface CertificationOrCourse {
+  name: string;
+  issuer_or_platform: string;
+  year?: string;
+  skills_covered?: string[];
+}
+
 export interface EducationDetails {
   education_level: EducationLevel;
   education_status: EducationStatus;
@@ -93,6 +100,10 @@ export interface EducationDetails {
   school_board_other?: string;
   school_stream?: string;
   favorite_school_subjects?: string[];
+  academic_strengths?: string[];
+  subjects_enjoyed?: string[];
+  certifications_and_courses?: CertificationOrCourse[];
+  academic_achievements?: string;
 }
 
 export interface DegreeConfig {

@@ -180,11 +180,21 @@ export function detectUserPersona(record: Partial<OnboardingRecord>): UserPerson
   return 'college_undergrad';
 }
 
+export interface GuidanceExpectations {
+  primary_reason?: string;
+  career_dilemma?: string;
+  counselor_expectations?: string[];
+  is_undecided_goal?: boolean;
+}
+
 export interface OnboardingRecord {
   path: CareerPath | null;
   career_mode?: CareerMode | null;
   career_growth_subtype?: CareerGrowthSubtype | null;
   user_persona?: UserPersona | null;
+  guidance_expectations?: GuidanceExpectations;
+  guidance_reason?: string;
+  career_dilemma?: string;
   educationStage?: EducationStage;
   education_details?: import("./educationTaxonomy").EducationDetails;
   interest_details?: import("./interestsTaxonomy").InterestDetails;

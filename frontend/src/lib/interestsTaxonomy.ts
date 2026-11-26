@@ -10,6 +10,9 @@ export interface InterestDetails {
   specific_interests: string[]; // Sub-interest labels e.g. ['Web Development', 'AI & Machine Learning']
   additional_interests: string; // Freeform notes
   interest_exploration_status: 'focused' | 'exploring';
+  curiosity_topics?: string[]; // Topics researched or explored independently
+  problem_solving_preference?: string[]; // e.g. 'Data & Logic', 'People & Relationships', 'Visuals & Design', 'Physical Tools & Hardware', 'Strategy & Writing'
+  independent_activities?: string; // Natural language: what they do when not studying/working
 }
 
 export const INTEREST_CATEGORIES: InterestCategoryConfig[] = [

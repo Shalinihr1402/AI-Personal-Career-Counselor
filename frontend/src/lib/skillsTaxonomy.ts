@@ -6,6 +6,7 @@ export type SkillProficiency =
   | 'not_sure';
 
 export type SkillSource =
+  | 'academic_coursework'
   | 'academic_project'
   | 'personal_project'
   | 'internship'
@@ -17,14 +18,42 @@ export type SkillSource =
   | 'school_activity'
   | 'other';
 
+export type SkillProvenance = 'declared' | 'resume_extracted' | 'demonstrated' | 'verified';
+
+export type SkillClassification = 'technical' | 'domain_knowledge' | 'transferable_soft';
+
 export interface UserSkill {
+  id?: string;
   name: string;
   skill_name?: string;
   category: string;
+  skill_classification?: SkillClassification;
   proficiency?: SkillProficiency;
   source?: SkillSource;
+  provenance?: SkillProvenance;
+  application_context?: string;
   years_used?: number | string | null;
   is_custom?: boolean;
+}
+
+export type ProjectType =
+  | 'academic_coursework'
+  | 'capstone_final_year'
+  | 'personal_curiosity'
+  | 'hackathon_competition'
+  | 'internship_client'
+  | 'self_learning_tutorial';
+
+export interface StructuredProject {
+  id: string;
+  title: string;
+  project_type: ProjectType;
+  problem_solved: string;
+  individual_contribution: string;
+  technologies: string[];
+  outcome_or_learning: string;
+  repo_or_demo_url?: string;
+  provenance: 'demonstrated' | 'declared' | 'resume_extracted';
 }
 
 export type ExperienceType =
@@ -68,6 +97,9 @@ export interface SkillsAndExperienceDetails {
   custom_skills: string[];
   experience_types: ExperienceType[];
   experiences: ExperienceItem[];
+  structured_projects?: StructuredProject[];
+  has_no_standalone_projects?: boolean;
+  academic_coursework_highlights?: string;
   professional_duration: ProfessionalDuration;
   has_no_experience?: boolean;
   not_sure_skills?: boolean;

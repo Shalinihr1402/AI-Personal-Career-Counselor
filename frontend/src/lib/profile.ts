@@ -77,6 +77,9 @@ export function fromRow(r: ProfileRow): Profile {
     career_mode: careerMode,
     career_growth_subtype: (km as any)?.career_growth_subtype || undefined,
     user_persona: (km as any)?.user_persona || undefined,
+    guidance_expectations: (km as any)?.guidance_expectations || undefined,
+    guidance_reason: (km as any)?.guidance_reason || undefined,
+    career_dilemma: (km as any)?.career_dilemma || undefined,
     college: r.college ?? undefined,
     course: r.course ?? undefined,
     year: r.year ?? undefined,
@@ -215,6 +218,9 @@ export function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> 
     'career_mode' in p ||
     'career_growth_subtype' in p ||
     'user_persona' in p ||
+    'guidance_expectations' in p ||
+    'guidance_reason' in p ||
+    'career_dilemma' in p ||
     'education_details' in p ||
     'interest_details' in p ||
     'skills_and_experience' in p ||
@@ -230,6 +236,9 @@ export function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> 
     const careerMode = p.career_mode ?? existingKm.career_mode;
     const careerGrowthSubtype = p.career_growth_subtype ?? existingKm.career_growth_subtype;
     const userPersona = p.user_persona ?? existingKm.user_persona;
+    const guidanceExpectations = p.guidance_expectations ?? existingKm.guidance_expectations;
+    const guidanceReason = p.guidance_reason ?? existingKm.guidance_reason;
+    const careerDilemma = p.career_dilemma ?? existingKm.career_dilemma;
     const educationDetails = p.education_details ?? existingKm.education_details;
     const interestDetails = p.interest_details ?? existingKm.interest_details;
     const skillsAndExperience = p.skills_and_experience ?? existingKm.skills_and_experience;
@@ -251,6 +260,9 @@ export function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> 
       ...(careerMode ? { career_mode: careerMode } : {}),
       ...(careerGrowthSubtype ? { career_growth_subtype: careerGrowthSubtype } : {}),
       ...(userPersona ? { user_persona: userPersona } : {}),
+      ...(guidanceExpectations ? { guidance_expectations: guidanceExpectations } : {}),
+      ...(guidanceReason ? { guidance_reason: guidanceReason } : {}),
+      ...(careerDilemma ? { career_dilemma: careerDilemma } : {}),
       ...(educationDetails ? { education_details: educationDetails } : {}),
       ...(interestDetails ? { interest_details: interestDetails } : {}),
       ...(skillsAndExperience ? { skills_and_experience: skillsAndExperience } : {}),

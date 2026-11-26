@@ -76,6 +76,8 @@ export interface SkillComparisonItem {
   name: string;
   category: 'already_provided' | 'additional_found' | 'onboarding_only';
   selected: boolean;
+  provenance: 'declared' | 'resume_extracted' | 'demonstrated' | 'verified';
+  skillClassification?: 'technical' | 'domain_knowledge' | 'transferable_soft';
 }
 
 export interface EducationConflict {
@@ -84,6 +86,22 @@ export interface EducationConflict {
   onboardingValue: string;
   resumeValue: string;
   resolvedSource: 'onboarding' | 'resume';
+}
+
+export interface SuggestedProjectItem {
+  id: string;
+  type: ExperienceType;
+  title: string;
+  organization: string;
+  role: string;
+  duration: string;
+  technologies: string[];
+  description: string;
+  problem_solved?: string;
+  individual_contribution?: string;
+  outcome_or_learning?: string;
+  provenance: 'resume_extracted';
+  selected: boolean;
 }
 
 export interface ResumeComparisonReport {
@@ -103,17 +121,7 @@ export interface ResumeComparisonReport {
     description: string;
     selected: boolean;
   }>;
-  suggestedProjects: Array<{
-    id: string;
-    type: ExperienceType;
-    title: string;
-    organization: string;
-    role: string;
-    duration: string;
-    technologies: string[];
-    description: string;
-    selected: boolean;
-  }>;
+  suggestedProjects: SuggestedProjectItem[];
 }
 
 /**
@@ -150,6 +158,18 @@ export function compareResumeWithOnboarding(
     }
   });
 
+  const technicalSet = new Set((resume.skills_categorized?.technical_skills || []).map(normalizeStr));
+  const toolsSet = new Set((resume.skills_categorized?.tools_and_frameworks || []).map(normalizeStr));
+  const domainSet = new Set((resume.skills_categorized?.domain_skills || []).map(normalizeStr));
+  const softSet = new Set((resume.skills_categorized?.soft_skills || []).map(normalizeStr));
+
+  const classify = (norm: string): 'technical' | 'domain_knowledge' | 'transferable_soft' => {
+    if (technicalSet.has(norm) || toolsSet.has(norm)) return 'technical';
+    if (domainSet.has(norm)) return 'domain_knowledge';
+    if (softSet.has(norm)) return 'transferable_soft';
+    return 'technical';
+  };
+
   const skillsComparison: SkillComparisonItem[] = [];
 
   // Match: in both onboarding and resume
@@ -161,6 +181,8 @@ export function compareResumeWithOnboarding(
         name: onboardingName,
         category: 'already_provided',
         selected: true,
+        provenance: 'declared',
+        skillClassification: classify(norm),
       });
     }
   });
@@ -171,7 +193,9 @@ export function compareResumeWithOnboarding(
       skillsComparison.push({
         name: resumeName,
         category: 'additional_found',
-        selected: true, // Selected by default for easy one-click enrichment
+        selected: true, // Selected by default for easy review
+        provenance: 'resume_extracted',
+        skillClassification: classify(norm),
       });
     }
   });
@@ -183,6 +207,8 @@ export function compareResumeWithOnboarding(
         name: onboardingName,
         category: 'onboarding_only',
         selected: true,
+        provenance: 'declared',
+        skillClassification: classify(norm),
       });
     }
   });
@@ -269,6 +295,10 @@ export function compareResumeWithOnboarding(
         duration: '',
         technologies: proj.technologies || [],
         description: (proj.description || '').trim(),
+        problem_solved: (proj.description || '').trim(),
+        individual_contribution: (proj.role || 'Contributor').trim(),
+        outcome_or_learning: (proj.description || '').trim(),
+        provenance: 'resume_extracted',
         selected: true,
       });
     }
