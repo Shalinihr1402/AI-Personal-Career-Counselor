@@ -1,0 +1,1734 @@
+{
+  "profiles": {
+    "Profile 1 (B.Com Accounting, Auditing & Tax)": {
+      "calibrated_stage": "college_ug_pg",
+      "total_questions_answered": 8,
+      "stopping_reason": "Trait certainty reached in 8 questions. Decisive separation established for Conventional (C) and Investigative (I) over other dimensions.",
+      "final_holland_code": "CIS",
+      "final_riasec_scores": {
+        "R": 0,
+        "I": 50,
+        "A": 0,
+        "S": 19,
+        "E": 19,
+        "C": 75
+      },
+      "top_career_fields": [
+        "Business, Management & Finance",
+        "Data & AI",
+        "Physical & Life Sciences",
+        "Operations & Administration"
+      ],
+      "completeness_score": 100,
+      "is_ready_for_recommendations": true,
+      "completeness_breakdown": {
+        "education": "collected",
+        "projects": "collected",
+        "skills": "collected",
+        "interests": "collected",
+        "challenges": "not_collected",
+        "preferences": "not_collected",
+        "goals": "collected"
+      },
+      "trace": [
+        {
+          "step": 1,
+          "question_id": "q_comp_ca_audit_sampling",
+          "category": "competency_demonstration",
+          "prompt": "While reviewing financial statements or reconciling accounts for a business, you notice that recorded cash balances do not match bank statements and inventory counts show unexplained shortages. What is your priority?",
+          "target_dimensions": [
+            "C",
+            "E"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Trace transactions systematically through ledgers, verify invoices and bank reconciliation statements, and document variances in working papers.",
+          "awarded_weights": {
+            "C": 3,
+            "I": 1
+          },
+          "awarded_fields": [
+            "Business, Management & Finance"
+          ],
+          "selection_rationale": "Domain competency calibration",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 4,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 12
+          },
+          "leading_dims_after_step": [
+            "C",
+            "I",
+            "R"
+          ]
+        },
+        {
+          "step": 2,
+          "question_id": "q_comp_tax_budgeting",
+          "category": "competency_demonstration",
+          "prompt": "A growing startup or local business asks for guidance on planning its annual budget and organizing its tax filings. Which role would you be most comfortable taking on?",
+          "target_dimensions": [
+            "C",
+            "E",
+            "I"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Calculating GST liabilities, verifying deductible business expenses, and preparing clear, compliant tax filing schedules.",
+          "awarded_weights": {
+            "C": 3,
+            "I": 1
+          },
+          "awarded_fields": [
+            "Business, Management & Finance"
+          ],
+          "selection_rationale": "Domain competency calibration",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 8,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 25
+          },
+          "leading_dims_after_step": [
+            "C",
+            "I",
+            "R"
+          ]
+        },
+        {
+          "step": 3,
+          "question_id": "legacy_q8",
+          "category": "interest_exploration",
+          "prompt": "When picking up an unfamiliar skill or subject, what approach helps you master it most effectively?",
+          "target_dimensions": [
+            "R",
+            "I",
+            "S",
+            "A"
+          ],
+          "chosen_option_id": "b",
+          "chosen_option_text": "Reading foundational textbooks, studying experimental evidence, and mapping the core logic.",
+          "awarded_weights": {
+            "I": 3
+          },
+          "awarded_fields": [
+            "Physical & Life Sciences",
+            "Data & AI"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 21,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 25
+          },
+          "leading_dims_after_step": [
+            "C",
+            "I",
+            "R"
+          ]
+        },
+        {
+          "step": 4,
+          "question_id": "legacy_q4",
+          "category": "interest_exploration",
+          "prompt": "Imagine your ideal day-to-day work environment. Where do you feel most energized and in your element?",
+          "target_dimensions": [
+            "R",
+            "I",
+            "S",
+            "C"
+          ],
+          "chosen_option_id": "c",
+          "chosen_option_text": "In a lively, people-centered setting\u2014like a clinic, school, or community center assisting individuals.",
+          "awarded_weights": {
+            "S": 3
+          },
+          "awarded_fields": [
+            "Healthcare & Medicine",
+            "Education & Training"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 21,
+            "A": 0,
+            "S": 12,
+            "E": 0,
+            "C": 25
+          },
+          "leading_dims_after_step": [
+            "C",
+            "I",
+            "S"
+          ]
+        },
+        {
+          "step": 5,
+          "question_id": "legacy_q6",
+          "category": "interest_exploration",
+          "prompt": "Your neighborhood is forming teams to improve community life. Which project group would you join?",
+          "target_dimensions": [
+            "E",
+            "A",
+            "C",
+            "I"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "The civic advocacy and safety committee ensuring consumer protection, fair rules, and citizen rights.",
+          "awarded_weights": {
+            "E": 3
+          },
+          "awarded_fields": [
+            "Law & Public Policy",
+            "Protective & Security Services"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 21,
+            "A": 0,
+            "S": 12,
+            "E": 12,
+            "C": 25
+          },
+          "leading_dims_after_step": [
+            "C",
+            "I",
+            "S"
+          ]
+        },
+        {
+          "step": 6,
+          "question_id": "legacy_q1",
+          "category": "interest_exploration",
+          "prompt": "Your college or local community is hosting a large weekend festival or exhibition. Which responsibility would you naturally choose?",
+          "target_dimensions": [
+            "A",
+            "R",
+            "C",
+            "S"
+          ],
+          "chosen_option_id": "c",
+          "chosen_option_text": "Managing schedule timetables, budget logs, and coordinating vendor deliveries.",
+          "awarded_weights": {
+            "C": 3
+          },
+          "awarded_fields": [
+            "Operations & Administration",
+            "Business, Management & Finance"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 42,
+            "A": 0,
+            "S": 25,
+            "E": 25,
+            "C": 75
+          },
+          "leading_dims_after_step": [
+            "C",
+            "I",
+            "S"
+          ]
+        },
+        {
+          "step": 7,
+          "question_id": "legacy_q7",
+          "category": "interest_exploration",
+          "prompt": "You are given a disorganized collection of survey responses, records, or inventory. How do you approach it?",
+          "target_dimensions": [
+            "C",
+            "I",
+            "A",
+            "E"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Build an organized spreadsheet, database, or indexing system where every item is verified.",
+          "awarded_weights": {
+            "C": 3
+          },
+          "awarded_fields": [
+            "Operations & Administration",
+            "Data & AI"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 36,
+            "A": 0,
+            "S": 21,
+            "E": 21,
+            "C": 86
+          },
+          "leading_dims_after_step": [
+            "C",
+            "I",
+            "S"
+          ]
+        },
+        {
+          "step": 8,
+          "question_id": "legacy_q2",
+          "category": "interest_exploration",
+          "prompt": "A tool, machine, or operational process breaks down right before an important deadline. What is your first instinct?",
+          "target_dimensions": [
+            "R",
+            "I",
+            "S",
+            "E"
+          ],
+          "chosen_option_id": "b",
+          "chosen_option_text": "Analyze error patterns, logs, or diagnostic data to isolate the root cause scientifically.",
+          "awarded_weights": {
+            "I": 3
+          },
+          "awarded_fields": [
+            "Data & AI",
+            "Physical & Life Sciences"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 50,
+            "A": 0,
+            "S": 19,
+            "E": 19,
+            "C": 75
+          },
+          "leading_dims_after_step": [
+            "C",
+            "I",
+            "S"
+          ]
+        },
+        {
+          "step": 9,
+          "action": "STOP",
+          "reason": "Trait certainty reached in 8 questions. Decisive separation established for Conventional (C) and Investigative (I) over other dimensions.",
+          "running_scores": {
+            "R": 0,
+            "I": 50,
+            "A": 0,
+            "S": 19,
+            "E": 19,
+            "C": 75
+          },
+          "leading_dimensions": [
+            "C",
+            "I",
+            "S"
+          ]
+        }
+      ]
+    },
+    "Profile 2 (B.Com Python & Data Science Exploration)": {
+      "calibrated_stage": "college_ug_pg",
+      "total_questions_answered": 8,
+      "stopping_reason": "Trait certainty reached in 8 questions. Decisive separation established for Investigative (I) and Conventional (C) over other dimensions.",
+      "final_holland_code": "ICE",
+      "final_riasec_scores": {
+        "R": 6,
+        "I": 100,
+        "A": 0,
+        "S": 0,
+        "E": 31,
+        "C": 44
+      },
+      "top_career_fields": [
+        "Data & AI",
+        "Physical & Life Sciences",
+        "Business, Management & Finance",
+        "Technology & Computer Science"
+      ],
+      "completeness_score": 100,
+      "is_ready_for_recommendations": true,
+      "completeness_breakdown": {
+        "education": "collected",
+        "projects": "collected",
+        "skills": "collected",
+        "interests": "collected",
+        "challenges": "not_collected",
+        "preferences": "not_collected",
+        "goals": "collected"
+      },
+      "trace": [
+        {
+          "step": 1,
+          "question_id": "q_comp_python_data",
+          "category": "competency_demonstration",
+          "prompt": "You are given a raw dataset containing thousands of records with missing values and inconsistent formatting. What is your preferred way to explore it?",
+          "target_dimensions": [
+            "I",
+            "C",
+            "A"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Write a Python script using Pandas or SQL to clean missing entries, calculate summary statistics, and visualize distributions.",
+          "awarded_weights": {
+            "I": 3,
+            "C": 1
+          },
+          "awarded_fields": [
+            "Technology & Computer Science",
+            "Data & AI"
+          ],
+          "selection_rationale": "Domain competency calibration",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 12,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 4
+          },
+          "leading_dims_after_step": [
+            "I",
+            "C",
+            "E"
+          ]
+        },
+        {
+          "step": 2,
+          "question_id": "q_comp_ca_audit_sampling",
+          "category": "competency_demonstration",
+          "prompt": "While reviewing financial statements or reconciling accounts for a business, you notice that recorded cash balances do not match bank statements and inventory counts show unexplained shortages. What is your priority?",
+          "target_dimensions": [
+            "C",
+            "E"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Trace transactions systematically through ledgers, verify invoices and bank reconciliation statements, and document variances in working papers.",
+          "awarded_weights": {
+            "C": 3,
+            "I": 1
+          },
+          "awarded_fields": [
+            "Business, Management & Finance"
+          ],
+          "selection_rationale": "Domain competency calibration",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 17,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 17
+          },
+          "leading_dims_after_step": [
+            "I",
+            "C",
+            "E"
+          ]
+        },
+        {
+          "step": 3,
+          "question_id": "q_comp_math_modeling",
+          "category": "competency_demonstration",
+          "prompt": "When working on a complex quantitative problem (such as optimizing transport routes, forecasting trends, or physical simulations), what part of the work excites you most?",
+          "target_dimensions": [
+            "I",
+            "R",
+            "C"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Formulating the real-world problem into precise mathematical equations, objective functions, and constraints.",
+          "awarded_weights": {
+            "I": 3,
+            "R": 1
+          },
+          "awarded_fields": [
+            "Physical & Life Sciences",
+            "Engineering & Architecture"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 4,
+            "I": 29,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 17
+          },
+          "leading_dims_after_step": [
+            "I",
+            "C",
+            "R"
+          ]
+        },
+        {
+          "step": 4,
+          "question_id": "q_comp_tax_budgeting",
+          "category": "competency_demonstration",
+          "prompt": "A growing startup or local business asks for guidance on planning its annual budget and organizing its tax filings. Which role would you be most comfortable taking on?",
+          "target_dimensions": [
+            "C",
+            "E",
+            "I"
+          ],
+          "chosen_option_id": "b",
+          "chosen_option_text": "Building a 12-month financial projection model with revenue scenarios, break-even points, and expense caps.",
+          "awarded_weights": {
+            "C": 2,
+            "E": 2
+          },
+          "awarded_fields": [
+            "Business, Management & Finance"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 4,
+            "I": 29,
+            "A": 0,
+            "S": 0,
+            "E": 8,
+            "C": 25
+          },
+          "leading_dims_after_step": [
+            "I",
+            "C",
+            "E"
+          ]
+        },
+        {
+          "step": 5,
+          "question_id": "legacy_q8",
+          "category": "interest_exploration",
+          "prompt": "When picking up an unfamiliar skill or subject, what approach helps you master it most effectively?",
+          "target_dimensions": [
+            "R",
+            "I",
+            "S",
+            "A"
+          ],
+          "chosen_option_id": "b",
+          "chosen_option_text": "Reading foundational textbooks, studying experimental evidence, and mapping the core logic.",
+          "awarded_weights": {
+            "I": 3
+          },
+          "awarded_fields": [
+            "Physical & Life Sciences",
+            "Data & AI"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 4,
+            "I": 42,
+            "A": 0,
+            "S": 0,
+            "E": 8,
+            "C": 25
+          },
+          "leading_dims_after_step": [
+            "I",
+            "C",
+            "E"
+          ]
+        },
+        {
+          "step": 6,
+          "question_id": "q_comp_stat_hypothesis",
+          "category": "competency_demonstration",
+          "prompt": "In a research experiment or survey, the preliminary data shows an unexpected correlation that seems to contradict conventional wisdom. What is your first reaction?",
+          "target_dimensions": [
+            "I",
+            "C",
+            "R",
+            "A"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Apply rigorous statistical significance tests, calculate confidence intervals, and check for sample size biases.",
+          "awarded_weights": {
+            "I": 3,
+            "C": 1
+          },
+          "awarded_fields": [
+            "Physical & Life Sciences",
+            "Data & AI"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 8,
+            "I": 100,
+            "A": 0,
+            "S": 0,
+            "E": 17,
+            "C": 58
+          },
+          "leading_dims_after_step": [
+            "I",
+            "C",
+            "E"
+          ]
+        },
+        {
+          "step": 7,
+          "question_id": "legacy_q2",
+          "category": "interest_exploration",
+          "prompt": "A tool, machine, or operational process breaks down right before an important deadline. What is your first instinct?",
+          "target_dimensions": [
+            "R",
+            "I",
+            "S",
+            "E"
+          ],
+          "chosen_option_id": "b",
+          "chosen_option_text": "Analyze error patterns, logs, or diagnostic data to isolate the root cause scientifically.",
+          "awarded_weights": {
+            "I": 3
+          },
+          "awarded_fields": [
+            "Data & AI",
+            "Physical & Life Sciences"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 7,
+            "I": 100,
+            "A": 0,
+            "S": 0,
+            "E": 14,
+            "C": 50
+          },
+          "leading_dims_after_step": [
+            "I",
+            "C",
+            "E"
+          ]
+        },
+        {
+          "step": 8,
+          "question_id": "legacy_q6",
+          "category": "interest_exploration",
+          "prompt": "Your neighborhood is forming teams to improve community life. Which project group would you join?",
+          "target_dimensions": [
+            "E",
+            "A",
+            "C",
+            "I"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "The civic advocacy and safety committee ensuring consumer protection, fair rules, and citizen rights.",
+          "awarded_weights": {
+            "E": 3
+          },
+          "awarded_fields": [
+            "Law & Public Policy",
+            "Protective & Security Services"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 6,
+            "I": 100,
+            "A": 0,
+            "S": 0,
+            "E": 31,
+            "C": 44
+          },
+          "leading_dims_after_step": [
+            "I",
+            "C",
+            "E"
+          ]
+        },
+        {
+          "step": 9,
+          "action": "STOP",
+          "reason": "Trait certainty reached in 8 questions. Decisive separation established for Investigative (I) and Conventional (C) over other dimensions.",
+          "running_scores": {
+            "R": 6,
+            "I": 100,
+            "A": 0,
+            "S": 0,
+            "E": 31,
+            "C": 44
+          },
+          "leading_dimensions": [
+            "I",
+            "C",
+            "E"
+          ]
+        }
+      ]
+    },
+    "Profile 3 (MCA AI/ML & Software Development)": {
+      "calibrated_stage": "college_ug_pg",
+      "total_questions_answered": 8,
+      "stopping_reason": "Trait certainty reached in 8 questions. Decisive separation established for Investigative (I) and Realistic (R) over other dimensions.",
+      "final_holland_code": "IRA",
+      "final_riasec_scores": {
+        "R": 44,
+        "I": 69,
+        "A": 19,
+        "S": 19,
+        "E": 0,
+        "C": 19
+      },
+      "top_career_fields": [
+        "Technology & Computer Science",
+        "Data & AI",
+        "Installation & Maintenance",
+        "Engineering & Architecture"
+      ],
+      "completeness_score": 100,
+      "is_ready_for_recommendations": true,
+      "completeness_breakdown": {
+        "education": "collected",
+        "projects": "collected",
+        "skills": "collected",
+        "interests": "collected",
+        "challenges": "not_collected",
+        "preferences": "not_collected",
+        "goals": "collected"
+      },
+      "trace": [
+        {
+          "step": 1,
+          "question_id": "q_comp_aiml_pipeline",
+          "category": "competency_demonstration",
+          "prompt": "You build a machine learning model using past data, but its predictions become less accurate when new, unseen data arrives. What would you try first to understand why?",
+          "target_dimensions": [
+            "I",
+            "R",
+            "C"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Check whether the model memorized the training examples (overfitting) and test simpler patterns or regularization.",
+          "awarded_weights": {
+            "I": 3,
+            "R": 1
+          },
+          "awarded_fields": [
+            "Data & AI",
+            "Technology & Computer Science"
+          ],
+          "selection_rationale": "Domain competency calibration",
+          "running_scores_after_step": {
+            "R": 4,
+            "I": 12,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 0
+          },
+          "leading_dims_after_step": [
+            "I",
+            "R",
+            "A"
+          ]
+        },
+        {
+          "step": 2,
+          "question_id": "q_comp_java_concurrency",
+          "category": "competency_demonstration",
+          "prompt": "When developing a web application or backend service that slows down when many users access it at the same time, what is your initial technical approach?",
+          "target_dimensions": [
+            "I",
+            "C",
+            "R"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Analyze database queries, add indexes, and cache frequently accessed data to eliminate bottlenecks.",
+          "awarded_weights": {
+            "I": 2,
+            "C": 2
+          },
+          "awarded_fields": [
+            "Technology & Computer Science"
+          ],
+          "selection_rationale": "Domain competency calibration",
+          "running_scores_after_step": {
+            "R": 4,
+            "I": 21,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 8
+          },
+          "leading_dims_after_step": [
+            "I",
+            "C",
+            "R"
+          ]
+        },
+        {
+          "step": 3,
+          "question_id": "q_comp_python_data",
+          "category": "competency_demonstration",
+          "prompt": "You are given a raw dataset containing thousands of records with missing values and inconsistent formatting. What is your preferred way to explore it?",
+          "target_dimensions": [
+            "I",
+            "C",
+            "A"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Write a Python script using Pandas or SQL to clean missing entries, calculate summary statistics, and visualize distributions.",
+          "awarded_weights": {
+            "I": 3,
+            "C": 1
+          },
+          "awarded_fields": [
+            "Technology & Computer Science",
+            "Data & AI"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 4,
+            "I": 33,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 12
+          },
+          "leading_dims_after_step": [
+            "I",
+            "C",
+            "R"
+          ]
+        },
+        {
+          "step": 4,
+          "question_id": "legacy_q2",
+          "category": "interest_exploration",
+          "prompt": "A tool, machine, or operational process breaks down right before an important deadline. What is your first instinct?",
+          "target_dimensions": [
+            "R",
+            "I",
+            "S",
+            "E"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Disassemble the physical components or inspect the mechanism hands-on to find what jammed.",
+          "awarded_weights": {
+            "R": 3
+          },
+          "awarded_fields": [
+            "Engineering & Architecture",
+            "Installation & Maintenance"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 17,
+            "I": 33,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 12
+          },
+          "leading_dims_after_step": [
+            "I",
+            "R",
+            "C"
+          ]
+        },
+        {
+          "step": 5,
+          "question_id": "legacy_q3",
+          "category": "interest_exploration",
+          "prompt": "You are given two free weeks and full support to work on any project you choose. What would you create or explore?",
+          "target_dimensions": [
+            "A",
+            "I",
+            "R",
+            "E"
+          ],
+          "chosen_option_id": "b",
+          "chosen_option_text": "Conduct an in-depth investigation or experiment on renewable energy, ecosystems, or biology.",
+          "awarded_weights": {
+            "I": 3
+          },
+          "awarded_fields": [
+            "Physical & Life Sciences",
+            "Agriculture & Natural Resources"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 17,
+            "I": 46,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 12
+          },
+          "leading_dims_after_step": [
+            "I",
+            "R",
+            "C"
+          ]
+        },
+        {
+          "step": 6,
+          "question_id": "legacy_q1",
+          "category": "interest_exploration",
+          "prompt": "Your college or local community is hosting a large weekend festival or exhibition. Which responsibility would you naturally choose?",
+          "target_dimensions": [
+            "A",
+            "R",
+            "C",
+            "S"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Designing visual posters, stage aesthetics, and creative media displays.",
+          "awarded_weights": {
+            "A": 3
+          },
+          "awarded_fields": [
+            "Arts, Design & Media"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 33,
+            "I": 92,
+            "A": 25,
+            "S": 0,
+            "E": 0,
+            "C": 25
+          },
+          "leading_dims_after_step": [
+            "I",
+            "R",
+            "A"
+          ]
+        },
+        {
+          "step": 7,
+          "question_id": "legacy_q5",
+          "category": "interest_exploration",
+          "prompt": "At the completion of a major milestone, which type of achievement gives you the deepest satisfaction?",
+          "target_dimensions": [
+            "S",
+            "R",
+            "I",
+            "E"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Knowing you taught, counseled, or cared for someone and helped them grow.",
+          "awarded_weights": {
+            "S": 3
+          },
+          "awarded_fields": [
+            "Healthcare & Medicine",
+            "Education & Training"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 29,
+            "I": 79,
+            "A": 21,
+            "S": 21,
+            "E": 0,
+            "C": 21
+          },
+          "leading_dims_after_step": [
+            "I",
+            "R",
+            "A"
+          ]
+        },
+        {
+          "step": 8,
+          "question_id": "legacy_q8",
+          "category": "interest_exploration",
+          "prompt": "When picking up an unfamiliar skill or subject, what approach helps you master it most effectively?",
+          "target_dimensions": [
+            "R",
+            "I",
+            "S",
+            "A"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Hands-on trial\u2014working directly with tools, equipment, or physical parts to see how they behave.",
+          "awarded_weights": {
+            "R": 3
+          },
+          "awarded_fields": [
+            "Construction & Trades",
+            "Installation & Maintenance"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 44,
+            "I": 69,
+            "A": 19,
+            "S": 19,
+            "E": 0,
+            "C": 19
+          },
+          "leading_dims_after_step": [
+            "I",
+            "R",
+            "A"
+          ]
+        },
+        {
+          "step": 9,
+          "action": "STOP",
+          "reason": "Trait certainty reached in 8 questions. Decisive separation established for Investigative (I) and Realistic (R) over other dimensions.",
+          "running_scores": {
+            "R": 44,
+            "I": 69,
+            "A": 19,
+            "S": 19,
+            "E": 0,
+            "C": 19
+          },
+          "leading_dimensions": [
+            "I",
+            "R",
+            "A"
+          ]
+        }
+      ]
+    },
+    "Profile 4 (BA English Teaching, Writing & Communication)": {
+      "calibrated_stage": "college_ug_pg",
+      "total_questions_answered": 8,
+      "stopping_reason": "Trait certainty reached in 8 questions. Decisive separation established for Artistic (A) and Social (S) over other dimensions.",
+      "final_holland_code": "ASE",
+      "final_riasec_scores": {
+        "R": 0,
+        "I": 0,
+        "A": 81,
+        "S": 44,
+        "E": 38,
+        "C": 0
+      },
+      "top_career_fields": [
+        "Arts, Design & Media",
+        "Education & Training",
+        "Community & Social Services",
+        "Protective & Security Services"
+      ],
+      "completeness_score": 100,
+      "is_ready_for_recommendations": true,
+      "completeness_breakdown": {
+        "education": "collected",
+        "projects": "collected",
+        "skills": "collected",
+        "interests": "collected",
+        "challenges": "not_collected",
+        "preferences": "not_collected",
+        "goals": "collected"
+      },
+      "trace": [
+        {
+          "step": 1,
+          "question_id": "q_comp_humanities_communication",
+          "category": "competency_demonstration",
+          "prompt": "When writing, editing, or presenting a comprehensive article or project report for an educated public audience, where do you invest most effort?",
+          "target_dimensions": [
+            "A",
+            "C",
+            "S",
+            "E"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Refining narrative structure, tone, and expressive vocabulary to make the piece engaging, nuanced, and memorable.",
+          "awarded_weights": {
+            "A": 3,
+            "S": 1
+          },
+          "awarded_fields": [
+            "Arts, Design & Media"
+          ],
+          "selection_rationale": "Domain competency calibration",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 0,
+            "A": 12,
+            "S": 4,
+            "E": 0,
+            "C": 0
+          },
+          "leading_dims_after_step": [
+            "A",
+            "S",
+            "C"
+          ]
+        },
+        {
+          "step": 2,
+          "question_id": "q_comp_pedagogical_empathy",
+          "category": "competency_demonstration",
+          "prompt": "You are leading a study session or workshop, and a student is feeling discouraged because they cannot understand a core concept. How do you respond?",
+          "target_dimensions": [
+            "S",
+            "I",
+            "E",
+            "R"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Listen to where they feel stuck, validate their effort, and explain the idea using a completely different real-world analogy.",
+          "awarded_weights": {
+            "S": 3,
+            "A": 1
+          },
+          "awarded_fields": [
+            "Education & Training",
+            "Community & Social Services"
+          ],
+          "selection_rationale": "Domain competency calibration",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 0,
+            "A": 17,
+            "S": 17,
+            "E": 0,
+            "C": 0
+          },
+          "leading_dims_after_step": [
+            "S",
+            "A",
+            "C"
+          ]
+        },
+        {
+          "step": 3,
+          "question_id": "legacy_q1",
+          "category": "interest_exploration",
+          "prompt": "Your college or local community is hosting a large weekend festival or exhibition. Which responsibility would you naturally choose?",
+          "target_dimensions": [
+            "A",
+            "R",
+            "C",
+            "S"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Designing visual posters, stage aesthetics, and creative media displays.",
+          "awarded_weights": {
+            "A": 3
+          },
+          "awarded_fields": [
+            "Arts, Design & Media"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 0,
+            "A": 29,
+            "S": 17,
+            "E": 0,
+            "C": 0
+          },
+          "leading_dims_after_step": [
+            "A",
+            "S",
+            "C"
+          ]
+        },
+        {
+          "step": 4,
+          "question_id": "legacy_q8",
+          "category": "interest_exploration",
+          "prompt": "When picking up an unfamiliar skill or subject, what approach helps you master it most effectively?",
+          "target_dimensions": [
+            "R",
+            "I",
+            "S",
+            "A"
+          ],
+          "chosen_option_id": "c",
+          "chosen_option_text": "Discussing concepts with peers, asking questions, and explaining ideas to someone else.",
+          "awarded_weights": {
+            "S": 3
+          },
+          "awarded_fields": [
+            "Education & Training",
+            "Community & Social Services"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 0,
+            "A": 29,
+            "S": 29,
+            "E": 0,
+            "C": 0
+          },
+          "leading_dims_after_step": [
+            "S",
+            "A",
+            "C"
+          ]
+        },
+        {
+          "step": 5,
+          "question_id": "legacy_q6",
+          "category": "interest_exploration",
+          "prompt": "Your neighborhood is forming teams to improve community life. Which project group would you join?",
+          "target_dimensions": [
+            "E",
+            "A",
+            "C",
+            "I"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "The civic advocacy and safety committee ensuring consumer protection, fair rules, and citizen rights.",
+          "awarded_weights": {
+            "E": 3
+          },
+          "awarded_fields": [
+            "Law & Public Policy",
+            "Protective & Security Services"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 0,
+            "A": 29,
+            "S": 29,
+            "E": 12,
+            "C": 0
+          },
+          "leading_dims_after_step": [
+            "S",
+            "A",
+            "E"
+          ]
+        },
+        {
+          "step": 6,
+          "question_id": "legacy_q9",
+          "category": "interest_exploration",
+          "prompt": "During a busy event or operational launch, an unexpected rush of attendees arrives. What role do you naturally assume?",
+          "target_dimensions": [
+            "E",
+            "S",
+            "C",
+            "A"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Take charge to direct crowd flow, establish priorities, and make rapid executive decisions.",
+          "awarded_weights": {
+            "E": 3
+          },
+          "awarded_fields": [
+            "Protective & Security Services",
+            "Business, Management & Finance"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 0,
+            "A": 58,
+            "S": 58,
+            "E": 50,
+            "C": 0
+          },
+          "leading_dims_after_step": [
+            "S",
+            "A",
+            "E"
+          ]
+        },
+        {
+          "step": 7,
+          "question_id": "legacy_q3",
+          "category": "interest_exploration",
+          "prompt": "You are given two free weeks and full support to work on any project you choose. What would you create or explore?",
+          "target_dimensions": [
+            "A",
+            "I",
+            "R",
+            "E"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Produce an original creative work\u2014such as a digital artwork series, video short, or music track.",
+          "awarded_weights": {
+            "A": 3
+          },
+          "awarded_fields": [
+            "Arts, Design & Media"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 0,
+            "A": 71,
+            "S": 50,
+            "E": 43,
+            "C": 0
+          },
+          "leading_dims_after_step": [
+            "A",
+            "S",
+            "E"
+          ]
+        },
+        {
+          "step": 8,
+          "question_id": "legacy_q11",
+          "category": "interest_exploration",
+          "prompt": "When collaborating with a group on a multi-week project, which contribution feels most natural to you?",
+          "target_dimensions": [
+            "A",
+            "C",
+            "S",
+            "E"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Generating original concepts, designing visual layouts, and keeping the presentation compelling.",
+          "awarded_weights": {
+            "A": 3
+          },
+          "awarded_fields": [
+            "Arts, Design & Media"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 0,
+            "I": 0,
+            "A": 81,
+            "S": 44,
+            "E": 38,
+            "C": 0
+          },
+          "leading_dims_after_step": [
+            "A",
+            "S",
+            "E"
+          ]
+        },
+        {
+          "step": 9,
+          "action": "STOP",
+          "reason": "Trait certainty reached in 8 questions. Decisive separation established for Artistic (A) and Social (S) over other dimensions.",
+          "running_scores": {
+            "R": 0,
+            "I": 0,
+            "A": 81,
+            "S": 44,
+            "E": 38,
+            "C": 0
+          },
+          "leading_dimensions": [
+            "A",
+            "S",
+            "E"
+          ]
+        }
+      ]
+    },
+    "Profile 5 (B.Sc Mathematics Research & Quantitative Analytics)": {
+      "calibrated_stage": "college_ug_pg",
+      "total_questions_answered": 8,
+      "stopping_reason": "Trait certainty reached in 8 questions. Decisive separation established for Investigative (I) and Social (S) over other dimensions.",
+      "final_holland_code": "ISR",
+      "final_riasec_scores": {
+        "R": 31,
+        "I": 94,
+        "A": 0,
+        "S": 38,
+        "E": 0,
+        "C": 6
+      },
+      "top_career_fields": [
+        "Physical & Life Sciences",
+        "Data & AI",
+        "Engineering & Architecture",
+        "Healthcare & Medicine"
+      ],
+      "completeness_score": 100,
+      "is_ready_for_recommendations": true,
+      "completeness_breakdown": {
+        "education": "collected",
+        "projects": "collected",
+        "skills": "collected",
+        "interests": "collected",
+        "challenges": "not_collected",
+        "preferences": "not_collected",
+        "goals": "collected"
+      },
+      "trace": [
+        {
+          "step": 1,
+          "question_id": "q_comp_math_modeling",
+          "category": "competency_demonstration",
+          "prompt": "When working on a complex quantitative problem (such as optimizing transport routes, forecasting trends, or physical simulations), what part of the work excites you most?",
+          "target_dimensions": [
+            "I",
+            "R",
+            "C"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Formulating the real-world problem into precise mathematical equations, objective functions, and constraints.",
+          "awarded_weights": {
+            "I": 3,
+            "R": 1
+          },
+          "awarded_fields": [
+            "Physical & Life Sciences",
+            "Engineering & Architecture"
+          ],
+          "selection_rationale": "Domain competency calibration",
+          "running_scores_after_step": {
+            "R": 4,
+            "I": 12,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 0
+          },
+          "leading_dims_after_step": [
+            "I",
+            "R",
+            "C"
+          ]
+        },
+        {
+          "step": 2,
+          "question_id": "q_comp_stat_hypothesis",
+          "category": "competency_demonstration",
+          "prompt": "In a research experiment or survey, the preliminary data shows an unexpected correlation that seems to contradict conventional wisdom. What is your first reaction?",
+          "target_dimensions": [
+            "I",
+            "C",
+            "R",
+            "A"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Apply rigorous statistical significance tests, calculate confidence intervals, and check for sample size biases.",
+          "awarded_weights": {
+            "I": 3,
+            "C": 1
+          },
+          "awarded_fields": [
+            "Physical & Life Sciences",
+            "Data & AI"
+          ],
+          "selection_rationale": "Domain competency calibration",
+          "running_scores_after_step": {
+            "R": 4,
+            "I": 25,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 4
+          },
+          "leading_dims_after_step": [
+            "I",
+            "C",
+            "R"
+          ]
+        },
+        {
+          "step": 3,
+          "question_id": "q_comp_python_data",
+          "category": "competency_demonstration",
+          "prompt": "You are given a raw dataset containing thousands of records with missing values and inconsistent formatting. What is your preferred way to explore it?",
+          "target_dimensions": [
+            "I",
+            "C",
+            "A"
+          ],
+          "chosen_option_id": "b",
+          "chosen_option_text": "Formulate testable hypotheses about the data and design statistical tests or predictive models to identify underlying patterns.",
+          "awarded_weights": {
+            "I": 3,
+            "R": 1
+          },
+          "awarded_fields": [
+            "Data & AI"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 8,
+            "I": 38,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 4
+          },
+          "leading_dims_after_step": [
+            "I",
+            "R",
+            "C"
+          ]
+        },
+        {
+          "step": 4,
+          "question_id": "legacy_q2",
+          "category": "interest_exploration",
+          "prompt": "A tool, machine, or operational process breaks down right before an important deadline. What is your first instinct?",
+          "target_dimensions": [
+            "R",
+            "I",
+            "S",
+            "E"
+          ],
+          "chosen_option_id": "b",
+          "chosen_option_text": "Analyze error patterns, logs, or diagnostic data to isolate the root cause scientifically.",
+          "awarded_weights": {
+            "I": 3
+          },
+          "awarded_fields": [
+            "Data & AI",
+            "Physical & Life Sciences"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 8,
+            "I": 50,
+            "A": 0,
+            "S": 0,
+            "E": 0,
+            "C": 4
+          },
+          "leading_dims_after_step": [
+            "I",
+            "R",
+            "C"
+          ]
+        },
+        {
+          "step": 5,
+          "question_id": "legacy_q5",
+          "category": "interest_exploration",
+          "prompt": "At the completion of a major milestone, which type of achievement gives you the deepest satisfaction?",
+          "target_dimensions": [
+            "S",
+            "R",
+            "I",
+            "E"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Knowing you taught, counseled, or cared for someone and helped them grow.",
+          "awarded_weights": {
+            "S": 3
+          },
+          "awarded_fields": [
+            "Healthcare & Medicine",
+            "Education & Training"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 8,
+            "I": 50,
+            "A": 0,
+            "S": 12,
+            "E": 0,
+            "C": 4
+          },
+          "leading_dims_after_step": [
+            "I",
+            "S",
+            "R"
+          ]
+        },
+        {
+          "step": 6,
+          "question_id": "legacy_q9",
+          "category": "interest_exploration",
+          "prompt": "During a busy event or operational launch, an unexpected rush of attendees arrives. What role do you naturally assume?",
+          "target_dimensions": [
+            "E",
+            "S",
+            "C",
+            "A"
+          ],
+          "chosen_option_id": "b",
+          "chosen_option_text": "Greet attendees warmly, handle individual concerns, and ensure visitors feel comfortable and valued.",
+          "awarded_weights": {
+            "S": 3
+          },
+          "awarded_fields": [
+            "Hospitality & Food Services",
+            "Personal Care & Services"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 17,
+            "I": 100,
+            "A": 0,
+            "S": 50,
+            "E": 0,
+            "C": 8
+          },
+          "leading_dims_after_step": [
+            "I",
+            "S",
+            "R"
+          ]
+        },
+        {
+          "step": 7,
+          "question_id": "legacy_q8",
+          "category": "interest_exploration",
+          "prompt": "When picking up an unfamiliar skill or subject, what approach helps you master it most effectively?",
+          "target_dimensions": [
+            "R",
+            "I",
+            "S",
+            "A"
+          ],
+          "chosen_option_id": "b",
+          "chosen_option_text": "Reading foundational textbooks, studying experimental evidence, and mapping the core logic.",
+          "awarded_weights": {
+            "I": 3
+          },
+          "awarded_fields": [
+            "Physical & Life Sciences",
+            "Data & AI"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 14,
+            "I": 100,
+            "A": 0,
+            "S": 43,
+            "E": 0,
+            "C": 7
+          },
+          "leading_dims_after_step": [
+            "I",
+            "S",
+            "R"
+          ]
+        },
+        {
+          "step": 8,
+          "question_id": "legacy_q4",
+          "category": "interest_exploration",
+          "prompt": "Imagine your ideal day-to-day work environment. Where do you feel most energized and in your element?",
+          "target_dimensions": [
+            "R",
+            "I",
+            "S",
+            "C"
+          ],
+          "chosen_option_id": "a",
+          "chosen_option_text": "Outdoors, in a workshop, or on-site working with physical materials, nature, or machinery.",
+          "awarded_weights": {
+            "R": 3
+          },
+          "awarded_fields": [
+            "Agriculture & Natural Resources",
+            "Construction & Trades"
+          ],
+          "selection_rationale": "Adaptive trajectory alignment & dimension discrimination",
+          "running_scores_after_step": {
+            "R": 31,
+            "I": 94,
+            "A": 0,
+            "S": 38,
+            "E": 0,
+            "C": 6
+          },
+          "leading_dims_after_step": [
+            "I",
+            "S",
+            "R"
+          ]
+        },
+        {
+          "step": 9,
+          "action": "STOP",
+          "reason": "Trait certainty reached in 8 questions. Decisive separation established for Investigative (I) and Social (S) over other dimensions.",
+          "running_scores": {
+            "R": 31,
+            "I": 94,
+            "A": 0,
+            "S": 38,
+            "E": 0,
+            "C": 6
+          },
+          "leading_dimensions": [
+            "I",
+            "S",
+            "R"
+          ]
+        }
+      ]
+    }
+  },
+  "branching_experiments": [
+    {
+      "experiment_id": "EXP_01_BCOM_Q2_CHOICE_DIVERGENCE",
+      "description": "Candidate answers identical Q1 (Audit) but diverges on Q2 (Tax liability vs Commercial growth).",
+      "branch_A": {
+        "previous_answers": {
+          "q_comp_ca_audit_sampling": "a",
+          "q_comp_tax_budgeting": "a"
+        },
+        "q2_chosen": "a: Calculating GST liabilities & tax schedules (C:3, I:1)",
+        "scores_after_q2": {
+          "R": 0,
+          "I": 8,
+          "A": 0,
+          "S": 0,
+          "E": 0,
+          "C": 25
+        },
+        "code_after_q2": "CIR",
+        "next_question_id": "legacy_q8",
+        "next_question_prompt": "When picking up an unfamiliar skill or subject, what approach helps you master it most effectively?",
+        "next_question_target_dims": [
+          "R",
+          "I",
+          "S",
+          "A"
+        ],
+        "selection_rationale": "Prioritized investigative/methodological problem-solving following strong C+I accumulation."
+      },
+      "branch_B": {
+        "previous_answers": {
+          "q_comp_ca_audit_sampling": "a",
+          "q_comp_tax_budgeting": "c"
+        },
+        "q2_chosen": "c: Evaluating commercial growth strategies & top-line sales (E:3, A:1)",
+        "scores_after_q2": {
+          "R": 0,
+          "I": 4,
+          "A": 4,
+          "S": 0,
+          "E": 12,
+          "C": 12
+        },
+        "code_after_q2": "CEI",
+        "next_question_id": "legacy_q1",
+        "next_question_prompt": "Your college or local community is hosting a large weekend festival or exhibition. Which responsibility would you naturally choose?",
+        "next_question_target_dims": [
+          "A",
+          "R",
+          "C",
+          "S"
+        ],
+        "selection_rationale": "Prioritized organizational leadership and initiative following C+E tie."
+      }
+    }
+  ],
+  "stopping_experiments": {
+    "clear_profile": {
+      "questions_count": 8,
+      "is_complete": true,
+      "completion_reason": "Trait certainty reached in 8 questions. Decisive separation established for Conventional (C) and Investigative (I) over other dimensions.",
+      "final_scores": {
+        "R": 0,
+        "I": 50,
+        "A": 19,
+        "S": 19,
+        "E": 19,
+        "C": 56
+      },
+      "separation_margin": 31
+    },
+    "ambiguous_profile": {
+      "at_question_8": {
+        "is_complete": false,
+        "served_discriminator_question": "legacy_q10",
+        "reason": "Margin s2 - s3 is below trait certainty threshold (Delta < 3). Engine actively requested discriminator question."
+      },
+      "at_question_9": {
+        "is_complete": false,
+        "completion_reason": null,
+        "separation_margin": 0
+      }
+    }
+  }
+}

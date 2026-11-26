@@ -774,7 +774,6 @@ const Assessment: React.FC = () => {
   const currentAdaptive = adaptiveQuestions[currentQuestionIndex];
   const isCurrentAnswered = currentQuestion && Boolean(answers[currentQuestion.id]);
   const answeredCount = Object.keys(answers).length;
-  const totalQuestions = questions.length || 12;
   const stageInfo = STAGE_LABELS[calibratedStage] || STAGE_LABELS.general;
   const categoryInfo = currentAdaptive ? CATEGORY_BADGES[currentAdaptive.category] : null;
 
@@ -903,8 +902,8 @@ const Assessment: React.FC = () => {
         {phase === 'intro' && (
           <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_6px_20px_rgba(0,0,0,0.02)]">
             <div className="flex items-start gap-3.5 mb-5">
-              <div className="w-10 h-10 rounded-xl bg-violet-50 text-violet-700 border border-violet-100/80 flex items-center justify-center font-bold text-sm font-mono shrink-0">
-                {totalQuestions}Q
+              <div className="w-12 h-10 rounded-xl bg-violet-50 text-violet-700 border border-violet-100/80 flex items-center justify-center font-bold text-xs font-mono shrink-0">
+                8–12Q
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -912,7 +911,7 @@ const Assessment: React.FC = () => {
                   <Badge variant="brand" size="xs">Stage Calibrated</Badge>
                 </div>
                 <p className="text-xs text-slate-500">
-                  {totalQuestions} scenario questions • ~3–4 minutes • Deterministic Python scoring
+                  Adaptive discovery scenarios (8–12 questions) • Dynamic evidence-based stopping • ~3–4 minutes • Deterministic Python scoring
                 </p>
               </div>
             </div>

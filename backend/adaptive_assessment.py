@@ -490,11 +490,11 @@ COLLEGE_COMPETENCY_QUESTIONS: List[AdaptiveQuestion] = [
             ),
             AdaptiveOption(
                 id="c",
-                text="Add more server resources temporarily and restart the application without finding the root cause.",
-                dimension_weights={"R": 1},
+                text="Set up performance monitoring and request logging to identify which specific database queries or screens take the longest.",
+                dimension_weights={"C": 2, "I": 1},
                 competency_id="java_programming",
-                competency_level="beginner",
-                evidence_level=CompetencyEvidenceLevel.AWARENESS_CONCEPTUAL,
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
                 occupational_fields=["Technology & Computer Science"],
             ),
             AdaptiveOption(
@@ -529,11 +529,11 @@ COLLEGE_COMPETENCY_QUESTIONS: List[AdaptiveQuestion] = [
             ),
             AdaptiveOption(
                 id="b",
-                text="Administer the dose quickly to save time, planning to verify and log the details later during handover.",
-                dimension_weights={"S": 1},
+                text="Explain each step of the treatment to the patient in reassuring, everyday language so they feel informed and at ease.",
+                dimension_weights={"S": 3, "C": 1},
                 competency_id="medication_administration",
-                competency_level="beginner",
-                evidence_level=CompetencyEvidenceLevel.AWARENESS_CONCEPTUAL,
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
                 occupational_fields=["Healthcare & Medicine"],
             ),
             AdaptiveOption(
@@ -574,11 +574,11 @@ COLLEGE_COMPETENCY_QUESTIONS: List[AdaptiveQuestion] = [
             ),
             AdaptiveOption(
                 id="b",
-                text="Rely primarily on persuasive emotional rhetoric and impassioned speech without verifying statutory citations.",
-                dimension_weights={"E": 2},
+                text="Present compelling real-world stories and oral arguments that highlight the practical human impact of the issue.",
+                dimension_weights={"E": 2, "A": 2},
                 competency_id="legal_drafting",
-                competency_level="beginner",
-                evidence_level=CompetencyEvidenceLevel.AWARENESS_CONCEPTUAL,
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
                 occupational_fields=["Law & Public Policy"],
             ),
             AdaptiveOption(
@@ -619,11 +619,11 @@ COLLEGE_COMPETENCY_QUESTIONS: List[AdaptiveQuestion] = [
             ),
             AdaptiveOption(
                 id="b",
-                text="Accept verbal explanations from the operations team to close the reconciliation quickly.",
-                dimension_weights={"C": 1},
+                text="Meet with warehouse and operations supervisors to understand daily inventory handling and find procedural gaps.",
+                dimension_weights={"S": 2, "C": 1},
                 competency_id="financial_auditing",
-                competency_level="beginner",
-                evidence_level=CompetencyEvidenceLevel.AWARENESS_CONCEPTUAL,
+                competency_level="intermediate",
+                evidence_level=CompetencyEvidenceLevel.APPLIED_SCENARIO,
                 occupational_fields=["Business, Management & Finance"],
             ),
             AdaptiveOption(
@@ -695,11 +695,11 @@ COLLEGE_COMPETENCY_QUESTIONS: List[AdaptiveQuestion] = [
         id="q_comp_aiml_pipeline",
         stage=AssessmentStage.COLLEGE_UG_PG,
         category=QuestionCategory.COMPETENCY_DEMONSTRATION,
-        prompt="When working on a predictive machine learning or computer vision model, the model achieves high training accuracy but performs poorly on new test data. What is your next step?",
+        prompt="You build a machine learning model using past data, but its predictions become less accurate when new, unseen data arrives. What would you try first to understand why?",
         options=[
             AdaptiveOption(
                 id="a",
-                text="Diagnose overfitting by adding data augmentations, applying regularization, and testing simpler model architectures with cross-validation.",
+                text="Check whether the model memorized the training examples (overfitting) and test simpler patterns or regularization.",
                 dimension_weights={"I": 3, "R": 1},
                 competency_id="problem_solving",
                 competency_level="intermediate",
@@ -709,20 +709,20 @@ COLLEGE_COMPETENCY_QUESTIONS: List[AdaptiveQuestion] = [
             ),
             AdaptiveOption(
                 id="b",
-                text="Inspect raw training data for label errors, distribution shifts, or feature leakage that could bias the model.",
+                text="Inspect the incoming data to see if real-world conditions or user patterns changed compared to the past data.",
                 dimension_weights={"I": 2, "C": 2},
                 occupational_fields=["Data & AI"],
             ),
             AdaptiveOption(
                 id="c",
-                text="Consult academic research papers or open-source implementations to compare benchmark approaches for this specific problem.",
+                text="Look up how similar prediction problems are solved in published studies or open-source projects.",
                 dimension_weights={"I": 3, "A": 1},
                 occupational_fields=["Physical & Life Sciences", "Data & AI"],
             ),
             AdaptiveOption(
                 id="d",
-                text="I am currently learning foundational machine learning concepts and have not tuned models on test splits yet.",
-                dimension_weights={"I": 2},
+                text="Discuss the prediction discrepancies with a teammate or mentor to review our data preparation steps.",
+                dimension_weights={"I": 2, "S": 1},
                 occupational_fields=["Data & AI"],
             ),
         ],
@@ -1466,12 +1466,12 @@ class AdaptiveAssessmentEngine:
         student_goals = [str(g).lower() for g in (profile.get("career_goals") or []) + ([profile.get("targetRole")] if profile.get("targetRole") else [])]
         all_signals_text = " ".join(student_skills + student_interests + student_goals + [combined_text])
 
-        has_data_ai_affinity = any(t in all_signals_text for t in ["data", "python", "machine learning", "ai", "pandas", "sql", "analytics"])
-        has_tech_affinity = any(t in all_signals_text for t in ["computer", "software", "code", "programming", "developer", "web", "java", "tech"])
-        has_finance_affinity = any(t in all_signals_text for t in ["accounting", "finance", "tax", "audit", "commerce", "tally", "gst"])
-        has_arts_affinity = any(t in all_signals_text for t in ["english", "literature", "writing", "teaching", "editorial", "communication", "public speaking"])
-        has_math_affinity = any(t in all_signals_text for t in ["math", "calculus", "statistics", "research", "equations", "modeling"])
-        has_health_affinity = any(t in all_signals_text for t in ["health", "nurse", "medical", "patient", "clinical", "hospital"])
+        has_software_affinity = any(t in all_signals_text for t in ["software developer", "software engineer", "backend", "web development", "java", "coding", "programmer", "full stack", "frontend", "oop", "application developer", "database"])
+        has_data_ai_affinity = any(t in all_signals_text for t in ["data", "python", "machine learning", "ai", "pandas", "sql", "analytics", "deep learning", "neural", "vision", "pytorch", "data scientist"])
+        has_finance_affinity = any(t in all_signals_text for t in ["accounting", "finance", "tax", "audit", "commerce", "tally", "gst", "chartered accountant", "bookkeeping"])
+        has_arts_affinity = any(t in all_signals_text for t in ["english", "literature", "writing", "teaching", "editorial", "communication", "public speaking", "content", "journalism", "creative"])
+        has_math_affinity = any(t in all_signals_text for t in ["math", "calculus", "statistics", "mathematics", "equations", "modeling", "quantitative", "research"])
+        has_health_affinity = any(t in all_signals_text for t in ["health", "nurse", "medical", "patient", "clinical", "hospital", "doctor"])
 
         is_pcb = (
             classified.domain == AcademicDomain.MEDICAL_HEALTHCARE
@@ -1502,8 +1502,11 @@ class AdaptiveAssessmentEngine:
             # College questions must NOT be asked to School/12th/Diploma;
             # GENERAL questions are universally applicable across all stages.
             if q.stage != AssessmentStage.GENERAL:
-                if stage in [AssessmentStage.COLLEGE_UG_PG, AssessmentStage.CAREER_TRANSITION]:
-                    if q.stage not in [AssessmentStage.COLLEGE_UG_PG, AssessmentStage.CAREER_TRANSITION]:
+                if stage == AssessmentStage.COLLEGE_UG_PG:
+                    if q.stage != AssessmentStage.COLLEGE_UG_PG:
+                        return False
+                elif stage == AssessmentStage.CAREER_TRANSITION:
+                    if q.stage not in [AssessmentStage.CAREER_TRANSITION, AssessmentStage.COLLEGE_UG_PG]:
                         return False
                 elif stage == AssessmentStage.HIGHER_SECONDARY_12TH:
                     if q.stage != AssessmentStage.HIGHER_SECONDARY_12TH:
@@ -1527,9 +1530,19 @@ class AdaptiveAssessmentEngine:
                 dom = q.prerequisite_domain
                 matches = False
                 if classified.domain == dom:
-                    matches = True
-                elif dom == "computer_applications" and (has_data_ai_affinity or has_tech_affinity):
-                    matches = True
+                    if q.id == "q_comp_java_concurrency":
+                        matches = has_software_affinity or classified.domain in [AcademicDomain.ENGINEERING_TECH, AcademicDomain.COMPUTER_APPLICATIONS]
+                    else:
+                        matches = True
+                elif dom == "computer_applications":
+                    if q.id == "q_comp_java_concurrency":
+                        matches = has_software_affinity
+                    elif q.id == "q_comp_aiml_pipeline":
+                        matches = has_data_ai_affinity and any(t in all_signals_text for t in ["ai", "machine learning", "vision", "pytorch", "deep learning", "neural"])
+                    elif q.id == "q_comp_python_data":
+                        matches = has_data_ai_affinity or has_software_affinity or has_math_affinity
+                    else:
+                        matches = has_data_ai_affinity or has_software_affinity
                 elif dom == "commerce_finance" and has_finance_affinity:
                     matches = True
                 elif dom == "arts_humanities" and has_arts_affinity:
@@ -1578,8 +1591,8 @@ class AdaptiveAssessmentEngine:
                         selected_q = q
                         break
 
-        # For questions 1 & 2: prioritize domain competency demonstration questions
-        if not selected_q and answered_count < 3 and stage in [AssessmentStage.COLLEGE_UG_PG, AssessmentStage.CAREER_TRANSITION]:
+        # For initial questions (1 & 2): prioritize student's primary domain/interest competency items
+        if not selected_q and answered_count < 2 and stage in [AssessmentStage.COLLEGE_UG_PG, AssessmentStage.CAREER_TRANSITION]:
             # 1. First prioritize AI/ML or Data specific questions if student has explicit AI/ML or Data goals/interests
             if has_data_ai_affinity:
                 for q in eligible_questions:
@@ -1597,20 +1610,23 @@ class AdaptiveAssessmentEngine:
                         selected_q = q
                         break
 
-            # 3. Look for any eligible domain question
+            # 3. Look for any eligible domain question matching student's active affinity
             if not selected_q:
                 for q in eligible_questions:
                     if q.category == QuestionCategory.COMPETENCY_DEMONSTRATION and q.prerequisite_domain:
                         selected_q = q
                         break
 
-        # Fallback to stage questions
-        if not selected_q:
+        # Fallback to stage questions (e.g. for School 10th, 12th PCB/PCM)
+        if not selected_q and stage in [AssessmentStage.SCHOOL_10TH, AssessmentStage.HIGHER_SECONDARY_12TH, AssessmentStage.DIPLOMA_POLYTECHNIC]:
             stage_qs = [q for q in eligible_questions if q.stage == stage]
             if stage_qs:
                 selected_q = stage_qs[0]
 
-        # General balanced exploratory scenarios: choose least-tested dimension
+        # Dynamic Adaptive Selection for Subsequent Questions:
+        # Evaluates candidate questions against student's running RIASEC scores and trajectory.
+        # Questions that probe or separate the student's active leading dimensions are prioritized,
+        # ensuring that selecting Option A vs Option C dynamically branches to different follow-up questions!
         if not selected_q:
             dim_counts = {d: 0 for d in DIMS}
             for qid in answers.keys():
@@ -1619,7 +1635,36 @@ class AdaptiveAssessmentEngine:
                     for td in pq.target_dimensions:
                         dim_counts[td] += 1
 
-            eligible_questions.sort(key=lambda q: sum(dim_counts.get(d, 0) for d in q.target_dimensions) / max(len(q.target_dimensions), 1))
+            def _question_adaptive_score(q: AdaptiveQuestion) -> float:
+                score = 0.0
+                q_dims = set(q.target_dimensions)
+
+                # 1. Trajectory Alignment: Questions targeting active leading dimensions
+                for d in q_dims:
+                    if d in running_scores:
+                        score += (running_scores[d] / 20.0)
+
+                # 2. Differentiation Bonus: If dim_1 and dim_2 are competing, probe both
+                if len(q_dims.intersection({dim_1, dim_2})) >= 2:
+                    score += 4.0
+                elif len(q_dims.intersection({dim_2, dim_3})) >= 2:
+                    score += 3.0
+                elif dim_1 in q_dims:
+                    score += 2.0
+                elif dim_2 in q_dims:
+                    score += 1.5
+
+                # 3. Domain relevance bonus
+                if q.category == QuestionCategory.COMPETENCY_DEMONSTRATION:
+                    score += 2.0
+
+                # 4. Coverage penalty to avoid repetitive dimensions
+                times_tested = sum(dim_counts.get(d, 0) for d in q_dims)
+                score -= (times_tested * 1.5)
+
+                return score
+
+            eligible_questions.sort(key=_question_adaptive_score, reverse=True)
             selected_q = eligible_questions[0]
 
         return {
