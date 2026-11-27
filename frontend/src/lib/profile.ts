@@ -147,10 +147,14 @@ export function toRow(userId: string, p: Partial<Profile>): Partial<ProfileRow> 
     let yearVal = ed.study_stage_value;
     if (ed.education_status === 'completed' && ed.graduation_year) {
       yearVal = `Graduated ${ed.graduation_year}`;
+    } else if (ed.education_status === 'completed') {
+      yearVal = 'Graduated';
     } else if (ed.education_status === 'discontinued') {
       yearVal = ed.last_attended_stage ? `Discontinued (${ed.last_attended_stage})` : 'Discontinued';
-    } else if (ed.education_status === 'gap_year') {
-      yearVal = ed.highest_qualification ? `Gap Year after ${ed.highest_qualification}` : 'On Gap Year';
+    } else if (ed.education_status === 'study_break' || ed.education_status === 'gap_year') {
+      yearVal = ed.last_attended_stage
+        ? `Study Break (${ed.last_attended_stage})`
+        : (ed.highest_qualification ? `Gap Year after ${ed.highest_qualification}` : 'On Study Break');
     }
     row.year = yearVal || row.year || null;
   }

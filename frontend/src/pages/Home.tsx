@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import AppFooter from '../components/AppFooter';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
 import { getJourneyStatus } from '../lib/profile';
@@ -13,23 +14,23 @@ import {
 } from 'lucide-react';
 
 const Home: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const { profile, assessment, activeGoal, loading: profileLoading } = useProfile();
   const navigate = useNavigate();
 
-  // If user is authenticated, redirect automatically to their journey destination
-  useEffect(() => {
-    if (!loading && user && !profileLoading) {
-      const { nextRoute } = getJourneyStatus(profile, assessment, activeGoal);
-      navigate(nextRoute, { replace: true });
-    }
-  }, [user, loading, profile, assessment, activeGoal, profileLoading, navigate]);
-
-  // While exchanging OAuth token or loading user profile, show a clean indicator
+  // Detect OAuth exchange parameters
   const hasAuthParams = typeof window !== 'undefined' && (
     window.location.hash.includes('access_token') ||
     window.location.search.includes('code=')
   );
+
+  // If user completed an OAuth callback, navigate to journey destination
+  useEffect(() => {
+    if (hasAuthParams && !loading && user && !profileLoading) {
+      const { nextRoute } = getJourneyStatus(profile, assessment, activeGoal);
+      navigate(nextRoute, { replace: true });
+    }
+  }, [hasAuthParams, user, loading, profile, assessment, activeGoal, profileLoading, navigate]);
 
   if (hasAuthParams && (loading || (user && profileLoading))) {
     return (
@@ -66,12 +67,24 @@ const Home: React.FC = () => {
 
           <div className="flex items-center gap-2.5 sm:gap-4 shrink-0">
             {user ? (
-              <Link
-                to={nextRoute}
-                className="bg-[#142B4A] text-white px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold hover:bg-[#10233D] transition-colors shadow-xs flex items-center gap-1.5 whitespace-nowrap"
-              >
-                Go to {nextRoute === '/dashboard' ? 'Dashboard' : nextRoute === '/assessment' ? 'Assessment' : 'Onboarding'} <ArrowRight className="w-4 h-4" />
-              </Link>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <Link
+                  to={nextRoute}
+                  className="bg-[#142B4A] text-white px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold hover:bg-[#10233D] transition-colors shadow-xs flex items-center gap-1.5 whitespace-nowrap"
+                >
+                  Go to {nextRoute === '/dashboard' ? 'Dashboard' : nextRoute === '/assessment' ? 'Assessment' : 'Onboarding'} <ArrowRight className="w-4 h-4" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await signOut();
+                    navigate('/login', { replace: true });
+                  }}
+                  className="text-xs sm:text-sm font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-3 py-2 rounded-xl transition-colors border border-rose-200 cursor-pointer"
+                >
+                  Sign out
+                </button>
+              </div>
             ) : (
               <>
                 <Link to="/login" className="text-xs sm:text-sm font-semibold text-[#64748B] hover:text-[#172638] hidden sm:block">Log in</Link>
@@ -504,65 +517,8 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 9. FOOTER */}
-      <footer className="bg-white border-t border-[#E2E8F0] pt-14 pb-8">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-10">
-            
-            <div className="lg:col-span-2">
-              <div className="flex items-center gap-2.5 mb-6">
-                <div className="w-8 h-8 rounded-xl bg-[#142B4A] flex items-center justify-center shadow-xs">
-                  <BrainCircuit className="w-4 h-4 text-white" />
-                </div>
-                <span className="font-bold text-[#172638]">AI Personal Career Counselor</span>
-              </div>
-              <p className="text-sm text-[#64748B] leading-relaxed mb-6 max-w-xs">
-                Your AI mentor for the right career decision and a better future.
-              </p>
-              <div className="flex gap-4">
-                <a href="#" className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-[#64748B] font-bold text-xs hover:text-[#168C89] hover:bg-[#EAF5F4] transition-colors">TW</a>
-                <a href="#" className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-[#64748B] font-bold text-xs hover:text-[#168C89] hover:bg-[#EAF5F4] transition-colors">IN</a>
-                <a href="#" className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-[#64748B] font-bold text-xs hover:text-[#168C89] hover:bg-[#EAF5F4] transition-colors">IG</a>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-bold text-[#172638] mb-6">Product</h4>
-              <ul className="space-y-4 text-sm text-[#64748B]">
-                <li><a href="#" className="hover:text-[#168C89] transition-colors">How It Works</a></li>
-                <li><a href="#" className="hover:text-[#168C89] transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-[#168C89] transition-colors">Career Options</a></li>
-                <li><a href="#" className="hover:text-[#168C89] transition-colors">Pricing</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold text-[#172638] mb-6">Resources</h4>
-              <ul className="space-y-4 text-sm text-[#64748B]">
-                <li><a href="#" className="hover:text-[#168C89] transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-[#168C89] transition-colors">Guides</a></li>
-                <li><a href="#" className="hover:text-[#168C89] transition-colors">Career Library</a></li>
-                <li><a href="#" className="hover:text-[#168C89] transition-colors">Student Stories</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold text-[#172638] mb-6">Company</h4>
-              <ul className="space-y-4 text-sm text-[#64748B]">
-                <li><a href="#" className="hover:text-[#168C89] transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-[#168C89] transition-colors">Contact Us</a></li>
-                <li><a href="#" className="hover:text-[#168C89] transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-[#168C89] transition-colors">Terms of Service</a></li>
-              </ul>
-            </div>
-
-          </div>
-          
-          <div className="pt-8 border-t border-[#E2E8F0] flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-[#64748B]">© 2026 AI Personal Career Counselor. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      {/* 9. GLOBAL MINIMAL FOOTER */}
+      <AppFooter />
     </div>
   );
 };

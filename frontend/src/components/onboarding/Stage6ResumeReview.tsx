@@ -246,7 +246,15 @@ export const Stage6ResumeReview: React.FC<Stage6ResumeReviewProps> = ({
                 : data.course || 'Degree Not Specified'}
             </p>
             <p className="text-[#64748B]">
-              {ed?.institution || 'Institution Not Specified'} • {ed?.study_stage_value || 'Stage Not Specified'}
+              {ed?.institution || 'Institution Not Specified'} • {
+                ed?.education_status === 'completed'
+                  ? `Completed / Graduated ${ed.graduation_year ? `(${ed.graduation_year})` : ''}`
+                  : ed?.education_status === 'discontinued'
+                  ? `Discontinued ${ed.last_attended_stage ? `(${ed.last_attended_stage})` : ''}`
+                  : ed?.education_status === 'study_break' || ed?.education_status === 'gap_year'
+                  ? `On Study Break ${ed.last_attended_stage ? `(${ed.last_attended_stage})` : ''}`
+                  : ed?.study_stage_value || 'Stage Not Specified'
+              }
             </p>
             {(ed?.academic_strengths || []).length > 0 && (
               <p className="text-[#64748B] text-[11px] pt-1">

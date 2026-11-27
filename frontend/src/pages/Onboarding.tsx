@@ -15,6 +15,8 @@ import {
   BookOpen,
   Bell,
   Sparkles,
+  LogOut,
+  ChevronDown,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
@@ -23,6 +25,7 @@ import {
   detectUserPersona,
   type OnboardingRecord,
 } from '../lib/onboarding';
+import type { EducationStatus } from '../lib/educationTaxonomy';
 import {
   loadUserDraft,
   loadUserStep,
@@ -84,22 +87,34 @@ const STEPS = [
 
 export default function Onboarding() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { profile, saveProfile } = useProfile();
 
   const [step, setStep] = useState<number>(0);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (e) {
+      console.error('Sign out error:', e);
+    }
+    navigate('/login', { replace: true });
+  };
   const [data, setData] = useState<Partial<OnboardingRecord>>({
     path: 'not_sure',
     career_mode: 'career_discovery',
     interests: [],
     education_details: {
       education_level: 'undergraduate',
-      education_status: 'currently_studying',
+      education_status: '' as unknown as EducationStatus,
       degree: '',
       specialization: '',
       institution: '',
       study_stage_type: 'year',
-      study_stage_value: '1st Year',
+      study_stage_value: '',
+      graduation_year: '',
+      last_attended_stage: '',
       academic_strengths: [],
       subjects_enjoyed: [],
       certifications_and_courses: [],
@@ -200,6 +215,12 @@ export default function Onboarding() {
     const ed = data.education_details;
     if (!ed) return Boolean(data.course);
     if (!ed.education_level || !ed.education_status) return false;
+
+    // When Currently Studying is selected, Current Year / Semester is mandatory
+    if (ed.education_status === 'currently_studying') {
+      if (!ed.study_stage_value || !ed.study_stage_value.trim()) return false;
+    }
+
     if (ed.education_level === 'sslc_10th') return true;
     if (ed.education_level === 'puc_12th') return Boolean(ed.specialization || ed.school_stream);
     return Boolean(ed.degree?.trim());
@@ -336,7 +357,7 @@ export default function Onboarding() {
               </Link>
             </nav>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {/* Notifications */}
               <button
                 type="button"
@@ -347,9 +368,74 @@ export default function Onboarding() {
                 <span className="w-2 h-2 bg-[#168C89] rounded-full absolute top-1.5 right-1.5 ring-2 ring-[#142B4A]" />
               </button>
 
-              {/* User Avatar */}
-              <div className="w-9 h-9 rounded-full bg-[#EAF5F4] text-[#142B4A] font-bold text-xs flex items-center justify-center shadow-xs border border-white/30 cursor-pointer">
-                {userInitials}
+              {/* Direct Quick Log out Button */}
+              <button
+                type="button"
+                onClick={handleSignOut}
+                title="Sign out of your account"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-200 hover:text-white hover:bg-white/10 border border-white/15 transition-colors cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5 text-rose-300" />
+                <span>Log out</span>
+              </button>
+
+              {/* User Avatar with Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  className="flex items-center gap-1.5 p-1 rounded-full hover:ring-2 hover:ring-[#168C89] transition-all cursor-pointer focus-visible:outline-none"
+                  aria-expanded={profileDropdownOpen}
+                  aria-label="User account menu"
+                >
+                  <div className="w-9 h-9 rounded-full bg-[#EAF5F4] text-[#142B4A] font-bold text-xs flex items-center justify-center shadow-xs border border-white/30">
+                    {userInitials}
+                  </div>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-300" />
+                </button>
+
+                {profileDropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setProfileDropdownOpen(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-[#E2E8F0] z-50 p-2 text-xs divide-y divide-[#E2E8F0] animate-in fade-in duration-100">
+                      <div className="px-3 py-2.5">
+                        <p className="font-bold text-[#172638] truncate">{user?.user_metadata?.full_name || (profile as any)?.fullName || 'Student'}</p>
+                        <p className="text-[#64748B] text-[11px] truncate">{user?.email || 'Logged in user'}</p>
+                        <div className="mt-2 pt-2 border-t border-[#E2E8F0] flex items-center justify-between">
+                          <span className="text-[10px] text-[#64748B] uppercase font-bold tracking-wider">Journey</span>
+                          <span className="text-[11px] font-semibold text-[#168C89] bg-[#EAF5F4] px-2 py-0.5 rounded-full border border-[#C5E6E4]">
+                            Step {step + 1} of 6
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="py-1">
+                        <Link
+                          to="/"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#172638] hover:bg-[#F1F5F9] transition-colors font-medium"
+                        >
+                          <Home className="w-4 h-4 text-[#64748B]" />
+                          <span>Return to Homepage</span>
+                        </Link>
+                      </div>
+
+                      <div className="pt-1">
+                        <button
+                          type="button"
+                          onClick={handleSignOut}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-600 hover:bg-rose-50 transition-colors font-bold cursor-pointer"
+                        >
+                          <LogOut className="w-4 h-4 text-rose-500" />
+                          <span>Sign out / Switch account</span>
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

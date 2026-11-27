@@ -210,6 +210,15 @@ export default function AppHeader() {
             <Mic className="w-4 h-4 text-[#168C89]" />
             <span>AI Voice Counselor</span>
           </Link>
+
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-rose-600 hover:bg-rose-50 font-bold transition-colors text-left border-t border-[#E2E8F0] mt-2 pt-2"
+          >
+            <LogOut className="w-4 h-4 text-rose-500" />
+            <span>Sign out ({username})</span>
+          </button>
         </div>
       )}
 

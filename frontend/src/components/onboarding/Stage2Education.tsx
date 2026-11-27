@@ -55,12 +55,14 @@ const COMMON_ENJOYED_SUGGESTIONS = [
 export const Stage2Education: React.FC<Stage2EducationProps> = ({ data, onChange }) => {
   const edu: EducationDetails = data.education_details || {
     education_level: 'undergraduate',
-    education_status: 'currently_studying',
+    education_status: '' as unknown as EducationStatus,
     degree: '', // Explicit: NO automatic default to btech_be!
     specialization: '',
     institution: '',
     study_stage_type: 'year',
-    study_stage_value: '1st Year',
+    study_stage_value: '',
+    graduation_year: '',
+    last_attended_stage: '',
     academic_strengths: [],
     subjects_enjoyed: [],
     certifications_and_courses: [],
@@ -76,17 +78,66 @@ export const Stage2Education: React.FC<Stage2EducationProps> = ({ data, onChange
 
   const updateEdu = (patch: Partial<EducationDetails>) => {
     const updated = { ...edu, ...patch };
+    let yearDisplay = updated.study_stage_value;
+    if (updated.education_status === 'completed') {
+      yearDisplay = updated.graduation_year ? `Graduated ${updated.graduation_year}` : 'Graduated';
+    } else if (updated.education_status === 'discontinued') {
+      yearDisplay = updated.last_attended_stage ? `Discontinued (${updated.last_attended_stage})` : 'Discontinued';
+    } else if (updated.education_status === 'study_break' || updated.education_status === 'gap_year') {
+      yearDisplay = updated.last_attended_stage ? `Study Break (${updated.last_attended_stage})` : 'On Study Break';
+    }
+
     onChange({
       education_details: updated,
-      college: updated.institution || data.college,
+      college: updated.institution !== undefined ? (updated.institution || '') : data.college,
       course: updated.degree || data.course,
-      year: updated.study_stage_value || data.year,
+      year: yearDisplay || data.year,
     });
+  };
+
+  const handleStatusChange = (newStatus: EducationStatus | '') => {
+    if (!newStatus) {
+      updateEdu({
+        education_status: '' as any,
+        study_stage_value: '',
+        graduation_year: '',
+        last_attended_stage: '',
+      });
+      return;
+    }
+
+    if (newStatus === 'currently_studying') {
+      updateEdu({
+        education_status: 'currently_studying',
+        graduation_year: '',
+        last_attended_stage: '',
+        study_stage_value: edu.study_stage_value || '',
+      });
+    } else if (newStatus === 'completed') {
+      updateEdu({
+        education_status: 'completed',
+        // Clear contradictory current-year value
+        study_stage_value: '',
+        last_attended_stage: '',
+        graduation_year: edu.graduation_year || '',
+      });
+    } else if (newStatus === 'discontinued' || newStatus === 'study_break') {
+      updateEdu({
+        education_status: newStatus,
+        // Clear contradictory current-year & graduation_year values
+        study_stage_value: '',
+        graduation_year: '',
+        last_attended_stage: edu.last_attended_stage || '',
+      });
+    }
   };
 
   const currentLevelConfig = DEGREE_CATALOG[edu.education_level] || [];
   const currentDegConfig = currentLevelConfig.find((d) => d.id === edu.degree);
-  const stageOptions = getStudyStageOptions(currentDegConfig);
+  const stageOptions = getStudyStageOptions(
+    currentDegConfig,
+    edu.study_stage_type === 'semester' ? 'semester' : 'year'
+  );
 
   // Toggle or add Academic Strength
   const removeStrength = (sub: string) => {
@@ -197,14 +248,15 @@ export const Stage2Education: React.FC<Stage2EducationProps> = ({ data, onChange
               Academic Status <span className="text-[#168C89]">*</span>
             </label>
             <select
-              value={edu.education_status}
-              onChange={(e) => updateEdu({ education_status: e.target.value as EducationStatus })}
+              value={edu.education_status === 'gap_year' ? 'study_break' : (edu.education_status || '')}
+              onChange={(e) => handleStatusChange(e.target.value as EducationStatus)}
               className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:outline-none focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89] transition-all"
             >
+              <option value="">Select Academic Status</option>
               <option value="currently_studying">Currently Studying</option>
               <option value="completed">Completed / Graduated</option>
-              <option value="gap_year">Gap Year / Exam Preparation</option>
-              <option value="discontinued">Discontinued / Career Switch</option>
+              <option value="discontinued">Discontinued</option>
+              <option value="study_break">On a Study Break</option>
             </select>
           </div>
 
@@ -268,23 +320,97 @@ export const Stage2Education: React.FC<Stage2EducationProps> = ({ data, onChange
             </div>
           </div>
 
-          {/* Academic Stage / Year */}
-          <div>
-            <label className="block text-xs font-semibold text-[#172638] mb-1.5">
-              Current Year / Semester <span className="text-[#168C89]">*</span>
-            </label>
-            <select
-              value={edu.study_stage_value}
-              onChange={(e) => updateEdu({ study_stage_value: e.target.value })}
-              className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:outline-none focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89] transition-all"
-            >
-              {stageOptions.map((st) => (
-                <option key={st.id} value={st.id}>
-                  {st.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          {/* Conditional Stage / Year Field */}
+          {edu.education_status === 'currently_studying' ? (
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-semibold text-[#172638]">
+                  Current Year / Semester <span className="text-[#168C89]">*</span>
+                </label>
+                {Boolean(currentDegConfig?.totalSemesters) && (
+                  <div className="inline-flex rounded-lg border border-[#E2E8F0] p-0.5 bg-[#F8FAFC] text-[10px] font-semibold">
+                    <button
+                      type="button"
+                      onClick={() => updateEdu({ study_stage_type: 'year', study_stage_value: '' })}
+                      className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
+                        edu.study_stage_type !== 'semester'
+                          ? 'bg-[#142B4A] text-white shadow-2xs'
+                          : 'text-[#64748B] hover:text-[#172638]'
+                      }`}
+                    >
+                      Year
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => updateEdu({ study_stage_type: 'semester', study_stage_value: '' })}
+                      className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
+                        edu.study_stage_type === 'semester'
+                          ? 'bg-[#142B4A] text-white shadow-2xs'
+                          : 'text-[#64748B] hover:text-[#172638]'
+                      }`}
+                    >
+                      Semester
+                    </button>
+                  </div>
+                )}
+              </div>
+              <select
+                value={edu.study_stage_value || ''}
+                onChange={(e) => updateEdu({ study_stage_value: e.target.value })}
+                className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:outline-none focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89] transition-all"
+              >
+                <option value="">Select Current Year / Semester</option>
+                {stageOptions.map((st) => (
+                  <option key={st.id} value={st.id}>
+                    {st.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : edu.education_status === 'completed' ? (
+            <div>
+              <label className="block text-xs font-semibold text-[#172638] mb-1.5">
+                Graduation Year <span className="text-[#64748B] font-normal">(Optional)</span>
+              </label>
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={4}
+                placeholder="e.g. 2024"
+                value={edu.graduation_year || ''}
+                onChange={(e) => updateEdu({ graduation_year: e.target.value.replace(/\D/g, '') })}
+                className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89] transition-all"
+              />
+            </div>
+          ) : edu.education_status === 'discontinued' || edu.education_status === 'study_break' || edu.education_status === 'gap_year' ? (
+            <div>
+              <label className="block text-xs font-semibold text-[#172638] mb-1.5">
+                Last Completed Year / Semester <span className="text-[#64748B] font-normal">(Optional)</span>
+              </label>
+              <select
+                value={edu.last_attended_stage || ''}
+                onChange={(e) => updateEdu({ last_attended_stage: e.target.value })}
+                className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:outline-none focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89] transition-all"
+              >
+                <option value="">Select Last Completed Stage (Optional)</option>
+                {stageOptions.map((st) => (
+                  <option key={st.id} value={st.id}>
+                    Completed {st.label.replace(' (Final)', '').replace(' (Final Year)', '')}
+                  </option>
+                ))}
+                <option value="Left in 1st Year">Left during 1st Year / Semester</option>
+              </select>
+            </div>
+          ) : (
+            <div className="opacity-75">
+              <label className="block text-xs font-semibold text-[#64748B] mb-1.5">
+                Academic Timeline / Stage
+              </label>
+              <div className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-dashed border-[#CBD5E1] bg-[#F8FAFC] text-[#94A3B8]">
+                Select Academic Status above first
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

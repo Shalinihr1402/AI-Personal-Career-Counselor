@@ -67,6 +67,7 @@ export type EducationStatus =
   | 'currently_studying'
   | 'completed'
   | 'discontinued'
+  | 'study_break'
   | 'gap_year';
 
 export type StudyStageType = 'year' | 'semester' | 'medical_phase' | 'standard' | 'graduation_year';
@@ -80,7 +81,7 @@ export interface CertificationOrCourse {
 
 export interface EducationDetails {
   education_level: EducationLevel;
-  education_status: EducationStatus;
+  education_status?: EducationStatus | '';
   degree: string;
   degree_other?: string;
   specialization: string;
@@ -126,10 +127,10 @@ export const EDUCATION_LEVELS: { id: EducationLevel; label: string; icon: string
 ];
 
 export const EDUCATION_STATUSES: { id: EducationStatus; label: string; icon: string; desc: string }[] = [
-  { id: 'currently_studying', label: 'Currently studying', icon: '📖', desc: 'Enrolled and actively pursuing coursework' },
-  { id: 'completed', label: 'Graduated / Completed', icon: '🎓', desc: 'Finished all academic requirements and exams' },
-  { id: 'discontinued', label: 'Discontinued / Dropout', icon: '⏸️', desc: 'Paused or left before degree completion' },
-  { id: 'gap_year', label: 'On a gap year', icon: '⏳', desc: 'Taking a planned break or preparing for admissions' },
+  { id: 'currently_studying', label: 'Currently Studying', icon: '📖', desc: 'Enrolled and actively pursuing coursework' },
+  { id: 'completed', label: 'Completed / Graduated', icon: '🎓', desc: 'Finished all academic requirements and exams' },
+  { id: 'discontinued', label: 'Discontinued', icon: '⏸️', desc: 'Paused or left before degree completion' },
+  { id: 'study_break', label: 'On a Study Break', icon: '⏳', desc: 'Taking a planned break or preparing for admissions' },
 ];
 
 export interface SchoolBoardConfig {
