@@ -12,6 +12,8 @@ import Roadmap from './pages/Roadmap'
 import Today from './pages/Today'
 import CareerDetail from './pages/CareerDetail'
 import Careers from './pages/Careers'
+import CareerRecommendations from './pages/CareerRecommendations'
+import InterestDiscovery from './pages/InterestDiscovery'
 
 function App() {
   return (
@@ -39,6 +41,38 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Assessment />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/recommendations"
+              element={
+                <ProtectedRoute>
+                  <CareerRecommendations />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/career-matches"
+              element={
+                <ProtectedRoute>
+                  <CareerRecommendations />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/discover-interests"
+              element={
+                <ProtectedRoute>
+                  <InterestDiscovery />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/interests"
+              element={
+                <ProtectedRoute>
+                  <InterestDiscovery />
                 </ProtectedRoute>
               }
             />

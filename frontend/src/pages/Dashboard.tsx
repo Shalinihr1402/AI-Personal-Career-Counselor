@@ -248,12 +248,22 @@ const Dashboard: React.FC = () => {
                     </p>
                   )}
 
-                  <Link
-                    to="/assessment"
-                    className="inline-flex items-center gap-1.5 text-[#168C89] font-bold text-xs hover:underline"
-                  >
-                    View full diagnostic report & statutory pathways <ArrowRight className="w-4 h-4" />
-                  </Link>
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                    <Link
+                      to="/recommendations"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#142B4A] hover:bg-[#0E1F36] text-white font-bold text-xs transition-all shadow-xs"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-[#168C89]" />
+                      <span>View Career Recommendations Dashboard</span>
+                      <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
+                    </Link>
+                    <Link
+                      to="/assessment"
+                      className="inline-flex items-center gap-1.5 text-[#168C89] font-bold text-xs hover:underline"
+                    >
+                      Diagnostic report <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
                 </div>
               ) : (
                 <div className="bg-[#142B4A] text-white rounded-2xl p-6 shadow-xs">
@@ -273,6 +283,31 @@ const Dashboard: React.FC = () => {
                   </Link>
                 </div>
               )}
+
+              {/* Subject & Domain Interest Exploration Card */}
+              <div className="bg-gradient-to-r from-[#F0FAF9] via-[#F4FBFA] to-[#EAF5F4] rounded-2xl p-6 border border-[#C5E6E4] shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#168C89] uppercase tracking-wider">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Interactive Activity Engine</span>
+                    </div>
+                    <h3 className="font-extrabold text-[#172638] text-base">
+                      Discover What You Enjoy — Subject & Domain Interests
+                    </h3>
+                    <p className="text-xs text-[#64748B] max-w-lg leading-relaxed">
+                      Explore interactive challenges across 12 domains (Math, Data, Engineering, Psychology, Arts, Law & more) to discover which topics and problem types you naturally enjoy.
+                    </p>
+                  </div>
+                  <Link
+                    to="/discover-interests"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#142B4A] hover:bg-[#0E1F36] text-white font-bold text-xs shadow-xs transition-all shrink-0 cursor-pointer"
+                  >
+                    <span>Explore 12 Domains</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#168C89]" />
+                  </Link>
+                </div>
+              </div>
 
               {/* Target Role Card */}
               {targetRole && (

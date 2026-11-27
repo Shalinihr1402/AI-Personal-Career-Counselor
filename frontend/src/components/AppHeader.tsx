@@ -7,23 +7,23 @@ import {
   X,
   Compass,
   LayoutDashboard,
-  Search,
   Map,
   Mic,
   ChevronDown,
   Settings,
   Sparkles,
   CalendarCheck,
+  Bell,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/assessment', label: 'Discover Careers', icon: Compass },
-  { to: '/careers', label: 'Career Explorer', icon: Search },
+  { to: '/recommendations', label: 'Career Matches', icon: Sparkles },
+  { to: '/assessment', label: 'Assessment', icon: Compass },
   { to: '/roadmap', label: 'Roadmap', icon: Map },
-  { to: '/today', label: 'Today', icon: CalendarCheck },
+  { to: '/today', label: 'Learning', icon: CalendarCheck },
 ];
 
 export default function AppHeader() {
@@ -68,7 +68,10 @@ export default function AppHeader() {
         <nav className="hidden lg:flex items-center gap-1 text-xs font-semibold" aria-label="Main navigation">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.to || (item.to !== '/dashboard' && pathname.startsWith(item.to));
+            const isActive =
+              pathname === item.to ||
+              (item.to !== '/dashboard' && pathname.startsWith(item.to)) ||
+              (item.to === '/recommendations' && pathname === '/career-matches');
             return (
               <Link
                 key={item.to}
@@ -97,6 +100,16 @@ export default function AppHeader() {
 
         {/* User Account Menu & Controls */}
         <div className="flex items-center gap-2.5">
+          {/* Notification Alert Bell */}
+          <button
+            type="button"
+            className="relative p-2 rounded-xl text-[#64748B] hover:text-[#172638] hover:bg-[#F1F5F9] transition-colors cursor-pointer"
+            aria-label="Notifications"
+          >
+            <Bell className="w-4 h-4" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-500 ring-2 ring-white" />
+          </button>
+
           {/* User Profile Menu */}
           <div className="relative">
             <button
@@ -150,6 +163,14 @@ export default function AppHeader() {
                       <Sparkles className="w-4 h-4 text-[#168C89]" />
                       <span>Career Assessment</span>
                     </Link>
+                    <Link
+                      to="/discover-interests"
+                      onClick={() => setProfileDropdownOpen(false)}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#172638] hover:bg-[#EAF5F4] transition-colors font-medium"
+                    >
+                      <Sparkles className="w-4 h-4 text-[#168C89]" />
+                      <span>Discover What You Enjoy</span>
+                    </Link>
                   </div>
 
                   <div className="pt-1">
@@ -184,7 +205,10 @@ export default function AppHeader() {
         <div className="lg:hidden border-t border-[#E2E8F0] bg-white px-4 py-3 space-y-1 text-sm font-semibold animate-in slide-in-from-top-2 duration-150">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.to || (item.to !== '/dashboard' && pathname.startsWith(item.to));
+            const isActive =
+              pathname === item.to ||
+              (item.to !== '/dashboard' && pathname.startsWith(item.to)) ||
+              (item.to === '/recommendations' && pathname === '/career-matches');
             return (
               <Link
                 key={item.to}

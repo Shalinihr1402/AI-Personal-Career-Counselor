@@ -59,6 +59,10 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
     const isGoalSelectionRoute =
       currentPath === '/assessment' ||
       currentPath === '/onboarding' ||
+      currentPath === '/recommendations' ||
+      currentPath === '/career-matches' ||
+      currentPath === '/discover-interests' ||
+      currentPath === '/interests' ||
       currentPath.startsWith('/careers');
 
     if (!isGoalSelectionRoute) {

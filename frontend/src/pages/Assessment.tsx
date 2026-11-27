@@ -1453,6 +1453,13 @@ const Assessment: React.FC = () => {
 
               {/* Bottom utility controls */}
               <div className="flex flex-wrap items-center justify-center gap-4 pt-6 border-t border-slate-200/70">
+                <Link
+                  to="/recommendations"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#142B4A] hover:bg-[#0E1F36] text-white text-xs font-bold transition-all shadow-xs"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#168C89]" />
+                  <span>View Recommendations Dashboard</span>
+                </Link>
                 <Button
                   variant="primary"
                   size="md"
