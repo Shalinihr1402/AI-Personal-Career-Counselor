@@ -8,6 +8,7 @@ import {
   Building2,
   Home,
   Check,
+  Sliders,
 } from 'lucide-react';
 import type { OnboardingRecord } from '../../lib/onboarding';
 import {
@@ -138,14 +139,15 @@ export const Stage5PrioritiesConstraints: React.FC<Stage5PrioritiesConstraintsPr
       career_preferences: updatedCP,
       career_discovery_preferences: updatedCDP,
       hoursPerWeek: patchGeneral.hoursPerWeek || data.hoursPerWeek,
-      ...patchGeneral,
     });
   };
 
   const togglePriority = (id: string) => {
     const updated = selectedPriorities.includes(id)
       ? selectedPriorities.filter((p) => p !== id)
-      : [...selectedPriorities, id];
+      : selectedPriorities.length < 3
+      ? [...selectedPriorities, id]
+      : selectedPriorities;
 
     updatePreferences(
       { career_priorities: updated },
@@ -159,27 +161,29 @@ export const Stage5PrioritiesConstraints: React.FC<Stage5PrioritiesConstraintsPr
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300 max-w-2xl mx-auto">
+    <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
-      <div className="text-left space-y-1.5 border-b border-slate-200 pb-5">
-        <div className="inline-flex items-center gap-1.5 text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider">
-          Stage 5 of 6
+      <div className="flex items-start gap-4 pb-2 border-b border-[#E2E8F0]">
+        <div className="w-12 h-12 rounded-xl bg-[#EAF5F4] text-[#168C89] border border-[#C5E6E4] flex items-center justify-center shrink-0 shadow-xs">
+          <Sliders className="w-6 h-6" />
         </div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-          Career Priorities & Practical Realities
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-          Career advice only works if it fits your real life. Tell us what matters most to you and your practical constraints.
-        </p>
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#172638] tracking-tight">
+            Career Priorities & Practical Realities
+          </h1>
+          <p className="text-xs sm:text-sm text-[#64748B] mt-0.5 leading-relaxed">
+            Career advice only works if it fits your real life. Tell us what matters most to you and your practical constraints.
+          </p>
+        </div>
       </div>
 
       {/* 1. Core Career Priorities */}
-      <div className="space-y-3">
+      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 sm:p-6 space-y-4 shadow-xs">
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#172638]">
             1. What Matters Most in Your Next Step? (Select up to 3)
           </label>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[#64748B]">
             Helps our matching engine rank roles that align with your core values.
           </p>
         </div>
@@ -202,23 +206,23 @@ export const Stage5PrioritiesConstraints: React.FC<Stage5PrioritiesConstraintsPr
                 }}
                 className={`p-3.5 rounded-xl border transition-all cursor-pointer text-left flex items-start gap-3 ${
                   isSelected
-                    ? 'border-slate-900 bg-slate-50/80 shadow-2xs ring-1 ring-slate-900/10'
-                    : 'border-slate-200 bg-white hover:border-slate-300'
+                    ? 'border-[#142B4A] bg-[#EAF5F4]/60 shadow-xs ring-1 ring-[#142B4A]/10'
+                    : 'border-[#E2E8F0] bg-white hover:border-[#CBD5E1]'
                 }`}
               >
                 <div
                   className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
-                    isSelected ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600'
+                    isSelected ? 'bg-[#142B4A] text-white' : 'bg-[#F1F5F9] text-[#64748B]'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-900">{p.title}</span>
-                    {isSelected && <Check className="w-3.5 h-3.5 text-slate-900" />}
+                    <span className="text-xs font-bold text-[#172638]">{p.title}</span>
+                    {isSelected && <Check className="w-3.5 h-3.5 text-[#168C89]" />}
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">{p.desc}</p>
+                  <p className="text-[11px] text-[#64748B] mt-0.5">{p.desc}</p>
                 </div>
               </div>
             );
@@ -226,8 +230,8 @@ export const Stage5PrioritiesConstraints: React.FC<Stage5PrioritiesConstraintsPr
         </div>
 
         {/* Qualitative Priority Explanation */}
-        <div className="pt-1">
-          <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+        <div className="pt-2 border-t border-[#E2E8F0]">
+          <label className="block text-[11px] font-semibold text-[#172638] mb-1">
             Why does this matter most to you right now? (Optional)
           </label>
           <input
@@ -235,19 +239,19 @@ export const Stage5PrioritiesConstraints: React.FC<Stage5PrioritiesConstraintsPr
             placeholder="e.g. I need financial independence early to support my family; or I want a role that lets me learn AI quickly."
             value={cp.reason_for_choice || ''}
             onChange={(e) => updatePreferences({ reason_for_choice: e.target.value })}
-            className="w-full text-xs px-3.5 py-2 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900"
+            className="w-full text-xs px-3.5 py-2 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89]"
           />
         </div>
       </div>
 
-      {/* 2. Earning Urgency & Financial Runway (CRITICAL GROUNDING) */}
-      <div className="space-y-3 pt-4 border-t border-slate-200">
+      {/* 2. Earning Urgency & Financial Runway */}
+      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 sm:p-6 space-y-3 shadow-xs">
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#172638]">
             2. Earning Urgency & Timeline
           </label>
-          <p className="text-xs text-slate-500">
-            Prevents recommending long unpaid master's programs or extended training to someone who needs to earn immediately.
+          <p className="text-xs text-[#64748B]">
+            Prevents recommending long unpaid training to someone who needs to earn immediately.
           </p>
         </div>
 
@@ -268,12 +272,12 @@ export const Stage5PrioritiesConstraints: React.FC<Stage5PrioritiesConstraintsPr
                 }}
                 className={`p-3.5 rounded-xl border text-left cursor-pointer transition-all ${
                   isSelected
-                    ? 'border-slate-900 bg-slate-50/80 shadow-2xs font-semibold'
-                    : 'border-slate-200 bg-white hover:border-slate-300'
+                    ? 'border-[#168C89] bg-[#EAF5F4] shadow-xs font-semibold'
+                    : 'border-[#E2E8F0] bg-white hover:border-[#CBD5E1]'
                 }`}
               >
-                <span className="text-xs font-bold text-slate-900 block">{urg.title}</span>
-                <span className="text-[11px] text-slate-500 block mt-1 leading-snug">{urg.desc}</span>
+                <span className="text-xs font-bold text-[#172638] block">{urg.title}</span>
+                <span className="text-[11px] text-[#64748B] block mt-1 leading-snug">{urg.desc}</span>
               </div>
             );
           })}
@@ -281,11 +285,11 @@ export const Stage5PrioritiesConstraints: React.FC<Stage5PrioritiesConstraintsPr
       </div>
 
       {/* 3. Work Setting & Relocation Mobility */}
-      <div className="space-y-4 pt-4 border-t border-slate-200">
+      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 sm:p-6 space-y-4 shadow-xs">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Work Environment */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#172638] mb-2">
               Work Setting Preference
             </label>
             <div className="space-y-2">
@@ -312,14 +316,14 @@ export const Stage5PrioritiesConstraints: React.FC<Stage5PrioritiesConstraintsPr
                         );
                       }
                     }}
-                    className={`p-2.5 rounded-lg border text-left cursor-pointer transition-all flex items-center gap-2.5 ${
+                    className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all flex items-center gap-2.5 ${
                       isSelected
-                        ? 'border-slate-900 bg-slate-50 shadow-2xs font-semibold'
-                        : 'border-slate-200 bg-white hover:border-slate-300'
+                        ? 'border-[#142B4A] bg-[#142B4A] text-white shadow-2xs font-semibold'
+                        : 'border-[#E2E8F0] bg-white text-[#172638] hover:border-[#CBD5E1]'
                     }`}
                   >
-                    <Icon className="w-3.5 h-3.5 text-slate-600" />
-                    <span className="text-xs text-slate-800">{env.title}</span>
+                    <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-[#168C89]' : 'text-[#64748B]'}`} />
+                    <span className="text-xs font-medium">{env.title}</span>
                   </div>
                 );
               })}
@@ -328,7 +332,7 @@ export const Stage5PrioritiesConstraints: React.FC<Stage5PrioritiesConstraintsPr
 
           {/* Relocation Flexibility */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#172638] mb-2">
               Relocation & Mobility
             </label>
             <div className="space-y-2">
@@ -346,14 +350,14 @@ export const Stage5PrioritiesConstraints: React.FC<Stage5PrioritiesConstraintsPr
                         handleUpdateConstraint({ relocation_flexibility: rel.id });
                       }
                     }}
-                    className={`p-2.5 rounded-lg border text-left cursor-pointer transition-all ${
+                    className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all ${
                       isSelected
-                        ? 'border-slate-900 bg-slate-50 shadow-2xs font-semibold'
-                        : 'border-slate-200 bg-white hover:border-slate-300'
+                        ? 'border-[#168C89] bg-[#EAF5F4] text-[#168C89] shadow-2xs font-semibold'
+                        : 'border-[#E2E8F0] bg-white text-[#172638] hover:border-[#CBD5E1]'
                     }`}
                   >
-                    <span className="text-xs font-bold text-slate-900 block">{rel.title}</span>
-                    <span className="text-[10px] text-slate-500 block leading-tight mt-0.5">{rel.desc}</span>
+                    <span className="text-xs font-bold text-[#172638] block">{rel.title}</span>
+                    <span className="text-[10px] text-[#64748B] block leading-tight mt-0.5">{rel.desc}</span>
                   </div>
                 );
               })}
@@ -362,11 +366,11 @@ export const Stage5PrioritiesConstraints: React.FC<Stage5PrioritiesConstraintsPr
         </div>
 
         {/* 4. Weekly Learning Bandwidth */}
-        <div className="pt-2">
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+        <div className="pt-3 border-t border-[#E2E8F0]">
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#172638] mb-1">
             Realistic Weekly Learning Bandwidth
           </label>
-          <p className="text-xs text-slate-500 mb-2">
+          <p className="text-xs text-[#64748B] mb-2">
             How many hours per week can you realistically invest alongside your college coursework or job?
           </p>
           <select
@@ -383,7 +387,7 @@ export const Stage5PrioritiesConstraints: React.FC<Stage5PrioritiesConstraintsPr
                 { hoursPerWeek: e.target.value }
               )
             }
-            className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+            className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:outline-none focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89]"
           >
             <option value="less_than_5_hrs">Light (Under 5 hours / week — weekends only)</option>
             <option value="5_to_10_hrs">Moderate (5 - 10 hours / week — 1 hour / day)</option>

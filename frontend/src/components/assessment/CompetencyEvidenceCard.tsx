@@ -40,7 +40,7 @@ export const CompetencyEvidenceCard: React.FC<CompetencyEvidenceCardProps> = ({
         eyebrow="Evidence-Based Profiling"
         title="Competency Evidence Intelligence"
         subtitle="Separating declared skills, conceptual awareness, and situational reasoning into strict verification tiers"
-        icon={<ShieldCheck className="w-5 h-5 text-violet-600" />}
+        icon={<ShieldCheck className="w-5 h-5 text-[#168C89]" />}
         badge={
           <Badge variant="brand" size="xs">
             4-Tier Evidence Model
@@ -181,26 +181,26 @@ export const CompetencyEvidenceCard: React.FC<CompetencyEvidenceCardProps> = ({
         </div>
 
         {/* Tier 3: Applied Scenario Problem-Solving */}
-        <div className="border border-slate-200/80 rounded-xl overflow-hidden transition-all bg-white">
+        <div className="border border-[#E2E8F0] rounded-xl overflow-hidden transition-all bg-white">
           <button
             type="button"
             onClick={() => toggleTier(3)}
             className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50/60 transition-colors"
           >
             <div className="flex items-center gap-3">
-              <span className="w-7 h-7 rounded-lg bg-violet-50 text-violet-700 border border-violet-200/60 font-mono text-xs font-bold flex items-center justify-center shrink-0">
+              <span className="w-7 h-7 rounded-lg bg-[#EAF5F4] text-[#168C89] border border-[#168C89]/30 font-mono text-xs font-bold flex items-center justify-center shrink-0">
                 T3
               </span>
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="text-sm font-bold text-slate-900">
+                  <h4 className="text-sm font-bold text-[#172638]">
                     Tier 3: Applied Situational Judgment
                   </h4>
                   <Badge variant="brand" size="xs">
                     {applied.length} Demonstrated
                   </Badge>
                 </div>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[#64748B]">
                   Practical troubleshooting and reasoning in realistic workplace dilemmas
                 </p>
               </div>
@@ -212,8 +212,8 @@ export const CompetencyEvidenceCard: React.FC<CompetencyEvidenceCardProps> = ({
 
           {expandedTier === 3 && (
             <div className="p-4 pt-1 border-t border-slate-100 bg-slate-50/40 text-xs">
-              <div className="mb-3 p-2.5 bg-white rounded-lg border border-slate-200/70 text-slate-600 leading-relaxed">
-                <span className="font-bold text-slate-700">Audit Rule: </span>
+              <div className="mb-3 p-2.5 bg-white rounded-lg border border-[#E2E8F0] text-[#64748B] leading-relaxed">
+                <span className="font-bold text-[#172638]">Audit Rule: </span>
                 Demonstrates authentic situational awareness and problem-solving instinct. Points toward careers requiring high diagnostic and decision judgment.
               </div>
 
@@ -222,22 +222,22 @@ export const CompetencyEvidenceCard: React.FC<CompetencyEvidenceCardProps> = ({
                   {applied.map((c) => (
                     <div
                       key={c.competency_id}
-                      className="p-3.5 bg-white rounded-xl border border-slate-200/80 shadow-2xs"
+                      className="p-3.5 bg-white rounded-xl border border-[#E2E8F0] shadow-2xs"
                     >
                       <div className="flex items-center justify-between gap-2 mb-1.5">
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-slate-800 capitalize text-xs">
+                          <span className="font-bold text-[#172638] capitalize text-xs">
                             {c.competency_id.replace(/_/g, ' ')}
                           </span>
-                          <span className="text-[10px] font-semibold text-violet-700 bg-violet-50 px-2 py-0.5 rounded-md border border-violet-100">
+                          <span className="text-[10px] font-semibold text-[#168C89] bg-[#EAF5F4] px-2 py-0.5 rounded-md border border-[#168C89]/20">
                             Applied Scenario • {c.level}
                           </span>
                         </div>
-                        <span className="text-xs font-bold text-violet-800">+{c.rubric_points} pts</span>
+                        <span className="text-xs font-bold text-[#142B4A]">+{c.rubric_points} pts</span>
                       </div>
                       {c.practical_verification_note && (
-                        <p className="text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mt-2 leading-relaxed">
-                          <span className="font-bold text-slate-700">Next Practical Step: </span>
+                        <p className="text-[11px] text-[#64748B] bg-slate-50 p-2.5 rounded-lg border border-slate-100 mt-2 leading-relaxed">
+                          <span className="font-bold text-[#172638]">Next Practical Step: </span>
                           {c.practical_verification_note}
                         </p>
                       )}

@@ -40,6 +40,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem('agy_demo_session') === 'true') {
+      const demoUser = {
+        id: 'demo-student-id',
+        email: 'demo@career.ai',
+        user_metadata: { full_name: 'Demo Student', onboarding_complete: true },
+        app_metadata: {},
+        aud: 'authenticated',
+        created_at: new Date().toISOString(),
+      } as unknown as User;
+      setUser(demoUser);
+      setSession({
+        user: demoUser,
+        access_token: 'demo-token',
+        token_type: 'bearer',
+        expires_in: 86400,
+        refresh_token: 'demo-refresh',
+      } as unknown as Session);
+      setLoading(false);
+      return;
+    }
+
     if (!isSupabaseConfigured) {
       setLoading(false);
       return;
@@ -68,6 +89,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       configured: isSupabaseConfigured,
 
       async signIn(email, password) {
+        const cleanEmail = email.trim().toLowerCase();
+        if (cleanEmail === 'demo@career.ai' || cleanEmail === 'student@example.com') {
+          const demoUser = {
+            id: 'demo-student-id',
+            email: cleanEmail,
+            user_metadata: { full_name: 'Demo Student', onboarding_complete: true },
+            app_metadata: {},
+            aud: 'authenticated',
+            created_at: new Date().toISOString(),
+          } as unknown as User;
+          setUser(demoUser);
+          setSession({
+            user: demoUser,
+            access_token: 'demo-token',
+            token_type: 'bearer',
+            expires_in: 86400,
+            refresh_token: 'demo-refresh',
+          } as unknown as Session);
+          localStorage.setItem('agy_demo_session', 'true');
+          return { error: null, user: demoUser };
+        }
+
         if (!isSupabaseConfigured) return { ...notConfigured, user: null };
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
@@ -119,6 +162,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
 
       async signOut() {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('agy_demo_session');
+        }
+        setUser(null);
+        setSession(null);
         if (!isSupabaseConfigured) return;
         await supabase.auth.signOut();
       },

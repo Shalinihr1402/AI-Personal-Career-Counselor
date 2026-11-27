@@ -3,6 +3,7 @@ import {
   Plus,
   Trash2,
   Info,
+  Code,
 } from 'lucide-react';
 import type { OnboardingRecord } from '../../lib/onboarding';
 import {
@@ -99,7 +100,7 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
           name: skillName,
           category,
           skill_classification: classification,
-          proficiency: 'beginner', // Explicit: Start at beginner, NEVER auto-intermediate!
+          proficiency: 'beginner',
           source: 'academic_coursework',
           provenance: 'declared',
           is_custom: false,
@@ -185,40 +186,42 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
   const structuredProjects = se.structured_projects || [];
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300 max-w-2xl mx-auto">
+    <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
-      <div className="text-left space-y-1.5 border-b border-slate-200 pb-5">
-        <div className="inline-flex items-center gap-1.5 text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider">
-          Stage 4 of 6
+      <div className="flex items-start gap-4 pb-2 border-b border-[#E2E8F0]">
+        <div className="w-12 h-12 rounded-xl bg-[#EAF5F4] text-[#168C89] border border-[#C5E6E4] flex items-center justify-center shrink-0 shadow-xs">
+          <Code className="w-6 h-6" />
         </div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-          Skills, Projects & Actual Experience
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-          Evidence matters. Tell us what skills you possess, where you learned them, and any projects, capstones, or coursework you built.
-        </p>
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#172638] tracking-tight">
+            Skills, Projects & Actual Experience
+          </h1>
+          <p className="text-xs sm:text-sm text-[#64748B] mt-0.5 leading-relaxed">
+            Evidence matters. Tell us what skills you possess, where you learned them, and any projects, capstones, or coursework you built.
+          </p>
+        </div>
       </div>
 
       {/* 1. Categorized Skills Section */}
-      <div className="space-y-4">
+      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 sm:p-6 space-y-4 shadow-xs">
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#172638]">
             1. Skills & Knowledge Base (Tag with your real proficiency)
           </label>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[#64748B]">
             Skills are separated by type to prevent treating domain theory the same as coding tools.
           </p>
         </div>
 
         {/* Category Tabs */}
-        <div className="flex border-b border-slate-200 gap-2">
+        <div className="flex border-b border-[#E2E8F0] gap-2">
           <button
             type="button"
             onClick={() => setActiveSkillCategory('technical')}
             className={`py-2 px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer ${
               activeSkillCategory === 'technical'
-                ? 'border-slate-900 text-slate-900'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-[#168C89] text-[#168C89]'
+                : 'border-transparent text-[#64748B] hover:text-[#172638]'
             }`}
           >
             Technical Tools & Software
@@ -228,8 +231,8 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
             onClick={() => setActiveSkillCategory('domain')}
             className={`py-2 px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer ${
               activeSkillCategory === 'domain'
-                ? 'border-slate-900 text-slate-900'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-[#168C89] text-[#168C89]'
+                : 'border-transparent text-[#64748B] hover:text-[#172638]'
             }`}
           >
             Domain & Academic Knowledge
@@ -239,8 +242,8 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
             onClick={() => setActiveSkillCategory('transferable')}
             className={`py-2 px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer ${
               activeSkillCategory === 'transferable'
-                ? 'border-slate-900 text-slate-900'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-[#168C89] text-[#168C89]'
+                : 'border-transparent text-[#64748B] hover:text-[#172638]'
             }`}
           >
             Transferable & Working Abilities
@@ -248,7 +251,7 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
         </div>
 
         {/* Skill Preset Badges */}
-        <div className="flex flex-wrap gap-1.5 p-3.5 rounded-xl border border-slate-200 bg-slate-50/50">
+        <div className="flex flex-wrap gap-1.5 p-3.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC]">
           {(activeSkillCategory === 'technical'
             ? COMMON_TECHNICAL_SKILLS
             : activeSkillCategory === 'domain'
@@ -272,10 +275,10 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
                       : 'transferable_soft'
                   )
                 }
-                className={`text-xs px-2.5 py-1 rounded-md border transition-all cursor-pointer ${
+                className={`text-xs px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
                   isSelected
-                    ? 'border-slate-900 bg-slate-900 text-white font-medium shadow-2xs'
-                    : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                    ? 'border-[#168C89] bg-[#168C89] text-white font-medium shadow-2xs'
+                    : 'border-[#E2E8F0] bg-white text-[#64748B] hover:border-[#CBD5E1]'
                 }`}
               >
                 {isSelected ? '✓ ' : '+ '}
@@ -298,32 +301,32 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
                 handleAddCustomSkill();
               }
             }}
-            className="flex-1 text-xs px-3 py-2 rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+            className="flex-1 text-xs px-3.5 py-2 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:outline-none focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89]"
           />
           <button
             type="button"
             onClick={handleAddCustomSkill}
-            className="px-3.5 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors cursor-pointer"
+            className="px-4 py-2 text-xs font-semibold rounded-xl bg-[#142B4A] hover:bg-[#0E1F36] text-white transition-colors cursor-pointer shadow-xs"
           >
             Add Skill
           </button>
         </div>
 
-        {/* Selected Skills Matrix with Real Proficiencies & Sources */}
+        {/* Selected Skills Matrix */}
         {declaredSkills.length > 0 && (
-          <div className="space-y-2 pt-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600">
+          <div className="space-y-2 pt-2 border-t border-[#E2E8F0]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#172638]">
               Selected Skills ({declaredSkills.length}) — Set Real Proficiency & Learning Source
             </h4>
             <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
               {declaredSkills.map((s) => (
                 <div
                   key={s.name}
-                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-white shadow-2xs gap-2"
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-2.5 rounded-xl border border-[#E2E8F0] bg-white shadow-2xs gap-2"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-900">{s.name}</span>
-                    <span className="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                    <span className="text-xs font-bold text-[#172638]">{s.name}</span>
+                    <span className="text-[10px] text-[#168C89] bg-[#EAF5F4] border border-[#C5E6E4] px-1.5 py-0.5 rounded font-semibold">
                       {s.skill_classification || 'tech'}
                     </span>
                   </div>
@@ -335,7 +338,7 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
                       onChange={(e) =>
                         handleSetSkillProficiency(s.name, e.target.value as SkillProficiency)
                       }
-                      className="text-[11px] font-medium py-1 px-2 rounded border border-slate-200 bg-slate-50 focus:ring-1 focus:ring-slate-900"
+                      className="text-[11px] font-medium py-1 px-2 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-[#172638] focus:ring-1 focus:ring-[#168C89]"
                     >
                       <option value="beginner">Beginner (Learning)</option>
                       <option value="intermediate">Intermediate (Can apply)</option>
@@ -349,7 +352,7 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
                       onChange={(e) =>
                         handleSetSkillSource(s.name, e.target.value as SkillSource)
                       }
-                      className="text-[11px] font-medium py-1 px-2 rounded border border-slate-200 bg-slate-50 focus:ring-1 focus:ring-slate-900"
+                      className="text-[11px] font-medium py-1 px-2 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-[#172638] focus:ring-1 focus:ring-[#168C89]"
                     >
                       <option value="academic_coursework">College Course</option>
                       <option value="self_learning">Self-Taught</option>
@@ -361,7 +364,7 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
                     <button
                       type="button"
                       onClick={() => handleRemoveSkill(s.name)}
-                      className="text-slate-400 hover:text-rose-600 transition-colors p-1"
+                      className="text-[#64748B] hover:text-rose-600 transition-colors p-1"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -374,13 +377,13 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
       </div>
 
       {/* 2. Structured Projects Section */}
-      <div className="space-y-4 pt-4 border-t border-slate-200">
+      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 sm:p-6 space-y-4 shadow-xs">
         <div className="flex items-center justify-between">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#172638]">
               2. Demonstrated Projects & Practical Evidence
             </label>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[#64748B]">
               Add projects, lab assignments, or capstones that demonstrate your problem-solving.
             </p>
           </div>
@@ -388,7 +391,7 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
           <button
             type="button"
             onClick={() => setIsAddingProject(!isAddingProject)}
-            className="text-xs font-semibold text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="text-xs font-semibold text-white bg-[#142B4A] hover:bg-[#0E1F36] px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
           >
             <Plus className="w-3.5 h-3.5" /> Add Project
           </button>
@@ -400,31 +403,31 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
             {structuredProjects.map((p) => (
               <div
                 key={p.id}
-                className="p-4 rounded-xl border border-slate-200 bg-white space-y-2 shadow-2xs"
+                className="p-4 rounded-xl border border-[#E2E8F0] bg-white space-y-2 shadow-2xs"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-900">{p.title}</span>
-                    <span className="text-[10px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
+                    <span className="text-xs font-bold text-[#172638]">{p.title}</span>
+                    <span className="text-[10px] font-semibold text-[#168C89] bg-[#EAF5F4] border border-[#C5E6E4] px-2 py-0.5 rounded-full">
                       {PROJECT_TYPE_OPTIONS.find((t) => t.id === p.project_type)?.label || 'Project'}
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => handleRemoveProject(p.id)}
-                    className="text-slate-400 hover:text-rose-600 transition-colors p-1"
+                    className="text-[#64748B] hover:text-rose-600 transition-colors p-1"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  <strong className="text-slate-800 font-medium">Problem:</strong> {p.problem_solved}
+                <p className="text-xs text-[#64748B] leading-relaxed">
+                  <strong className="text-[#172638] font-medium">Problem:</strong> {p.problem_solved}
                 </p>
 
                 {p.individual_contribution && (
-                  <p className="text-xs text-slate-600">
-                    <strong className="text-slate-800 font-medium">Your Role:</strong> {p.individual_contribution}
+                  <p className="text-xs text-[#64748B]">
+                    <strong className="text-[#172638] font-medium">Your Role:</strong> {p.individual_contribution}
                   </p>
                 )}
 
@@ -433,7 +436,7 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
                     {p.technologies.map((t) => (
                       <span
                         key={t}
-                        className="text-[10px] font-medium bg-slate-100 text-slate-700 px-2 py-0.5 rounded"
+                        className="text-[10px] font-medium bg-[#F1F5F9] text-[#172638] px-2 py-0.5 rounded-md border border-[#E2E8F0]"
                       >
                         {t}
                       </span>
@@ -447,33 +450,33 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
 
         {/* Add Project Form Drawer */}
         {isAddingProject && (
-          <div className="p-4 sm:p-5 rounded-xl border border-slate-200 bg-slate-50 space-y-3.5 animate-in fade-in">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+          <div className="p-4 sm:p-5 rounded-xl border border-[#C5E6E4] bg-[#EAF5F4]/40 space-y-3.5 animate-in fade-in">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#142B4A]">
               Add Structured Project Details
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
-                  Project Title <span className="text-rose-500">*</span>
+                <label className="block text-[11px] font-semibold text-[#172638] mb-1">
+                  Project Title <span className="text-[#168C89]">*</span>
                 </label>
                 <input
                   type="text"
                   placeholder="e.g. GST Billing Ledger System, Portfolio Website"
                   value={newProjTitle}
                   onChange={(e) => setNewProjTitle(e.target.value)}
-                  className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900"
+                  className="w-full text-xs px-3.5 py-2 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89]"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
-                  Project Type <span className="text-rose-500">*</span>
+                <label className="block text-[11px] font-semibold text-[#172638] mb-1">
+                  Project Type <span className="text-[#168C89]">*</span>
                 </label>
                 <select
                   value={newProjType}
                   onChange={(e) => setNewProjType(e.target.value as ProjectType)}
-                  className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900"
+                  className="w-full text-xs px-3.5 py-2 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89]"
                 >
                   {PROJECT_TYPE_OPTIONS.map((opt) => (
                     <option key={opt.id} value={opt.id}>
@@ -485,21 +488,21 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
             </div>
 
             <div>
-              <label className="block text-[11px] font-medium text-slate-700 mb-1">
-                Problem Solved or Task Goal <span className="text-rose-500">*</span>
+              <label className="block text-[11px] font-semibold text-[#172638] mb-1">
+                Problem Solved or Task Goal <span className="text-[#168C89]">*</span>
               </label>
               <textarea
                 rows={2}
                 placeholder="What real problem or academic challenge did this project solve?"
                 value={newProjProblem}
                 onChange={(e) => setNewProjProblem(e.target.value)}
-                className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900"
+                className="w-full text-xs p-3 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89]"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                <label className="block text-[11px] font-semibold text-[#172638] mb-1">
                   Your Individual Contribution / Role
                 </label>
                 <input
@@ -507,12 +510,12 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
                   placeholder="e.g. Lead Developer, Solo Author, Data Cleaning & Analysis"
                   value={newProjRole}
                   onChange={(e) => setNewProjRole(e.target.value)}
-                  className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900"
+                  className="w-full text-xs px-3.5 py-2 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89]"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                <label className="block text-[11px] font-semibold text-[#172638] mb-1">
                   Tools or Technologies Used (comma-separated)
                 </label>
                 <input
@@ -520,14 +523,14 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
                   placeholder="e.g. Python, Pandas, SQLite, Excel"
                   value={newProjTech}
                   onChange={(e) => setNewProjTech(e.target.value)}
-                  className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900"
+                  className="w-full text-xs px-3.5 py-2 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89]"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                <label className="block text-[11px] font-semibold text-[#172638] mb-1">
                   Outcome or Key Takeaway
                 </label>
                 <input
@@ -535,12 +538,12 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
                   placeholder="e.g. Achieved 94% accuracy, Deployed on Vercel, Scored A grade"
                   value={newProjOutcome}
                   onChange={(e) => setNewProjOutcome(e.target.value)}
-                  className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900"
+                  className="w-full text-xs px-3.5 py-2 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89]"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                <label className="block text-[11px] font-semibold text-[#172638] mb-1">
                   Repo / Demo Link (Optional)
                 </label>
                 <input
@@ -548,7 +551,7 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
                   placeholder="e.g. https://github.com/... or live URL"
                   value={newProjUrl}
                   onChange={(e) => setNewProjUrl(e.target.value)}
-                  className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900"
+                  className="w-full text-xs px-3.5 py-2 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89]"
                 />
               </div>
             </div>
@@ -557,14 +560,14 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
               <button
                 type="button"
                 onClick={() => setIsAddingProject(false)}
-                className="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-800"
+                className="px-3 py-1.5 text-xs text-[#64748B] hover:text-[#172638]"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSaveProject}
-                className="px-4 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 text-white hover:bg-slate-800"
+                className="px-4 py-1.5 text-xs font-semibold rounded-xl bg-[#142B4A] text-white hover:bg-[#0E1F36]"
               >
                 Save Project
               </button>
@@ -573,27 +576,27 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
         )}
 
         {/* 3. Dignified Path for Freshers Without Projects */}
-        <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-3">
+        <div className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] space-y-3">
           <label className="flex items-start gap-2.5 cursor-pointer">
             <input
               type="checkbox"
               checked={Boolean(se.has_no_standalone_projects)}
               onChange={(e) => updateSE({ has_no_standalone_projects: e.target.checked })}
-              className="mt-0.5 rounded text-slate-900 focus:ring-slate-900"
+              className="mt-0.5 rounded text-[#168C89] focus:ring-[#168C89]"
             />
             <div>
-              <span className="text-xs font-bold text-slate-900 block">
+              <span className="text-xs font-bold text-[#172638] block">
                 I haven't completed standalone portfolio or commercial projects yet.
               </span>
-              <span className="text-[11px] text-slate-500 block leading-snug">
+              <span className="text-[11px] text-[#64748B] block leading-snug">
                 You can highlight significant coursework assignments, case studies, or lab experiments instead. There is zero penalty.
               </span>
             </div>
           </label>
 
           {se.has_no_standalone_projects && (
-            <div className="pt-2 border-t border-slate-200/80 space-y-2 animate-in fade-in">
-              <label className="block text-[11px] font-semibold text-slate-700">
+            <div className="pt-2 border-t border-[#E2E8F0] space-y-2 animate-in fade-in">
+              <label className="block text-[11px] font-semibold text-[#172638]">
                 Coursework Problem-Solving & Lab Highlights
               </label>
               <textarea
@@ -601,10 +604,10 @@ export const Stage4SkillsProjects: React.FC<Stage4SkillsProjectsProps> = ({ data
                 value={se.academic_coursework_highlights || ''}
                 onChange={(e) => updateSE({ academic_coursework_highlights: e.target.value })}
                 placeholder="e.g. In semester 4, I analyzed 5 balance sheets for a corporate taxation case study; in semester 5, I solved linear programming optimization models in lab."
-                className="w-full text-xs px-3 py-2 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900"
+                className="w-full text-xs p-3 rounded-xl border border-[#E2E8F0] bg-white text-[#172638] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89]"
               />
-              <p className="text-[10px] text-slate-500 flex items-center gap-1">
-                <Info className="w-3 h-3 text-slate-400" />
+              <p className="text-[10px] text-[#64748B] flex items-center gap-1">
+                <Info className="w-3 h-3 text-[#168C89]" />
                 Coursework problem solving is counted as valid academic evidence by the recommendation engine.
               </p>
             </div>

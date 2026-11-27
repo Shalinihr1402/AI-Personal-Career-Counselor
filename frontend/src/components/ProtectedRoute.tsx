@@ -20,8 +20,8 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
 
   if (loading || (user && profileLoading)) {
     return (
-      <div className="min-h-screen bg-[#F8F9FE] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#F5F8FC] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#168C89]/20 border-t-[#168C89] rounded-full animate-spin" />
       </div>
     );
   }

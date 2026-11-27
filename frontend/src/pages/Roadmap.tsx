@@ -82,27 +82,27 @@ const Roadmap: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-ambient-glow font-sans flex flex-col">
+    <div className="min-h-screen bg-[#F5F8FC] font-sans flex flex-col">
       <AppHeader />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
-        <div className="flex items-center gap-2 text-violet-600 mb-1">
-          <Target className="w-5 h-5" />
+        <div className="flex items-center gap-2 text-[#168C89] mb-1">
+          <Target className="w-5 h-5 text-[#168C89]" />
           <span className="text-sm font-bold uppercase tracking-wider">Your roadmap</span>
         </div>
-        <h1 className="text-3xl font-extrabold text-slate-900 mb-1">
+        <h1 className="text-3xl font-extrabold text-[#172638] mb-1">
           The path to {roadmap.role}
         </h1>
-        <p className="text-slate-500 mb-1">{pace.note}</p>
+        <p className="text-[#64748B] mb-1">{pace.note}</p>
         <p className="text-slate-400 text-sm mb-8">
           {weeks.length} weeks at {weeklyHours}h/week · {overallPct}% complete
         </p>
 
         {/* Change target role */}
         {configured && (
-          <div className="bg-white rounded-[1.25rem] p-4 border border-slate-200/80 shadow-[0_4px_20px_rgb(0,0,0,0.03)] mb-6 flex flex-wrap items-end gap-3">
+          <div className="bg-white rounded-[1.25rem] p-4 border border-[#E2E8F0] shadow-sm mb-6 flex flex-wrap items-end gap-3">
             <div className="flex-1 min-w-[220px]">
-              <label htmlFor="role" className="block text-[13px] font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="role" className="block text-[13px] font-semibold text-[#172638] mb-1.5">
                 Target role
               </label>
               <input
@@ -113,14 +113,14 @@ const Roadmap: React.FC = () => {
                   setRoleSaved(false);
                 }}
                 placeholder="e.g. Data Analyst"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm font-medium text-slate-900"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#168C89] focus:border-[#168C89] outline-none text-sm font-medium text-slate-900"
               />
             </div>
             <button
               type="button"
               onClick={saveRole}
               disabled={savingRole || roleInput.trim() === (onboarding?.targetRole ?? '').trim()}
-              className="px-5 py-2.5 rounded-xl bg-violet-700 text-white font-bold text-sm hover:bg-violet-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 py-2.5 rounded-xl bg-[#142B4A] text-white font-bold text-sm hover:bg-[#10233D] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {savingRole ? 'Saving…' : roleSaved ? 'Saved ✓' : 'Update roadmap'}
             </button>
@@ -143,7 +143,7 @@ const Roadmap: React.FC = () => {
               <button
                 type="button"
                 onClick={handleReset}
-                className="inline-flex items-center gap-1.5 text-slate-400 hover:text-red-500 text-xs font-semibold transition-colors"
+                className="inline-flex items-center gap-1.5 text-slate-400 hover:text-red-500 text-xs font-semibold transition-colors cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" /> Reset progress
               </button>
@@ -155,14 +155,14 @@ const Roadmap: React.FC = () => {
             {/* Stages */}
             <section className="space-y-5">
               {roadmap.stages.map((stage, si) => (
-                <div key={stage.id} className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+                <div key={stage.id} className="bg-white rounded-2xl p-6 border border-[#E2E8F0] shadow-sm">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="w-6 h-6 rounded-full bg-violet-100 text-violet-800 text-xs font-bold flex items-center justify-center">
+                    <span className="w-6 h-6 rounded-full bg-[#EAF5F4] text-[#142B4A] text-xs font-bold flex items-center justify-center">
                       {si + 1}
                     </span>
-                    <h2 className="font-extrabold text-slate-900">{stage.title}</h2>
+                    <h2 className="font-extrabold text-[#172638]">{stage.title}</h2>
                   </div>
-                  <p className="text-slate-500 text-sm mb-4">{stage.goal}</p>
+                  <p className="text-[#64748B] text-sm mb-4">{stage.goal}</p>
 
                   <div className="space-y-4">
                     {stage.skills.map((skill) => {
@@ -180,7 +180,7 @@ const Roadmap: React.FC = () => {
                                 ) : (
                                   <Circle className="w-4 h-4 text-slate-300 shrink-0" />
                                 )}
-                                <h3 className="font-bold text-slate-800 text-sm">{skill.title}</h3>
+                                <h3 className="font-bold text-[#172638] text-sm">{skill.title}</h3>
                               </div>
                               <p className="text-slate-400 text-xs ml-6 mt-0.5">{skill.summary}</p>
                             </div>
@@ -192,7 +192,7 @@ const Roadmap: React.FC = () => {
                                 type="button"
                                 onClick={() => toggleSkill(skill.id)}
                                 title={isSkipped ? 'Add back to schedule' : 'Skip — I already know this'}
-                                className="text-slate-300 hover:text-violet-600 transition-colors"
+                                className="text-slate-300 hover:text-[#168C89] transition-colors cursor-pointer"
                               >
                                 {isSkipped ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                               </button>
@@ -209,7 +209,7 @@ const Roadmap: React.FC = () => {
                                     key={id}
                                     type="button"
                                     onClick={() => toggleTask(id)}
-                                    className={`w-full flex items-center gap-2 text-left text-xs rounded-lg px-2 py-1.5 hover:bg-slate-50 transition-colors ${
+                                    className={`w-full flex items-center gap-2 text-left text-xs rounded-lg px-2 py-1.5 hover:bg-slate-50 transition-colors cursor-pointer ${
                                       isDone ? 'opacity-60' : ''
                                     }`}
                                   >
@@ -218,7 +218,7 @@ const Roadmap: React.FC = () => {
                                     ) : (
                                       <Circle className="w-3.5 h-3.5 text-slate-300 shrink-0" />
                                     )}
-                                    <span className="text-purple-400 shrink-0">{TYPE_ICON[res.type]}</span>
+                                    <span className="text-[#168C89] shrink-0">{TYPE_ICON[res.type]}</span>
                                     <span className={`flex-1 truncate font-medium text-slate-600 ${isDone ? 'line-through' : ''}`}>
                                       {res.title}
                                     </span>
@@ -228,7 +228,7 @@ const Roadmap: React.FC = () => {
                                         target="_blank"
                                         rel="noreferrer noopener"
                                         onClick={(e) => e.stopPropagation()}
-                                        className="text-slate-300 hover:text-violet-600 shrink-0"
+                                        className="text-slate-300 hover:text-[#168C89] shrink-0"
                                       >
                                         <ExternalLink className="w-3 h-3" />
                                       </a>
@@ -249,7 +249,7 @@ const Roadmap: React.FC = () => {
 
             {/* Full schedule */}
             <section>
-              <h2 className="font-extrabold text-slate-900 mb-3">Full schedule</h2>
+              <h2 className="font-extrabold text-[#172638] mb-3">Full schedule</h2>
               <div className="space-y-2">
                 {weeks.map((w) => {
                   const wDone = w.tasks.filter((t) => done.has(t.id)).length;
@@ -258,14 +258,14 @@ const Roadmap: React.FC = () => {
                     <details
                       key={w.index}
                       open={w.index === curIdx}
-                      className="bg-white rounded-xl border border-slate-200/80 shadow-[0_2px_12px_rgb(0,0,0,0.02)] group"
+                      className="bg-white rounded-xl border border-[#E2E8F0] shadow-sm group"
                     >
                       <summary className="flex items-center gap-3 px-4 py-3 cursor-pointer list-none">
                         <ChevronDown className="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform shrink-0" />
-                        <span className="font-bold text-slate-800 text-sm shrink-0">
+                        <span className="font-bold text-[#172638] text-sm shrink-0">
                           Week {w.index}
                           {w.index === curIdx && (
-                            <span className="ml-2 text-[10px] font-bold uppercase tracking-wide bg-violet-100 text-violet-800 px-1.5 py-0.5 rounded">
+                            <span className="ml-2 text-[10px] font-bold uppercase tracking-wide bg-[#EAF5F4] text-[#142B4A] px-1.5 py-0.5 rounded border border-[#168C89]/20">
                               now
                             </span>
                           )}
@@ -312,7 +312,7 @@ const Roadmap: React.FC = () => {
             </section>
 
             <p className="text-center">
-              <Link to="/today" className="text-violet-700 font-bold text-sm hover:underline">
+              <Link to="/today" className="text-[#168C89] font-bold text-sm hover:underline">
                 Go to today's tasks →
               </Link>
             </p>

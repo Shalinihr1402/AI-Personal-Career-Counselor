@@ -87,15 +87,15 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
   // SPOTLIGHT FEATURED LAYOUT FOR TOP #1 RECOMMENDATION
   if (isTopMatch) {
     return (
-      <div className="bg-gradient-to-br from-white via-violet-50/20 to-white rounded-2xl border-2 border-violet-500/80 p-6 sm:p-8 shadow-[0_4px_24px_rgba(109,40,217,0.08)] relative overflow-hidden transition-all hover:shadow-[0_8px_32px_rgba(109,40,217,0.12)]">
+      <div className="bg-white rounded-2xl border-2 border-[#168C89] p-6 sm:p-8 shadow-sm relative overflow-hidden transition-all hover:shadow-md">
         {/* Top Spotlight Banner */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-violet-100">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-xs">
-            <Star className="w-3.5 h-3.5 fill-amber-300 text-amber-300" />
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-[#E2E8F0]">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-[#142B4A] text-white shadow-2xs">
+            <Star className="w-3.5 h-3.5 fill-[#168C89] text-[#168C89]" />
             <span>TOP CAREER RECOMMENDATION</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500 font-medium">Highest Cognitive & Psychological Resonance</span>
+            <span className="text-xs text-[#64748B] font-medium">Highest Cognitive & Practical Alignment</span>
             <Badge variant={getMatchLevelVariant(matchLevel)} size="sm" className="font-semibold">
               {matchLevel}
             </Badge>
@@ -106,11 +106,11 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
           {/* Left Column: Title, Metadata, and Fit Narrative */}
           <div className="lg:col-span-7 space-y-4">
             <div className="flex items-start gap-3">
-              <span className="w-8 h-8 rounded-xl bg-violet-700 text-white font-mono text-sm font-extrabold flex items-center justify-center shrink-0 shadow-xs">
+              <span className="w-8 h-8 rounded-xl bg-[#142B4A] text-white font-mono text-sm font-extrabold flex items-center justify-center shrink-0 shadow-xs">
                 #{rank}
               </span>
               <div>
-                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-extrabold text-[#172638] tracking-tight">
                   {career.title}
                 </h3>
                 {/* Metadata Row */}
@@ -131,10 +131,10 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
                   )}
                   {career.education && (
                     <span 
-                      className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200/80"
-                      title="Typical occupational entry benchmark qualification (O*NET 31.0 standard)"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-[#64748B] bg-[#F8FAFC] px-2.5 py-0.5 rounded-md border border-[#E2E8F0]"
+                      title="Typical occupational entry benchmark qualification (O*NET standard)"
                     >
-                      <GraduationCap className="w-3.5 h-3.5 text-slate-500" />
+                      <GraduationCap className="w-3.5 h-3.5 text-[#168C89]" />
                       Req: {career.education}
                     </span>
                   )}
@@ -165,18 +165,18 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
             </div>
 
             {/* Why It Fits Callout Box */}
-            <div className="p-4 rounded-xl bg-violet-50/60 border border-violet-100 text-slate-800 leading-relaxed text-sm">
-              <span className="font-extrabold text-violet-950 block mb-1 text-xs uppercase tracking-wider flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-violet-600" />
+            <div className="p-4 rounded-xl bg-[#EAF5F4]/60 border border-[#C5E6E4] text-[#172638] leading-relaxed text-sm">
+              <span className="font-extrabold text-[#142B4A] block mb-1 text-xs uppercase tracking-wider flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5 text-[#168C89]" />
                 Why It Fits You
               </span>
               <p>{career.why_it_fits}</p>
             </div>
 
             {/* Typical Day-to-Day */}
-            <div className="p-3.5 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-600 leading-relaxed">
-              <span className="font-bold text-slate-800 block mb-0.5 flex items-center gap-1">
-                <Briefcase className="w-3.5 h-3.5 text-slate-400" />
+            <div className="p-3.5 rounded-xl bg-white border border-[#E2E8F0] text-xs text-[#64748B] leading-relaxed">
+              <span className="font-bold text-[#172638] block mb-0.5 flex items-center gap-1">
+                <Briefcase className="w-3.5 h-3.5 text-[#168C89]" />
                 Typical Day-to-Day:
               </span>
               <p>{career.day_to_day}</p>
@@ -186,21 +186,20 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
           {/* Right Column: Skills, Considerations & Actions */}
           <div className="lg:col-span-5 flex flex-col justify-between h-full space-y-4">
             <div>
-              {/* Demonstrated Matching Skills vs Gap Skills or Fallback to Key Skills */}
               {career.matched_skills && career.matched_skills.length > 0 ? (
                 <div className="space-y-3 mb-4">
                   <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 block mb-1.5 flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#168C89] block mb-1.5 flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#168C89]" />
                       Demonstrated Matching Skills ({career.matched_skills.length})
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {career.matched_skills.map((skill) => (
                         <span
                           key={skill}
-                          className="text-xs font-semibold text-emerald-900 bg-emerald-50/90 border border-emerald-200 px-2.5 py-1 rounded-lg shadow-2xs flex items-center gap-1"
+                          className="text-xs font-semibold text-[#168C89] bg-[#EAF5F4] border border-[#C5E6E4] px-2.5 py-1 rounded-lg flex items-center gap-1"
                         >
-                          <Check className="w-3 h-3 stroke-[2.5] text-emerald-600" />
+                          <Check className="w-3 h-3 stroke-[2.5]" />
                           {skill}
                         </span>
                       ))}
@@ -209,15 +208,15 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
 
                   {career.missing_skills && career.missing_skills.length > 0 && (
                     <div>
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1.5 flex items-center gap-1">
-                        <Target className="w-3.5 h-3.5 text-slate-400" />
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] block mb-1.5 flex items-center gap-1">
+                        <Target className="w-3.5 h-3.5 text-[#64748B]" />
                         Target Areas & Skill Gap
                       </span>
                       <div className="flex flex-wrap gap-1.5">
                         {career.missing_skills.map((skill) => (
                           <span
                             key={skill}
-                            className="text-xs font-medium text-slate-600 bg-slate-50 border border-dashed border-slate-300 px-2.5 py-1 rounded-lg"
+                            className="text-xs font-medium text-[#64748B] bg-[#F8FAFC] border border-dashed border-[#CBD5E1] px-2.5 py-1 rounded-lg"
                           >
                             {skill}
                           </span>
@@ -228,14 +227,14 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
                 </div>
               ) : career.key_skills && career.key_skills.length > 0 ? (
                 <div className="mb-4">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] block mb-2">
                     Core Demonstrated & Required Skills
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {career.key_skills.map((skill) => (
                       <span
                         key={skill}
-                        className="text-xs font-semibold text-slate-700 bg-white border border-slate-200 px-2.5 py-1 rounded-lg shadow-2xs"
+                        className="text-xs font-semibold text-[#172638] bg-white border border-[#E2E8F0] px-2.5 py-1 rounded-lg shadow-2xs"
                       >
                         {skill}
                       </span>
@@ -257,10 +256,10 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
             </div>
 
             {/* Action Row */}
-            <div className="pt-4 border-t border-violet-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <div className="pt-4 border-t border-[#E2E8F0] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <Link
                 to={`/careers/${careerSlug}`}
-                className="inline-flex items-center justify-center gap-1.5 text-violet-700 hover:text-violet-900 font-bold text-xs group py-2"
+                className="inline-flex items-center justify-center gap-1.5 text-[#168C89] hover:text-[#116A68] font-bold text-xs group py-2"
               >
                 <span>Explore Day-to-Day & Skill Gap</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -270,10 +269,10 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
                 variant={isActiveGoal ? 'secondary' : 'primary'}
                 size="sm"
                 isLoading={isSettingGoal}
-                leftIcon={isActiveGoal ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Target className="w-3.5 h-3.5 text-white" />}
+                leftIcon={isActiveGoal ? <Check className="w-3.5 h-3.5 text-[#168C89]" /> : <Target className="w-3.5 h-3.5 text-white" />}
                 onClick={() => onSetGoal(career)}
                 disabled={isActiveGoal}
-                className="shadow-sm"
+                className="shadow-xs"
               >
                 {isActiveGoal ? 'Active Career Goal' : 'Set as Primary Goal'}
               </Button>
@@ -286,15 +285,15 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
 
   // STANDARD CARD FOR RECOMMENDATIONS #2 - #5
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)] hover:border-violet-300 hover:shadow-[0_6px_24px_rgba(109,40,217,0.06)] transition-all flex flex-col justify-between group">
+    <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 sm:p-6 shadow-xs hover:border-[#168C89] hover:shadow-sm transition-all flex flex-col justify-between group">
       <div>
         {/* Header: Rank + Title + Fit Badge */}
         <div className="flex items-start justify-between gap-3 mb-2.5">
           <div className="flex items-center gap-2.5 min-w-0">
-            <span className="w-6 h-6 rounded-md bg-slate-100 text-slate-700 text-xs font-bold font-mono flex items-center justify-center shrink-0 border border-slate-200/80 group-hover:bg-violet-50 group-hover:text-violet-700 group-hover:border-violet-200 transition-colors">
+            <span className="w-6 h-6 rounded-md bg-[#F1F5F9] text-[#172638] text-xs font-bold font-mono flex items-center justify-center shrink-0 border border-[#E2E8F0] group-hover:bg-[#EAF5F4] group-hover:text-[#168C89] transition-colors">
               #{rank}
             </span>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 truncate group-hover:text-violet-950 transition-colors">
+            <h3 className="text-base sm:text-lg font-bold text-[#172638] truncate group-hover:text-[#142B4A] transition-colors">
               {career.title}
             </h3>
           </div>
@@ -322,10 +321,10 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
           )}
           {career.education && (
             <span 
-              className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 bg-slate-100/80 px-2 py-0.5 rounded-md border border-slate-200/70 truncate max-w-[220px]"
-              title="Typical occupational entry benchmark qualification (O*NET 31.0 standard)"
+              className="inline-flex items-center gap-1 text-[11px] font-medium text-[#64748B] bg-[#F8FAFC] px-2 py-0.5 rounded-md border border-[#E2E8F0] truncate max-w-[220px]"
+              title="Typical occupational entry benchmark qualification (O*NET standard)"
             >
-              <GraduationCap className="w-3 h-3 text-slate-400 shrink-0" />
+              <GraduationCap className="w-3 h-3 text-[#168C89] shrink-0" />
               <span className="truncate">Req: {career.education}</span>
             </span>
           )}
@@ -354,39 +353,39 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
         </div>
 
         {/* Why it fits narrative */}
-        <div className="mb-3 text-xs sm:text-sm text-slate-700 leading-relaxed">
-          <span className="font-bold text-violet-700 block mb-0.5 text-xs uppercase tracking-wider">
+        <div className="mb-3 text-xs sm:text-sm text-[#172638] leading-relaxed">
+          <span className="font-bold text-[#168C89] block mb-0.5 text-xs uppercase tracking-wider">
             Why It Fits You:
           </span>
-          <p className="line-clamp-3">{career.why_it_fits}</p>
+          <p className="line-clamp-3 text-[#64748B]">{career.why_it_fits}</p>
         </div>
 
         {/* Typical Day-to-Day */}
-        <p className="text-xs text-slate-500 mb-3.5 leading-relaxed bg-slate-50/70 p-2.5 rounded-xl border border-slate-100">
-          <span className="font-semibold text-slate-700">Typical Day-to-Day: </span>
+        <p className="text-xs text-[#64748B] mb-3.5 leading-relaxed bg-[#F8FAFC] p-2.5 rounded-xl border border-[#E2E8F0]">
+          <span className="font-semibold text-[#172638]">Typical Day-to-Day: </span>
           <span className="line-clamp-2">{career.day_to_day}</span>
         </p>
 
-        {/* Skills: Demonstrated Matched vs Gap or Fallback to Key Skills */}
+        {/* Skills: Demonstrated Matched vs Gap */}
         {career.matched_skills && career.matched_skills.length > 0 ? (
           <div className="mb-3.5 space-y-2">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 block mb-1 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#168C89] block mb-1 flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3 text-[#168C89]" />
                 Demonstrated Skills ({career.matched_skills.length})
               </span>
               <div className="flex flex-wrap gap-1">
                 {career.matched_skills.slice(0, 4).map((skill) => (
                   <span
                     key={skill}
-                    className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md flex items-center gap-0.5"
+                    className="text-[11px] font-semibold text-[#168C89] bg-[#EAF5F4] border border-[#C5E6E4] px-2 py-0.5 rounded-md flex items-center gap-0.5"
                   >
-                    <Check className="w-2.5 h-2.5 stroke-[2.5] text-emerald-600" />
+                    <Check className="w-2.5 h-2.5 stroke-[2.5]" />
                     {skill}
                   </span>
                 ))}
                 {career.matched_skills.length > 4 && (
-                  <span className="text-[10px] font-medium text-emerald-700 px-1 py-0.5">
+                  <span className="text-[10px] font-medium text-[#168C89] px-1 py-0.5">
                     +{career.matched_skills.length - 4} more
                   </span>
                 )}
@@ -395,21 +394,21 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
 
             {career.missing_skills && career.missing_skills.length > 0 && (
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1 flex items-center gap-1">
-                  <Target className="w-3 h-3 text-slate-400" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748B] block mb-1 flex items-center gap-1">
+                  <Target className="w-3 h-3 text-[#64748B]" />
                   Target Growth
                 </span>
                 <div className="flex flex-wrap gap-1">
                   {career.missing_skills.slice(0, 3).map((skill) => (
                     <span
                       key={skill}
-                      className="text-[11px] font-medium text-slate-600 bg-slate-50 border border-dashed border-slate-300 px-2 py-0.5 rounded-md"
+                      className="text-[11px] font-medium text-[#64748B] bg-[#F8FAFC] border border-dashed border-[#CBD5E1] px-2 py-0.5 rounded-md"
                     >
                       {skill}
                     </span>
                   ))}
                   {career.missing_skills.length > 3 && (
-                    <span className="text-[10px] font-medium text-slate-400 px-1 py-0.5">
+                    <span className="text-[10px] font-medium text-[#64748B] px-1 py-0.5">
                       +{career.missing_skills.length - 3} more
                     </span>
                   )}
@@ -419,20 +418,20 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
           </div>
         ) : career.key_skills && career.key_skills.length > 0 ? (
           <div className="mb-3.5">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748B] block mb-1.5">
               Core Skills
             </span>
             <div className="flex flex-wrap gap-1.5">
               {career.key_skills.slice(0, 5).map((skill) => (
                 <span
                   key={skill}
-                  className="text-xs font-medium text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded-md shadow-2xs"
+                  className="text-xs font-medium text-[#64748B] bg-white border border-[#E2E8F0] px-2 py-0.5 rounded-md shadow-2xs"
                 >
                   {skill}
                 </span>
               ))}
               {career.key_skills.length > 5 && (
-                <span className="text-[11px] font-medium text-slate-400 px-1 py-0.5">
+                <span className="text-[11px] font-medium text-[#64748B] px-1 py-0.5">
                   +{career.key_skills.length - 5} more
                 </span>
               )}
@@ -453,10 +452,10 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
       </div>
 
       {/* Action Footer */}
-      <div className="pt-3.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 mt-1">
+      <div className="pt-3.5 border-t border-[#E2E8F0] flex flex-wrap items-center justify-between gap-3 mt-1">
         <Link
           to={`/careers/${careerSlug}`}
-          className="inline-flex items-center gap-1.5 text-violet-700 hover:text-violet-900 font-bold text-xs group"
+          className="inline-flex items-center gap-1.5 text-[#168C89] hover:text-[#116A68] font-bold text-xs group"
         >
           <span>Explore day-to-day & skill gap</span>
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -466,7 +465,7 @@ export const CareerMatchCard: React.FC<CareerMatchCardProps> = ({
           variant={isActiveGoal ? 'secondary' : 'outline'}
           size="sm"
           isLoading={isSettingGoal}
-          leftIcon={isActiveGoal ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Target className="w-3.5 h-3.5 text-violet-600" />}
+          leftIcon={isActiveGoal ? <Check className="w-3.5 h-3.5 text-[#168C89]" /> : <Target className="w-3.5 h-3.5 text-[#168C89]" />}
           onClick={() => onSetGoal(career)}
           disabled={isActiveGoal}
         >

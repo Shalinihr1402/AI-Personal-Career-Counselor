@@ -3,6 +3,7 @@ import React from 'react';
 export type BadgeVariant =
   | 'default'
   | 'brand'
+  | 'navy'
   | 'success'
   | 'warning'
   | 'error'
@@ -19,13 +20,14 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 const VARIANT_STYLES: Record<BadgeVariant, string> = {
-  default: 'bg-slate-100 text-slate-700 border-slate-200/80',
-  brand: 'bg-violet-50 text-violet-700 border-violet-200/80',
-  success: 'bg-emerald-50 text-emerald-800 border-emerald-200/80',
-  warning: 'bg-amber-50 text-amber-800 border-amber-200/80',
-  error: 'bg-rose-50 text-rose-800 border-rose-200/80',
-  neutral: 'bg-slate-50 text-slate-600 border-slate-200/60',
-  outline: 'bg-white text-slate-700 border-slate-200',
+  default: 'bg-[#F1F5F9] text-[#172638] border-[#E2E8F0]',
+  brand: 'bg-[#EAF5F4] text-[#168C89] border-[#C5E6E4]',
+  navy: 'bg-[#142B4A] text-white border-[#142B4A]',
+  success: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+  warning: 'bg-amber-50 text-amber-800 border-amber-200',
+  error: 'bg-rose-50 text-rose-800 border-rose-200',
+  neutral: 'bg-[#F8FAFC] text-[#64748B] border-[#E2E8F0]',
+  outline: 'bg-white text-[#172638] border-[#E2E8F0]',
 };
 
 const SIZE_STYLES: Record<BadgeSize, string> = {

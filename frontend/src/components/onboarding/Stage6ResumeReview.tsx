@@ -5,6 +5,7 @@ import {
   ShieldCheck,
   Check,
   RefreshCw,
+  FileText,
 } from 'lucide-react';
 import type { OnboardingRecord } from '../../lib/onboarding';
 import { ResumeReviewModal, type ResumeEnrichmentPayload } from '../ResumeReviewModal';
@@ -64,7 +65,6 @@ export const Stage6ResumeReview: React.FC<Stage6ResumeReviewProps> = ({
       const parsed: ExtractedResumeData = await res.json();
       setParsedData(parsed);
 
-      // Save raw resume metadata to profile
       onChange({
         resume: {
           name: file.name,
@@ -74,7 +74,6 @@ export const Stage6ResumeReview: React.FC<Stage6ResumeReviewProps> = ({
         },
       });
 
-      // Automatically open review modal for non-destructive reconciliation
       setIsReviewModalOpen(true);
     } catch (err: any) {
       setUploadError(err.message || 'An error occurred while parsing the resume.');
@@ -97,7 +96,6 @@ export const Stage6ResumeReview: React.FC<Stage6ResumeReviewProps> = ({
     const currentSkills = currentSe.skills || [];
     const existingSkillNames = new Set(currentSkills.map((s) => s.name.toLowerCase()));
 
-    // Filter skills that do not already exist, preserving their provenance = 'resume_extracted'
     const newSkills = enriched.skillsToAdd.filter(
       (s) => !existingSkillNames.has(s.name.toLowerCase())
     );
@@ -105,7 +103,6 @@ export const Stage6ResumeReview: React.FC<Stage6ResumeReviewProps> = ({
     const mergedSkills = [...currentSkills, ...newSkills];
     const mergedExperiences = [...currentSe.experiences, ...enriched.experiencesToAdd];
 
-    // Merge structured projects without overwriting
     const existingProjects = currentSe.structured_projects || [];
     const existingProjTitles = new Set(existingProjects.map((p) => p.title.toLowerCase()));
     const newProjects = enriched.projectsToAdd.filter(
@@ -121,7 +118,6 @@ export const Stage6ResumeReview: React.FC<Stage6ResumeReviewProps> = ({
       has_no_standalone_projects: mergedProjects.length > 0 ? false : currentSe.has_no_standalone_projects,
     };
 
-    // Education conflict resolution without silent overwrites
     let updatedEdu = data.education_details;
     if (enriched.resolvedConflicts && updatedEdu) {
       const rc = enriched.resolvedConflicts;
@@ -148,31 +144,33 @@ export const Stage6ResumeReview: React.FC<Stage6ResumeReviewProps> = ({
   const projects = se?.structured_projects || [];
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300 max-w-2xl mx-auto">
+    <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
-      <div className="text-left space-y-1.5 border-b border-slate-200 pb-5">
-        <div className="inline-flex items-center gap-1.5 text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider">
-          Stage 6 of 6
+      <div className="flex items-start gap-4 pb-2 border-b border-[#E2E8F0]">
+        <div className="w-12 h-12 rounded-xl bg-[#EAF5F4] text-[#168C89] border border-[#C5E6E4] flex items-center justify-center shrink-0 shadow-xs">
+          <FileText className="w-6 h-6" />
         </div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-          Review & Profile Confirmation
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-          Upload an optional resume for automated extraction, or review your verified profile below before entering the Career Discovery Assessment.
-        </p>
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#172638] tracking-tight">
+            Review & Profile Confirmation
+          </h1>
+          <p className="text-xs sm:text-sm text-[#64748B] mt-0.5 leading-relaxed">
+            Upload an optional resume for automated extraction, or review your verified profile below before entering the Career Discovery Assessment.
+          </p>
+        </div>
       </div>
 
       {/* 1. Optional Resume Upload Box */}
-      <div className="p-5 rounded-xl border border-dashed border-slate-300 bg-slate-50/60 hover:bg-slate-50 transition-colors text-center space-y-3">
-        <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center mx-auto text-slate-700 shadow-2xs">
-          <UploadCloud className="w-5 h-5" />
+      <div className="p-6 rounded-2xl border-2 border-dashed border-[#C5E6E4] bg-[#EAF5F4]/30 hover:bg-[#EAF5F4]/50 transition-colors text-center space-y-3">
+        <div className="w-12 h-12 rounded-xl bg-white border border-[#E2E8F0] flex items-center justify-center mx-auto text-[#168C89] shadow-xs">
+          <UploadCloud className="w-6 h-6" />
         </div>
         <div>
-          <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+          <h3 className="text-xs font-bold text-[#172638] uppercase tracking-wider">
             Have a Resume or CV? (Optional)
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
-            PDF, Word (.docx, .doc) up to 5 MB. We will extract details and let you review them side-by-side.
+          <p className="text-xs text-[#64748B] mt-0.5">
+            PDF, Word (.docx, .doc) up to 5 MB. We extract verified details without overwriting your manual entries.
           </p>
         </div>
 
@@ -189,14 +187,14 @@ export const Stage6ResumeReview: React.FC<Stage6ResumeReviewProps> = ({
             type="button"
             disabled={resumeLoading}
             onClick={() => fileInputRef.current?.click()}
-            className="text-xs font-semibold px-4 py-2 rounded-lg bg-white border border-slate-200 text-slate-800 hover:bg-slate-50 hover:border-slate-300 shadow-2xs transition-all disabled:opacity-50 cursor-pointer"
+            className="text-xs font-semibold px-4 py-2 rounded-xl bg-[#142B4A] hover:bg-[#0E1F36] text-white shadow-xs transition-all disabled:opacity-50 cursor-pointer"
           >
             {resumeLoading ? (
               <span className="flex items-center gap-1.5">
                 <RefreshCw className="w-3.5 h-3.5 animate-spin" /> Parsing Resume...
               </span>
             ) : data.resume?.name ? (
-              <span className="flex items-center gap-1.5 text-emerald-700">
+              <span className="flex items-center gap-1.5 text-teal-200">
                 <Check className="w-3.5 h-3.5" /> Replace Resume: {data.resume.name}
               </span>
             ) : (
@@ -216,7 +214,7 @@ export const Stage6ResumeReview: React.FC<Stage6ResumeReviewProps> = ({
             <button
               type="button"
               onClick={() => setIsReviewModalOpen(true)}
-              className="text-xs text-slate-700 hover:text-slate-900 font-semibold underline"
+              className="text-xs text-[#168C89] hover:text-[#116A68] font-semibold underline cursor-pointer"
             >
               Reopen Resume Reconciliation Modal
             </button>
@@ -225,13 +223,13 @@ export const Stage6ResumeReview: React.FC<Stage6ResumeReviewProps> = ({
       </div>
 
       {/* 2. Profile Summary Confirmation Card */}
-      <div className="p-5 rounded-xl border border-slate-200 bg-white space-y-4 shadow-2xs text-left">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-slate-700" />
+      <div className="bg-white rounded-2xl border border-[#E2E8F0] p-5 sm:p-6 space-y-4 shadow-xs text-left">
+        <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[#172638] flex items-center gap-1.5">
+            <ShieldCheck className="w-4 h-4 text-[#168C89]" />
             Verified Profile Summary
           </h3>
-          <span className="text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 font-semibold px-2 py-0.5 rounded">
+          <span className="text-[11px] text-[#168C89] bg-[#EAF5F4] border border-[#C5E6E4] font-semibold px-2 py-0.5 rounded-full">
             Ready for Assessment
           </span>
         </div>
@@ -239,67 +237,67 @@ export const Stage6ResumeReview: React.FC<Stage6ResumeReviewProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           {/* Academic Background */}
           <div className="space-y-1">
-            <span className="text-slate-400 font-semibold uppercase text-[10px] block">
+            <span className="text-[#64748B] font-semibold uppercase text-[10px] block">
               Education & Program
             </span>
-            <p className="font-semibold text-slate-900">
+            <p className="font-semibold text-[#172638]">
               {ed?.degree
                 ? `${ed.degree.replace(/_/g, ' ').toUpperCase()} ${ed.specialization ? `(${ed.specialization})` : ''}`
                 : data.course || 'Degree Not Specified'}
             </p>
-            <p className="text-slate-500">
+            <p className="text-[#64748B]">
               {ed?.institution || 'Institution Not Specified'} • {ed?.study_stage_value || 'Stage Not Specified'}
             </p>
             {(ed?.academic_strengths || []).length > 0 && (
-              <p className="text-slate-600 text-[11px] pt-1">
-                <strong className="text-slate-700">Academic Strengths:</strong> {ed?.academic_strengths?.join(', ')}
+              <p className="text-[#64748B] text-[11px] pt-1">
+                <strong className="text-[#172638]">Academic Strengths:</strong> {ed?.academic_strengths?.join(', ')}
               </p>
             )}
             {(ed?.subjects_enjoyed || []).length > 0 && (
-              <p className="text-slate-600 text-[11px]">
-                <strong className="text-slate-700">Subjects Enjoyed:</strong> {ed?.subjects_enjoyed?.join(', ')}
+              <p className="text-[#64748B] text-[11px]">
+                <strong className="text-[#172638]">Subjects Enjoyed:</strong> {ed?.subjects_enjoyed?.join(', ')}
               </p>
             )}
           </div>
 
           {/* Practical Constraints */}
           <div className="space-y-1">
-            <span className="text-slate-400 font-semibold uppercase text-[10px] block">
+            <span className="text-[#64748B] font-semibold uppercase text-[10px] block">
               Priorities & Constraints
             </span>
-            <p className="font-semibold text-slate-900">
+            <p className="font-semibold text-[#172638]">
               Earning Urgency: {cp?.practical_constraints?.earning_urgency ? cp.practical_constraints.earning_urgency.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()) : 'Flexible'}
             </p>
-            <p className="text-slate-500">
+            <p className="text-[#64748B]">
               Work Setting: {cp?.preferred_work_environment?.[0] ? cp.preferred_work_environment[0].replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()) : 'Hybrid'}
             </p>
-            <p className="text-slate-500">
+            <p className="text-[#64748B]">
               Learning Bandwidth: {data.hoursPerWeek ? data.hoursPerWeek.replace(/_/g, ' ') : '10-15 hrs/week'}
             </p>
           </div>
         </div>
 
         {/* Skills & Evidence Stats */}
-        <div className="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-center">
-          <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
-            <span className="text-base font-bold text-slate-900 block">{declaredSkills.length}</span>
-            <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider block">
+        <div className="pt-3 border-t border-[#E2E8F0] grid grid-cols-3 gap-2 text-center">
+          <div className="p-3 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0]">
+            <span className="text-base font-bold text-[#142B4A] block">{declaredSkills.length}</span>
+            <span className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider block">
               Declared Skills
             </span>
           </div>
 
-          <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
-            <span className="text-base font-bold text-slate-900 block">{projects.length}</span>
-            <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider block">
+          <div className="p-3 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0]">
+            <span className="text-base font-bold text-[#142B4A] block">{projects.length}</span>
+            <span className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider block">
               Projects Added
             </span>
           </div>
 
-          <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
-            <span className="text-base font-bold text-slate-900 block">
+          <div className="p-3 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0]">
+            <span className="text-base font-bold text-[#142B4A] block">
               {data.interests?.length || 0}
             </span>
-            <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider block">
+            <span className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider block">
               Domains Picked
             </span>
           </div>
@@ -320,7 +318,7 @@ export const Stage6ResumeReview: React.FC<Stage6ResumeReviewProps> = ({
 
       {/* Save Error */}
       {saveError && (
-        <div className="p-3 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg text-xs font-medium flex items-center gap-2">
+        <div className="p-3.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl text-xs font-medium flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
           <span>{saveError}</span>
         </div>

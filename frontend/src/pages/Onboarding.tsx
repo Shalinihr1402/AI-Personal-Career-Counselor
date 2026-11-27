@@ -3,6 +3,18 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
   ArrowLeft,
+  GraduationCap,
+  Target,
+  Lightbulb,
+  Code,
+  Sliders,
+  FileText,
+  Check,
+  Home,
+  Rocket,
+  BookOpen,
+  Bell,
+  Sparkles,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
@@ -26,12 +38,48 @@ import { Stage5PrioritiesConstraints } from '../components/onboarding/Stage5Prio
 import { Stage6ResumeReview } from '../components/onboarding/Stage6ResumeReview';
 
 const STEPS = [
-  { id: 0, label: 'Purpose & Guidance', shortLabel: 'Purpose' },
-  { id: 1, label: 'Education & Learning', shortLabel: 'Education' },
-  { id: 2, label: 'Interests & Curiosity', shortLabel: 'Interests' },
-  { id: 3, label: 'Skills & Projects', shortLabel: 'Skills & Projects' },
-  { id: 4, label: 'Priorities & Constraints', shortLabel: 'Priorities' },
-  { id: 5, label: 'Review & Submit', shortLabel: 'Review' },
+  {
+    id: 0,
+    number: '1',
+    label: '1. Your Goal',
+    subtitle: 'Career purpose & expectations',
+    icon: Target,
+  },
+  {
+    id: 1,
+    number: '2',
+    label: '2. Education & Learning',
+    subtitle: 'Your academic journey & skills',
+    icon: GraduationCap,
+  },
+  {
+    id: 2,
+    number: '3',
+    label: '3. Interests & Curiosity',
+    subtitle: 'What excites and engages you',
+    icon: Lightbulb,
+  },
+  {
+    id: 3,
+    number: '4',
+    label: '4. Skills & Projects',
+    subtitle: 'Your skills, projects & experience',
+    icon: Code,
+  },
+  {
+    id: 4,
+    number: '5',
+    label: '5. Priorities & Constraints',
+    subtitle: 'Career goals, work & practical needs',
+    icon: Sliders,
+  },
+  {
+    id: 5,
+    number: '6',
+    label: '6. Review & Confirm',
+    subtitle: 'Verify your profile & proceed',
+    icon: FileText,
+  },
 ];
 
 export default function Onboarding() {
@@ -145,7 +193,6 @@ export default function Onboarding() {
     if (mode === 'career_growth_transition') {
       return Boolean(data.career_growth_subtype);
     }
-    // Career planning does NOT force a targetRole if the student is exploratory or undecided
     return true;
   }, [data.career_mode, data.path, data.career_growth_subtype]);
 
@@ -153,7 +200,6 @@ export default function Onboarding() {
     const ed = data.education_details;
     if (!ed) return Boolean(data.course);
     if (!ed.education_level || !ed.education_status) return false;
-    // Require degree selection unless 10th standard
     if (ed.education_level === 'sslc_10th') return true;
     if (ed.education_level === 'puc_12th') return Boolean(ed.specialization || ed.school_stream);
     return Boolean(ed.degree?.trim());
@@ -169,15 +215,13 @@ export default function Onboarding() {
   const isStep3Valid = useMemo(() => {
     const se = data.skills_and_experience;
     if (!se) return false;
-    // Valid if user has declared skills, or toggled no projects, or has coursework highlights, or not_sure
     if ((se.skills || []).length > 0) return true;
     if (se.has_no_standalone_projects && se.academic_coursework_highlights?.trim()) return true;
     if (se.not_sure_skills) return true;
-    return true; // Keep accessible so students without skills are not blocked
+    return true;
   }, [data.skills_and_experience]);
 
   const isStep4Valid = useMemo(() => {
-    // Valid as long as step is reviewed
     return true;
   }, []);
 
@@ -233,7 +277,6 @@ export default function Onboarding() {
         clearUserDraft(user.id);
       }
 
-      // Navigate to assessment or dashboard
       navigate('/assessment');
     } catch (err: any) {
       console.error('Failed to save profile:', err);
@@ -243,123 +286,269 @@ export default function Onboarding() {
     }
   };
 
+  // Avatar initials
+  const userInitials = useMemo(() => {
+    const name = user?.user_metadata?.full_name || (profile as any)?.fullName;
+    if (name) {
+      const parts = name.trim().split(/\s+/);
+      if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+      return name.slice(0, 2).toUpperCase();
+    }
+    return 'SH';
+  }, [user, profile]);
+
+  const completionPercent = Math.round(((step + 1) / STEPS.length) * 100);
+
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-800">
-      {/* Top Application Bar */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5 text-slate-900 font-bold tracking-tight text-sm">
-            <div className="w-7 h-7 rounded-lg bg-slate-900 flex items-center justify-center text-white text-xs font-bold shadow-2xs">
-              AG
+    <div className="min-h-screen bg-[#F5F8FC] flex flex-col font-sans text-[#172638] selection:bg-[#EAF5F4] selection:text-[#168C89]">
+      {/* Top Application Header in Primary Navy */}
+      <header className="bg-[#142B4A] border-b border-[#0E1F36] sticky top-0 z-40 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          {/* Brand Logo & Subtitle */}
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center text-white shadow-xs group-hover:bg-white/15 transition-all">
+              <GraduationCap className="w-5 h-5 text-[#168C89]" />
             </div>
-            <span>Career Discovery</span>
+            <div>
+              <div className="text-white font-bold text-sm sm:text-base tracking-tight leading-tight flex items-center gap-1.5">
+                <span>Personal Career Counselor</span>
+              </div>
+              <p className="text-[11px] text-teal-200/80 font-medium tracking-wide">
+                AI-Powered Career Discovery
+              </p>
+            </div>
           </Link>
 
-          <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-            <span>Step {step + 1} of {STEPS.length}</span>
-            <span className="text-slate-300">|</span>
-            <span className="text-slate-700 font-semibold">{STEPS[step].label}</span>
-          </div>
-        </div>
+          {/* Right Header Navigation */}
+          <div className="flex items-center gap-4 sm:gap-6">
+            <nav className="hidden md:flex items-center gap-5 text-xs font-semibold text-slate-200">
+              <Link to="/dashboard" className="hover:text-white transition-colors flex items-center gap-1.5">
+                <Home className="w-3.5 h-3.5" />
+                <span>Dashboard</span>
+              </Link>
+              <Link to="/careers" className="hover:text-white transition-colors flex items-center gap-1.5">
+                <Rocket className="w-3.5 h-3.5" />
+                <span>Career Paths</span>
+              </Link>
+              <Link to="/roadmap" className="hover:text-white transition-colors flex items-center gap-1.5">
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Roadmap</span>
+              </Link>
+            </nav>
 
-        {/* Clean Step Progress Indicator */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-6 gap-1 pb-2">
-            {STEPS.map((s, idx) => (
+            <div className="flex items-center gap-3">
+              {/* Notifications */}
               <button
-                key={s.id}
                 type="button"
-                onClick={() => {
-                  if (idx <= step || isCurrentStepValid) {
-                    setStep(idx);
-                  }
-                }}
-                className={`group flex flex-col text-left py-1 cursor-pointer transition-all ${
-                  idx === step
-                    ? 'opacity-100'
-                    : idx < step
-                    ? 'opacity-80 hover:opacity-100'
-                    : 'opacity-40 cursor-not-allowed'
-                }`}
+                aria-label="Notifications"
+                className="relative p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
               >
-                <div
-                  className={`h-1.5 w-full rounded-full transition-all ${
-                    idx === step
-                      ? 'bg-slate-900'
-                      : idx < step
-                      ? 'bg-slate-400'
-                      : 'bg-slate-200'
-                  }`}
-                />
-                <span className="text-[10px] font-semibold text-slate-600 mt-1 truncate hidden sm:block">
-                  {s.shortLabel}
-                </span>
+                <Bell className="w-4 h-4" />
+                <span className="w-2 h-2 bg-[#168C89] rounded-full absolute top-1.5 right-1.5 ring-2 ring-[#142B4A]" />
               </button>
-            ))}
+
+              {/* User Avatar */}
+              <div className="w-9 h-9 rounded-full bg-[#EAF5F4] text-[#142B4A] font-bold text-xs flex items-center justify-center shadow-xs border border-white/30 cursor-pointer">
+                {userInitials}
+              </div>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Form Content Container */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-8">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs p-6 sm:p-10">
-          {step === 0 && <Stage1Purpose data={data} onChange={handleChange} />}
-          {step === 1 && <Stage2Education data={data} onChange={handleChange} />}
-          {step === 2 && <Stage3Interests data={data} onChange={handleChange} />}
-          {step === 3 && <Stage4SkillsProjects data={data} onChange={handleChange} />}
-          {step === 4 && <Stage5PrioritiesConstraints data={data} onChange={handleChange} />}
-          {step === 5 && (
-            <Stage6ResumeReview
-              data={data}
-              onChange={handleChange}
-              saveError={saveError}
-            />
-          )}
+      {/* Main Two-Column Layout Grid */}
+      <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[290px_1fr] xl:grid-cols-[320px_1fr] gap-6 items-start">
+          
+          {/* Left Sidebar: Journey Stepper & Quote */}
+          <aside className="space-y-5">
+            {/* 1. Onboarding Journey Card */}
+            <div className="bg-white rounded-2xl p-5 shadow-xs border border-[#E2E8F0]">
+              {/* Sidebar Header */}
+              <div className="flex items-center gap-3 pb-4 mb-4 border-b border-[#E2E8F0]">
+                <div className="w-9 h-9 rounded-xl bg-[#EAF5F4] text-[#168C89] flex items-center justify-center shrink-0 shadow-2xs border border-[#C5E6E4]">
+                  <GraduationCap className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-xs font-bold text-[#172638] tracking-tight uppercase">
+                    Onboarding Journey
+                  </h2>
+                  <p className="text-[11px] text-[#64748B] leading-snug">
+                    Build your personalized profile in 6 simple steps.
+                  </p>
+                </div>
+              </div>
 
-          {/* Navigation Action Buttons */}
-          <div className="mt-10 pt-6 border-t border-slate-200 flex items-center justify-between gap-4">
-            {step > 0 ? (
-              <button
-                type="button"
-                onClick={goBack}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer shadow-2xs"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Back</span>
-              </button>
-            ) : (
-              <Link
-                to="/"
-                className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors"
-              >
-                &larr; Back to home
-              </Link>
-            )}
+              {/* 6-Step Vertical Progression List */}
+              <div className="space-y-1.5 relative">
+                {STEPS.map((s, idx) => {
+                  const isActive = idx === step;
+                  const isCompleted = idx < step;
+                  const StepIcon = s.icon;
 
-            {step < STEPS.length - 1 ? (
-              <button
-                type="button"
-                onClick={goNext}
-                disabled={!isCurrentStepValid}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-2xs cursor-pointer"
-              >
-                <span>Continue</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={finishOnboarding}
-                disabled={isSaving}
-                className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 active:scale-[0.98] transition-all shadow-2xs cursor-pointer disabled:opacity-50"
-              >
-                <span>{isSaving ? 'Saving Profile...' : 'Finish & Start Assessment'}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
+                  return (
+                    <div
+                      key={s.id}
+                      onClick={() => {
+                        if (idx <= step || isCurrentStepValid) {
+                          setStep(idx);
+                        }
+                      }}
+                      className={`transition-all rounded-xl ${
+                        isActive
+                          ? 'bg-[#142B4A] text-white p-3 shadow-xs'
+                          : isCompleted
+                          ? 'flex items-center gap-3 p-2.5 hover:bg-[#F8FAFC] cursor-pointer text-[#172638]'
+                          : 'flex items-center gap-3 p-2.5 opacity-60 cursor-not-allowed text-[#64748B]'
+                      }`}
+                    >
+                      {isActive ? (
+                        <div className="flex items-center gap-3 w-full">
+                          <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0 text-white">
+                            <StepIcon className="w-4 h-4 text-[#168C89]" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-xs font-bold tracking-tight text-white leading-tight">
+                              {s.label}
+                            </div>
+                            <div className="text-[10px] text-teal-200/90 truncate leading-tight mt-0.5">
+                              {s.subtitle}
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div
+                            className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-bold transition-all ${
+                              isCompleted
+                                ? 'bg-[#168C89] text-white shadow-2xs'
+                                : 'bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B]'
+                            }`}
+                          >
+                            {isCompleted ? (
+                              <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                            ) : (
+                              <StepIcon className="w-3.5 h-3.5" />
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-xs font-semibold text-[#172638] truncate leading-tight">
+                              {s.label}
+                            </div>
+                            <div className="text-[10px] text-[#64748B] truncate leading-tight">
+                              {s.subtitle}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 2. Inspirational Quote Card in Subtle Teal */}
+            <div className="bg-[#EAF5F4] rounded-2xl p-5 relative overflow-hidden border border-[#C5E6E4] hidden sm:block">
+              <span className="font-serif text-[#168C89]/40 text-4xl leading-none font-bold block mb-1">
+                “
+              </span>
+              <p className="text-xs text-[#172638] font-medium italic leading-relaxed relative z-10">
+                A clear understanding of yourself is the first step to the right career.
+              </p>
+            </div>
+          </aside>
+
+          {/* Right Main Content Card */}
+          <main className="bg-white rounded-2xl p-6 sm:p-9 shadow-xs border border-[#E2E8F0]">
+            {/* Top Step Progress Bar Area */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 mb-7 border-b border-[#E2E8F0]">
+              {/* Left Step Pill */}
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#142B4A] text-white text-xs font-semibold shadow-2xs shrink-0 self-start sm:self-auto">
+                Step {step + 1} of {STEPS.length}
+              </div>
+
+              {/* 6-Segment Rounded Progress Bar */}
+              <div className="flex-1 max-w-sm mx-0 sm:mx-4 flex items-center gap-1.5 w-full">
+                {STEPS.map((s, idx) => (
+                  <div
+                    key={s.id}
+                    className={`h-2 flex-1 rounded-full transition-all duration-300 ${
+                      idx <= step ? 'bg-[#168C89]' : 'bg-[#E2E8F0]'
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Right Percentage Pill */}
+              <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#EAF5F4] text-[#168C89] border border-[#C5E6E4] text-xs font-bold shrink-0 self-start sm:self-auto">
+                {completionPercent}% Complete
+              </div>
+            </div>
+
+            {/* Dynamic Stage Render */}
+            <div className="min-h-[420px]">
+              {step === 0 && <Stage1Purpose data={data} onChange={handleChange} />}
+              {step === 1 && <Stage2Education data={data} onChange={handleChange} />}
+              {step === 2 && <Stage3Interests data={data} onChange={handleChange} />}
+              {step === 3 && <Stage4SkillsProjects data={data} onChange={handleChange} />}
+              {step === 4 && <Stage5PrioritiesConstraints data={data} onChange={handleChange} />}
+              {step === 5 && (
+                <Stage6ResumeReview
+                  data={data}
+                  onChange={handleChange}
+                  saveError={saveError}
+                />
+              )}
+            </div>
+
+            {/* Bottom Navigation Action Buttons */}
+            <div className="mt-10 pt-6 border-t border-[#E2E8F0] flex items-center justify-between gap-4">
+              {step > 0 ? (
+                <button
+                  type="button"
+                  onClick={goBack}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#E2E8F0] bg-white text-xs font-bold text-[#172638] hover:bg-[#F8FAFC] transition-all cursor-pointer shadow-xs active:scale-[0.98]"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back</span>
+                </button>
+              ) : (
+                <Link
+                  to="/"
+                  className="text-xs font-semibold text-[#64748B] hover:text-[#142B4A] transition-colors flex items-center gap-1"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back to home</span>
+                </Link>
+              )}
+
+              {step < STEPS.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={goNext}
+                  disabled={!isCurrentStepValid}
+                  className="inline-flex items-center gap-2 px-7 py-2.5 rounded-xl bg-[#142B4A] text-white text-xs font-bold hover:bg-[#0E1F36] active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-xs cursor-pointer"
+                >
+                  <span>Continue</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={finishOnboarding}
+                  disabled={isSaving}
+                  className="inline-flex items-center gap-2 px-7 py-2.5 rounded-xl bg-[#168C89] text-white text-xs font-bold hover:bg-[#116A68] active:scale-[0.98] transition-all shadow-xs cursor-pointer disabled:opacity-50"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-teal-100" />
+                  <span>{isSaving ? 'Saving Profile...' : 'Finish & Start Assessment'}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </main>
+
         </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+export type ButtonVariant = 'primary' | 'secondary' | 'teal' | 'outline' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -15,13 +15,15 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_STYLES: Record<ButtonVariant, string> = {
   primary:
-    'bg-violet-700 text-white hover:bg-violet-800 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_2px_8px_rgba(109,40,217,0.18)] border border-violet-800/40 focus-visible:ring-violet-600',
+    'bg-[#142B4A] text-white hover:bg-[#0E1F36] shadow-xs border border-[#142B4A] focus-visible:ring-[#168C89]',
   secondary:
-    'bg-slate-100 text-slate-800 hover:bg-slate-200/80 border border-slate-200/60 focus-visible:ring-slate-400',
+    'bg-[#EAF5F4] text-[#168C89] hover:bg-[#D4ECE9] border border-[#C5E6E4] focus-visible:ring-[#168C89]',
+  teal:
+    'bg-[#168C89] text-white hover:bg-[#116A68] shadow-xs border border-[#168C89] focus-visible:ring-[#168C89]',
   outline:
-    'bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 border border-slate-200 focus-visible:ring-slate-400 shadow-xs',
+    'bg-white text-[#172638] hover:bg-[#F8FAFC] hover:text-[#142B4A] border border-[#E2E8F0] focus-visible:ring-[#168C89] shadow-xs',
   ghost:
-    'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-transparent focus-visible:ring-slate-400',
+    'bg-transparent text-[#64748B] hover:bg-[#F1F5F9] hover:text-[#172638] border border-transparent focus-visible:ring-[#168C89]',
   danger:
     'bg-rose-600 text-white hover:bg-rose-700 border border-rose-700/50 focus-visible:ring-rose-500 shadow-xs',
 };

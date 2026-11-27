@@ -84,20 +84,20 @@ export default function CareerComparisonModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
       <div className="relative w-full max-w-6xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden my-8 max-h-[92vh] flex flex-col">
         {/* Header */}
-        <div className="p-6 bg-gradient-to-r from-purple-700 via-indigo-700 to-emerald-700 text-white flex items-center justify-between shrink-0">
+        <div className="p-6 bg-[#142B4A] text-white flex items-center justify-between shrink-0 border-b border-[#168C89]/30">
           <div>
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <div className="inline-flex items-center gap-2 bg-[#168C89]/20 border border-[#168C89]/40 px-3 py-1 rounded-full text-xs font-semibold text-[#EAF5F4] mb-2 backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-[#168C89]" />
               Side-by-Side Comparison
             </div>
             <h2 className="text-2xl font-black">Compare Career Options</h2>
-            <p className="text-purple-100 text-xs sm:text-sm mt-0.5">
+            <p className="text-slate-300 text-xs sm:text-sm mt-0.5">
               Evaluating {careers.length} career {careers.length === 1 ? 'path' : 'paths'} to make a confident, informed decision.
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -129,64 +129,64 @@ export default function CareerComparisonModal({
                   return (
                     <div
                       key={career.slug}
-                      className="border border-slate-200 rounded-2xl p-5 bg-slate-50/50 flex flex-col justify-between hover:border-purple-300 transition-all shadow-sm"
+                      className="border border-[#E2E8F0] rounded-2xl p-5 bg-white flex flex-col justify-between hover:border-[#168C89]/40 transition-all shadow-sm"
                     >
                       {/* Top Action & Title */}
                       <div>
                         <div className="flex items-start justify-between gap-2 mb-3">
-                          <span className="inline-block px-2.5 py-1 text-xs font-bold rounded-lg bg-purple-100 text-purple-700">
+                          <span className="inline-block px-2.5 py-1 text-xs font-bold rounded-lg bg-[#EAF5F4] text-[#142B4A] border border-[#168C89]/20">
                             {career.field}
                           </span>
                           <button
                             onClick={() => onRemove(career.slug)}
-                            className="p-1 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                            className="p-1 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
                             title="Remove from comparison"
                           >
                             <X className="w-4 h-4" />
                           </button>
                         </div>
 
-                        <h3 className="text-xl font-black text-slate-900 leading-snug">
+                        <h3 className="text-xl font-black text-[#172638] leading-snug">
                           {career.title}
                         </h3>
 
                         <div className="flex items-center gap-2 mt-2">
                           {career.code && (
-                            <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                            <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
                               RIASEC: {career.code}
                             </span>
                           )}
-                          <span className="text-[11px] font-semibold text-slate-500">
+                          <span className="text-[11px] font-semibold text-[#64748B]">
                             {career.education || "Bachelor's Degree"}
                           </span>
                         </div>
 
-                        <p className="text-xs text-slate-600 mt-3 line-clamp-3 leading-relaxed">
+                        <p className="text-xs text-[#64748B] mt-3 line-clamp-3 leading-relaxed">
                           {career.summary || career.description}
                         </p>
 
                         {/* Salary Tier in India */}
-                        <div className="mt-4 p-3 bg-white rounded-xl border border-slate-200/80">
-                          <div className="text-xs font-bold text-slate-700 flex items-center gap-1.5 mb-2">
+                        <div className="mt-4 p-3 bg-slate-50 rounded-xl border border-[#E2E8F0]">
+                          <div className="text-xs font-bold text-[#172638] flex items-center gap-1.5 mb-2">
                             <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
                             Estimated Salary (India)
                           </div>
                           <div className="space-y-1 text-xs">
-                            <div className="flex justify-between text-slate-600">
+                            <div className="flex justify-between text-[#64748B]">
                               <span>Fresher / Entry:</span>
-                              <span className="font-bold text-slate-800">
+                              <span className="font-bold text-[#172638]">
                                 {career.salary_india?.entry || '₹4 - ₹7 LPA'}
                               </span>
                             </div>
-                            <div className="flex justify-between text-slate-600">
+                            <div className="flex justify-between text-[#64748B]">
                               <span>Mid-Career (3-5y):</span>
-                              <span className="font-bold text-purple-700">
+                              <span className="font-bold text-[#142B4A]">
                                 {career.salary_india?.mid || '₹10 - ₹18 LPA'}
                               </span>
                             </div>
-                            <div className="flex justify-between text-slate-600">
+                            <div className="flex justify-between text-[#64748B]">
                               <span>Senior / Lead:</span>
-                              <span className="font-bold text-slate-800">
+                              <span className="font-bold text-[#172638]">
                                 {career.salary_india?.senior || '₹20 - ₹35+ LPA'}
                               </span>
                             </div>
@@ -195,15 +195,15 @@ export default function CareerComparisonModal({
 
                         {/* Key Skills & Tools */}
                         <div className="mt-4">
-                          <div className="text-xs font-bold text-slate-700 mb-2 flex items-center gap-1.5">
-                            <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+                          <div className="text-xs font-bold text-[#172638] mb-2 flex items-center gap-1.5">
+                            <BookOpen className="w-3.5 h-3.5 text-[#168C89]" />
                             Top Skills & Competencies
                           </div>
                           <div className="flex flex-wrap gap-1.5">
                             {career.skills?.slice(0, 5).map((skill, i) => (
                               <span
                                 key={i}
-                                className="px-2 py-1 bg-white border border-slate-200 text-slate-700 text-[11px] font-medium rounded-md"
+                                className="px-2 py-1 bg-white border border-[#E2E8F0] text-[#172638] text-[11px] font-medium rounded-md"
                               >
                                 {skill}
                               </span>
@@ -218,7 +218,7 @@ export default function CareerComparisonModal({
                               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                               Key Advantages
                             </div>
-                            <ul className="space-y-1 text-xs text-slate-600">
+                            <ul className="space-y-1 text-xs text-[#64748B]">
                               {career.pros.slice(0, 2).map((p, i) => (
                                 <li key={i} className="flex items-start gap-1.5">
                                   <span className="text-emerald-500 font-bold">•</span>
@@ -236,7 +236,7 @@ export default function CareerComparisonModal({
                               <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
                               Real-World Challenges
                             </div>
-                            <ul className="space-y-1 text-xs text-slate-600">
+                            <ul className="space-y-1 text-xs text-[#64748B]">
                               {career.cons.slice(0, 2).map((c, i) => (
                                 <li key={i} className="flex items-start gap-1.5">
                                   <span className="text-amber-500 font-bold">•</span>
@@ -249,7 +249,7 @@ export default function CareerComparisonModal({
                       </div>
 
                       {/* Bottom Action Buttons */}
-                      <div className="mt-6 pt-4 border-t border-slate-200 space-y-2">
+                      <div className="mt-6 pt-4 border-t border-[#E2E8F0] space-y-2">
                         {isCurrentGoal ? (
                           <div className="w-full py-2.5 px-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5">
                             <Check className="w-4 h-4" /> Current Career Goal
@@ -262,7 +262,7 @@ export default function CareerComparisonModal({
                           <button
                             onClick={() => handleSetGoal(career)}
                             disabled={settingGoalSlug === career.slug}
-                            className="w-full py-2.5 px-3 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-1.5 disabled:opacity-50"
+                            className="w-full py-2.5 px-3 bg-[#142B4A] hover:bg-[#10233D] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 disabled:opacity-50 cursor-pointer"
                           >
                             <Target className="w-4 h-4" />
                             {settingGoalSlug === career.slug
@@ -274,7 +274,7 @@ export default function CareerComparisonModal({
                         <Link
                           to={`/careers/${career.slug}`}
                           onClick={onClose}
-                          className="w-full py-2 px-3 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-colors flex items-center justify-center gap-1.5"
+                          className="w-full py-2 px-3 bg-white hover:bg-[#EAF5F4] hover:border-[#168C89]/40 border border-[#E2E8F0] text-[#172638] text-xs font-semibold rounded-xl transition-colors flex items-center justify-center gap-1.5"
                         >
                           View Full Details <ArrowRight className="w-3.5 h-3.5" />
                         </Link>

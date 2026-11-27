@@ -24,8 +24,8 @@ interface Props {
 const chip = (active: boolean) =>
   `inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border transition-all duration-150 cursor-pointer ${
     active
-      ? 'bg-violet-700 border-violet-800 text-white shadow-xs'
-      : 'bg-white border-slate-200/80 text-slate-700 hover:border-slate-300 hover:bg-slate-50/80'
+      ? 'bg-[#142B4A] border-[#142B4A] text-white shadow-xs'
+      : 'bg-white border-[#E2E8F0] text-[#172638] hover:border-[#168C89]/40 hover:bg-[#EAF5F4]/40'
   }`;
 
 function toggle(list: string[], item: string, max?: number): string[] {
@@ -36,9 +36,9 @@ function toggle(list: string[], item: string, max?: number): string[] {
 
 function Card({ title, hint, children }: { title: string; hint?: string; children: ReactNode }) {
   return (
-    <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-      <p className="text-sm font-bold text-slate-900">{title}</p>
-      {hint && <p className="text-xs text-slate-500 mt-0.5">{hint}</p>}
+    <div className="bg-white rounded-2xl p-5 sm:p-6 border border-[#E2E8F0] shadow-sm">
+      <p className="text-sm font-bold text-[#172638]">{title}</p>
+      {hint && <p className="text-xs text-[#64748B] mt-0.5">{hint}</p>}
       <div className="mt-3.5">{children}</div>
     </div>
   );
@@ -73,7 +73,7 @@ export default function KnowMeSection({ section, value, onChange }: Props) {
     const full = value.values.length >= MAX_VALUES;
     return (
       <div className="space-y-3">
-        <p className="text-slate-500 text-sm">
+        <p className="text-[#64748B] text-sm">
           Pick the <strong>{MAX_VALUES} things that matter most</strong> to you in a career. There are no wrong
           answers — this helps us weigh trade-offs honestly.
         </p>
@@ -88,23 +88,23 @@ export default function KnowMeSection({ section, value, onChange }: Props) {
                 disabled={disabled}
                 aria-pressed={active}
                 onClick={() => onChange({ values: toggle(value.values, o.value, MAX_VALUES) })}
-                className={`text-left rounded-2xl border-2 p-4 transition-all ${
+                className={`text-left rounded-2xl border-2 p-4 transition-all cursor-pointer ${
                   active
-                    ? 'border-violet-600 bg-violet-50/50 shadow-xs'
+                    ? 'border-[#168C89] bg-[#EAF5F4] shadow-xs'
                     : disabled
                       ? 'border-slate-100 bg-white opacity-50 cursor-not-allowed'
-                      : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'
+                      : 'border-[#E2E8F0] bg-white hover:border-[#168C89]/40 hover:bg-[#EAF5F4]/30'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-bold text-slate-900 text-sm">{o.value}</span>
+                  <span className="font-bold text-[#172638] text-sm">{o.value}</span>
                   {active && (
-                    <span className="w-5 h-5 rounded-full bg-purple-600 text-white text-[11px] font-bold flex items-center justify-center">
+                    <span className="w-5 h-5 rounded-full bg-[#168C89] text-white text-[11px] font-bold flex items-center justify-center">
                       {value.values.indexOf(o.value) + 1}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-slate-500 mt-0.5">{o.hint}</p>
+                <p className="text-xs text-[#64748B] mt-0.5">{o.hint}</p>
               </button>
             );
           })}
@@ -163,10 +163,10 @@ export default function KnowMeSection({ section, value, onChange }: Props) {
                   key={opt}
                   type="button"
                   onClick={() => onChange({ equalSalaryChoice: opt })}
-                  className={`text-left rounded-xl border p-3 text-xs font-semibold transition-all ${
+                  className={`text-left rounded-xl border p-3 text-xs font-semibold transition-all cursor-pointer ${
                     active
-                      ? 'border-purple-600 bg-purple-50/80 text-purple-900 shadow-sm'
-                      : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50/60'
+                      ? 'border-[#168C89] bg-[#EAF5F4] text-[#142B4A] shadow-sm'
+                      : 'border-[#E2E8F0] bg-white text-[#172638] hover:border-[#168C89]/40 hover:bg-[#EAF5F4]/30'
                   }`}
                 >
                   {opt}
@@ -188,10 +188,10 @@ export default function KnowMeSection({ section, value, onChange }: Props) {
                   key={opt}
                   type="button"
                   onClick={() => onChange({ energySource: opt })}
-                  className={`text-left rounded-xl border p-3 text-xs font-semibold transition-all ${
+                  className={`text-left rounded-xl border p-3 text-xs font-semibold transition-all cursor-pointer ${
                     active
-                      ? 'border-purple-600 bg-purple-50/80 text-purple-900 shadow-sm'
-                      : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50/60'
+                      ? 'border-[#168C89] bg-[#EAF5F4] text-[#142B4A] shadow-sm'
+                      : 'border-[#E2E8F0] bg-white text-[#172638] hover:border-[#168C89]/40 hover:bg-[#EAF5F4]/30'
                   }`}
                 >
                   {opt}
@@ -227,10 +227,10 @@ export default function KnowMeSection({ section, value, onChange }: Props) {
                   key={opt}
                   type="button"
                   onClick={() => onChange({ secretCuriosity: opt })}
-                  className={`text-left rounded-xl border p-3 text-xs font-semibold transition-all ${
+                  className={`text-left rounded-xl border p-3 text-xs font-semibold transition-all cursor-pointer ${
                     active
-                      ? 'border-purple-600 bg-purple-50/80 text-purple-900 shadow-sm'
-                      : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50/60'
+                      ? 'border-[#168C89] bg-[#EAF5F4] text-[#142B4A] shadow-sm'
+                      : 'border-[#E2E8F0] bg-white text-[#172638] hover:border-[#168C89]/40 hover:bg-[#EAF5F4]/30'
                   }`}
                 >
                   {opt}
@@ -245,7 +245,7 @@ export default function KnowMeSection({ section, value, onChange }: Props) {
 
   return (
     <div className="space-y-3">
-      <p className="text-slate-500 text-sm">
+      <p className="text-[#64748B] text-sm">
         A good counselor considers your real situation, not just your interests. This stays private.
       </p>
       {SITUATION_QUESTIONS.map((q) => (
@@ -269,7 +269,7 @@ export default function KnowMeSection({ section, value, onChange }: Props) {
               onChange={(e) => onChange({ familyNote: e.target.value })}
               maxLength={120}
               placeholder="Optional — e.g. they'd like engineering or a government job"
-              className="mt-3 w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm"
+              className="mt-3 w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] focus:ring-2 focus:ring-[#168C89] focus:border-[#168C89] outline-none text-sm text-[#172638]"
             />
           )}
         </Card>

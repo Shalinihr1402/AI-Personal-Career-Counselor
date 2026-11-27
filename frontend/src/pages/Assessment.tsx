@@ -80,7 +80,7 @@ const CATEGORY_BADGES: Record<string, { label: string; className: string }> = {
   },
   interest_exploration: {
     label: 'Interest Discovery',
-    className: 'bg-purple-50 text-purple-700 border-purple-200',
+    className: 'bg-[#EAF5F4] text-[#168C89] border-[#168C89]/30',
   },
   workstyle_fit: {
     label: 'Workstyle Fit',
@@ -181,7 +181,7 @@ function SectionStepper({ current }: { current: Phase }) {
         <div className="absolute top-4 left-6 right-6 h-0.5 bg-slate-200 -z-0" />
         {/* Active progress fill line */}
         <div
-          className="absolute top-4 left-6 h-0.5 bg-violet-600 transition-all duration-500 ease-out -z-0"
+          className="absolute top-4 left-6 h-0.5 bg-[#168C89] transition-all duration-500 ease-out -z-0"
           style={{
             width: idx <= 0 ? '0%' : `${(idx / (SECTIONS.length - 1)) * 100}%`,
           }}
@@ -195,9 +195,9 @@ function SectionStepper({ current }: { current: Phase }) {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${
                   isCurrent
-                    ? 'bg-white border-2 border-violet-600 text-violet-700 ring-4 ring-violet-100 shadow-xs'
+                    ? 'bg-white border-2 border-[#168C89] text-[#168C89] ring-4 ring-[#168C89]/20 shadow-xs'
                     : isPast
-                    ? 'bg-violet-700 text-white shadow-2xs'
+                    ? 'bg-[#142B4A] text-white shadow-2xs'
                     : 'bg-white border-2 border-slate-200 text-slate-400'
                 }`}
                 aria-current={isCurrent ? 'step' : undefined}
@@ -207,7 +207,7 @@ function SectionStepper({ current }: { current: Phase }) {
               <span
                 className={`mt-2 text-xs transition-colors text-center hidden sm:block ${
                   isCurrent
-                    ? 'text-violet-950 font-bold'
+                    ? 'text-[#142B4A] font-bold'
                     : isPast
                     ? 'text-slate-700 font-semibold'
                     : 'text-slate-400 font-medium'
@@ -221,7 +221,7 @@ function SectionStepper({ current }: { current: Phase }) {
       </ol>
       {/* Mobile active label */}
       <div className="sm:hidden text-center mt-2">
-        <span className="text-xs font-bold text-violet-900">
+        <span className="text-xs font-bold text-[#142B4A]">
           Step {idx + 1} of {SECTIONS.length}: {SECTIONS[idx]?.label}
         </span>
       </div>
@@ -778,17 +778,17 @@ const Assessment: React.FC = () => {
   const categoryInfo = currentAdaptive ? CATEGORY_BADGES[currentAdaptive.category] : null;
 
   return (
-    <div className="min-h-screen bg-[#FAFAFC] font-sans flex flex-col">
+    <div className="min-h-screen bg-[#F5F8FC] font-sans flex flex-col">
       <AppHeader />
       <main className={`${phase === 'results' ? 'max-w-[1240px]' : 'max-w-4xl'} mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1`}>
         {/* Top Header Row with Title and Mode Switcher */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <div className="flex items-center gap-2 text-violet-600 mb-1">
-              <Compass className="w-5 h-5" />
+            <div className="flex items-center gap-2 text-[#168C89] mb-1">
+              <Compass className="w-5 h-5 text-[#168C89]" />
               <span className="text-xs font-bold uppercase tracking-wider">Career discovery assessment</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#172638] tracking-tight">
               Find careers that fit you
             </h1>
           </div>
@@ -809,7 +809,7 @@ const Assessment: React.FC = () => {
                   !isQuizScored
                     ? 'opacity-60 text-slate-500 hover:text-slate-700 cursor-pointer'
                     : phase === 'counselor_diagnostic'
-                    ? 'bg-violet-700 text-white shadow-xs font-bold'
+                    ? 'bg-[#142B4A] text-white shadow-xs font-bold'
                     : 'text-slate-600 hover:text-slate-900 font-semibold'
                 }`}
                 title={!isQuizScored ? 'Mandatory: Complete the discovery assessment first' : undefined}
@@ -832,7 +832,7 @@ const Assessment: React.FC = () => {
                 }}
                 className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
                   phase !== 'counselor_diagnostic'
-                    ? 'bg-violet-700 text-white shadow-xs font-bold'
+                    ? 'bg-[#142B4A] text-white shadow-xs font-bold'
                     : 'text-slate-600 hover:text-slate-900 font-semibold'
                 }`}
               >
@@ -861,7 +861,7 @@ const Assessment: React.FC = () => {
 
         {phase === 'loading' && (
           <div className="bg-white rounded-2xl p-10 border border-slate-200/80 text-center shadow-xs">
-            <div className="w-8 h-8 border-2 border-violet-200 border-t-violet-700 rounded-full animate-spin mx-auto mb-3" />
+            <div className="w-8 h-8 border-2 border-[#168C89]/20 border-t-[#168C89] rounded-full animate-spin mx-auto mb-3" />
             <p className="text-sm text-slate-500 font-medium">Loading discovery assessment...</p>
           </div>
         )}
@@ -900,23 +900,23 @@ const Assessment: React.FC = () => {
 
         {/* Intro Step */}
         {phase === 'intro' && (
-          <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_6px_20px_rgba(0,0,0,0.02)]">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 border border-[#E2E8F0] shadow-sm">
             <div className="flex items-start gap-3.5 mb-5">
-              <div className="w-12 h-10 rounded-xl bg-violet-50 text-violet-700 border border-violet-100/80 flex items-center justify-center font-bold text-xs font-mono shrink-0">
+              <div className="w-12 h-10 rounded-xl bg-[#EAF5F4] text-[#168C89] border border-[#168C89]/30 flex items-center justify-center font-bold text-xs font-mono shrink-0">
                 8–12Q
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">{stageInfo.title}</h2>
+                  <h2 className="text-lg sm:text-xl font-bold text-[#172638] tracking-tight">{stageInfo.title}</h2>
                   <Badge variant="brand" size="xs">Stage Calibrated</Badge>
                 </div>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[#64748B]">
                   Adaptive discovery scenarios (8–12 questions) • Dynamic evidence-based stopping • ~3–4 minutes • Deterministic Python scoring
                 </p>
               </div>
             </div>
 
-            <p className="text-slate-600 mb-5 leading-relaxed text-sm">
+            <p className="text-[#64748B] mb-5 leading-relaxed text-sm">
               {stageInfo.subtitle}
             </p>
 
@@ -956,9 +956,9 @@ const Assessment: React.FC = () => {
             <SectionStepper current="quiz" />
 
             {/* Progress indicator */}
-            <div className="mb-6 bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+            <div className="mb-6 bg-white p-4 rounded-xl border border-[#E2E8F0] shadow-xs">
               <div className="flex items-center justify-between text-xs font-bold tracking-tight text-slate-500 mb-2">
-                <span className="text-violet-900 font-extrabold flex items-center gap-1.5">
+                <span className="text-[#142B4A] font-extrabold flex items-center gap-1.5">
                   <span>Question {currentQuestionIndex + 1}</span>
                   <span className="text-slate-400 font-normal hidden sm:inline">• Adaptive Career Discovery</span>
                 </span>
@@ -968,14 +968,14 @@ const Assessment: React.FC = () => {
               </div>
               <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-violet-700 rounded-full transition-all duration-300 ease-out"
+                  className="h-full bg-[#168C89] rounded-full transition-all duration-300 ease-out"
                   style={{ width: `${Math.min(100, Math.max(8, Math.round(((answeredCount + 1) / 12) * 100)))}%` }}
                 />
               </div>
             </div>
 
             {/* Scenario Card */}
-            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_4px_16px_rgba(0,0,0,0.02)] mb-6">
+            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-[#E2E8F0] shadow-sm mb-6">
               <div className="flex flex-wrap items-center gap-2 mb-4">
                 <Badge variant="brand" size="xs">
                   Scenario {currentQuestionIndex + 1}
@@ -991,16 +991,16 @@ const Assessment: React.FC = () => {
               </div>
 
               {currentAdaptive?.explanation_tip && (
-                <div className="mb-5 p-3.5 bg-violet-50/50 border border-violet-100 rounded-xl flex items-start gap-2.5 text-xs text-violet-900 leading-relaxed">
-                  <Info className="w-4 h-4 text-violet-600 shrink-0 mt-0.5" />
+                <div className="mb-5 p-3.5 bg-[#EAF5F4] border border-[#168C89]/25 rounded-xl flex items-start gap-2.5 text-xs text-[#142B4A] leading-relaxed">
+                  <Info className="w-4 h-4 text-[#168C89] shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-bold text-violet-950">Counselor Context: </span>
+                    <span className="font-bold text-[#142B4A]">Counselor Context: </span>
                     <span>{currentAdaptive.explanation_tip}</span>
                   </div>
                 </div>
               )}
 
-              <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight leading-snug mb-6">
+              <h2 className="text-lg sm:text-xl font-bold text-[#172638] tracking-tight leading-snug mb-6">
                 {currentQuestion.scenario}
               </h2>
 
@@ -1016,14 +1016,14 @@ const Assessment: React.FC = () => {
                       onClick={() => handleSelectOption(currentQuestion.id, opt.id)}
                       className={`w-full text-left p-4 sm:p-5 rounded-xl border transition-all flex items-start gap-3.5 group cursor-pointer ${
                         isSelected
-                          ? 'border-violet-600 bg-violet-50/50 shadow-xs ring-1 ring-violet-500/20'
-                          : 'border-slate-200/90 bg-white hover:border-slate-300 hover:bg-slate-50/60'
+                          ? 'border-[#168C89] bg-[#EAF5F4] shadow-xs ring-1 ring-[#168C89]/20'
+                          : 'border-[#E2E8F0] bg-white hover:border-[#168C89]/40 hover:bg-[#EAF5F4]/40'
                       }`}
                     >
                       <span
                         className={`w-7 h-7 rounded-lg font-bold text-xs font-mono flex items-center justify-center shrink-0 transition-colors ${
                           isSelected
-                            ? 'bg-violet-700 text-white shadow-2xs'
+                            ? 'bg-[#142B4A] text-white shadow-2xs'
                             : 'bg-slate-100 text-slate-600 border border-slate-200 group-hover:bg-slate-200/80 group-hover:text-slate-800'
                         }`}
                       >
@@ -1031,7 +1031,7 @@ const Assessment: React.FC = () => {
                       </span>
                       <span
                         className={`text-sm sm:text-base leading-relaxed pt-0.5 ${
-                          isSelected ? 'font-semibold text-slate-900' : 'font-normal text-slate-700'
+                          isSelected ? 'font-semibold text-[#172638]' : 'font-normal text-slate-700'
                         }`}
                       >
                         {opt.text}
@@ -1078,7 +1078,7 @@ const Assessment: React.FC = () => {
           </div>
           ) : (
             <div className="bg-white rounded-2xl p-8 border border-slate-200/80 text-center shadow-xs">
-              <div className="w-12 h-12 bg-violet-100 text-violet-700 rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold">
+              <div className="w-12 h-12 bg-[#EAF5F4] text-[#168C89] rounded-2xl flex items-center justify-center mx-auto mb-4 font-bold border border-[#168C89]/30">
                 <CheckCircle2 className="w-6 h-6 text-emerald-600" />
               </div>
               <h3 className="font-bold text-slate-900 text-lg mb-2">Scenario Questions Complete!</h3>
@@ -1122,7 +1122,7 @@ const Assessment: React.FC = () => {
                 return (
                   <div key={q.id} className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs">
                     <div className="flex items-center gap-2 mb-1.5">
-                      <span className="w-6 h-6 rounded-md bg-violet-50 text-violet-700 font-mono text-xs font-bold flex items-center justify-center border border-violet-100">
+                      <span className="w-6 h-6 rounded-md bg-[#EAF5F4] text-[#168C89] font-mono text-xs font-bold flex items-center justify-center border border-[#168C89]/30">
                         0{qIndex + 1}
                       </span>
                       <p className="text-sm sm:text-base font-bold text-slate-900">{q.prompt}</p>
@@ -1144,14 +1144,14 @@ const Assessment: React.FC = () => {
                             onClick={() => setWorkStyle((w) => ({ ...w, [q.id]: optText }))}
                             className={`p-4 rounded-xl text-left border transition-all cursor-pointer flex items-start gap-3.5 group relative ${
                               isSelected
-                                ? 'border-violet-600 bg-violet-50/50 shadow-xs ring-1 ring-violet-500/20'
-                                : 'border-slate-200/90 bg-white hover:border-slate-300 hover:bg-slate-50/60'
+                                ? 'border-[#168C89] bg-[#EAF5F4] shadow-xs ring-1 ring-[#168C89]/20'
+                                : 'border-slate-200/90 bg-white hover:border-[#168C89]/40 hover:bg-[#EAF5F4]/40'
                             }`}
                           >
                             <div
                               className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                                 isSelected
-                                  ? 'bg-violet-700 text-white shadow-2xs'
+                                  ? 'bg-[#142B4A] text-white shadow-2xs'
                                   : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200/70 group-hover:text-slate-800'
                               }`}
                             >
@@ -1161,7 +1161,7 @@ const Assessment: React.FC = () => {
                             <div className="flex-1 min-w-0 pr-6">
                               <span
                                 className={`text-sm font-bold block mb-0.5 ${
-                                  isSelected ? 'text-violet-950' : 'text-slate-800'
+                                  isSelected ? 'text-[#142B4A]' : 'text-[#172638]'
                                 }`}
                               >
                                 {optText}
@@ -1177,7 +1177,7 @@ const Assessment: React.FC = () => {
                             <div
                               className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 absolute top-4 right-4 transition-all ${
                                 isSelected
-                                  ? 'border-violet-600 bg-violet-600 text-white shadow-2xs'
+                                  ? 'border-[#168C89] bg-[#168C89] text-white shadow-2xs'
                                   : 'border-slate-300 bg-white group-hover:border-slate-400'
                               }`}
                             >
@@ -1274,16 +1274,16 @@ const Assessment: React.FC = () => {
 
         {/* Scoring & Analysis Loading Screen */}
         {phase === 'scoring' && (
-          <div className="bg-white rounded-2xl p-10 sm:p-14 border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.02),0_6px_20px_rgba(0,0,0,0.02)] text-center">
-            <div className="w-12 h-12 border-3 border-violet-200 border-t-violet-700 rounded-full animate-spin mx-auto mb-5" />
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-100 mb-3">
-              <Sparkles className="w-3.5 h-3.5" />
+          <div className="bg-white rounded-2xl p-10 sm:p-14 border border-[#E2E8F0] shadow-sm text-center">
+            <div className="w-12 h-12 border-3 border-[#168C89]/20 border-t-[#168C89] rounded-full animate-spin mx-auto mb-5" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#EAF5F4] text-[#168C89] border border-[#168C89]/30 mb-3">
+              <Sparkles className="w-3.5 h-3.5 text-[#168C89]" />
               <span>Analyzing Your Assessment</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mb-2">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-[#172638] tracking-tight mb-2">
               Scoring Assessment & Initializing AI Counselor
             </h2>
-            <p className="text-sm text-slate-500 max-w-lg mx-auto leading-relaxed">
+            <p className="text-sm text-[#64748B] max-w-lg mx-auto leading-relaxed">
               Evaluating Holland RIASEC dimensions, separating declared vs demonstrated competencies, and preparing your personalized diagnostic consultation.
             </p>
           </div>
@@ -1308,21 +1308,21 @@ const Assessment: React.FC = () => {
               />
 
               {/* Diagnostic Synthesis Verified Banner */}
-              <div className="bg-gradient-to-r from-violet-50/90 via-purple-50/40 to-white rounded-2xl border border-violet-200/80 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+              <div className="bg-gradient-to-r from-[#EAF5F4] via-white to-white rounded-2xl border border-[#168C89]/30 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
                 <div className="flex items-start sm:items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-violet-700 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-[#142B4A] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
                     <CheckCircle2 className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs font-extrabold uppercase tracking-wider text-violet-800">
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-[#142B4A]">
                         Diagnostic Synthesis Complete
                       </span>
-                      <Badge variant="success" size="xs" className="font-semibold">
+                      <Badge variant="brand" size="xs" className="font-semibold">
                         AI Counselor Verified
                       </Badge>
                     </div>
-                    <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                    <p className="text-xs text-[#64748B] mt-0.5 leading-relaxed">
                       {diagnosticProfile?.projects && diagnosticProfile.projects.length > 0
                         ? `Grounded in ${diagnosticProfile.projects.length} practical projects and ${diagnosticProfile.technical_skills?.length || 0} demonstrated competencies without premature guessing.`
                         : 'Personalized recommendations synthesized from your Holland RIASEC profile, practical experiences, and statutory pathways.'}
@@ -1332,9 +1332,9 @@ const Assessment: React.FC = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  leftIcon={<Mic className="w-3.5 h-3.5 text-violet-700" />}
+                  leftIcon={<Mic className="w-3.5 h-3.5 text-[#168C89]" />}
                   onClick={() => goToPhase('counselor_diagnostic')}
-                  className="bg-white hover:bg-violet-50 shrink-0 text-xs font-bold"
+                  className="bg-white hover:bg-[#EAF5F4] hover:border-[#168C89]/40 text-[#172638] shrink-0 text-xs font-bold"
                 >
                   Consult Counselor
                 </Button>
@@ -1408,9 +1408,9 @@ const Assessment: React.FC = () => {
                       variant="outline"
                       size="sm"
                       isLoading={isRefreshingRecs}
-                      leftIcon={<RefreshCw className="w-3.5 h-3.5 text-violet-700" />}
+                      leftIcon={<RefreshCw className="w-3.5 h-3.5 text-[#168C89]" />}
                       onClick={handleRefreshRecommendations}
-                      className="bg-white hover:bg-violet-50 text-xs font-bold shrink-0"
+                      className="bg-white hover:bg-[#EAF5F4] hover:border-[#168C89]/40 text-[#172638] text-xs font-bold shrink-0"
                       title="Update recommendations with your latest profile skills and career goals"
                     >
                       Refresh Recommendations
@@ -1465,8 +1465,9 @@ const Assessment: React.FC = () => {
                   variant="outline"
                   size="md"
                   isLoading={isRefreshingRecs}
-                  leftIcon={<RefreshCw className="w-4 h-4 text-violet-700" />}
+                  leftIcon={<RefreshCw className="w-4 h-4 text-[#168C89]" />}
                   onClick={handleRefreshRecommendations}
+                  className="bg-white hover:bg-[#EAF5F4] hover:border-[#168C89]/40 text-[#172638]"
                 >
                   Refresh Recommendations
                 </Button>
@@ -1480,17 +1481,17 @@ const Assessment: React.FC = () => {
                 </Button>
                 <Link
                   to="/dashboard"
-                  className="text-violet-700 hover:text-violet-900 text-xs font-bold transition-colors ml-2"
+                  className="text-[#168C89] hover:underline text-xs font-bold transition-colors ml-2"
                 >
                   Back to dashboard →
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl p-10 border border-slate-200/80 text-center shadow-xs">
-              <div className="w-8 h-8 border-2 border-violet-200 border-t-violet-700 rounded-full animate-spin mx-auto mb-4" />
-              <h3 className="font-bold text-slate-900 text-base mb-1">Loading Your Assessment Results...</h3>
-              <p className="text-slate-500 text-xs mb-5">Retrieving your career recommendations and Holland RIASEC scores.</p>
+            <div className="bg-white rounded-2xl p-10 border border-[#E2E8F0] text-center shadow-xs">
+              <div className="w-8 h-8 border-2 border-[#168C89]/20 border-t-[#168C89] rounded-full animate-spin mx-auto mb-4" />
+              <h3 className="font-bold text-[#172638] text-base mb-1">Loading Your Assessment Results...</h3>
+              <p className="text-[#64748B] text-xs mb-5">Retrieving your career recommendations and Holland RIASEC scores.</p>
               <Button
                 variant="outline"
                 size="sm"

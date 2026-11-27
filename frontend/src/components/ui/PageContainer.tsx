@@ -18,10 +18,9 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   children,
   maxWidth = 'wide',
   className = '',
-  hasAmbientGlow = true,
 }) => {
   return (
-    <div className={`min-h-[calc(100vh-4rem)] ${hasAmbientGlow ? 'bg-ambient-glow' : 'bg-[#F8F9FB]'} transition-colors`}>
+    <div className="min-h-[calc(100vh-4rem)] bg-[#F5F8FC] transition-colors">
       <main className={`${MAX_WIDTHS[maxWidth]} mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 ${className}`}>
         {children}
       </main>

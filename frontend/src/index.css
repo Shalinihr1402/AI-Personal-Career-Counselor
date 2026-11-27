@@ -5,41 +5,59 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Sophisticated Brand Violet / Indigo */
-  --color-brand-50: #f5f3ff;
-  --color-brand-100: #ede9fe;
-  --color-brand-200: #ddd6fe;
-  --color-brand-300: #c4b5fd;
-  --color-brand-400: #a78bfa;
-  --color-brand-500: #8b5cf6;
-  --color-brand-600: #6d28d9;
-  --color-brand-700: #5b21b6;
-  --color-brand-800: #4c1d95;
-  --color-brand-900: #2e1065;
-  --color-brand-950: #1e0847;
+  /* Primary Navy Palette (#142B4A) */
+  --color-navy-950: #0A1626;
+  --color-navy-900: #0E1F36;
+  --color-navy-800: #142B4A;
+  --color-navy-700: #1C3B64;
+  --color-navy-600: #264D80;
+  --color-navy-500: #33619E;
+  --color-navy-400: #4B79BD;
+  --color-navy-300: #749CD4;
+  --color-navy-200: #A8C2E7;
+  --color-navy-100: #DCE7F5;
+  --color-navy-50: #F0F5FA;
+
+  /* Primary Teal Palette (#168C89) */
+  --color-teal-950: #073332;
+  --color-teal-900: #0C4E4D;
+  --color-teal-800: #116A68;
+  --color-teal-700: #168C89;
+  --color-teal-600: #1EB0AD;
+  --color-teal-500: #2ED1CE;
+  --color-teal-400: #57DEDC;
+  --color-teal-300: #8CE8E6;
+  --color-teal-200: #C2F3F2;
+  --color-teal-100: #E0F9F8;
+  --color-teal-50: #EAF5F4;
 
   /* Semantic UI Surfaces */
-  --color-surface-bg: #f8f9fb;
-  --color-surface-card: #ffffff;
-  --color-surface-subtle: #f1f5f9;
-  --color-surface-muted: #e2e8f0;
+  --color-surface-bg: #F5F8FC;
+  --color-surface-card: #FFFFFF;
+  --color-surface-subtle: #F8FAFC;
+  --color-surface-muted: #F1F5F9;
 
   /* Text Colors */
-  --color-content-primary: #0f172a;
+  --color-content-primary: #172638;
   --color-content-secondary: #334155;
-  --color-content-muted: #64748b;
-  --color-content-subtle: #94a3b8;
+  --color-content-muted: #64748B;
+  --color-content-subtle: #94A3B8;
 
   /* Refined Borders */
-  --color-line-subtle: #f1f5f9;
-  --color-line-border: #e2e8f0;
-  --color-line-active: #cbd5e1;
+  --color-line-subtle: #F1F5F9;
+  --color-line-border: #E2E8F0;
+  --color-line-active: #CBD5E1;
+
+  /* Brand Defaults */
+  --color-brand-primary: #142B4A;
+  --color-brand-teal: #168C89;
+  --color-brand-teal-light: #EAF5F4;
 }
 
 @layer base {
   body {
-    background-color: var(--color-surface-bg);
-    color: var(--color-content-primary);
+    background-color: #F5F8FC;
+    color: #172638;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -55,23 +73,72 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: #CBD5E1;
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: #94A3B8;
   }
 }
 
-/* Ambient glow and subtle background mesh for premium SaaS aesthetic */
+/* Subtle enterprise SaaS ambient glow */
 .bg-ambient-glow {
+  background-color: #F5F8FC;
   background-image: 
-    radial-gradient(at 15% 10%, rgba(139, 92, 246, 0.05) 0px, transparent 45%),
-    radial-gradient(at 85% 85%, rgba(99, 102, 241, 0.04) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(248, 249, 251, 1) 0px, transparent 100%);
+    radial-gradient(at 15% 10%, rgba(22, 140, 137, 0.04) 0px, transparent 45%),
+    radial-gradient(at 85% 85%, rgba(20, 43, 74, 0.04) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(245, 248, 252, 1) 0px, transparent 100%);
 }
 
 .bg-dot-pattern {
-  background-image: radial-gradient(rgba(148, 163, 184, 0.2) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(100, 116, 139, 0.15) 1px, transparent 1px);
   background-size: 20px 20px;
+}
+
+/* Reusable SaaS UI Classes */
+.saas-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(20, 43, 74, 0.03), 0 1px 2px -1px rgba(20, 43, 74, 0.02);
+}
+
+.saas-card-hover {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(20, 43, 74, 0.03), 0 1px 2px -1px rgba(20, 43, 74, 0.02);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.saas-card-hover:hover {
+  border-color: #CBD5E1;
+  box-shadow: 0 10px 25px -5px rgba(20, 43, 74, 0.06), 0 8px 10px -6px rgba(20, 43, 74, 0.03);
+}
+
+.btn-navy {
+  background-color: #142B4A;
+  color: #FFFFFF;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.15s ease;
+}
+.btn-navy:hover {
+  background-color: #0E1F36;
+}
+
+.btn-teal {
+  background-color: #168C89;
+  color: #FFFFFF;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.15s ease;
+}
+.btn-teal:hover {
+  background-color: #116A68;
+}
+
+.badge-teal {
+  background-color: #EAF5F4;
+  color: #168C89;
+  border: 1px solid #C5E6E4;
 }

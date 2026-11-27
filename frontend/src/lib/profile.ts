@@ -304,6 +304,49 @@ export function isMissingTable(error: { code?: string } | null): boolean {
 }
 
 export async function loadProfile(userId: string): Promise<Profile | null> {
+  if (userId === 'demo-student-id') {
+    return {
+      path: 'know_goal',
+      career_mode: 'career_planning',
+      educationStage: 'degree_ug',
+      streamOrBranch: 'Computer Applications',
+      college: 'GM University, Davanagere',
+      course: 'MCA (Master of Computer Applications)',
+      year: 'III Semester',
+      interests: ['Web Development', 'AI & Machine Learning', 'System Design'],
+      targetRole: 'Software Developer',
+      hoursPerWeek: '15',
+      onboardingComplete: true,
+      education_details: {
+        education_level: 'postgraduate',
+        education_status: 'currently_studying',
+        degree: 'MCA (Master of Computer Applications)',
+        specialization: 'Computer Applications',
+        institution: 'GM University, Davanagere',
+        study_stage_type: 'semester',
+        study_stage_value: 'III Semester',
+        academic_strengths: ['Web Development', 'Data Structures', 'Database Management'],
+        subjects_enjoyed: ['AI & Machine Learning', 'System Design', 'Software Engineering'],
+        certifications: [{ name: 'Python for Data Science', issuer_or_platform: 'Coursera', year: '2025' }],
+      },
+      skills_and_experience: {
+        skills: [
+          { name: 'JavaScript', category: 'technical', proficiency: 'intermediate', source: 'academic_coursework' },
+          { name: 'Python', category: 'technical', proficiency: 'intermediate', source: 'self_taught' },
+          { name: 'React', category: 'technical', proficiency: 'beginner', source: 'personal_project' },
+        ],
+        structured_projects: [
+          {
+            title: 'Personal Career Discovery Portal',
+            role_or_nature: 'Full Stack Developer',
+            technologies_used: ['React', 'FastAPI', 'TailwindCSS'],
+            problem_solved: 'Built adaptive career matching algorithms.',
+          },
+        ],
+      },
+    } as unknown as Profile;
+  }
+
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
@@ -314,6 +357,11 @@ export async function loadProfile(userId: string): Promise<Profile | null> {
 }
 
 export async function saveProfile(userId: string, patch: Partial<Profile>): Promise<Profile> {
+  if (userId === 'demo-student-id') {
+    const existing = await loadProfile(userId);
+    return { ...(existing || {}), ...patch } as Profile;
+  }
+
   const { data, error } = await supabase
     .from('profiles')
     .upsert(toRow(userId, patch), { onConflict: 'user_id' })
@@ -324,6 +372,55 @@ export async function saveProfile(userId: string, patch: Partial<Profile>): Prom
 }
 
 export async function loadLatestAssessment(userId: string): Promise<SavedAssessment | null> {
+  if (userId === 'demo-student-id') {
+    return {
+      id: 'demo-assessment-1',
+      code: 'IRC',
+      scores: { R: 65, I: 85, A: 55, S: 45, E: 60, C: 75 },
+      matches: [
+        {
+          slug: 'software-developer',
+          title: 'Software Developer',
+          score: 0.88,
+          match_level: 'Strong Match',
+          why_it_fits: 'Strong alignment with Investigative & Conventional traits, high domain overlap in Python and React.',
+          day_to_day: 'Build and architect responsive modern web applications and cloud APIs.',
+          key_skills: ['JavaScript', 'Python', 'React', 'Data Structures'],
+          field: 'Technology & Computer Science',
+        },
+        {
+          slug: 'data-scientist',
+          title: 'Data Scientist',
+          score: 0.82,
+          match_level: 'Strong Match',
+          why_it_fits: 'High analytical alignment with Investigative orientation and Machine Learning curiosity.',
+          day_to_day: 'Design machine learning pipelines and analyze quantitative patterns.',
+          key_skills: ['Python', 'Statistics', 'Machine Learning', 'Data Analysis'],
+          field: 'Data & AI',
+        },
+        {
+          slug: 'database-architect',
+          title: 'Database Administrator',
+          score: 0.76,
+          match_level: 'Good Match',
+          why_it_fits: 'Conventional data governance and structures alignment.',
+          day_to_day: 'Manage database schemas, optimize queries and secure relational data stores.',
+          key_skills: ['SQL', 'Database Design', 'PostgreSQL', 'Performance Tuning'],
+          field: 'Technology & Computer Science',
+        },
+      ],
+      source: 'rule',
+      workStyle: {},
+      adaptiveEvidence: {
+        riasec_scores: { R: 65, I: 85, A: 55, S: 45, E: 60, C: 75 },
+        top_dimensions: ['I', 'C', 'R'],
+        confidence: 'High',
+        evidence_count: 12,
+      } as any,
+      createdAt: new Date().toISOString(),
+    };
+  }
+
   // Query with adaptive_evidence column; fallback gracefully if column not yet migrated
   let res = await supabase
     .from('assessments')
@@ -470,6 +567,18 @@ export async function confirmCareerGoal(
 }
 
 export async function loadActiveGoal(userId: string): Promise<CareerGoal | null> {
+  if (userId === 'demo-student-id') {
+    return {
+      id: 'demo-goal-1',
+      userId: 'demo-student-id',
+      careerTitle: 'Software Developer',
+      field: 'Technology & Computer Science',
+      reason: 'Targeting a career in software engineering and web application architecture.',
+      status: 'active',
+      confirmedAt: new Date().toISOString(),
+    };
+  }
+
   const { data, error } = await supabase
     .from('career_goals')
     .select('*')

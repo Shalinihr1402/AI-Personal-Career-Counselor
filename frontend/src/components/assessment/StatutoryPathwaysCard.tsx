@@ -40,9 +40,9 @@ export const StatutoryPathwaysCard: React.FC<StatutoryPathwaysCardProps> = ({
         eyebrow="Indian Regulatory Compliance"
         title="Statutory Career Eligibility & Pathways"
         subtitle="Audited against official Indian statutory frameworks (NMC, BCI, ICAI, AICTE, NCVT)"
-        icon={<GraduationCap className="w-5 h-5 text-emerald-700" />}
+        icon={<GraduationCap className="w-5 h-5 text-[#168C89]" />}
         badge={
-          <Badge variant="success" size="xs">
+          <Badge variant="brand" size="xs">
             Regulatory Verification
           </Badge>
         }

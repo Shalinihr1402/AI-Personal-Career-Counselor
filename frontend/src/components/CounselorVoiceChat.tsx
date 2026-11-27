@@ -381,22 +381,22 @@ export default function CounselorVoiceChat({
   return (
     <div className="w-full">
       {/* Top Workspace Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-xs mb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-[#E2E8F0] shadow-xs mb-5">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-violet-50 text-violet-700 border border-violet-100 flex items-center justify-center font-bold text-sm shrink-0 shadow-2xs">
-            <Compass className="w-5 h-5 text-violet-700" />
+          <div className="w-10 h-10 rounded-xl bg-[#EAF5F4] text-[#168C89] border border-[#168C89]/30 flex items-center justify-center font-bold text-sm shrink-0 shadow-2xs">
+            <Compass className="w-5 h-5 text-[#168C89]" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+              <h2 className="text-base sm:text-lg font-extrabold text-[#172638] tracking-tight">
                 AI Diagnostic Career Counselor
               </h2>
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Diagnostic Active
               </span>
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[#64748B]">
               Interactive consultation synthesizing your assessment, practical projects, and technical skills.
             </p>
           </div>
@@ -407,7 +407,7 @@ export default function CounselorVoiceChat({
             <button
               type="button"
               onClick={onRestartAssessment}
-              className="p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors text-slate-500 hover:text-slate-800"
+              className="p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors text-slate-500 hover:text-slate-800 cursor-pointer"
               title="Retake Career Assessment"
             >
               <RotateCcw className="w-4 h-4" />
@@ -420,10 +420,10 @@ export default function CounselorVoiceChat({
               if (isVoiceEnabled) window.speechSynthesis?.cancel();
               setIsVoiceEnabled(!isVoiceEnabled);
             }}
-            className="p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors text-slate-700"
+            className="p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors text-slate-700 cursor-pointer"
             title={isVoiceEnabled ? 'Mute counselor audio voice' : 'Enable counselor audio voice'}
           >
-            {isVoiceEnabled ? <Volume2 className="w-4 h-4 text-violet-700" /> : <VolumeX className="w-4 h-4 text-slate-400" />}
+            {isVoiceEnabled ? <Volume2 className="w-4 h-4 text-[#168C89]" /> : <VolumeX className="w-4 h-4 text-slate-400" />}
           </button>
 
           <Button
@@ -431,8 +431,8 @@ export default function CounselorVoiceChat({
             size="sm"
             onClick={() => handleSendMessage('I am ready to review my profile and see career recommendations.', true)}
             disabled={loading || generating}
-            rightIcon={<ArrowRight className="w-3.5 h-3.5 text-violet-700" />}
-            className="bg-white hover:bg-violet-50 hover:border-violet-300"
+            rightIcon={<ArrowRight className="w-3.5 h-3.5 text-[#168C89]" />}
+            className="bg-white hover:bg-[#EAF5F4] hover:border-[#168C89]/40 text-[#172638]"
           >
             Finish & Review
           </Button>
@@ -444,42 +444,42 @@ export default function CounselorVoiceChat({
         {/* Left Side Panel: Profile & Diagnostic State Tracker */}
         <div className="lg:col-span-4 space-y-4">
           {/* Assessment Foundation Card */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs">
+          <div className="bg-white rounded-2xl p-5 border border-[#E2E8F0] shadow-xs">
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-2">
               Assessment Foundation
             </span>
             <div className="flex items-center justify-between mb-3">
               <div>
-                <span className="text-sm font-extrabold text-slate-900 block capitalize">{firstName}</span>
-                <span className="text-xs text-slate-500">{stage}</span>
+                <span className="text-sm font-extrabold text-[#172638] block capitalize">{firstName}</span>
+                <span className="text-xs text-[#64748B]">{stage}</span>
               </div>
-              <div className="flex items-center gap-1 bg-violet-50 px-2.5 py-1 rounded-xl border border-violet-100">
-                <span className="text-[10px] font-bold text-violet-600 mr-1">RIASEC</span>
-                <span className="font-mono font-extrabold text-xs text-violet-900 tracking-wider">
+              <div className="flex items-center gap-1 bg-[#EAF5F4] px-2.5 py-1 rounded-xl border border-[#168C89]/30">
+                <span className="text-[10px] font-bold text-[#168C89] mr-1">RIASEC</span>
+                <span className="font-mono font-extrabold text-xs text-[#142B4A] tracking-wider">
                   {hollandCode}
                 </span>
               </div>
             </div>
 
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-600 flex items-start gap-2 leading-relaxed">
+            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-[#64748B] flex items-start gap-2 leading-relaxed">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <span>Assessment verified. Now collecting practical evidence & project responsibilities.</span>
             </div>
           </div>
 
           {/* Diagnostic Completeness Tracker */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs space-y-4">
+          <div className="bg-white rounded-2xl p-5 border border-[#E2E8F0] shadow-xs space-y-4">
             <div>
               <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1.5">
                 <span className="flex items-center gap-1.5">
-                  <Layers className="w-3.5 h-3.5 text-violet-600" />
+                  <Layers className="w-3.5 h-3.5 text-[#168C89]" />
                   Diagnostic Profile
                 </span>
-                <span className="font-mono text-violet-700">{diagnosticProfile.completeness_score}%</span>
+                <span className="font-mono text-[#168C89]">{diagnosticProfile.completeness_score}%</span>
               </div>
               <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-violet-600 rounded-full transition-all duration-500 ease-out"
+                  className="h-full bg-[#168C89] rounded-full transition-all duration-500 ease-out"
                   style={{ width: `${Math.min(100, Math.max(15, diagnosticProfile.completeness_score))}%` }}
                 />
               </div>
@@ -566,8 +566,8 @@ export default function CounselorVoiceChat({
                   className={`flex gap-3 ${isAssistant ? 'justify-start' : 'justify-end'}`}
                 >
                   {isAssistant && (
-                    <div className="w-8 h-8 rounded-xl bg-violet-50 text-violet-700 border border-violet-100 flex items-center justify-center shrink-0 font-bold text-xs shadow-2xs">
-                      <Sparkles className="w-4 h-4 text-violet-700" />
+                    <div className="w-8 h-8 rounded-xl bg-[#EAF5F4] text-[#168C89] border border-[#168C89]/30 flex items-center justify-center shrink-0 font-bold text-xs shadow-2xs">
+                      <Sparkles className="w-4 h-4 text-[#168C89]" />
                     </div>
                   )}
 
@@ -575,8 +575,8 @@ export default function CounselorVoiceChat({
                     <div
                       className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                         isAssistant
-                          ? 'bg-slate-50/90 text-slate-800 rounded-bl-sm border border-slate-200/70 shadow-2xs'
-                          : 'bg-violet-700 text-white font-medium rounded-br-sm shadow-xs'
+                          ? 'bg-slate-50/90 text-[#172638] rounded-bl-sm border border-slate-200/70 shadow-2xs'
+                          : 'bg-[#142B4A] text-white font-medium rounded-br-sm shadow-xs'
                       }`}
                     >
                       <p className="whitespace-pre-line">{m.text}</p>
@@ -591,13 +591,13 @@ export default function CounselorVoiceChat({
 
             {loading && (
               <div className="flex gap-3 justify-start">
-                <div className="w-8 h-8 rounded-xl bg-violet-50 text-violet-700 border border-violet-100 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-4 h-4 text-violet-700" />
+                <div className="w-8 h-8 rounded-xl bg-[#EAF5F4] text-[#168C89] border border-[#168C89]/30 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-4 h-4 text-[#168C89]" />
                 </div>
-                <div className="bg-slate-50 rounded-2xl px-4 py-3 text-sm text-slate-500 rounded-bl-sm border border-slate-200/70 flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-violet-600 animate-bounce" />
-                  <div className="w-2 h-2 rounded-full bg-violet-600 animate-bounce delay-100" />
-                  <div className="w-2 h-2 rounded-full bg-violet-600 animate-bounce delay-200" />
+                <div className="bg-slate-50 rounded-2xl px-4 py-3 text-sm text-[#64748B] rounded-bl-sm border border-slate-200/70 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#168C89] animate-bounce" />
+                  <div className="w-2 h-2 rounded-full bg-[#168C89] animate-bounce delay-100" />
+                  <div className="w-2 h-2 rounded-full bg-[#168C89] animate-bounce delay-200" />
                   <span className="text-xs font-semibold ml-1 text-slate-400">Counselor is analyzing your response...</span>
                 </div>
               </div>
@@ -605,24 +605,24 @@ export default function CounselorVoiceChat({
 
             {/* Diagnostic Confirmation Card (Ready for Recommendations) */}
             {diagnosticProfile.is_ready_for_recommendations && !generating && (
-              <div className="p-5 rounded-2xl bg-gradient-to-br from-violet-50 via-purple-50/40 to-white border-2 border-violet-500/80 shadow-md space-y-3.5 my-2">
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-[#EAF5F4] via-white to-white border-2 border-[#168C89]/40 shadow-md space-y-3.5 my-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-violet-700 text-white flex items-center justify-center shadow-2xs">
+                  <div className="w-7 h-7 rounded-lg bg-[#142B4A] text-white flex items-center justify-center shadow-2xs">
                     <CheckCircle2 className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-extrabold text-slate-900">
+                    <h3 className="text-sm font-extrabold text-[#172638]">
                       Diagnostic Consultation Complete
                     </h3>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-[#64748B]">
                       Sufficient practical evidence collected to synthesize your final career recommendations.
                     </p>
                   </div>
                 </div>
 
                 {diagnosticProfile.summary_of_student && (
-                  <div className="p-3.5 bg-white rounded-xl border border-violet-100 text-xs text-slate-700 leading-relaxed">
-                    <span className="font-bold text-violet-950 block mb-1">Counselor Summary:</span>
+                  <div className="p-3.5 bg-white rounded-xl border border-[#168C89]/30 text-xs text-[#172638] leading-relaxed">
+                    <span className="font-bold text-[#142B4A] block mb-1">Counselor Summary:</span>
                     <p className="whitespace-pre-line">{diagnosticProfile.summary_of_student}</p>
                   </div>
                 )}
@@ -643,7 +643,7 @@ export default function CounselorVoiceChat({
                     variant="outline"
                     size="md"
                     onClick={() => handleSendMessage('I want to add another detail about my experience.', false)}
-                    className="bg-white hover:bg-slate-50 text-xs"
+                    className="bg-white hover:bg-[#EAF5F4] text-[#172638] text-xs"
                   >
                     Add More Details
                   </Button>
@@ -653,12 +653,12 @@ export default function CounselorVoiceChat({
 
             {/* Recommendation Generation Loading Banner */}
             {generating && (
-              <div className="p-6 rounded-2xl bg-violet-50/80 border border-violet-200 text-center space-y-3 my-2">
-                <div className="w-8 h-8 border-2 border-violet-300 border-t-violet-700 rounded-full animate-spin mx-auto" />
-                <h4 className="text-sm font-bold text-slate-900">
+              <div className="p-6 rounded-2xl bg-[#EAF5F4] border border-[#168C89]/30 text-center space-y-3 my-2">
+                <div className="w-8 h-8 border-2 border-[#168C89]/30 border-t-[#168C89] rounded-full animate-spin mx-auto" />
+                <h4 className="text-sm font-bold text-[#172638]">
                   Synthesizing Final Recommendations
                 </h4>
-                <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                <p className="text-xs text-[#64748B] max-w-md mx-auto leading-relaxed">
                   Ranking across 1,016 occupational pathways, matching your Holland RIASEC scores, practical projects, and skills.
                 </p>
               </div>
@@ -676,14 +676,14 @@ export default function CounselorVoiceChat({
 
           {/* Quick Suggestion Chips */}
           {suggestionChips.length > 0 && !generating && (
-            <div className="px-5 py-2.5 bg-slate-50 border-t border-slate-200/70 overflow-x-auto flex gap-2 shrink-0">
+            <div className="px-5 py-2.5 bg-slate-50 border-t border-[#E2E8F0] overflow-x-auto flex gap-2 shrink-0">
               {suggestionChips.map((chip, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => handleSendMessage(chip)}
                   disabled={loading || generating}
-                  className="whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:border-violet-300 hover:bg-violet-50 transition-all shrink-0 cursor-pointer disabled:opacity-50"
+                  className="whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold bg-white border border-[#E2E8F0] text-[#172638] hover:border-[#168C89]/40 hover:bg-[#EAF5F4] transition-all shrink-0 cursor-pointer disabled:opacity-50"
                 >
                   {chip}
                 </button>
@@ -692,7 +692,7 @@ export default function CounselorVoiceChat({
           )}
 
           {/* Message Composer */}
-          <div className="p-4 bg-white border-t border-slate-200/80">
+          <div className="p-4 bg-white border-t border-[#E2E8F0]">
             {isListening && (
               <div className="mb-2 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-bold flex items-center gap-2 animate-pulse">
                 <span className="w-2 h-2 rounded-full bg-red-600" />
@@ -732,13 +732,13 @@ export default function CounselorVoiceChat({
                     : 'Type your response (e.g. project role, tools used, or challenges)...'
                 }
                 disabled={loading || generating}
-                className="flex-1 px-4 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:bg-white transition-all placeholder:text-slate-400"
+                className="flex-1 px-4 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#168C89] focus:border-[#168C89] focus:bg-white transition-all placeholder:text-slate-400"
               />
 
               <button
                 type="submit"
                 disabled={loading || generating || !inputText.trim()}
-                className="p-2.5 bg-violet-700 hover:bg-violet-800 text-white rounded-xl font-bold transition-all disabled:opacity-40 shrink-0 shadow-xs cursor-pointer"
+                className="p-2.5 bg-[#142B4A] hover:bg-[#10233D] text-white rounded-xl font-bold transition-all disabled:opacity-40 shrink-0 shadow-xs cursor-pointer"
                 title="Send message"
               >
                 <Send className="w-4 h-4" />

@@ -43,25 +43,25 @@ const Today: React.FC = () => {
   const hasPlan = Boolean(onboarding);
 
   return (
-    <div className="min-h-screen bg-ambient-glow font-sans flex flex-col">
+    <div className="min-h-screen bg-[#F5F8FC] font-sans flex flex-col">
       <AppHeader />
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
-        <div className="flex items-center gap-2 text-violet-600 mb-1">
-          <CalendarCheck className="w-5 h-5" />
+        <div className="flex items-center gap-2 text-[#168C89] mb-1">
+          <CalendarCheck className="w-5 h-5 text-[#168C89]" />
           <span className="text-sm font-bold uppercase tracking-wider">Today's work</span>
         </div>
-        <h1 className="text-3xl font-extrabold text-slate-900 mb-1">What to do now</h1>
-        <p className="text-slate-500 mb-8">
-          Your focus for this week on the path to <strong className="text-slate-700">{roadmap.role}</strong>.
+        <h1 className="text-3xl font-extrabold text-[#172638] mb-1">What to do now</h1>
+        <p className="text-[#64748B] mb-8">
+          Your focus for this week on the path to <strong className="text-[#172638]">{roadmap.role}</strong>.
         </p>
 
         {!hasPlan ? (
-          <div className="bg-white rounded-2xl p-8 border border-slate-200/80 text-center">
-            <p className="text-slate-500 mb-4">Finish onboarding to generate your plan.</p>
+          <div className="bg-white rounded-2xl p-8 border border-[#E2E8F0] text-center shadow-sm">
+            <p className="text-[#64748B] mb-4">Finish onboarding to generate your plan.</p>
             <Link
               to="/onboarding"
-              className="inline-block bg-violet-700 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-violet-800 transition-colors"
+              className="inline-block bg-[#142B4A] text-white font-bold py-2.5 px-5 rounded-xl hover:bg-[#10233D] transition-colors"
             >
               Complete onboarding
             </Link>
@@ -78,7 +78,7 @@ const Today: React.FC = () => {
               hoursFromProfile={hoursFromProfile}
             />
             <p className="text-center mt-6">
-              <Link to="/roadmap" className="text-violet-700 font-bold text-sm hover:underline">
+              <Link to="/roadmap" className="text-[#168C89] font-bold text-sm hover:underline">
                 See the full roadmap →
               </Link>
             </p>

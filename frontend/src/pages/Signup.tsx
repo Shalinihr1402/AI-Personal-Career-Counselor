@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   BrainCircuit, Compass, TrendingUp, Target,
-  User, Mail, Lock, Eye, EyeOff, ArrowRight,
-  GraduationCap, ClipboardList
+  User, Mail, Lock, Eye, EyeOff, ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
@@ -77,168 +76,148 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-ambient-glow flex items-center justify-center p-6 lg:p-12 font-sans relative">
+    <div className="min-h-screen bg-[#F5F8FC] flex items-center justify-center p-6 lg:p-12 font-sans relative">
 
       <div className="w-full max-w-[1200px] flex flex-col lg:flex-row items-center gap-12 lg:gap-24 z-10 relative">
 
         {/* Left Side Content */}
         <div className="w-full lg:w-1/2 pt-8 lg:pt-0">
           <div className="flex items-center gap-2 mb-10">
-            <BrainCircuit className="w-8 h-8 text-violet-700" />
-            <span className="text-xl font-bold tracking-tight text-slate-900">AI Personal Career Counselor</span>
+            <div className="w-10 h-10 rounded-xl bg-[#142B4A] text-white flex items-center justify-center shadow-xs">
+              <BrainCircuit className="w-5 h-5 text-[#168C89]" />
+            </div>
+            <span className="text-xl font-bold tracking-tight text-[#172638]">AI Personal Career Counselor</span>
           </div>
 
-          <h1 className="text-5xl md:text-[56px] font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
+          <h1 className="text-5xl md:text-[54px] font-extrabold text-[#172638] leading-[1.1] mb-4 tracking-tight">
             Your career <br/>
-            <span className="text-violet-700">deserves more</span> <br/>
-            than luck.
+            <span className="text-[#168C89]">deserves more</span> <br/>
+            than guesswork.
           </h1>
 
-          <p className="text-lg text-slate-500 mb-8 max-w-md leading-relaxed font-medium">
-            Join thousands of students who stopped guessing and started following a personalized roadmap that actually works.
+          <p className="text-base text-[#64748B] mb-8 max-w-md leading-relaxed font-normal">
+            Join students who stopped guessing and started following an evidence-grounded career discovery roadmap.
           </p>
 
           <div className="space-y-6 mb-12">
-            <div className="flex items-center gap-5">
-              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center shrink-0 border border-purple-200/50 shadow-sm">
-                <Compass className="w-5 h-5 text-violet-700" />
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-xl bg-[#EAF5F4] border border-[#C5E6E4] flex items-center justify-center shrink-0 shadow-2xs">
+                <Compass className="w-5 h-5 text-[#168C89]" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-[15px] mb-0.5">Discover the right career</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">Explore paths that match<br/>your interests and strengths.</p>
+                <h3 className="font-bold text-[#172638] text-sm mb-0.5">Discover the right career</h3>
+                <p className="text-[#64748B] text-xs leading-relaxed">Adaptive assessments mapped to Holland codes and 1,016 real careers.</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-5">
-              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center shrink-0 border border-purple-200/50 shadow-sm">
-                <TrendingUp className="w-5 h-5 text-violet-700" />
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-xl bg-[#EAF5F4] border border-[#C5E6E4] flex items-center justify-center shrink-0 shadow-2xs">
+                <TrendingUp className="w-5 h-5 text-[#168C89]" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-[15px] mb-0.5">Plan with clarity</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">Get a personalized roadmap with<br/>clear next steps.</p>
+                <h3 className="font-bold text-[#172638] text-sm mb-0.5">Plan with clarity</h3>
+                <p className="text-[#64748B] text-xs leading-relaxed">Actionable stage roadmaps with verified statutory licensing pathways.</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-5">
-              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center shrink-0 border border-purple-200/50 shadow-sm">
-                <Target className="w-5 h-5 text-violet-700" />
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-xl bg-[#EAF5F4] border border-[#C5E6E4] flex items-center justify-center shrink-0 shadow-2xs">
+                <Target className="w-5 h-5 text-[#168C89]" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 text-[15px] mb-0.5">Stay on track</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">Track progress, build consistency<br/>and achieve your goals.</p>
+                <h3 className="font-bold text-[#172638] text-sm mb-0.5">Stay on track</h3>
+                <p className="text-[#64748B] text-xs leading-relaxed">Skill gap milestones and realistic weekly learning commitments.</p>
               </div>
             </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <p className="text-slate-500 font-medium text-[15px]">Trusted by students worldwide.</p>
           </div>
         </div>
 
         {/* Right Side Form Card */}
         <div className="w-full lg:w-1/2 max-w-[480px] mx-auto relative">
-
-          {/* Decorative Dashed Arc & Icons */}
-          <div className="hidden lg:block absolute -left-[140px] top-1/2 -translate-y-1/2 -z-10 w-[200px] h-[400px]">
-             <svg width="100%" height="100%" viewBox="0 0 200 400" fill="none" className="text-purple-200">
-                <path d="M200,20 C50,100 50,300 200,380" stroke="currentColor" strokeWidth="2" strokeDasharray="6 6" />
-             </svg>
-             <div className="absolute top-[35px] left-[105px] w-12 h-12 bg-white rounded-full shadow-sm border border-purple-50 flex items-center justify-center text-purple-500">
-               <GraduationCap className="w-5 h-5" />
-             </div>
-             <div className="absolute top-[175px] left-[55px] w-12 h-12 bg-white rounded-full shadow-sm border border-purple-50 flex items-center justify-center text-purple-500">
-               <ClipboardList className="w-5 h-5" />
-             </div>
-             <div className="absolute top-[315px] left-[105px] w-12 h-12 bg-white rounded-full shadow-sm border border-purple-50 flex items-center justify-center text-purple-500">
-               <Target className="w-5 h-5" />
-             </div>
-          </div>
-
-          {/* Form Card */}
-          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 relative z-10 w-full">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-xs border border-[#E2E8F0] relative z-10 w-full">
             <div className="mb-6">
-              <h2 className="text-2xl font-extrabold text-slate-900 mb-1 tracking-tight">Create your account</h2>
-              <p className="text-slate-500 font-medium text-sm">Let's map out your future, <span className="text-violet-700">step by step.</span></p>
+              <h2 className="text-2xl font-extrabold text-[#172638] mb-1 tracking-tight">Create your account</h2>
+              <p className="text-[#64748B] text-xs font-normal">Let's map out your career discovery, <span className="text-[#168C89] font-semibold">step by step.</span></p>
             </div>
 
             {error && (
-              <div className="mb-4 bg-red-50 border border-red-100 text-red-600 text-[13px] font-medium rounded-xl px-4 py-3">
+              <div className="mb-4 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold rounded-xl px-4 py-3">
                 {error}
               </div>
             )}
             {notice && (
-              <div className="mb-4 bg-emerald-50 border border-emerald-100 text-emerald-700 text-[13px] font-medium rounded-xl px-4 py-3">
+              <div className="mb-4 bg-[#EAF5F4] border border-[#C5E6E4] text-[#168C89] text-xs font-semibold rounded-xl px-4 py-3">
                 {notice}
               </div>
             )}
 
             <form className="space-y-4" onSubmit={handleSubmit}>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="firstName" className="block text-[13px] font-semibold text-slate-700">First Name</label>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label htmlFor="firstName" className="block text-xs font-bold uppercase tracking-wider text-[#172638]">First Name</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
                       <User className="w-4 h-4" />
                     </div>
-                    <input id="firstName" type="text" autoComplete="given-name" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-600 focus:border-violet-600 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="First name" />
+                    <input id="firstName" type="text" autoComplete="given-name" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-[#E2E8F0] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89] outline-none text-[#172638] text-xs font-medium placeholder:text-[#94A3B8]" placeholder="First name" />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <label htmlFor="lastName" className="block text-[13px] font-semibold text-slate-700">Last Name</label>
+                <div className="space-y-1.5">
+                  <label htmlFor="lastName" className="block text-xs font-bold uppercase tracking-wider text-[#172638]">Last Name</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
                       <User className="w-4 h-4" />
                     </div>
-                    <input id="lastName" type="text" autoComplete="family-name" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-600 focus:border-violet-600 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="Last name" />
+                    <input id="lastName" type="text" autoComplete="family-name" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-[#E2E8F0] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89] outline-none text-[#172638] text-xs font-medium placeholder:text-[#94A3B8]" placeholder="Last name" />
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="email" className="block text-[13px] font-semibold text-slate-700">Email Address</label>
+              <div className="space-y-1.5">
+                <label htmlFor="email" className="block text-xs font-bold uppercase tracking-wider text-[#172638]">Email Address</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
                     <Mail className="w-4 h-4" />
                   </div>
-                  <input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-600 focus:border-violet-600 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="you@example.com" />
+                  <input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#E2E8F0] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89] outline-none text-[#172638] text-xs font-medium placeholder:text-[#94A3B8]" placeholder="you@example.com" />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="password" className="block text-[13px] font-semibold text-slate-700">Password</label>
+              <div className="space-y-1.5">
+                <label htmlFor="password" className="block text-xs font-bold uppercase tracking-wider text-[#172638]">Password</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
                     <Lock className="w-4 h-4" />
                   </div>
-                  <input id="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-600 focus:border-violet-600 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="Create a strong password (min. 8 chars)" />
-                  <button type="button" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? 'Hide password' : 'Show password'} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 cursor-pointer hover:text-slate-600 transition-colors">
+                  <input id="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-[#E2E8F0] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89] outline-none text-[#172638] text-xs font-medium placeholder:text-[#94A3B8]" placeholder="Min. 8 characters" />
+                  <button type="button" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? 'Hide password' : 'Show password'} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#64748B] cursor-pointer hover:text-[#172638] transition-colors">
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="block text-[13px] font-semibold text-slate-700">Confirm Password</label>
+              <div className="space-y-1.5">
+                <label htmlFor="confirmPassword" className="block text-xs font-bold uppercase tracking-wider text-[#172638]">Confirm Password</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B]">
                     <Lock className="w-4 h-4" />
                   </div>
-                  <input id="confirmPassword" type={showPassword ? 'text' : 'password'} autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-violet-600 focus:border-violet-600 outline-none transition-all text-slate-900 text-sm font-medium placeholder:text-slate-400 placeholder:font-normal" placeholder="Re-enter your password" />
+                  <input id="confirmPassword" type={showPassword ? 'text' : 'password'} autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#E2E8F0] focus:ring-2 focus:ring-[#168C89]/30 focus:border-[#168C89] outline-none text-[#172638] text-xs font-medium placeholder:text-[#94A3B8]" placeholder="Re-enter your password" />
                 </div>
                 {confirmPassword.length > 0 && password !== confirmPassword && (
-                  <p className="text-[12px] font-medium text-red-500">Passwords do not match.</p>
+                  <p className="text-[11px] font-semibold text-rose-600">Passwords do not match.</p>
                 )}
               </div>
 
-              <label className="flex items-start gap-2.5 text-[13px] text-slate-500 font-medium cursor-pointer">
-                <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 w-4 h-4 rounded border-slate-300 text-violet-700 focus:ring-violet-600" />
-                <span>I agree to the <a href="#" className="text-violet-700 font-semibold hover:underline">Terms</a> and <a href="#" className="text-violet-700 font-semibold hover:underline">Privacy Policy</a>.</span>
+              <label className="flex items-start gap-2.5 text-xs text-[#64748B] font-medium cursor-pointer">
+                <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-0.5 w-4 h-4 rounded border-[#E2E8F0] text-[#168C89] focus:ring-[#168C89]" />
+                <span>I agree to the <a href="#" className="text-[#168C89] font-semibold hover:underline">Terms</a> and <a href="#" className="text-[#168C89] font-semibold hover:underline">Privacy Policy</a>.</span>
               </label>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-violet-700 text-white font-bold py-3 px-4 rounded-xl hover:bg-violet-800 active:scale-[0.98] transition-all mt-3 shadow-md shadow-purple-600/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-[#142B4A] hover:bg-[#0E1F36] text-white font-bold py-3 px-4 rounded-xl transition-all shadow-xs flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer text-xs"
               >
                 {loading ? (
                   <>
@@ -253,19 +232,19 @@ const Signup: React.FC = () => {
               </button>
             </form>
 
-            <div className="mt-6 flex items-center justify-center gap-4">
-              <div className="h-px bg-slate-100 flex-1"></div>
-              <span className="text-[12px] font-medium text-slate-400">or continue with</span>
-              <div className="h-px bg-slate-100 flex-1"></div>
+            <div className="mt-5 flex items-center justify-center gap-4">
+              <div className="h-px bg-[#E2E8F0] flex-1"></div>
+              <span className="text-[11px] font-medium text-[#64748B]">or continue with</span>
+              <div className="h-px bg-[#E2E8F0] flex-1"></div>
             </div>
 
-            <div className="mt-5">
+            <div className="mt-4">
               <button
                 type="button"
                 onClick={handleGoogle}
-                className="w-full bg-white border border-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center justify-center gap-3 text-sm"
+                className="w-full bg-white border border-[#E2E8F0] text-[#172638] font-bold py-2.5 px-4 rounded-xl hover:bg-[#F8FAFC] transition-all flex items-center justify-center gap-3 text-xs shadow-xs cursor-pointer"
               >
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -275,10 +254,10 @@ const Signup: React.FC = () => {
               </button>
             </div>
 
-            <div className="mt-6 text-center">
-              <p className="text-slate-600 text-[13px] font-medium">
-                Already have a roadmap?{' '}
-                <Link to="/login" className="text-violet-700 font-bold hover:underline">
+            <div className="mt-5 text-center">
+              <p className="text-[#64748B] text-xs font-medium">
+                Already have an account?{' '}
+                <Link to="/login" className="text-[#168C89] font-bold hover:underline">
                   Log in
                 </Link>
               </p>
