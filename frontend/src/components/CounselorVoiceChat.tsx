@@ -380,24 +380,24 @@ export default function CounselorVoiceChat({
 
   return (
     <div className="w-full">
-      {/* Top Workspace Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-[#E2E8F0] shadow-xs mb-5">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#EAF5F4] text-[#168C89] border border-[#168C89]/30 flex items-center justify-center font-bold text-sm shrink-0 shadow-2xs">
-            <Compass className="w-5 h-5 text-[#168C89]" />
+      {/* Top Workspace Header - Cinematic Deep Navy Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-[#0B1930] via-[#142B4A] to-[#0E223D] text-white p-5 rounded-2xl border border-white/10 shadow-lg mb-5">
+        <div className="flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center font-bold text-sm shrink-0 backdrop-blur-sm">
+            <Compass className="w-6 h-6 text-[#168C89]" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base sm:text-lg font-extrabold text-[#172638] tracking-tight">
+              <h2 className="text-base sm:text-lg font-extrabold text-white tracking-tight">
                 AI Diagnostic Career Counselor
               </h2>
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Diagnostic Active
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-teal-200 bg-[#168C89]/20 px-2.5 py-0.5 rounded-full border border-[#168C89]/40">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#168C89] animate-pulse" />
+                Live Consultation
               </span>
             </div>
-            <p className="text-xs text-[#64748B]">
-              Interactive consultation synthesizing your assessment, practical projects, and technical skills.
+            <p className="text-xs text-slate-300 mt-0.5">
+              Interactive consultation synthesizing your assessment, practical projects, and technical competencies.
             </p>
           </div>
         </div>
@@ -407,7 +407,7 @@ export default function CounselorVoiceChat({
             <button
               type="button"
               onClick={onRestartAssessment}
-              className="p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors text-slate-500 hover:text-slate-800 cursor-pointer"
+              className="p-2.5 rounded-xl border border-white/15 bg-white/10 hover:bg-white/15 transition-colors text-slate-200 hover:text-white cursor-pointer"
               title="Retake Career Assessment"
             >
               <RotateCcw className="w-4 h-4" />
@@ -420,19 +420,19 @@ export default function CounselorVoiceChat({
               if (isVoiceEnabled) window.speechSynthesis?.cancel();
               setIsVoiceEnabled(!isVoiceEnabled);
             }}
-            className="p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors text-slate-700 cursor-pointer"
+            className="p-2.5 rounded-xl border border-white/15 bg-white/10 hover:bg-white/15 transition-colors text-slate-200 hover:text-white cursor-pointer"
             title={isVoiceEnabled ? 'Mute counselor audio voice' : 'Enable counselor audio voice'}
           >
-            {isVoiceEnabled ? <Volume2 className="w-4 h-4 text-[#168C89]" /> : <VolumeX className="w-4 h-4 text-slate-400" />}
+            {isVoiceEnabled ? <Volume2 className="w-4 h-4 text-teal-300" /> : <VolumeX className="w-4 h-4 text-slate-400" />}
           </button>
 
           <Button
-            variant="outline"
+            variant="primary"
             size="sm"
             onClick={() => handleSendMessage('I am ready to review my profile and see career recommendations.', true)}
             disabled={loading || generating}
-            rightIcon={<ArrowRight className="w-3.5 h-3.5 text-[#168C89]" />}
-            className="bg-white hover:bg-[#EAF5F4] hover:border-[#168C89]/40 text-[#172638]"
+            rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+            className="bg-[#168C89] hover:bg-[#137471] text-white border-none font-bold"
           >
             Finish & Review
           </Button>

@@ -45,6 +45,14 @@ function App() {
               }
             />
             <Route
+              path="/ai-counselor"
+              element={
+                <ProtectedRoute>
+                  <Assessment />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/recommendations"
               element={
                 <ProtectedRoute>

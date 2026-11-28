@@ -86,46 +86,64 @@ const Roadmap: React.FC = () => {
       <AppHeader />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
-        <div className="flex items-center gap-2 text-[#168C89] mb-1">
-          <Target className="w-5 h-5 text-[#168C89]" />
-          <span className="text-sm font-bold uppercase tracking-wider">Your roadmap</span>
-        </div>
-        <h1 className="text-3xl font-extrabold text-[#172638] mb-1">
-          The path to {roadmap.role}
-        </h1>
-        <p className="text-[#64748B] mb-1">{pace.note}</p>
-        <p className="text-slate-400 text-sm mb-8">
-          {weeks.length} weeks at {weeklyHours}h/week · {overallPct}% complete
-        </p>
-
-        {/* Change target role */}
-        {configured && (
-          <div className="bg-white rounded-[1.25rem] p-4 border border-[#E2E8F0] shadow-sm mb-6 flex flex-wrap items-end gap-3">
-            <div className="flex-1 min-w-[220px]">
-              <label htmlFor="role" className="block text-[13px] font-semibold text-[#172638] mb-1.5">
-                Target role
-              </label>
-              <input
-                id="role"
-                value={roleInput}
-                onChange={(e) => {
-                  setRoleInput(e.target.value);
-                  setRoleSaved(false);
-                }}
-                placeholder="e.g. Data Analyst"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#168C89] focus:border-[#168C89] outline-none text-sm font-medium text-slate-900"
-              />
+        {/* Cinematic Deep Navy Hero Banner */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B1930] via-[#142B4A] to-[#0A182E] text-white p-7 sm:p-10 mb-8 border border-white/10 shadow-xl">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-[radial-gradient(circle,rgba(22,140,137,0.22)_0%,transparent_70%)] pointer-events-none -mr-16 -mt-16" />
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-teal-200 text-xs font-semibold mb-3">
+                <Target className="w-3.5 h-3.5 text-[#168C89]" />
+                <span className="uppercase tracking-wider text-[11px] font-bold">Execution Roadmap</span>
+              </div>
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                The path to {roadmap.role}
+              </h1>
+              <p className="text-sm text-slate-300 mt-2 max-w-2xl font-normal leading-relaxed">
+                {pace.note}
+              </p>
+              <div className="flex flex-wrap items-center gap-3 mt-4 text-xs">
+                <span className="px-3 py-1 rounded-lg bg-white/10 border border-white/15 text-slate-200">
+                  {weeks.length} weeks scheduled
+                </span>
+                <span className="px-3 py-1 rounded-lg bg-white/10 border border-white/15 text-slate-200">
+                  {weeklyHours}h / week intensity
+                </span>
+                <span className="px-3 py-1 rounded-lg bg-[#168C89]/25 border border-[#168C89]/50 text-teal-200 font-bold">
+                  {overallPct}% completed
+                </span>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={saveRole}
-              disabled={savingRole || roleInput.trim() === (onboarding?.targetRole ?? '').trim()}
-              className="px-5 py-2.5 rounded-xl bg-[#142B4A] text-white font-bold text-sm hover:bg-[#10233D] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            >
-              {savingRole ? 'Saving…' : roleSaved ? 'Saved ✓' : 'Update roadmap'}
-            </button>
+
+            {/* Target Role input embedded inside banner */}
+            {configured && (
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 p-4 rounded-2xl shrink-0 w-full md:w-80 space-y-2.5">
+                <label htmlFor="role" className="block text-xs font-bold text-slate-200">
+                  Change Target Goal
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    id="role"
+                    value={roleInput}
+                    onChange={(e) => {
+                      setRoleInput(e.target.value);
+                      setRoleSaved(false);
+                    }}
+                    placeholder="e.g. Data Analyst"
+                    className="w-full px-3 py-2 rounded-xl bg-white/95 border border-white/20 focus:ring-2 focus:ring-[#168C89] outline-none text-xs font-semibold text-slate-900 placeholder:text-slate-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={saveRole}
+                    disabled={savingRole || roleInput.trim() === (onboarding?.targetRole ?? '').trim()}
+                    className="px-3.5 py-2 rounded-xl bg-[#168C89] hover:bg-[#137471] text-white font-bold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0 cursor-pointer"
+                  >
+                    {savingRole ? 'Saving…' : roleSaved ? 'Saved ✓' : 'Update'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
         <div className="grid lg:grid-cols-5 gap-6">
           {/* Left: this week */}

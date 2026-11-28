@@ -22,6 +22,7 @@ import {
   Target,
   Rocket,
   Search,
+  RotateCcw,
 } from 'lucide-react';
 import AppHeader from '../components/AppHeader';
 import AppFooter from '../components/AppFooter';
@@ -393,19 +394,31 @@ export default function CareerRecommendations() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
         
         {/* A. Top Header */}
-        <div className="mb-6">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF5F4] text-[#168C89] font-bold text-xs border border-[#C5E6E4] shadow-2xs mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-[#168C89]" />
-            <span>Your Career Recommendations</span>
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF5F4] text-[#168C89] font-bold text-xs border border-[#C5E6E4] shadow-2xs mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-[#168C89]" />
+              <span>Your Career Recommendations</span>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#172638] tracking-tight">
+              Here are your <span className="text-[#168C89]">best</span> career matches!
+            </h1>
+
+            <p className="text-sm text-[#64748B] mt-1">
+              Based on your profile, skills, interests and assessment results
+            </p>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#172638] tracking-tight">
-            Here are your <span className="text-[#168C89]">best</span> career matches!
-          </h1>
-
-          <p className="text-sm text-[#64748B] mt-1">
-            Based on your profile, skills, interests and assessment results
-          </p>
+          <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
+            <Link
+              to="/assessment?retake=true"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[#64748B] hover:text-[#172638] bg-white hover:bg-slate-50 border border-[#E2E8F0] shadow-2xs transition-all cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-[#168C89]" />
+              <span>Retake Assessment</span>
+            </Link>
+          </div>
         </div>
 
         {/* B. AI Counselor's Insight Banner */}

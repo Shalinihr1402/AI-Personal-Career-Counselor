@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   BrainCircuit,
   LogOut,
@@ -30,10 +30,36 @@ export default function AppHeader() {
   const { user, signOut } = useAuth();
   const { profile, setupNeeded } = useProfile();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+  const isCounselorActive =
+    pathname === '/ai-counselor' ||
+    (pathname === '/assessment' && (search.includes('mode=counselor') || search.includes('counselor')));
+
+  const checkIsActive = (to: string) => {
+    if (to === '/assessment?mode=counselor' || to === '/ai-counselor') {
+      return isCounselorActive;
+    }
+    if (to === '/dashboard') {
+      return pathname === '/dashboard';
+    }
+    if (to === '/recommendations') {
+      return pathname === '/recommendations' || pathname === '/career-matches';
+    }
+    if (to === '/assessment') {
+      return pathname === '/assessment' && !isCounselorActive;
+    }
+    if (to === '/roadmap') {
+      return pathname.startsWith('/roadmap');
+    }
+    if (to === '/today') {
+      return pathname.startsWith('/today');
+    }
+    return pathname === to;
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -45,20 +71,20 @@ export default function AppHeader() {
 
   return (
     <header className="bg-white border-b border-[#E2E8F0] sticky top-0 z-40 shadow-[0_1px_2px_rgba(20,43,74,0.02)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
         {/* Brand Logo & Title */}
-        <Link to="/dashboard" className="flex items-center gap-2.5 shrink-0 group">
-          <div className="w-9 h-9 rounded-xl bg-[#142B4A] text-white flex items-center justify-center shadow-xs group-hover:bg-[#0E1F36] transition-colors">
-            <BrainCircuit className="w-5 h-5 text-[#168C89]" />
+        <Link to="/dashboard" className="flex items-center gap-2 sm:gap-2.5 min-w-0 group">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#142B4A] text-white flex items-center justify-center shadow-xs group-hover:bg-[#0E1F36] transition-colors shrink-0">
+            <BrainCircuit className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-[#168C89]" />
           </div>
-          <div className="flex flex-col">
-            <span className="font-extrabold text-[#172638] text-sm tracking-tight flex items-center gap-1.5">
-              <span>Personal Career Counselor</span>
+          <div className="flex flex-col min-w-0">
+            <span className="font-extrabold text-[#172638] text-xs sm:text-sm tracking-tight flex items-center gap-1.5 truncate">
+              <span className="truncate">Personal Career Counselor</span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#168C89] bg-[#EAF5F4] px-1.5 py-0.5 rounded border border-[#C5E6E4] hidden md:inline">
                 AI SaaS
               </span>
             </span>
-            <span className="text-[11px] text-[#64748B] font-medium -mt-0.5 hidden sm:inline">
+            <span className="text-[11px] text-[#64748B] font-medium -mt-0.5 hidden sm:inline truncate">
               Evidence Intelligence & Statutory Pathways
             </span>
           </div>
@@ -68,38 +94,39 @@ export default function AppHeader() {
         <nav className="hidden lg:flex items-center gap-1 text-xs font-semibold" aria-label="Main navigation">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
-            const isActive =
-              pathname === item.to ||
-              (item.to !== '/dashboard' && pathname.startsWith(item.to)) ||
-              (item.to === '/recommendations' && pathname === '/career-matches');
+            const isActive = checkIsActive(item.to);
             return (
-              <Link
+              <NavLink
                 key={item.to}
                 to={item.to}
                 className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-150 ${
                   isActive
                     ? 'bg-[#EAF5F4] text-[#168C89] font-bold border border-[#C5E6E4] shadow-2xs'
-                    : 'text-[#64748B] hover:text-[#172638] hover:bg-[#F1F5F9]'
+                    : 'text-[#64748B] hover:text-[#172638] hover:bg-[#F1F5F9] border border-transparent'
                 }`}
               >
                 <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#168C89]' : 'text-[#94A3B8]'}`} />
                 <span>{item.label}</span>
-              </Link>
+              </NavLink>
             );
           })}
 
           {/* Dedicated AI Counselor Action */}
-          <Link
-            to="/assessment"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[#168C89] hover:text-[#116A68] hover:bg-[#EAF5F4] transition-colors font-bold ml-1 border border-transparent hover:border-[#C5E6E4]"
+          <NavLink
+            to="/assessment?mode=counselor"
+            className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all duration-150 font-bold ml-1 ${
+              isCounselorActive
+                ? 'bg-[#EAF5F4] text-[#168C89] font-bold border border-[#C5E6E4] shadow-2xs'
+                : 'text-[#168C89] hover:text-[#116A68] hover:bg-[#EAF5F4] border border-transparent hover:border-[#C5E6E4]'
+            }`}
           >
             <Mic className="w-3.5 h-3.5 text-[#168C89]" />
             <span>AI Counselor</span>
-          </Link>
+          </NavLink>
         </nav>
 
         {/* User Account Menu & Controls */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           {/* Notification Alert Bell */}
           <button
             type="button"
@@ -205,12 +232,9 @@ export default function AppHeader() {
         <div className="lg:hidden border-t border-[#E2E8F0] bg-white px-4 py-3 space-y-1 text-sm font-semibold animate-in slide-in-from-top-2 duration-150">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
-            const isActive =
-              pathname === item.to ||
-              (item.to !== '/dashboard' && pathname.startsWith(item.to)) ||
-              (item.to === '/recommendations' && pathname === '/career-matches');
+            const isActive = checkIsActive(item.to);
             return (
-              <Link
+              <NavLink
                 key={item.to}
                 to={item.to}
                 onClick={() => setMobileMenuOpen(false)}
@@ -222,18 +246,22 @@ export default function AppHeader() {
               >
                 <Icon className={`w-4 h-4 ${isActive ? 'text-[#168C89]' : 'text-[#94A3B8]'}`} />
                 <span>{item.label}</span>
-              </Link>
+              </NavLink>
             );
           })}
 
-          <Link
-            to="/assessment"
+          <NavLink
+            to="/assessment?mode=counselor"
             onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[#168C89] hover:bg-[#EAF5F4] font-bold"
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold transition-colors ${
+              isCounselorActive
+                ? 'bg-[#EAF5F4] text-[#168C89] border border-[#C5E6E4]'
+                : 'text-[#168C89] hover:bg-[#EAF5F4]'
+            }`}
           >
             <Mic className="w-4 h-4 text-[#168C89]" />
             <span>AI Voice Counselor</span>
-          </Link>
+          </NavLink>
 
           <button
             type="button"

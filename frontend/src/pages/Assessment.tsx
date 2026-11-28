@@ -1,6 +1,6 @@
 import AppFooter from '../components/AppFooter';
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import {
   Sparkles, ArrowRight, ArrowLeft,
   AlertTriangle, RotateCcw, Compass, Mic, FileText,
@@ -231,6 +231,11 @@ function SectionStepper({ current }: { current: Phase }) {
 
 const Assessment: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const isRetakeRequested = searchParams.get('retake') === 'true';
+  const isCounselorMode = searchParams.get('mode') === 'counselor' || location.pathname === '/ai-counselor';
+
   const { user } = useAuth();
   const { profile, assessment: saved, saveProfile, saveAssessment, refreshActiveGoal } = useProfile();
 
@@ -253,10 +258,20 @@ const Assessment: React.FC = () => {
   const [settingGoal, setSettingGoal] = useState<string | null>(null);
   const [goalError, setGoalError] = useState<string | null>(null);
   const [showLockNotice, setShowLockNotice] = useState(false);
-  const [isRetaking, setIsRetaking] = useState(false);
+  const [isRetaking, setIsRetaking] = useState(isRetakeRequested);
   const [isRefreshingRecs, setIsRefreshingRecs] = useState(false);
   const [loadingNext, setLoadingNext] = useState<boolean>(false);
   const [completionReason, setCompletionReason] = useState<string | null>(null);
+
+  // Sync mode changes from URL parameters or navigation
+  useEffect(() => {
+    if (isCounselorMode) {
+      setPhase('counselor_diagnostic');
+    } else if (isRetakeRequested) {
+      setIsRetaking(true);
+      setPhase('intro');
+    }
+  }, [isCounselorMode, isRetakeRequested]);
 
   const isAssessmentComplete = Boolean(
     (saved?.matches && saved.matches.length > 0) || (score && match && (match.matches || []).length > 0)
@@ -337,7 +352,9 @@ const Assessment: React.FC = () => {
           setCalibratedStage(saved.adaptiveEvidence.stage);
         }
       }
-      if (saved.matches && saved.matches.length > 0) {
+      if (isCounselorMode) {
+        setPhase('counselor_diagnostic');
+      } else if (saved.matches && saved.matches.length > 0) {
         setMatch({ source: saved.source, matches: saved.matches });
         setPhase('results');
       } else {
@@ -613,7 +630,7 @@ const Assessment: React.FC = () => {
     }
 
     setIsRetaking(false);
-    goToPhase('results');
+    navigate('/recommendations');
   };
 
   const handleRefreshRecommendations = async () => {
@@ -823,7 +840,7 @@ const Assessment: React.FC = () => {
                 onClick={() => {
                   setShowLockNotice(false);
                   if (isAssessmentComplete) {
-                    goToPhase('results');
+                    navigate('/recommendations');
                   } else if (isQuizScored) {
                     goToPhase('counselor_diagnostic');
                   } else {
@@ -837,7 +854,7 @@ const Assessment: React.FC = () => {
                 }`}
               >
                 {isAssessmentComplete ? <Sparkles className="w-3.5 h-3.5" /> : <FileText className="w-3.5 h-3.5" />}
-                <span>{isAssessmentComplete ? 'Discovery Report' : 'Discovery Quiz'}</span>
+                <span>{isAssessmentComplete ? 'View Recommendations' : 'Discovery Quiz'}</span>
               </button>
             </div>
           )}

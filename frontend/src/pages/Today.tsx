@@ -47,14 +47,22 @@ const Today: React.FC = () => {
       <AppHeader />
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
-        <div className="flex items-center gap-2 text-[#168C89] mb-1">
-          <CalendarCheck className="w-5 h-5 text-[#168C89]" />
-          <span className="text-sm font-bold uppercase tracking-wider">Today's work</span>
+        {/* Cinematic Deep Navy Hero Banner */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B1930] via-[#142B4A] to-[#0A182E] text-white p-7 sm:p-9 mb-8 border border-white/10 shadow-xl">
+          <div className="absolute top-0 right-0 w-72 h-72 bg-[radial-gradient(circle,rgba(22,140,137,0.2)_0%,transparent_70%)] pointer-events-none -mr-16 -mt-16" />
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-teal-200 text-xs font-semibold mb-3">
+              <CalendarCheck className="w-3.5 h-3.5 text-[#168C89]" />
+              <span className="uppercase tracking-wider text-[11px] font-bold">Daily Priority & Learning</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
+              What to do this week
+            </h1>
+            <p className="text-sm text-slate-300 mt-2 font-normal leading-relaxed">
+              Your focused execution priorities on the path to <strong className="text-teal-200 font-semibold">{roadmap.role}</strong>.
+            </p>
+          </div>
         </div>
-        <h1 className="text-3xl font-extrabold text-[#172638] mb-1">What to do now</h1>
-        <p className="text-[#64748B] mb-8">
-          Your focus for this week on the path to <strong className="text-[#172638]">{roadmap.role}</strong>.
-        </p>
 
         {!hasPlan ? (
           <div className="bg-white rounded-2xl p-8 border border-[#E2E8F0] text-center shadow-sm">

@@ -4,25 +4,102 @@ import AppFooter from '../components/AppFooter';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
 import { getJourneyStatus } from '../lib/profile';
-import { motion } from 'framer-motion';
+import { INTEREST_DOMAINS } from '../lib/interestDomains';
 import {
-  ArrowRight, Check, BrainCircuit, Star, Clock,
-  Target, Search, TrendingUp, User, Compass,
-  Map, BarChart2, ClipboardList, Calendar,
-  MessageSquare, GraduationCap, Shield, Zap,
-  Heart, CheckSquare, Sparkles
+  ArrowRight,
+  BrainCircuit,
+  Check,
+  Target,
+  Search,
+  TrendingUp,
+  Compass,
+  BarChart2,
+  Sparkles,
+  Calculator,
+  BookOpen,
+  Code,
+  Activity,
+  Wrench,
+  DollarSign,
+  Palette,
+  Users,
+  Shield,
+  GraduationCap,
+  Layers,
+  Briefcase,
 } from 'lucide-react';
+
+const renderDomainIcon = (iconName: string) => {
+  const iconClass = 'w-5 h-5 text-[#168C89] group-hover:text-white transition-colors';
+  switch (iconName) {
+    case 'Calculator':
+      return <Calculator className={iconClass} />;
+    case 'BookOpen':
+      return <BookOpen className={iconClass} />;
+    case 'BarChart2':
+      return <BarChart2 className={iconClass} />;
+    case 'Code':
+      return <Code className={iconClass} />;
+    case 'Activity':
+      return <Activity className={iconClass} />;
+    case 'Wrench':
+      return <Wrench className={iconClass} />;
+    case 'Compass':
+      return <Compass className={iconClass} />;
+    case 'DollarSign':
+      return <DollarSign className={iconClass} />;
+    case 'Palette':
+      return <Palette className={iconClass} />;
+    case 'Users':
+      return <Users className={iconClass} />;
+    case 'Shield':
+      return <Shield className={iconClass} />;
+    case 'GraduationCap':
+      return <GraduationCap className={iconClass} />;
+    default:
+      return <Sparkles className={iconClass} />;
+  }
+};
 
 const Home: React.FC = () => {
   const { user, loading, signOut } = useAuth();
   const { profile, assessment, activeGoal, loading: profileLoading } = useProfile();
   const navigate = useNavigate();
 
+  // Scroll Reveal IntersectionObserver
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Respect user's reduced motion preference
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('.reveal-init').forEach((el) => {
+        el.classList.add('revealed');
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target); // Unobserve so animation only triggers once
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    const elements = document.querySelectorAll('.reveal-init');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
   // Detect OAuth exchange parameters
-  const hasAuthParams = typeof window !== 'undefined' && (
-    window.location.hash.includes('access_token') ||
-    window.location.search.includes('code=')
-  );
+  const hasAuthParams =
+    typeof window !== 'undefined' &&
+    (window.location.hash.includes('access_token') || window.location.search.includes('code='));
 
   // If user completed an OAuth callback, navigate to journey destination
   useEffect(() => {
@@ -34,45 +111,60 @@ const Home: React.FC = () => {
 
   if (hasAuthParams && (loading || (user && profileLoading))) {
     return (
-      <div className="min-h-screen bg-[#F5F8FC] flex items-center justify-center font-sans">
+      <div className="min-h-screen bg-[#0B1930] flex items-center justify-center font-sans text-white">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-9 h-9 border-3 border-[#168C89]/20 border-t-[#168C89] rounded-full animate-spin" />
-          <p className="text-sm font-semibold text-[#172638]">Signing you in and loading your journey...</p>
+          <div className="w-10 h-10 border-3 border-[#168C89]/30 border-t-[#168C89] rounded-full animate-spin" />
+          <p className="text-sm font-semibold text-slate-300">Signing you in and loading your journey...</p>
         </div>
       </div>
     );
   }
 
   const { nextRoute } = user && !profileLoading ? getJourneyStatus(profile, assessment, activeGoal) : { nextRoute: '/onboarding' };
+
   return (
     <div className="min-h-screen bg-[#F5F8FC] font-sans text-[#172638] selection:bg-[#EAF5F4] overflow-x-hidden">
       
-      {/* 1. HEADER */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#E2E8F0]">
-        <nav className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 max-w-7xl mx-auto">
-          <div className="flex items-center gap-2.5 min-w-0 pr-2">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#142B4A] flex items-center justify-center shadow-xs shrink-0">
-              <BrainCircuit className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+      {/* 1. CINEMATIC DARK NAVIGATION BAR */}
+      <header className="sticky top-0 z-50 bg-[#0B1930]/90 backdrop-blur-md border-b border-[#142B4A]/80 text-white transition-all">
+        <nav className="flex items-center justify-between px-4 sm:px-6 py-3.5 max-w-7xl mx-auto">
+          {/* Logo & Platform Name */}
+          <Link to="/" className="flex items-center gap-3 min-w-0 pr-2 group">
+            <div className="w-9 h-9 rounded-xl bg-[#142B4A] border border-[#168C89]/40 flex items-center justify-center shadow-xs group-hover:border-[#168C89] group-hover:scale-105 transition-all shrink-0">
+              <BrainCircuit className="w-5 h-5 text-[#168C89]" />
             </div>
-            <span className="text-sm sm:text-lg font-bold tracking-tight text-[#172638] truncate">AI Personal Career Counselor</span>
-          </div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-xs sm:text-base font-extrabold tracking-tight text-white flex items-center gap-1.5 truncate">
+                <span className="hidden sm:inline">Personal Career Counselor</span>
+                <span className="sm:hidden font-bold">Counselor</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-teal-300 bg-[#168C89]/20 px-1.5 py-0.5 rounded border border-[#168C89]/40 hidden md:inline">
+                  AI SaaS
+                </span>
+              </span>
+              <span className="text-[11px] text-slate-400 font-medium -mt-0.5 hidden sm:inline truncate">
+                Evidence Intelligence & Statutory Pathways
+              </span>
+            </div>
+          </Link>
           
-          <div className="hidden lg:flex items-center gap-8 text-sm font-medium text-[#64748B]">
-            <a href="#" className="text-[#168C89] font-semibold">Home</a>
-            <a href="#how-it-works" className="hover:text-[#168C89] transition-colors">How It Works</a>
-            <a href="#features" className="hover:text-[#168C89] transition-colors">Features</a>
-            <a href="#resources" className="hover:text-[#168C89] transition-colors">Resources</a>
-            <a href="#about" className="hover:text-[#168C89] transition-colors">About</a>
+          {/* Center Links */}
+          <div className="hidden lg:flex items-center gap-7 text-xs font-semibold text-slate-300">
+            <a href="#how-it-works" className="hover:text-teal-300 transition-colors focus-visible:ring-2 focus-visible:ring-[#168C89] outline-none rounded">How It Works</a>
+            <a href="#features" className="hover:text-teal-300 transition-colors focus-visible:ring-2 focus-visible:ring-[#168C89] outline-none rounded">Core Features</a>
+            <a href="#domains" className="hover:text-teal-300 transition-colors focus-visible:ring-2 focus-visible:ring-[#168C89] outline-none rounded">Subject Domains</a>
+            <Link to="/careers" className="hover:text-teal-300 transition-colors focus-visible:ring-2 focus-visible:ring-[#168C89] outline-none rounded">Career Directory</Link>
           </div>
 
-          <div className="flex items-center gap-2.5 sm:gap-4 shrink-0">
+          {/* Right Action Controls */}
+          <div className="flex items-center gap-3 shrink-0">
             {user ? (
-              <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-2.5">
                 <Link
                   to={nextRoute}
-                  className="bg-[#142B4A] text-white px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold hover:bg-[#10233D] transition-colors shadow-xs flex items-center gap-1.5 whitespace-nowrap"
+                  className="bg-[#168C89] hover:bg-[#137471] text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer hover:shadow-teal-900/30"
                 >
-                  Go to {nextRoute === '/dashboard' ? 'Dashboard' : nextRoute === '/assessment' ? 'Assessment' : 'Onboarding'} <ArrowRight className="w-4 h-4" />
+                  <span>Dashboard</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
                 <button
                   type="button"
@@ -80,16 +172,25 @@ const Home: React.FC = () => {
                     await signOut();
                     navigate('/login', { replace: true });
                   }}
-                  className="text-xs sm:text-sm font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-3 py-2 rounded-xl transition-colors border border-rose-200 cursor-pointer"
+                  className="text-xs font-semibold text-slate-400 hover:text-white px-3 py-2 rounded-xl transition-colors cursor-pointer"
                 >
                   Sign out
                 </button>
               </div>
             ) : (
               <>
-                <Link to="/login" className="text-xs sm:text-sm font-semibold text-[#64748B] hover:text-[#172638] hidden sm:block">Log in</Link>
-                <Link to="/signup" className="bg-[#142B4A] text-white px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold hover:bg-[#10233D] transition-colors shadow-xs whitespace-nowrap">
-                  Get Started
+                <Link
+                  to="/login"
+                  className="text-xs font-bold text-slate-300 hover:text-white px-3 py-2 rounded-xl transition-colors hidden sm:block"
+                >
+                  Log in
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-[#168C89] hover:bg-[#137471] text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap cursor-pointer hover:shadow-teal-900/30"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </>
             )}
@@ -97,427 +198,514 @@ const Home: React.FC = () => {
         </nav>
       </header>
 
-      {/* 2. HERO SECTION */}
-      <section className="pt-6 pb-12 px-6 max-w-7xl mx-auto overflow-hidden relative">
-        <div className="grid lg:grid-cols-2 gap-8 items-center">
+      {/* 2. FULL-WIDTH CINEMATIC HERO SECTION */}
+      <section className="relative bg-[#0B1930] text-white overflow-hidden min-h-[620px] lg:min-h-[700px] flex flex-col justify-center items-center border-b border-[#142B4A]">
+        {/* Background Photography with Layered Deep Navy Overlays */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <img
+            src="/hero-bg.jpg"
+            alt="Student discovering career paths and opportunities"
+            className="w-full h-full object-cover object-[28%_center] sm:object-center opacity-95 filter brightness-100 contrast-105 transition-transform duration-1000 ease-out sm:hover:scale-[1.01]"
+            style={{
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+            }}
+          />
+          {/* Layered Cinematic Overlays - Preserves photographic vibrance while guaranteeing text readability */}
+          {/* 1. Subtle top & bottom atmospheric fade to blend navbar and stats bar */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0B1930]/75 via-transparent to-[#0B1930]/90 pointer-events-none" />
           
-          {/* Left Side: Text and Buttons */}
-          <div className="max-w-xl z-10 relative">
-            <h1 className="text-5xl md:text-[56px] font-extrabold tracking-tight text-[#172638] leading-[1.1] mb-2">
-              Not sure what career is right for you?
-            </h1>
-            <h2 className="text-5xl md:text-[56px] font-extrabold tracking-tight text-[#168C89] leading-[1.1] mb-6">
-              Let's figure it out together.
-            </h2>
-            <p className="text-lg text-[#64748B] leading-relaxed mb-6">
-              Your AI career counselor that helps you discover the right career, understand your skill gaps, and build a personalized roadmap around your life and goals.
-            </p>
+          {/* 2. Horizontal framing: low opacity on left/right so student and sunrise pop, deeper in center for text contrast */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0B1930]/35 via-[#0B1930]/65 to-[#0B1930]/25 pointer-events-none" />
+          
+          {/* 3. Central ambient radial vignette focused strictly behind the hero headline and copy */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(11,25,48,0.65)_0%,rgba(11,25,48,0.3)_45%,transparent_75%)] animate-pulse-ambient pointer-events-none" />
 
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
-              <Link
-                to={user ? nextRoute : '/signup'}
-                className="bg-[#142B4A] text-white px-8 py-4 rounded-xl font-bold hover:bg-[#10233D] transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-              >
-                {user ? 'Continue Your Journey' : 'Start Career Discovery'} <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link
-                to={user ? nextRoute : '/signup'}
-                className="bg-white text-[#142B4A] border border-[#E2E8F0] px-8 py-4 rounded-xl font-bold hover:bg-[#EAF5F4] hover:border-[#168C89]/30 transition-all flex items-center justify-center"
-              >
-                I Know My Career Goal
-              </Link>
-            </div>
-            
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm font-medium text-[#64748B]">
-              <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-[#168C89]" /> Personalized guidance</span>
-              <span className="flex items-center gap-1.5"><Star className="w-4 h-4 text-[#168C89]" /> Multiple career fields</span>
-              <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-[#168C89]" /> Built around your real life</span>
-            </div>
+          {/* 4. Mobile contrast stabilizer: keeps text razor-sharp over portrait details on small screens */}
+          <div className="absolute inset-0 bg-[#0B1930]/35 sm:hidden pointer-events-none" />
+        </div>
+
+        {/* Hero Centered Content Container */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 relative z-10 w-full text-center flex flex-col items-center">
+          
+          {/* Centered Editorial Headline with Space Grotesk */}
+          <h1 className="reveal-init revealed font-headline text-4xl sm:text-5xl md:text-6xl lg:text-[64px] font-extrabold tracking-tight text-white leading-[1.12] mb-6 max-w-4xl drop-shadow-[0_4px_16px_rgba(11,25,48,0.85)]">
+            <span className="block text-white">Your Potential Has</span>
+            <span className="block text-teal-400 mt-1.5 sm:mt-2 drop-shadow-[0_2px_16px_rgba(45,212,191,0.35)]">More Than One Direction.</span>
+          </h1>
+
+          {/* Centered Supporting Message */}
+          <p className="reveal-init revealed delay-150 font-sans text-base sm:text-lg lg:text-[18px] text-slate-100 font-normal leading-relaxed mb-8 sm:mb-10 max-w-2xl mx-auto drop-shadow-[0_2px_8px_rgba(11,25,48,0.8)]">
+            Discover what drives you, uncover your strengths, and turn your ambitions into a meaningful career journey.
+          </p>
+
+          {/* Centered CTA Buttons (Strictly 2 Distinct Actions) */}
+          <div className="reveal-init revealed delay-225 flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 sm:mb-12 w-full sm:w-auto">
+            <Link
+              to={user ? '/assessment' : '/signup'}
+              className="w-full sm:w-auto bg-[#168C89] hover:bg-[#137471] text-white px-8 py-3.5 rounded-xl font-bold text-sm sm:text-base transition-all shadow-lg hover:shadow-teal-900/50 hover:-translate-y-0.5 flex items-center justify-center gap-2 cursor-pointer group"
+            >
+              <span>Start Career Discovery</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+
+            <Link
+              to="/careers"
+              className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/25 px-8 py-3.5 rounded-xl font-bold text-sm sm:text-base backdrop-blur-md transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Explore Careers</span>
+            </Link>
           </div>
 
-          {/* Right Side: Avatar & Floating Cards */}
-          <div className="relative h-[440px] lg:h-[500px] flex items-center justify-center">
-            <div className="absolute inset-0 z-0">
-              <svg className="w-full h-full text-[#168C89]/15" viewBox="0 0 500 500" preserveAspectRatio="none">
-                <path d="M 50 250 Q 150 50 400 150 T 450 400" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="6 6" />
-                <path d="M 100 450 Q 250 500 450 300" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="6 6" />
-              </svg>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] bg-[#EAF5F4] rounded-full blur-3xl opacity-70"></div>
+          {/* Centered Evidence-Based Guidance Highlights */}
+          <div className="reveal-init revealed delay-300 flex flex-wrap items-center justify-center gap-x-8 gap-y-2.5 text-xs sm:text-sm font-semibold text-slate-200 pt-5 border-t border-white/15 max-w-2xl mx-auto">
+            <span className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-[#168C89]" />
+              Holland RIASEC Diagnostic
+            </span>
+            <span className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-[#168C89]" />
+              Statutory Pathways
+            </span>
+            <span className="flex items-center gap-2">
+              <Check className="w-4 h-4 text-[#168C89]" />
+              Evidence Grounded
+            </span>
+          </div>
+        </div>
+
+        {/* Bottom Metrics Bar */}
+        <div className="w-full bg-[#0B1930]/95 border-t border-white/10 backdrop-blur-md hidden md:block">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 grid grid-cols-4 gap-6 text-center">
+            <div>
+              <div className="text-xl lg:text-2xl font-extrabold text-[#168C89] font-mono">12</div>
+              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Universal Domains</div>
             </div>
-
-            <motion.div 
-              animate={{ y: [-8, 8, -8] }} 
-              transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-              className="relative z-10 w-[340px] h-[340px] lg:w-[400px] lg:h-[400px] rounded-full bg-[#EAF5F4] border-[12px] border-white shadow-xl flex items-center justify-center overflow-hidden"
-            >
-              <div className="absolute inset-2 border border-[#168C89]/20 rounded-full z-0"></div>
-              <img src="/counselor.jpg" alt="AI Career Counselor" className="w-full h-full object-cover object-top relative z-10 scale-[1.02]" />
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, x: 20, y: 20 }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ delay: 0.5, duration: 0.6 }}
-              className="absolute top-20 left-0 md:-left-12 z-20 bg-white p-5 rounded-2xl rounded-br-sm shadow-lg border border-[#E2E8F0] max-w-[240px]"
-            >
-              <p className="text-sm font-medium text-[#172638] leading-relaxed">
-                Hi! I'm your <br/><span className="text-[#142B4A] font-bold">AI career counselor.</span><br/>
-                You don't need to know your career yet.<br/>Let's find it together.
-              </p>
-            </motion.div>
-
-            <motion.div 
-              animate={{ y: [-5, 5, -5] }} transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
-              className="absolute top-32 -right-4 z-20 bg-white px-4 py-3 rounded-xl shadow-md border border-[#E2E8F0] flex items-center gap-3"
-            >
-              <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center">
-                <svg className="w-4 h-4 text-rose-500 fill-rose-500" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              </div>
-              <span className="font-bold text-[#172638] text-sm">Your Interests</span>
-            </motion.div>
-
-            <motion.div 
-              animate={{ y: [5, -5, 5] }} transition={{ repeat: Infinity, duration: 5.5, ease: "easeInOut" }}
-              className="absolute bottom-32 -left-8 z-20 bg-white px-4 py-3 rounded-xl shadow-md border border-[#E2E8F0] flex items-center gap-3"
-            >
-              <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center">
-                <User className="w-4 h-4 text-emerald-500 fill-emerald-500" />
-              </div>
-              <span className="font-bold text-[#172638] text-sm">Your Skills</span>
-            </motion.div>
-
-            <motion.div 
-              animate={{ y: [-4, 4, -4] }} transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-              className="absolute bottom-12 right-4 z-20 bg-white px-4 py-3 rounded-xl shadow-md border border-[#E2E8F0] flex items-center gap-3"
-            >
-              <div className="w-8 h-8 rounded-full bg-[#EAF5F4] flex items-center justify-center">
-                <GraduationCap className="w-4 h-4 text-[#168C89]" />
-              </div>
-              <span className="font-bold text-[#172638] text-sm">Career Options</span>
-            </motion.div>
+            <div>
+              <div className="text-xl lg:text-2xl font-extrabold text-white font-mono">RIASEC</div>
+              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Psychometric Intelligence</div>
+            </div>
+            <div>
+              <div className="text-xl lg:text-2xl font-extrabold text-[#168C89] font-mono">100+</div>
+              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Verified Trajectories</div>
+            </div>
+            <div>
+              <div className="text-xl lg:text-2xl font-extrabold text-white font-mono">100%</div>
+              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Evidence Grounded</div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 3. WHAT DO YOU NEED HELP WITH? */}
-      <section className="py-12 relative overflow-hidden bg-[#F5F8FC]">
-        {/* Subtle background color blobs */}
-        <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-[#EAF5F4]/60 rounded-full blur-[80px] -translate-y-1/2 pointer-events-none"></div>
-        <div className="absolute top-1/2 right-1/4 w-[500px] h-[500px] bg-[#EAF5F4]/40 rounded-full blur-[80px] -translate-y-1/2 pointer-events-none"></div>
-
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-extrabold text-[#172638] mb-3">
-              What do you need help with?
+      {/* 3. LIGHT CONTENT SECTION: PERSONALIZED STARTING POINTS (GLASSMORPHIC CARDS) */}
+      <section className="py-16 sm:py-20 bg-[#F5F8FC] border-b border-[#E2E8F0] relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center max-w-2xl mx-auto mb-12 reveal-init">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF5F4] text-[#168C89] font-bold text-xs border border-[#C5E6E4] uppercase tracking-wider mb-3">
+              <Target className="w-3.5 h-3.5" />
+              <span>Personalized Starting Point</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#172638] tracking-tight">
+              Where are you in your career journey?
             </h2>
-            <p className="text-[#64748B] font-medium">
-              Choose the option that best describes you so I can guide you in the right way.
+            <p className="text-sm sm:text-base text-[#64748B] mt-2">
+              Select the option that best reflects where you stand today. Each pathway provides immediate, tailored guidance.
             </p>
           </div>
-          
-          <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
-            
-            <Link to="/signup" className="group relative bg-white border border-[#E2E8F0] rounded-2xl p-8 shadow-xs hover:shadow-md hover:border-[#168C89] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[260px] h-auto overflow-hidden">
-              <div className="relative z-10">
-                <div className="w-14 h-14 bg-[#EAF5F4] border border-[#168C89]/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform text-[#168C89]">
-                  <Target className="w-7 h-7" />
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {/* Card 1: Goal Known -> Goes to Roadmap */}
+            <Link
+              to={user ? '/roadmap' : '/login'}
+              className="glass-card-light card-hover-cinematic reveal-init delay-75 rounded-2xl p-7 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
+            >
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-[#EAF5F4] border border-[#C5E6E4] flex items-center justify-center text-[#168C89] mb-5 group-hover:bg-[#168C89] group-hover:text-white group-hover:scale-110 transition-all duration-300">
+                  <Target className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold text-[#172638] mb-3">I know my career goal</h3>
-                <p className="text-[#64748B] text-sm leading-relaxed">
-                  I know what I want. Help me reach it with a personalized plan.
+                <h3 className="text-lg font-bold text-[#172638] mb-2 group-hover:text-[#168C89] transition-colors">
+                  I Know My Career Goal
+                </h3>
+                <p className="text-xs sm:text-sm text-[#64748B] leading-relaxed">
+                  I have a specific target role. Diagnose my skill gaps and build a structured milestone roadmap to achieve it.
                 </p>
               </div>
-              <div className="flex justify-end relative z-10 mt-6">
-                <div className="w-10 h-10 rounded-full bg-slate-50 border border-[#E2E8F0] shadow-xs flex items-center justify-center text-[#64748B] group-hover:bg-[#142B4A] group-hover:text-white group-hover:border-[#142B4A] transition-colors">
-                  <ArrowRight className="w-5 h-5" />
-                </div>
-              </div>
-            </Link>
-            
-            <Link to="/signup" className="group relative bg-white border border-[#E2E8F0] rounded-2xl p-8 shadow-xs hover:shadow-md hover:border-[#168C89] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[260px] h-auto overflow-hidden">
-              <div className="absolute top-6 right-6 bg-[#142B4A] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider z-20 shadow-xs">
-                Most chosen
-              </div>
-              <div className="relative z-10">
-                <div className="w-14 h-14 bg-[#EAF5F4] border border-[#168C89]/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform text-[#168C89]">
-                  <Search className="w-7 h-7" />
-                </div>
-                <h3 className="text-xl font-bold text-[#172638] mb-3 pr-12">I'm not sure which career is right for me</h3>
-                <p className="text-[#64748B] text-sm leading-relaxed">
-                  Help me discover careers that fit my skills and interests.
-                </p>
-              </div>
-              <div className="flex justify-end relative z-10 mt-6">
-                <div className="w-10 h-10 rounded-full bg-slate-50 border border-[#E2E8F0] shadow-xs flex items-center justify-center text-[#64748B] group-hover:bg-[#142B4A] group-hover:text-white group-hover:border-[#142B4A] transition-colors">
-                  <ArrowRight className="w-5 h-5" />
-                </div>
+              <div className="pt-6 flex items-center justify-between text-xs font-bold text-[#168C89]">
+                <span>Build My Execution Roadmap</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
               </div>
             </Link>
 
-            <Link to="/signup" className="group relative bg-white border border-[#E2E8F0] rounded-2xl p-8 shadow-xs hover:shadow-md hover:border-[#168C89] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between min-h-[260px] h-auto overflow-hidden">
-              <div className="relative z-10">
-                <div className="w-14 h-14 bg-[#EAF5F4] border border-[#168C89]/20 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform text-[#168C89]">
-                  <TrendingUp className="w-7 h-7" />
+            {/* Card 2: Exploring -> Goes to Assessment */}
+            <Link
+              to={user ? '/assessment' : '/signup'}
+              className="glass-card-teal card-hover-cinematic reveal-init delay-150 rounded-2xl p-7 flex flex-col justify-between relative group cursor-pointer"
+            >
+              <div className="absolute -top-3 right-6 bg-[#142B4A] text-white text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider shadow-2xs">
+                Recommended
+              </div>
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-[#142B4A] text-white flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-[#0B1930] transition-all duration-300 shadow-sm">
+                  <Search className="w-6 h-6 text-teal-300" />
                 </div>
-                <h3 className="text-xl font-bold text-[#172638] mb-3">I know my career, need a plan</h3>
-                <p className="text-[#64748B] text-sm leading-relaxed">
-                  Show me exactly what I need to learn and do to get there.
+                <h3 className="text-lg font-bold text-[#172638] mb-2 group-hover:text-[#168C89] transition-colors">
+                  I'm Exploring & Discovering
+                </h3>
+                <p className="text-xs sm:text-sm text-[#64748B] leading-relaxed">
+                  I want to discover which careers match my genuine interests, RIASEC behavioral profile, and educational strengths.
                 </p>
               </div>
-              <div className="flex justify-end relative z-10 mt-6">
-                <div className="w-10 h-10 rounded-full bg-slate-50 border border-[#E2E8F0] shadow-xs flex items-center justify-center text-[#64748B] group-hover:bg-[#142B4A] group-hover:text-white group-hover:border-[#142B4A] transition-colors">
-                  <ArrowRight className="w-5 h-5" />
-                </div>
+              <div className="pt-6 flex items-center justify-between text-xs font-bold text-[#168C89]">
+                <span>Start Discovery Assessment</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
               </div>
             </Link>
 
-          </div>
-        </div>
-      </section>
-
-      {/* 4. HOW IT WORKS */}
-      <section id="how-it-works" className="py-14 bg-white border-y border-[#E2E8F0]">
-        <div className="max-w-[1400px] mx-auto px-6">
-          <div className="text-center mb-10 relative">
-            <h2 className="text-4xl font-extrabold text-[#172638] mb-3 flex items-center justify-center gap-2">
-              <Star className="w-6 h-6 text-[#168C89]/30 fill-[#168C89]/30" />
-              How it works
-              <Star className="w-4 h-4 text-[#168C89]/30 fill-[#168C89]/30 -mt-6" />
-            </h2>
-            <p className="text-[#64748B] font-medium text-lg">
-              Simple steps to clarity and confidence.
-            </p>
-          </div>
-          
-          <div className="flex flex-col lg:flex-row items-center justify-center gap-4 xl:gap-6">
-            {[
-              { img: "/counselor.jpg", icon: <User/>, title: "Tell me about yourself", desc: "Share your interests, strengths, goals and current skills." },
-              { img: "/counselor-step2.jpg", icon: <Search/>, title: "Discover your best options", desc: "I'll analyze and match you with careers that fit you best." },
-              { img: "/counselor-step3.jpg", icon: <BarChart2/>, title: "Understand the gaps", desc: "See the skills you need to learn and the areas to improve." },
-              { img: "/counselor-step4.jpg", icon: <ClipboardList/>, title: "Get your personalized plan", desc: "Follow a custom roadmap with resources and a smart schedule." },
-              { img: "/counselor-step5.jpg", icon: <Target/>, title: "Track & grow", desc: "Track your progress, stay consistent, and achieve your goals." },
-            ].map((step, i, arr) => (
-              <React.Fragment key={i}>
-                <div className="relative bg-white rounded-2xl p-6 shadow-xs border border-[#E2E8F0] flex flex-col items-center text-center w-full max-w-[280px] h-[340px] hover:-translate-y-1 hover:shadow-md hover:border-[#168C89] transition-all duration-300">
-                  {/* Number Badge */}
-                  <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-[#142B4A] text-white font-bold flex items-center justify-center text-sm shadow-xs z-10">
-                    {i + 1}
-                  </div>
-                  
-                  {/* Image Wrapper */}
-                  <div className="w-36 h-36 rounded-2xl bg-[#F5F8FC] overflow-hidden relative mb-6 border-4 border-[#F5F8FC]">
-                    <img src={step.img} alt={`Counselor step ${i+1}`} className="w-full h-full object-cover object-top scale-110 translate-y-2" />
-                    {/* Floating Icon to differentiate steps */}
-                    <div className="absolute top-2 right-2 w-8 h-8 bg-white/95 rounded-lg flex items-center justify-center text-[#168C89] shadow-xs border border-[#E2E8F0]">
-                      {React.cloneElement(step.icon as any, { className: "w-4 h-4" })}
-                    </div>
-                  </div>
-                  
-                  <h4 className="font-bold text-[#172638] text-base mb-3">{step.title}</h4>
-                  <p className="text-sm text-[#64748B] leading-relaxed px-2">{step.desc}</p>
-                  
-                  {/* Bottom Dash */}
-                  <div className="w-6 h-1 bg-[#168C89] rounded-full mt-auto mb-2 opacity-80"></div>
+            {/* Card 3: Transition -> Goes to Career Directory */}
+            <Link
+              to="/careers"
+              className="glass-card-light card-hover-cinematic reveal-init delay-225 rounded-2xl p-7 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
+            >
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-[#EAF5F4] border border-[#C5E6E4] flex items-center justify-center text-[#168C89] mb-5 group-hover:bg-[#168C89] group-hover:text-white group-hover:scale-110 transition-all duration-300">
+                  <TrendingUp className="w-6 h-6" />
                 </div>
-                
-                {/* Arrow connecting cards */}
-                {i < arr.length - 1 && (
-                  <div className="hidden lg:block text-[#168C89]/30 shrink-0">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-                  </div>
-                )}
-              </React.Fragment>
-            ))}
-          </div>
-
-          <div className="mt-12 mx-auto bg-[#EAF5F4] text-[#172638] px-8 py-5 rounded-2xl max-w-3xl flex items-center justify-center gap-4 text-sm md:text-base font-medium shadow-xs border border-[#168C89]/20">
-            <div className="w-8 h-8 rounded-full bg-[#168C89] text-white flex items-center justify-center shrink-0">
-              <Shield className="w-4 h-4" />
-            </div>
-            <span>I'm with you at every step — <span className="text-[#142B4A] font-bold">guiding, motivating</span> and helping you become the best version of yourself.</span>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. FEATURES / EVERYTHING YOU NEED */}
-      <section id="features" className="py-14 bg-[#F5F8FC]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-10 flex flex-col items-center">
-            <div className="text-[#168C89] bg-[#EAF5F4] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest inline-block mb-4 border border-[#168C89]/20">
-              Powerful Tools
-            </div>
-            <h2 className="text-3xl font-extrabold text-[#172638] mb-3">
-              Everything you need in one place
-            </h2>
-            <p className="text-[#64748B] font-medium text-lg">
-              Powerful tools to help you make better career decisions.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
-            {[
-              { icon: <Search/>, title: "Career Discovery", desc: "Explore careers that match your interests, skills and personality." },
-              { icon: <ClipboardList/>, title: "Skill Gap Analysis", desc: "Know exactly what skills you need to learn and improve." },
-              { icon: <Map/>, title: "Personalized Roadmap", desc: "Get a step-by-step plan tailored to your goals and time." },
-              { icon: <Calendar/>, title: "Smart Schedule", desc: "Study plan, projects and tasks that fit your college life and time." },
-              { icon: <TrendingUp/>, title: "Progress Tracker", desc: "Track your learning, build consistency and grow every day." },
-              { icon: <MessageSquare/>, title: "AI Career Mentor", desc: "Ask anything. Get clarity, motivation and right guidance." },
-            ].map((feature, i) => (
-              <div key={i} className="bg-white border border-[#E2E8F0] rounded-2xl p-8 text-center shadow-xs hover:shadow-md hover:border-[#168C89] hover:-translate-y-1 transition-all duration-300 flex flex-col items-center h-[260px]">
-                <div className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-6 bg-[#EAF5F4] text-[#168C89]">
-                  {React.cloneElement(feature.icon as any, { className: "w-7 h-7" })}
-                </div>
-                <h4 className="font-bold text-[#172638] mb-3 text-lg">{feature.title}</h4>
-                <p className="text-[#64748B] text-sm leading-relaxed mb-6 px-2">{feature.desc}</p>
-                <div className="w-8 h-1 rounded-full mt-auto bg-[#168C89] opacity-80"></div>
+                <h3 className="text-lg font-bold text-[#172638] mb-2 group-hover:text-[#168C89] transition-colors">
+                  I Need a Career Transition
+                </h3>
+                <p className="text-xs sm:text-sm text-[#64748B] leading-relaxed">
+                  I'm considering switching fields or preparing for higher degree requirements. Compare pathways and requirements.
+                </p>
               </div>
-            ))}
-          </div>
-
-          <div className="mt-12 mx-auto bg-white text-[#172638] px-8 py-5 rounded-2xl max-w-4xl flex items-center justify-center gap-4 text-sm md:text-base font-medium shadow-xs border border-[#E2E8F0]">
-            <div className="w-10 h-10 rounded-xl bg-[#142B4A] text-white flex items-center justify-center shrink-0 shadow-xs">
-              <Zap className="w-5 h-5 fill-white" />
-            </div>
-            <span><strong className="text-[#172638]">All in one place</strong> so you can focus on what matters most — your future.</span>
+              <div className="pt-6 flex items-center justify-between text-xs font-bold text-[#168C89]">
+                <span>Explore Transition Pathways</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+              </div>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* 6. MADE FOR STUDENTS LIKE YOU */}
-      <section className="py-14 bg-white relative overflow-hidden">
-        {/* Background Sparkles / Dots */}
-        <div className="absolute top-1/4 left-10 text-[#168C89]/20"><Sparkles className="w-6 h-6" /></div>
-        <div className="absolute top-1/3 right-12 text-[#168C89]/20"><Sparkles className="w-4 h-4" /></div>
-        <div className="absolute bottom-1/4 right-20 text-[#168C89]/20"><Sparkles className="w-8 h-8" /></div>
-        <div className="absolute bottom-1/3 left-16 text-[#168C89]/20"><Sparkles className="w-5 h-5" /></div>
-
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="text-center mb-10 flex flex-col items-center">
-            <div className="flex items-center gap-1.5 text-[#168C89] bg-[#EAF5F4] text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest mb-6 border border-[#168C89]/20">
-              <Heart className="w-3.5 h-3.5" /> BUILT FOR STUDENTS
+      {/* 4. EDITORIAL STEP-BY-STEP PROCESS (HOW IT WORKS TIMELINE) */}
+      <section id="how-it-works" className="py-20 bg-white border-b border-[#E2E8F0]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16 reveal-init">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF5F4] text-[#168C89] font-bold text-xs border border-[#C5E6E4] uppercase tracking-wider mb-3">
+              <Compass className="w-3.5 h-3.5" />
+              <span>The Methodology</span>
             </div>
-            <h2 className="text-4xl font-extrabold text-[#172638] mb-4 tracking-tight">
-              Made for students like you
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#172638] tracking-tight">
+              Four Steps from Uncertainty to Clarity
             </h2>
-            <p className="text-[#64748B] font-medium text-lg">
-              Whether you're just starting or planning your next step — we've got you covered.
+            <p className="text-sm sm:text-base text-[#64748B] mt-2">
+              A transparent, evidence-grounded diagnostic journey designed to build clarity without guesswork or locked paths.
             </p>
           </div>
-          
-          <div className="relative w-full max-w-5xl mx-auto mb-10">
-            <div className="flex flex-wrap md:flex-nowrap justify-center gap-4 lg:gap-6 relative z-10">
+
+          <div className="relative max-w-6xl mx-auto">
+            {/* Subtle connecting line across steps on desktop */}
+            <div className="hidden lg:block absolute top-7 left-14 right-14 h-0.5 bg-gradient-to-r from-[#168C89]/20 via-[#168C89]/60 to-[#168C89]/20 z-0" />
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
               {[
-                { icon: <GraduationCap/>, title: "College Students" },
-                { icon: <Compass/>, title: "Confused About Career" },
-                { icon: <Target/>, title: "Planning Switch" },
-                { icon: <BarChart2/>, title: "Building Skills" },
-                { icon: <CheckSquare/>, title: "Future Ready" },
-              ].map((item, i) => (
-                <div key={i} className="bg-[#F5F8FC] rounded-2xl p-6 shadow-xs border border-[#E2E8F0] flex flex-col items-center justify-center w-[160px] h-[180px] shrink-0 hover:-translate-y-1 hover:shadow-md hover:border-[#168C89] transition-all duration-300 relative group cursor-pointer">
-                  <div className="w-16 h-16 rounded-2xl bg-white border border-[#E2E8F0] flex items-center justify-center mb-4 text-[#168C89] transition-transform group-hover:scale-110 shadow-xs">
-                    {React.cloneElement(item.icon as any, { className: "w-7 h-7" })}
+                {
+                  num: '01',
+                  title: 'Subject & Interest Discovery',
+                  desc: 'Explore real-world problem scenarios across 12 domains to uncover what you voluntarily enjoy solving.',
+                  badge: 'Exploration Phase',
+                  delay: 'delay-75',
+                },
+                {
+                  num: '02',
+                  title: 'Adaptive Assessment',
+                  desc: 'Answer calibrated scenario questions mapping your Holland RIASEC occupational code and core work preferences.',
+                  badge: 'Psychometric Profile',
+                  delay: 'delay-150',
+                },
+                {
+                  num: '03',
+                  title: 'Multi-Signal AI Synthesis',
+                  desc: 'Synthesize your projects, declared skills, and academic stream with O*NET occupational intelligence.',
+                  badge: 'Diagnostic Matching',
+                  delay: 'delay-225',
+                },
+                {
+                  num: '04',
+                  title: 'Verified Execution Roadmap',
+                  desc: 'Follow a curated milestone plan with weekly tasks, daily learning objectives, and pace control.',
+                  badge: 'Action Roadmap',
+                  delay: 'delay-300',
+                },
+              ].map((step) => (
+                <div
+                  key={step.num}
+                  className={`glass-card-light card-hover-cinematic reveal-init ${step.delay} rounded-2xl p-6 relative flex flex-col justify-between group`}
+                >
+                  <div>
+                    <div className="w-14 h-14 rounded-2xl bg-[#0B1930] text-white flex items-center justify-center font-mono font-extrabold text-lg border-2 border-[#168C89] shadow-sm mb-5 group-hover:scale-105 group-hover:border-teal-300 transition-all duration-300">
+                      {step.num}
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#168C89] bg-[#EAF5F4] px-2 py-0.5 rounded border border-[#C5E6E4] inline-block mb-2">
+                      {step.badge}
+                    </span>
+                    <h3 className="text-base font-bold text-[#172638] mb-2">{step.title}</h3>
+                    <p className="text-xs text-[#64748B] leading-relaxed">{step.desc}</p>
                   </div>
-                  <span className="font-bold text-[#172638] text-[13px] text-center leading-tight">{item.title}</span>
+                  <div className="w-8 h-1 bg-[#168C89] rounded-full mt-6 group-hover:w-12 transition-all duration-300" />
                 </div>
               ))}
             </div>
           </div>
-
-          <div className="max-w-2xl mx-auto bg-[#EAF5F4] border border-[#168C89]/20 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xs">
-            <div className="flex items-center gap-6 text-center sm:text-left">
-              <div className="w-12 h-12 rounded-full bg-[#142B4A] text-white flex items-center justify-center shrink-0 shadow-xs">
-                <Star className="w-6 h-6 fill-white text-white" />
-              </div>
-              <div>
-                <h4 className="font-bold text-[#142B4A] mb-1 text-lg">You're not alone.</h4>
-                <p className="text-[#64748B] text-sm leading-relaxed">
-                  Thousands of students are on the same journey.<br className="hidden sm:block"/> We're here to help you reach your goals.
-                </p>
-              </div>
-            </div>
-            <Link to="/signup" className="w-10 h-10 rounded-full border border-[#168C89]/40 bg-white flex items-center justify-center text-[#168C89] hover:bg-[#142B4A] hover:text-white hover:border-[#142B4A] transition-colors shrink-0">
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* 7. TRUSTED BY STUDENTS */}
-      <section className="py-14 bg-[#F5F8FC]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-extrabold text-[#172638] mb-3">
-              Trusted by students
-            </h2>
-            <p className="text-[#64748B] font-medium">
-              Real stories from students who found their direction.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { name: "Aishwarya K.", role: "BCA Student", quote: "I was completely confused about what to do next. This platform helped me discover a career path I actually enjoy. The roadmap is so clear!" },
-              { name: "Pranav S.", role: "MCA Student", quote: "The skill gap analysis opened my eyes. Now I know exactly what to learn and I'm following a plan that fits my schedule perfectly." },
-              { name: "Sneha R.", role: "Final Year Student", quote: "It's like having a personal mentor available 24/7. The guidance is practical, simple and really effective." },
-            ].map((testimonial, i) => (
-              <div key={i} className="bg-white border border-[#E2E8F0] rounded-2xl p-8 shadow-xs hover:border-[#168C89] transition-colors">
-                <p className="text-[#64748B] text-sm leading-relaxed mb-6 italic">"{testimonial.quote}"</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#EAF5F4] flex items-center justify-center font-bold text-[#142B4A]">
-                      {testimonial.name.charAt(0)}
-                    </div>
-                    <div>
-                      <h5 className="font-bold text-[#172638] text-sm">{testimonial.name}</h5>
-                      <p className="text-xs text-[#64748B]">{testimonial.role}</p>
-                    </div>
+      {/* 5. PRODUCT EXPLANATION SECTION (MULTI-SIGNAL INTELLIGENCE WITH SOFT PHOTOGRAPHIC DEPTH) */}
+      <section id="features" className="py-20 bg-[#F5F8FC] border-b border-[#E2E8F0] relative overflow-hidden">
+        {/* Soft atmospheric background photograph */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <img
+            src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=2400&q=80"
+            alt=""
+            className="w-full h-full object-cover opacity-8 filter grayscale brightness-50"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#F5F8FC] via-[#F5F8FC]/95 to-[#F5F8FC]" />
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-[radial-gradient(circle,rgba(22,140,137,0.08)_0%,transparent_70%)] pointer-events-none" />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left Column: Conceptual Overview */}
+            <div className="lg:col-span-5 space-y-6 reveal-init">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF5F4] text-[#168C89] font-bold text-xs border border-[#C5E6E4] uppercase tracking-wider">
+                <BrainCircuit className="w-3.5 h-3.5" />
+                <span>Multi-Signal Intelligence</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#172638] tracking-tight leading-tight">
+                Career Guidance Grounded in Your Complete Profile
+              </h2>
+              <p className="text-sm sm:text-base text-[#64748B] leading-relaxed">
+                Traditional aptitude tests reduce students to a single static label. Our counselor synthesizes six distinct, verifiable signals to recommend career trajectories aligned with who you actually are.
+              </p>
+
+              {/* Glass Dark Callout */}
+              <div className="glass-card-dark text-white rounded-2xl p-6 shadow-xl space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#168C89] flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                    <Check className="w-4 h-4 text-white" />
                   </div>
-                  <div className="flex gap-0.5">
-                    {[1,2,3,4,5].map(star => <Star key={star} className="w-3 h-3 text-amber-400 fill-amber-400" />)}
+                  <div>
+                    <h4 className="text-sm font-bold text-white">Zero Forced Lock-In</h4>
+                    <p className="text-xs text-slate-300 mt-0.5">Guidance dynamically updates as you complete activities, learn new skills, or change interests.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#142B4A] border border-[#168C89]/50 flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                    <Shield className="w-4 h-4 text-teal-300" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-white">Statutory & Regulatory Alignment</h4>
+                    <p className="text-xs text-slate-300 mt-0.5">Accounts for licensing bodies, entrance requirements, and qualification pathways across Indian and global benchmarks.</p>
                   </div>
                 </div>
               </div>
-            ))}
+
+              <div className="pt-2">
+                <Link
+                  to={user ? '/assessment' : '/signup'}
+                  className="inline-flex items-center gap-2 text-sm font-bold text-[#168C89] hover:underline"
+                >
+                  <span>Experience the multi-signal assessment</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Column: 6 Signals Grid */}
+            <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4">
+              {[
+                {
+                  icon: Sparkles,
+                  title: 'Personal Interests',
+                  desc: 'Topics, domains, and micro-challenges you voluntarily explore without pressure or grading.',
+                  tag: 'Signal 01',
+                  delay: 'delay-75',
+                },
+                {
+                  icon: GraduationCap,
+                  title: 'Academic Foundation',
+                  desc: 'Current education stage, academic stream prerequisites, and degree runway.',
+                  tag: 'Signal 02',
+                  delay: 'delay-150',
+                },
+                {
+                  icon: Code,
+                  title: 'Demonstrated Skills',
+                  desc: 'Software tools, technical proficiencies, problem-solving methods, and languages.',
+                  tag: 'Signal 03',
+                  delay: 'delay-225',
+                },
+                {
+                  icon: Briefcase,
+                  title: 'Projects & Builds',
+                  desc: 'Tangible coursework artifacts, portfolio builds, experiments, and hackathon experience.',
+                  tag: 'Signal 04',
+                  delay: 'delay-300',
+                },
+                {
+                  icon: Target,
+                  title: 'Career Preferences',
+                  desc: 'Work style preferences, weekly commitment hours, and target industry domains.',
+                  tag: 'Signal 05',
+                  delay: 'delay-375',
+                },
+                {
+                  icon: BarChart2,
+                  title: 'Assessment Evidence',
+                  desc: 'Calibrated Holland RIASEC psychometrics cross-referenced with O*NET occupational data.',
+                  tag: 'Signal 06',
+                  delay: 'delay-450',
+                },
+              ].map((signal) => {
+                const Icon = signal.icon;
+                return (
+                  <div
+                    key={signal.title}
+                    className={`glass-card-light card-hover-cinematic reveal-init ${signal.delay} rounded-2xl p-5 shadow-xs`}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-[#EAF5F4] border border-[#C5E6E4] flex items-center justify-center text-[#168C89] group-hover:scale-105 transition-transform">
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold text-slate-400 font-mono uppercase tracking-wider">
+                        {signal.tag}
+                      </span>
+                    </div>
+                    <h3 className="text-sm font-bold text-[#172638] mb-1">{signal.title}</h3>
+                    <p className="text-xs text-[#64748B] leading-relaxed">{signal.desc}</p>
+                  </div>
+                );
+              })}
+            </div>
+
           </div>
+        </div>
+      </section>
+
+      {/* 6. SPOTLIGHT: 12 UNIVERSAL SUBJECT DOMAINS SHOWCASE (GLASSMORPHIC HOVER CARDS) */}
+      <section id="domains" className="py-20 bg-white border-b border-[#E2E8F0]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          {/* Pagination dots */}
-          <div className="flex justify-center gap-2 mt-8">
-            <div className="w-2 h-2 rounded-full bg-[#142B4A]"></div>
-            <div className="w-2 h-2 rounded-full bg-slate-300"></div>
-            <div className="w-2 h-2 rounded-full bg-slate-300"></div>
-            <div className="w-2 h-2 rounded-full bg-slate-300"></div>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 reveal-init">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF5F4] text-[#168C89] font-bold text-xs border border-[#C5E6E4] uppercase tracking-wider mb-3">
+                <Layers className="w-3.5 h-3.5" />
+                <span>12 Universal Domains</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#172638] tracking-tight">
+                Discover What You Naturally Enjoy
+              </h2>
+              <p className="text-sm sm:text-base text-[#64748B] mt-2">
+                Explore bite-sized interactive challenges across 12 distinct academic and practical fields to discover where your natural curiosity lies.
+              </p>
+            </div>
+
+            <Link
+              to="/discover-interests"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#142B4A] hover:bg-[#0E1F36] text-white font-bold text-xs shadow-xs transition-all shrink-0 cursor-pointer hover:shadow-md hover:-translate-y-0.5"
+            >
+              <span>Explore All 12 Domains</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#168C89]" />
+            </Link>
+          </div>
+
+          {/* 12 Domain Editorial Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+            {INTEREST_DOMAINS.map((domain, idx) => {
+              const staggerDelay = idx % 4 === 0 ? 'delay-75' : idx % 4 === 1 ? 'delay-150' : idx % 4 === 2 ? 'delay-225' : 'delay-300';
+              return (
+                <Link
+                  key={domain.id}
+                  to="/discover-interests"
+                  className={`glass-card-light card-hover-cinematic reveal-init ${staggerDelay} rounded-2xl p-5 shadow-2xs group flex flex-col justify-between cursor-pointer focus-visible:ring-2 focus-visible:ring-[#168C89] outline-none`}
+                >
+                  <div>
+                    <div className="w-10 h-10 rounded-xl bg-[#EAF5F4] border border-[#C5E6E4] flex items-center justify-center mb-3.5 group-hover:bg-[#168C89] group-hover:scale-110 group-hover:shadow-xs transition-all duration-300">
+                      {renderDomainIcon(domain.iconName)}
+                    </div>
+                    <h3 className="text-sm font-bold text-[#172638] group-hover:text-[#168C89] transition-colors mb-1">
+                      {domain.name}
+                    </h3>
+                    <p className="text-xs text-[#64748B] leading-relaxed line-clamp-2 mb-3">
+                      {domain.description}
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-[#E2E8F0] flex items-center justify-between">
+                    <span className="text-[11px] font-semibold text-[#168C89]">
+                      {domain.activities.length} interactive {domain.activities.length === 1 ? 'activity' : 'activities'}
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#168C89] group-hover:translate-x-1.5 transition-all duration-200" />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+        </div>
+      </section>
+
+      {/* 7. DISTINCTIVE FULL-WIDTH FINAL CTA (DEEP NAVY WITH PHOTOGRAPHIC HORIZON DEPTH) */}
+      <section className="py-24 bg-gradient-to-br from-[#0B1930] via-[#142B4A] to-[#0A182E] text-white relative overflow-hidden">
+        {/* Soft photographic horizon depth */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <img
+            src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=2400&q=80"
+            alt=""
+            className="w-full h-full object-cover opacity-12 filter brightness-50 contrast-125"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0B1930]/95 via-[#142B4A]/90 to-[#0A182E]/98" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(22,140,137,0.22)_0%,transparent_65%)] animate-pulse-ambient" />
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
+          <h2 className="reveal-init font-headline text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4 drop-shadow-sm">
+            Your Next Chapter Starts With Understanding Yourself.
+          </h2>
+          <p className="reveal-init delay-150 text-base sm:text-lg text-slate-300 mb-9 max-w-xl mx-auto font-normal leading-relaxed">
+            Explore your strengths, understand your options, and take your next career step with confidence.
+          </p>
+
+          <div className="reveal-init delay-225 flex justify-center">
+            <Link
+              to={user ? '/assessment' : '/signup'}
+              className="bg-[#168C89] hover:bg-[#137471] text-white px-9 py-4 rounded-xl font-bold text-base transition-all shadow-lg hover:shadow-teal-900/50 hover:-translate-y-0.5 inline-flex items-center gap-2.5 cursor-pointer group"
+            >
+              <span>Start Your Career Journey</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          <div className="reveal-init delay-300 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400 mt-8 font-medium">
+            <span className="flex items-center gap-1.5">
+              <Check className="w-3.5 h-3.5 text-[#168C89]" />
+              Evidence-based psychometrics
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Check className="w-3.5 h-3.5 text-[#168C89]" />
+              Statutory Indian benchmarks
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Check className="w-3.5 h-3.5 text-[#168C89]" />
+              Zero forced career locks
+            </span>
           </div>
         </div>
       </section>
 
-      {/* 8. CTA BANNER */}
-      <section className="pb-16 pt-4 bg-[#F5F8FC]">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="bg-gradient-to-r from-[#142B4A] to-[#10233D] rounded-2xl p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl relative overflow-hidden">
-            {/* Background elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"></div>
-            
-            <div className="flex items-center gap-6 relative z-10 w-full md:w-auto">
-              <div className="hidden md:flex w-20 h-20 bg-white/10 backdrop-blur-sm rounded-2xl items-center justify-center shrink-0">
-                <Target className="w-10 h-10 text-white" />
-              </div>
-              <div>
-                <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
-                  Ready to find the right career <br className="hidden sm:inline" />and build your future?
-                </h2>
-                <p className="text-[#EAF5F4]">Let's start your journey today.</p>
-              </div>
-            </div>
-            
-            <div className="relative z-10 w-full md:w-auto">
-              <Link to="/signup" className="block w-full md:w-auto bg-[#168C89] text-white font-bold px-8 py-4 rounded-xl shadow-md hover:bg-[#137573] hover:shadow-lg transition-all text-center flex items-center justify-center gap-2">
-                Start Career Discovery <ArrowRight className="w-5 h-5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 9. GLOBAL MINIMAL FOOTER */}
+      {/* 8. GLOBAL FOOTER */}
       <AppFooter />
     </div>
   );

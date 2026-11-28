@@ -54,67 +54,97 @@ const Dashboard: React.FC = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
         
-        {/* 1. Welcome Section & Quick Status Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#E2E8F0]">
-          <div>
-            <div className="flex items-center gap-2 text-[#168C89] mb-1">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-xs font-bold uppercase tracking-wider">Career Intelligence Dashboard</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#172638] tracking-tight">
-              Welcome back{onboarding?.college ? `, ${onboarding.college} student` : ''} 👋
-            </h1>
-            <p className="text-sm text-[#64748B] mt-1">
-              Here is where your career trajectory, skill competencies, and milestones stand right now.
-            </p>
-          </div>
+        {/* 1. Cinematic Deep Navy Hero Banner */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B1930] via-[#142B4A] to-[#0A182E] text-white p-7 sm:p-10 mb-8 border border-white/10 shadow-xl">
+          {/* Subtle teal atmospheric glow */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[radial-gradient(circle,rgba(22,140,137,0.22)_0%,transparent_70%)] pointer-events-none -mr-20 -mt-20" />
+          <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-[radial-gradient(circle,rgba(20,43,74,0.4)_0%,transparent_70%)] pointer-events-none" />
 
-          <div className="flex items-center gap-3 shrink-0 flex-wrap">
-            {assessment && (
-              <div className="px-3.5 py-1.5 bg-[#EAF5F4] border border-[#C5E6E4] rounded-xl text-xs font-bold text-[#168C89] flex items-center gap-2 shadow-2xs">
-                <Compass className="w-3.5 h-3.5 text-[#168C89]" />
-                <span>Holland: <strong className="text-[#142B4A] font-mono tracking-wider">{assessment.code}</strong></span>
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-teal-200 text-xs font-semibold mb-3">
+                <Sparkles className="w-3.5 h-3.5 text-[#168C89]" />
+                <span className="uppercase tracking-wider text-[11px] font-bold">Career Intelligence Hub</span>
               </div>
-            )}
-            <Link
-              to="/assessment"
-              className="px-4 py-2 bg-[#142B4A] hover:bg-[#0E1F36] text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
-            >
-              <Compass className="w-3.5 h-3.5 text-[#168C89]" />
-              <span>{assessment ? 'Retake Discovery' : 'Take Discovery Assessment'}</span>
-            </Link>
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                Welcome back{onboarding?.college ? `, ${onboarding.college} student` : ''} <span className="inline-block">👋</span>
+              </h1>
+              <p className="text-sm sm:text-base text-slate-300 mt-2 font-normal leading-relaxed">
+                Here is where your career trajectory, skill competencies, and strategic milestones stand right now.
+              </p>
+
+              {/* Status Chips */}
+              <div className="flex flex-wrap items-center gap-3 mt-5">
+                {assessment && (
+                  <div className="px-3.5 py-1.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 text-xs text-slate-200 flex items-center gap-2">
+                    <Compass className="w-3.5 h-3.5 text-[#168C89]" />
+                    <span>Holland RIASEC: <strong className="text-white font-mono tracking-wider">{assessment.code}</strong></span>
+                  </div>
+                )}
+                {targetRole && (
+                  <div className="px-3.5 py-1.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 text-xs text-slate-200 flex items-center gap-2">
+                    <Target className="w-3.5 h-3.5 text-[#168C89]" />
+                    <span>Target: <strong className="text-white">{targetRole}</strong></span>
+                  </div>
+                )}
+                <div className="px-3.5 py-1.5 rounded-xl bg-[#168C89]/25 border border-[#168C89]/50 text-xs text-teal-200 flex items-center gap-2">
+                  <Award className="w-3.5 h-3.5 text-[#168C89]" />
+                  <span>Readiness: <strong className="text-white font-bold">{completionPercentage}%</strong></span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions inside banner */}
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+              <Link
+                to={assessment ? "/assessment?retake=true" : "/assessment"}
+                className="px-5 py-3 bg-[#168C89] hover:bg-[#137471] text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer group"
+              >
+                <Compass className="w-4 h-4 text-white" />
+                <span>{assessment ? 'Retake Discovery' : 'Take Discovery Assessment'}</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+              <Link
+                to="/recommendations"
+                className="px-5 py-3 bg-white/10 hover:bg-white/15 text-white text-xs font-bold rounded-xl transition-all border border-white/15 backdrop-blur-sm flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4 text-[#168C89]" />
+                <span>View Career Matches</span>
+              </Link>
+            </div>
           </div>
         </div>
 
         {/* 2. Profile Completion Bar */}
-        <div className="bg-white rounded-2xl p-5 border border-[#E2E8F0] shadow-xs mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex-1 w-full">
-            <div className="flex items-center justify-between text-xs font-bold mb-2">
-              <span className="text-[#172638] flex items-center gap-2">
-                <Award className="w-4 h-4 text-[#168C89]" /> Profile Completion & Readiness
-              </span>
-              <span className="text-[#168C89] font-extrabold">{completionPercentage}%</span>
-            </div>
-            <div className="w-full h-2.5 bg-[#F1F5F9] rounded-full overflow-hidden border border-[#E2E8F0]">
-              <div
-                className="h-full bg-[#168C89] transition-all duration-500 rounded-full"
-                style={{ width: `${completionPercentage}%` }}
-              />
-            </div>
+        <div className="bg-white rounded-2xl p-6 border border-[#E2E8F0] shadow-xs mb-8 space-y-3">
+          <div className="flex items-center justify-between text-xs font-bold">
+            <span className="text-[#172638] flex items-center gap-2">
+              <Award className="w-4 h-4 text-[#168C89]" /> Profile Completion & Readiness
+            </span>
+            <span className="text-[#168C89] font-extrabold text-sm">{completionPercentage}%</span>
           </div>
-          <div className="flex items-center gap-2 text-xs shrink-0">
-            <span className={`px-2.5 py-1 rounded-lg font-semibold border ${onboarding?.education_details?.degree ? 'bg-[#EAF5F4] text-[#168C89] border-[#C5E6E4]' : 'bg-[#F8FAFC] text-[#94A3B8] border-[#E2E8F0]'}`}>
-              Education
-            </span>
-            <span className={`px-2.5 py-1 rounded-lg font-semibold border ${interests.length > 0 ? 'bg-[#EAF5F4] text-[#168C89] border-[#C5E6E4]' : 'bg-[#F8FAFC] text-[#94A3B8] border-[#E2E8F0]'}`}>
-              Interests
-            </span>
-            <span className={`px-2.5 py-1 rounded-lg font-semibold border ${declaredSkills.length > 0 ? 'bg-[#EAF5F4] text-[#168C89] border-[#C5E6E4]' : 'bg-[#F8FAFC] text-[#94A3B8] border-[#E2E8F0]'}`}>
-              Skills
-            </span>
-            <span className={`px-2.5 py-1 rounded-lg font-semibold border ${assessment ? 'bg-[#EAF5F4] text-[#168C89] border-[#C5E6E4]' : 'bg-[#F8FAFC] text-[#94A3B8] border-[#E2E8F0]'}`}>
-              Assessment
-            </span>
+          <div className="w-full h-2.5 bg-[#F1F5F9] rounded-full overflow-hidden border border-[#E2E8F0]">
+            <div
+              className="h-full bg-[#168C89] transition-all duration-500 rounded-full"
+              style={{ width: `${completionPercentage}%` }}
+            />
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
+            <span className="text-slate-400 text-[11px]">Core milestone readiness criteria:</span>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className={`px-2.5 py-0.5 rounded-lg font-semibold text-[11px] border ${onboarding?.education_details?.degree ? 'bg-[#EAF5F4] text-[#168C89] border-[#C5E6E4]' : 'bg-[#F8FAFC] text-[#94A3B8] border-[#E2E8F0]'}`}>
+                Education {onboarding?.education_details?.degree ? '✓' : ''}
+              </span>
+              <span className={`px-2.5 py-0.5 rounded-lg font-semibold text-[11px] border ${interests.length > 0 ? 'bg-[#EAF5F4] text-[#168C89] border-[#C5E6E4]' : 'bg-[#F8FAFC] text-[#94A3B8] border-[#E2E8F0]'}`}>
+                Interests {interests.length > 0 ? '✓' : ''}
+              </span>
+              <span className={`px-2.5 py-0.5 rounded-lg font-semibold text-[11px] border ${declaredSkills.length > 0 ? 'bg-[#EAF5F4] text-[#168C89] border-[#C5E6E4]' : 'bg-[#F8FAFC] text-[#94A3B8] border-[#E2E8F0]'}`}>
+                Skills {declaredSkills.length > 0 ? '✓' : ''}
+              </span>
+              <span className={`px-2.5 py-0.5 rounded-lg font-semibold text-[11px] border ${assessment ? 'bg-[#EAF5F4] text-[#168C89] border-[#C5E6E4]' : 'bg-[#F8FAFC] text-[#94A3B8] border-[#E2E8F0]'}`}>
+                Assessment {assessment ? '✓' : ''}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -258,10 +288,10 @@ const Dashboard: React.FC = () => {
                       <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
                     </Link>
                     <Link
-                      to="/assessment"
+                      to="/assessment?retake=true"
                       className="inline-flex items-center gap-1.5 text-[#168C89] font-bold text-xs hover:underline"
                     >
-                      Diagnostic report <ArrowRight className="w-3.5 h-3.5" />
+                      Retake assessment <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
                 </div>

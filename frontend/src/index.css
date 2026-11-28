@@ -1,7 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
+  --font-headline: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
@@ -62,6 +64,10 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.011em;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
   }
 
   /* Custom sleek scrollbar */
@@ -141,4 +147,97 @@
   background-color: #EAF5F4;
   color: #168C89;
   border: 1px solid #C5E6E4;
+}
+
+/* Typography Utilities */
+.font-headline {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.font-display {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.font-body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Premium Cinematic Glassmorphism */
+.glass-card-light {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 4px 20px -2px rgba(20, 43, 74, 0.04), 0 2px 6px -1px rgba(20, 43, 74, 0.02);
+}
+
+.glass-card-dark {
+  background: rgba(11, 25, 48, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35);
+}
+
+.glass-card-teal {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(234, 245, 244, 0.75) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 2px solid #168C89;
+  box-shadow: 0 8px 25px -4px rgba(22, 140, 137, 0.14);
+}
+
+/* Refined Cinematic Card Hover Animations */
+.card-hover-cinematic {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
+}
+
+.card-hover-cinematic:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px -6px rgba(20, 43, 74, 0.09), 0 6px 12px -3px rgba(20, 43, 74, 0.04);
+  border-color: #168C89;
+}
+
+/* Scroll Reveal Animations */
+.reveal-init {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-init.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.delay-75 { transition-delay: 75ms; }
+.delay-150 { transition-delay: 150ms; }
+.delay-225 { transition-delay: 225ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-375 { transition-delay: 375ms; }
+.delay-450 { transition-delay: 450ms; }
+
+/* Subtle Ambient Glow Pulsing */
+@keyframes pulse-ambient {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+.animate-pulse-ambient {
+  animation: pulse-ambient 9s ease-in-out infinite;
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-init {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .card-hover-cinematic:hover {
+    transform: none !important;
+  }
+  .animate-pulse-ambient {
+    animation: none !important;
+  }
 }

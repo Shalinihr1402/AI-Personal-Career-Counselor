@@ -266,47 +266,51 @@ export default function InterestDiscovery() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
         
-        {/* A. Page Header */}
-        <div className="mb-6">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF5F4] text-[#168C89] font-bold text-xs border border-[#C5E6E4] shadow-2xs mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-[#168C89]" />
-            <span>Discover What You Enjoy</span>
+        {/* Cinematic Deep Navy Hero Banner */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B1930] via-[#142B4A] to-[#0A182E] text-white p-7 sm:p-10 mb-8 border border-white/10 shadow-xl">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[radial-gradient(circle,rgba(22,140,137,0.22)_0%,transparent_70%)] pointer-events-none -mr-20 -mt-20" />
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-teal-200 text-xs font-semibold mb-3">
+                <Sparkles className="w-3.5 h-3.5 text-[#168C89]" />
+                <span className="uppercase tracking-wider text-[11px] font-bold">Interactive Discovery Engine</span>
+              </div>
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                Discover What You Enjoy
+              </h1>
+              <p className="text-sm sm:text-base text-slate-300 mt-2 font-normal leading-relaxed">
+                Explore real-world problem scenarios across 12 subject domains. No tests, no grades—discover which topics and problem types you voluntarily love to solve.
+              </p>
+
+              {/* Discovery Evidence Progress Chips */}
+              <div className="flex flex-wrap items-center gap-3 mt-5">
+                <div className="px-3.5 py-1.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 text-xs text-slate-200 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-slate-300" />
+                  <span>Explored: <strong className="text-white font-mono">{exploredSet.size}/12</strong></span>
+                </div>
+                <div className="px-3.5 py-1.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 text-xs text-slate-200 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#168C89]" />
+                  <span>Emerging Patterns: <strong className="text-teal-200 font-bold">{emergingSet.size}</strong></span>
+                </div>
+                <div className="px-3.5 py-1.5 rounded-xl bg-[#168C89]/25 border border-[#168C89]/50 text-xs text-teal-200 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <span>Confirmed Interests: <strong className="text-white font-bold">{confirmedSet.size}</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div className="shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsSummaryOpen(true)}
+                className="px-5 py-3 bg-[#168C89] hover:bg-[#137471] text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer group"
+              >
+                <Sparkles className="w-4 h-4 text-white" />
+                <span>View Evidence Summary</span>
+                <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+              </button>
+            </div>
           </div>
-
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#172638] tracking-tight">
-            Subject & Domain Interest Exploration
-          </h1>
-
-          <p className="text-sm text-[#64748B] mt-1 max-w-2xl leading-relaxed">
-            Discover what naturally engages your curiosity through real-world problem scenarios across 12 subject domains. No tests, no grades—just explore and see what you enjoy!
-          </p>
-        </div>
-
-        {/* B. Discovery Status & Evidence Summary Banner */}
-        <div className="bg-white rounded-2xl p-5 border border-[#E2E8F0] shadow-xs mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-4 text-xs font-semibold">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-slate-300" />
-              <span>Explored: <strong className="text-[#142B4A] font-extrabold">{exploredSet.size}/12</strong></span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#168C89]" />
-              <span>Emerging Patterns: <strong className="text-[#168C89] font-extrabold">{emergingSet.size}</strong></span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-              <span>Confirmed: <strong className="text-emerald-700 font-extrabold">{confirmedSet.size}</strong></span>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setIsSummaryOpen(true)}
-            className="px-4 py-2 bg-[#142B4A] hover:bg-[#0E1F36] text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 shrink-0 cursor-pointer"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-[#168C89]" />
-            <span>View Evidence Summary</span>
-          </button>
         </div>
 
         {/* C. Filters Bar */}
